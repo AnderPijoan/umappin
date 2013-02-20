@@ -1,0 +1,28 @@
+@(localUser: models.User = null)
+
+@main(Messages("editmap.title"), "editmap") {
+
+    <!-- styles -->
+    <link href='@routes.Assets.at("css/ol/style.css")' rel="stylesheet">
+    <link href='@routes.Assets.at("css/editmap.css")' rel="stylesheet">
+
+    <h2>@Messages("editmap.title")</h2>
+    <p>@Messages("editmap.message.controls")</p>
+
+    <form id='editMapForm' method='post' action='#'>
+        Map Source
+        <select id='mapSource' name='mapSource'  value='osm'>
+            <option value='osm'>OSM</option>
+            <option value='bing'>Bing</option>
+        </select>
+    </form>
+
+    <div id="map" class=""></div>
+
+    <!-- scripts -->
+    <!-- script src="http://openlayers.org/api/OpenLayers.js"></script -->
+    <script src='@routes.Assets.at("js/OpenLayers.js")'></script>
+    <script src='@routes.Assets.at("js/editmap.js")'></script>
+    <script src="@routes.Application.jsRoutes" defer="defer"></script>
+
+}

@@ -1,9 +1,1 @@
-'let's see if this works!!' 
-
-Test Orodriguez
-
-'Another test...'
-
-by igarri
-
-Jon's test
+# Play Authenticate sample Java application

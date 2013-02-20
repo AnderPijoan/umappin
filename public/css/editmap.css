@@ -1,0 +1,94 @@
+/* EDIT MAP PAGE STYLES
+-------------------------------------------------- */
+
+div#map {
+    width: 100%;
+    height: 50em;
+    border: 1px groove #888888;
+    margin: 0.5em;
+    padding: 0.1em;
+}
+
+div.baseLayersDiv label {
+    display: inline-block;
+    margin-left: 0.5em;
+}
+
+div.navHistoryNextItemActive,
+div.navHistoryNextItemInactive,
+div.navHistoryPreviousItemActive,
+div.navHistoryPreviousItemInactive,
+div.olControlNavigationItemActive,
+div.olControlNavigationItemInactive,
+div.olControlMousePositionItemActive,
+div.olControlMousePositionItemInactive,
+div.olControlDrawFeaturePathItemActive,
+div.olControlDrawFeaturePathItemInactive,
+div.olControlDrawFeaturePolygonItemActive,
+div.olControlDrawFeaturePolygonItemInactive,
+div.olControlDrawFeatureRegularPolygonItemActive,
+div.olControlDrawFeatureRegularPolygonItemInactive,
+div.olControlDrawFeaturePointItemActive,
+div.olControlDrawFeaturePointItemInactive,
+div.olControlModifyFeatureItemActive,
+div.olControlModifyFeatureItemInactive,
+div.olControlAttributionItemActive,
+div.olControlAttributionItemInactive,
+div.olControlPanZoomBarItemActive,
+div.olControlPanZoomBarItemInactive,
+div.olControlSaveSessionToLocalButtonItemActive,
+div.olControlSaveSessionToLocalButtonItemInactive,
+div.olControlDragFeatureItemActive,
+div.olControlDragFeatureItemInactive  {
+    background-position: 0 !important;
+    height: 22px;
+    width: 24px;
+    top: 5px;
+}
+
+div.navHistoryNextItemActive  { background-image: url("ol/img/view_next_on.png"); }
+div.navHistoryNextItemInactive  { background-image: url("ol/img/view_next_off.png"); }
+div.navHistoryPreviousItemActive  { background-image: url("ol/img/view_previous_on.png"); }
+div.navHistoryPreviousItemInactive  { background-image: url("ol/img/view_previous_off.png"); }
+div.olControlNavigationItemActive  { background-image: url("ol/img/pan_on.png"); }
+div.olControlNavigationItemInactive  { background-image: url("ol/img/pan_off.png"); }
+div.olControlMousePositionItemActive  { background-image: url("ol/img/move_feature_on.png"); }
+div.olControlMousePositionItemInactive  { background-image: url("ol/img/move_feature_off.png"); }
+div.olControlDrawFeaturePathItemActive  { background-image: url("ol/img/draw_line_on.png"); }
+div.olControlDrawFeaturePathItemInactive  { background-image: url("ol/img/draw_line_off.png"); }
+div.olControlAttributionItemActive  { background-image: url("ol/img/draw_point_on.png"); }
+div.olControlAttributionItemInactive  { background-image: url("ol/img/draw_point_off.png"); }
+div.olControlPanZoomBarItemActive  { background-image: url("ol/img/add_point_on.png"); }
+div.olControlPanZoomBarItemInactive  { background-image: url("ol/img/add_point_off.png"); }
+div.olControlDragFeatureItemActive  { background-image: url("ol/img/pan_on.png"); }
+div.olControlDragFeatureItemInactive  { background-image: url("ol/img/pan_off.png"); }
+div.olControlDrawFeaturePolygonItemActive  { background-image: url("ol/img/draw_polygon_on.png"); }
+div.olControlDrawFeaturePolygonItemInactive  { background-image: url("ol/img/draw_polygon_off.png"); }
+div.olControlDrawFeatureRegularPolygonItemActive  { background-image: url("ol/img/draw_regular_polygon_on.png"); }
+div.olControlDrawFeatureRegularPolygonItemInactive  { background-image: url("ol/img/draw_regular_polygon_off.png"); }
+div.olControlDrawFeaturePointItemActive  { background-image: url("ol/img/draw_point_on.png"); }
+div.olControlDrawFeaturePointItemInactive  { background-image: url("ol/img/draw_point_off.png"); }
+div.olControlModifyFeatureItemActive  { background-image: url("ol/img/modify_feature_on.png"); }
+div.olControlModifyFeatureItemInactive  { background-image: url("ol/img/modify_feature_off.png"); }
+div.olControlSaveSessionToLocalButtonItemActive  { background-image: url("ol/img/save_features_on.png"); }
+div.olControlSaveSessionToLocalButtonItemInactive  { background-image: url("ol/img/save_features_off.png"); }
+
+
+div.olControlPanel {
+    margin: 0.1em 0 0 3.5em;
+}
+
+div.olControlPanel div {
+    position: relative;
+    display: block;
+    /*border: 1px solid;*/
+    margin: 0 0.25em;
+    padding: 0.2em;
+    border-radius: 4px;
+    float: left;
+    overflow: visible; /* needed to remove padding from buttons in IE */
+}
+
+div.olControlZoom {
+    display: none !important;
+}
