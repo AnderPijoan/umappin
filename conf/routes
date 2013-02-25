@@ -47,3 +47,13 @@ POST    /login/password/forgot     controllers.Signup.doForgotPassword
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
 
 GET     /editmap                 controllers.Application.editmap
+
+# messaging user view
+
+GET     /message_form                   controllers.UserMessage.form
+POST    /message_post                   controllers.UserMessage.post
+
+# messaging rest APIs
+GET     /rest/messages                   controllers.RestMessages.all
+
+GET     /rest/messages/:id               controllers.RestMessages.findById(id: String)
