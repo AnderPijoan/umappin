@@ -1,0 +1,10 @@
+{
+    "discussion":"123456"
+    "message":{
+            "message":"This is the first one of the created discussion",
+            "prev_message": 1234 //is the first one
+            //no user, the Rest have to know it
+    }
+
+    
+}
