@@ -18,14 +18,44 @@
 
             </ul>
         </div>
-        <div class="span9  " >
-        </div>
+
+        <ul id="discussion_list">
+
+        </ul>
+        
+
     </div>
 </div>
 
+<!-- This is the discussions header template -->
+<script type="text/template" id="discussion-head-template">
+        <div class="span9  " >
+            <div class="discussion_head">
+                <div class="discussion_subject"><a href="/messages/<%- id %>"><%- subject %></a></div>
+                <div class="discussion_author">
+                    <div class="author_name"><a href="/user/<%- user.id %>"><%- user.name %></div>
+                </div>  
+            </div>
+        </div>
+</script>
+
     <!-- scripts -->
     <!-- script src="http://openlayers.org/api/OpenLayers.js"></script -->
+    <script src='@routes.Assets.at("js/jquery-1.9.1.min.js")'></script>
+
+    <script src='@routes.Assets.at("js/underscore-min.js")'></script>
+
+
     <script src='@routes.Assets.at("js/backbone-min-0.9.js")'></script>
+    <script src='@routes.Assets.at("js/messagesAPP/model/discussion.js")'></script>
+    <script src='@routes.Assets.at("js/messagesAPP/collection/discussion_list.js")'></script>
+    <script src='@routes.Assets.at("js/messagesAPP/view/receivedMessages_view.js")'></script>
+    <script src='@routes.Assets.at("js/messagesAPP/view/messagesApp_view.js")'></script>
+
+    <script src='@routes.Assets.at("js/messagesAPP/test_data.js")'></script>
+
+
+
 
     <script src="@routes.Application.jsRoutes" defer="defer"></script>
 
