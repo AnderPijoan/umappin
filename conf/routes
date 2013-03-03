@@ -48,18 +48,12 @@ GET     /assets/*file               controllers.Assets.at(path="/public", file)
 
 GET     /editmap                 controllers.Application.editmap
 
-<<<<<<< HEAD
 #Messages
 
 GET		/messages				controllers.Application.messages
-=======
-# messaging user view
 
-GET     /message_form                   controllers.UserMessage.form
-POST    /message_post                   controllers.UserMessage.post
 
 # messaging rest APIs
 GET     /rest/messages                   controllers.RestMessages.all
 
 GET     /rest/messages/:id               controllers.RestMessages.findById(id: String)
->>>>>>> ff5af25a322389ffb322a16177483058862b8ccc
