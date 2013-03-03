@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <title>uMappin</title>
+
+    <!-- meta -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="uMappin Play 2.1 Application">
+    <meta name="author" content="uMappin Deusto Team">
+
+    <!-- styles -->
+    <link href="/assets/stylesheets/main.min.css" rel="stylesheet">
+    <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+    <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+                <a class="brand" href="Javascript:home();">uMappin</a>
+
+                <div class="btn-group pull-right loggedout">
+                    <a href="Javascript:setTemplate('/login')" class="btn btn-primary btn-mini ">Log in</a>
+                </div>
+
+                <div class="btn-group pull-right loggedin" accesskey="" id="loggedControl">
+                    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                        <i class="icon-user"></i>
+                        <span id="username"></span>
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="Javascript:setTemplate('/profile')">Profile</a></li>
+                        <li><a href="/accounts/add">Link more providers</a></li>
+                        <li class="divider"></li>
+                        <li><a href="Javascript:doLogout()"><i class="icon-off"></i> Sign out</a></li>
+                    </ul>
+                </div>
+
+                <div class="nav-collapse">
+                    <ul class="nav">
+                        <li class="active"><a href="Javascript:home();">Home</a></li>
+                        <li class=""><a href="Javascript:setTemplate('/userlist')">User List</a></li>
+                        <li class=""><a href="Javascript:setTemplate('/editmap')">Edit Map</a></li>
+
+                        <li class="loggedout"><a href="/signup">Sign up</a></li>
+
+                    </ul>
+                </div><!--/.nav-collapse -->
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <div id="actionResult"></div>
+        <div id="content">WELCOME</div>
+
+        <hr>
+        <footer>
+            <p>&copy; 2013 uMappin. Licensed under Apache License, Version 2.0. View details <a href="#">here</a>.</p>
+            <p><small>
+                Styles by <a href="http://twitter.github.com/bootstrap/index.html" target="_blank">Twitter Bootstrap</a>
+                &middot; Provider icons by <a href="http://prlloyd.com/Pf4al8" target="_blank">Paul Robert Lloyd</a>
+            </small></p>
+        </footer>
+    </div> <!-- /container -->
+
+    <!-- scripts -->
+    <script src="/assets/js/jquery.min.js"></script>
+    <script src="/assets/js/bootstrap.min.js"></script>
+    <script src="/assets/js/underscore-min.js"></script>
+    <script src="/assets/js/json2.js"></script>
+    <script src="/assets/js/backbone-min.js"></script>
+    <script src="/assets/javascript/routes.js" defer="defer"></script>
+
+    <script>
+
+        function setTemplate(url) {
+            $('div#actionResult').css('display','none');
+            $('div#content').empty();
+            var templateGet = $.get( url );
+            templateGet.done(function( data ) {
+                $.get(
+                    data,
+                    function(template) {
+                        $('div#content').empty().html(template);
+                        sessionStorage.setItem("lastTemplate", url);
+                    }
+                )
+            });
+            templateGet.error(function( data ) {
+                $('div#actionResult').css('display','block').empty().html(
+                        "<div class='alert alert-error'>" + data.responseText + "</div>");
+            });
+        }
+
+        function updateSessionViews(username) {
+            $('.loggedout').css('display', username != "" ? 'none' : 'block');
+            $('.loggedin').css('display', username != "" ? 'block' : 'none').find('#username').text(username);
+        }
+
+        function doLogout() {
+            setTemplate('/logout');
+            sessionStorage.removeItem("user");
+            updateSessionViews("");
+        }
+
+        function home() {
+            sessionStorage.setItem("lastTemplate", "/");
+            window.location.href = "/";
+        }
+
+        $(function() {
+            var json = sessionStorage.getItem("user");
+            if (json != null && json != undefined && json != "") {
+                var usr = JSON.parse(json);
+                updateSessionViews(usr.name);
+            } else {
+                updateSessionViews("");
+            }
+            var lastTemplate = sessionStorage.getItem("lastTemplate");
+            setTemplate(lastTemplate);
+        });
+
+    </script>
+
+</body>
+
+</html>

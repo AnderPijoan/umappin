@@ -2,9 +2,11 @@ package providers;
 
 import com.feth.play.module.mail.Mailer.Mail.Body;
 import com.feth.play.module.pa.PlayAuthenticate;
+import com.feth.play.module.pa.exceptions.AuthException;
 import com.feth.play.module.pa.providers.password.UsernamePasswordAuthProvider;
 import com.feth.play.module.pa.providers.password.UsernamePasswordAuthUser;
 import controllers.routes;
+import play.mvc.Result;
 import models.LinkedAccount;
 import models.TokenAction;
 import models.TokenAction.Type;
@@ -27,6 +29,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static play.data.Form.form;
+import static play.mvc.Results.ok;
 
 public class MyUsernamePasswordAuthProvider
 		extends
@@ -55,7 +58,11 @@ public class MyUsernamePasswordAuthProvider
 				.getProvider(UsernamePasswordAuthProvider.PROVIDER_KEY);
 	}
 
-	public static class MyIdentity {
+    public void $init$() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public static class MyIdentity {
 
 		public MyIdentity() {
 		}
@@ -174,7 +181,7 @@ public class MyUsernamePasswordAuthProvider
 		}
 	}
 
-	@Override
+    @Override
 	protected Call userExists(final UsernamePasswordAuthUser authUser) {
 		return routes.Signup.exists();
 	}
@@ -211,10 +218,13 @@ public class MyUsernamePasswordAuthProvider
 
 	@Override
 	protected String onLoginUserNotFound(final Context context) {
+        /*
 		context.flash()
 				.put(controllers.Application.FLASH_ERROR_KEY,
 						Messages.get("playauthenticate.password.login.unknown_user_or_pw"));
 		return super.onLoginUserNotFound(context);
+		*/
+        return Messages.get("playauthenticate.password.login.unknown_user_or_pw");
 	}
 
 	@Override

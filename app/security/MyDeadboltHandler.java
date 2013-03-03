@@ -24,13 +24,16 @@ public class MyDeadboltHandler extends AbstractDeadboltHandler {
 			// was requested before sending him to the login page
 			// if you don't call this, the user will get redirected to the page
 			// defined by your resolver
+
 			final String originalUrl = PlayAuthenticate
 					.storeOriginalUrl(context);
-
+             /*
 			context.flash().put("error",
 					"You need to log in first, to view '" + originalUrl + "'");
 			return redirect(PlayAuthenticate.getResolver().login());
-		}
+             */
+            return forbidden("You need to log in first, to view '" + originalUrl + "'");
+        }
 	}
 
 	@Override

@@ -1,13 +1,15 @@
 package controllers;
 
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import models.User;
 import play.Routes;
 import play.data.Form;
+import play.data.validation.ValidationError;
 import play.mvc.*;
-import play.mvc.Http.Response;
 import play.mvc.Http.Session;
 import play.mvc.Result;
 import providers.MyUsernamePasswordAuthProvider;
@@ -29,19 +31,14 @@ public class Application extends Controller {
 	public static final String USER_ROLE = "user";
 	
 	public static Result index() {
-		return ok(index.render());
+        //return ok(index.render());
+        return redirect("/assets/index.html");
 	}
 
 	public static User getLocalUser(final Session session) {
 		final AuthUser currentAuthUser = PlayAuthenticate.getUser(session);
 		final User localUser = User.findByAuthUserIdentity(currentAuthUser);
 		return localUser;
-	}
-
-	@Restrict(@Group(Application.USER_ROLE))
-	public static Result restricted() {
-		final User localUser = getLocalUser(session());
-		return ok(restricted.render(localUser));
 	}
 
 	@Restrict(@Group(Application.USER_ROLE))
@@ -60,9 +57,17 @@ public class Application extends Controller {
 				.bindFromRequest();
 		if (filledForm.hasErrors()) {
 			// User did not fill everything properly
-			return badRequest(login.render(filledForm));
+            Collection<List<ValidationError>> errors = filledForm.errors().values();
+            StringBuffer sb = new StringBuffer();
+            for (List<ValidationError> vel : errors)
+                for (ValidationError ve : vel)
+                    sb.append("<li>").append(ve.key()).append(": ").append(ve.message()).append("</li>");
+			return badRequest("<ul>" + sb.toString() + "</ul>");// "Fill the fields properly!");//login.render(filledForm));
 		} else {
 			// Everything was filled
+            Result res = UsernamePasswordAuthProvider.handleLogin(ctx());
+
+
 			return UsernamePasswordAuthProvider.handleLogin(ctx());
 		}
 	}
@@ -73,9 +78,12 @@ public class Application extends Controller {
 
 	public static Result jsRoutes() {
 		return ok(
-				Routes.javascriptRouter("jsRoutes",
-						controllers.routes.javascript.Signup.forgotPassword()))
-				.as("text/javascript");
+            Routes.javascriptRouter(
+                "jsRoutes",
+                controllers.routes.javascript.Signup.forgotPassword()
+            )
+        )
+        .as("text/javascript");
 	}
 
 	public static Result doSignup() {
@@ -103,4 +111,5 @@ public class Application extends Controller {
         final User localUser = getLocalUser(session());
         return ok(editmap.render(localUser));
     }
+
 }

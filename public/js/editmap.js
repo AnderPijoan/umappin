@@ -409,8 +409,9 @@ function saveSessionToLocal() {
 /** ----------------------------------------------------------------------------------- **/
 /** ----------------------------------- MAIN -------------------------------------- **/
 /** ---------------------------------------------------------------------------------- **/
-$(function() {
+setTimeout(function() {
     /** ----------------- Map declaration / initialization ------------------ **/
+    OpenLayers.ImgPath = "/assets/img/ol/";
     var olMap = new OLMap();
     initMap(olMap);
     loadLocalFeatures(olMap);
@@ -419,4 +420,4 @@ $(function() {
         olMap.changeSource($('#mapSource').val());
     });
 
-});
+}, 100);

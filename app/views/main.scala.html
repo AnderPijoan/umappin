@@ -61,7 +61,6 @@
           <div class="nav-collapse">
             <ul class="nav">
               <li class="@("active".when(nav == ""))"><a href="@routes.Application.index()">@Messages("playauthenticate.navigation.home")</a></li>
-              <li class="@("active".when(nav == "restricted"))"><a href="@routes.Application.restricted()">@Messages("playauthenticate.navigation.restricted")</a></li>
               <li class="@("active".when(nav == "editmap"))"><a href="@routes.Application.editmap()">@Messages("editmap.title")</a></li>
                 @subjectNotPresent() {
 			    	<li class="@("active".when(nav == "signup"))"><a href="@routes.Application.signup()">@Messages("playauthenticate.navigation.signup")</a></li>

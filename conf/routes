@@ -4,18 +4,18 @@
 
 # Home page
 GET     /                           controllers.Application.index
-GET     /restricted                 controllers.Application.restricted
+
 GET     /assets/javascript/routes.js    controllers.Application.jsRoutes
 
-GET     /profile                    controllers.Application.profile
+GET     /profile                    controllers.Templates.profile
 
-GET     /login                      controllers.Application.login
+GET     /login                      controllers.Templates.login
 POST    /login                      controllers.Application.doLogin
 
 GET     /logout                     com.feth.play.module.pa.controllers.Authenticate.logout
 GET     /authenticate/:provider     com.feth.play.module.pa.controllers.Authenticate.authenticate(provider: String)
 
-GET     /signup                     controllers.Application.signup
+GET     /signup                     controllers.Templates.signup
 POST    /signup                     controllers.Application.doSignup
 
 GET     /accounts/unverified        controllers.Signup.unverified
@@ -46,4 +46,31 @@ POST    /login/password/forgot     controllers.Signup.doForgotPassword
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
 
-GET     /editmap                 controllers.Application.editmap
+
+# Added sites Map
+GET     /home                   controllers.Application.index
+GET     /editmap                controllers.Templates.editmap
+GET     /userlist                  controllers.Templates.userlist
+
+
+
+
+GET      /follows               controllers.FollowManager.getFollows()
+POST     /follow             controllers.FollowManager.follow
+POST     /unfollow             controllers.FollowManager.unfollow
+
+GET     /logoutTemplate             controllers.Templates.logout
+
+# Map -  REST CRUD for Users
+GET     /users              controllers.UserREST.getUsers()
+GET     /users/:name        controllers.UserREST.getUser(name: String)
+POST    /users              controllers.UserREST.addUser()
+
+GET     /sessionuser         controllers.UserREST.getSessionUser
+
+# OLD ROUTES Map - REMOVE LATER ...
+GET     /loginold                   controllers.Application.login
+GET     /editmapold                controllers.Application.editmap
+GET     /profileold               controllers.Application.profile
+GET     /signupold               controllers.Application.signup
+

@@ -1,0 +1,27 @@
+package controllers;
+
+import play.mvc.*;
+
+import play.mvc.Result;
+import providers.MyUsernamePasswordAuthProvider;
+
+import views.html.*;
+import be.objectify.deadbolt.java.actions.Group;
+import be.objectify.deadbolt.java.actions.Restrict;
+
+public class Templates extends Controller {
+
+    /** PUBLIC **/
+    public static Result login() { return ok("templates/login.html"); }
+    public static Result logout() { return ok("templates/logout.html"); }
+    public static Result signup() { return ok(signup.render(MyUsernamePasswordAuthProvider.SIGNUP_FORM)); }
+
+    /** RESTRICTED **/
+    @Restrict(@Group(Application.USER_ROLE))
+    public static Result userlist() { return ok("templates/userlist.html"); }
+	@Restrict(@Group(Application.USER_ROLE))
+	public static Result profile() { return ok("templates/profile.html"); }
+    @Restrict(@Group(Application.USER_ROLE))
+    public static Result editmap() { return ok("templates/editmap.html"); }
+
+}

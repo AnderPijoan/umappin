@@ -43,7 +43,7 @@ public class Signup extends Controller {
 
 	public static Result unverified() {
 		com.feth.play.module.pa.controllers.Authenticate.noCache(response());
-		return ok(unverified.render());
+		return notFound(unverified.render());
 	}
 
 	private static final Form<MyIdentity> FORGOT_PASSWORD_FORM = form(MyIdentity.class);

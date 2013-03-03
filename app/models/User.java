@@ -66,6 +66,10 @@ public class User implements Subject {
         }
     }
 
+    public static User findByName(String name) {
+        return MorphiaObject.datastore.find(User.class).field("name").equal(name).get();
+    }
+
     public static void delete(String idToDelete) {
         User toDelete = MorphiaObject.datastore.find(User.class).field("_id").equal(new ObjectId(idToDelete)).get();
         if (toDelete != null) {
