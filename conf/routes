@@ -47,3 +47,7 @@ POST    /login/password/forgot     controllers.Signup.doForgotPassword
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
 
 GET     /editmap                 controllers.Application.editmap
+
+#Messages
+
+GET		/messages				controllers.Application.messages

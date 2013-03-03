@@ -1,0 +1,32 @@
+@(localUser: models.User = null)
+
+@main(Messages("messages.index.title"), "Messages") {
+
+<!-- styles -->
+<link href='@routes.Assets.at("css/ol/style.css")' rel="stylesheet">
+<link href='@routes.Assets.at("css/editmap.css")' rel="stylesheet">
+
+<h2>@Messages("messages.index.title")</h2>
+<p>@Messages("messages.message.controls")</p>
+
+<div class="row">
+    <div class="span3 bs-docs-sidebar">
+        <ul class="nav nav-list bs-docs-sidenav " id="subsec_nav" >
+            <li id="received_messages"class="active"><a tabindex="-1" href="#received">@Messages("messages.received.title")</a></li>
+            <li id="sended_messages"><a tabindex ="-1" href="#sended">@Messages("messages.sended.title")</a><li>
+             <li id="group_messages"><a tabindex ="-1" href="#sended">@Messages("messages.group.title")</a><li>
+
+            </ul>
+        </div>
+        <div class="span9  " >
+        </div>
+    </div>
+</div>
+
+    <!-- scripts -->
+    <!-- script src="http://openlayers.org/api/OpenLayers.js"></script -->
+    <script src='@routes.Assets.at("js/backbone-min-0.9.js")'></script>
+
+    <script src="@routes.Application.jsRoutes" defer="defer"></script>
+
+}
