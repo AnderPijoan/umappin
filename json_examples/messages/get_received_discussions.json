@@ -1,0 +1,40 @@
+{
+    "discussions":[
+        {
+            "id":"123456",
+            "subject": "This subject",
+            "message_number":"5", //number of total messages
+            "unread_messages":"2", //number of unread messages, 0 if none
+            "user":{
+                "id":"123", //creator user id
+                "name":"Jon Doe",
+                "user_pic":"http://" //blank for now
+
+            }
+        }
+        {
+            "id":"64321",
+            "subject": "This second subject",
+            "message_number":"3", //number of total messages
+            "unread_messages":"0",
+            "user":{
+                "id":"124", //creator user id
+                "name":"Pepe Gotera",
+                "user_pic":"http://" //blank for now
+                 
+            }
+        }
+        {
+            "id":"234567",
+            "subject": "This other subject",
+            "message_number":"1", //number of total messages
+            "unread_messages":"1",
+            "user":{
+                "id":"133", //creator user id
+                "name":"Otilio",
+                "user_pic":"http://" //blank for now
+                 
+            }
+        }
+    ]
+}

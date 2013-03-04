@@ -112,4 +112,10 @@ public class Application extends Controller {
         return ok(editmap.render(localUser));
     }
 
+    @Restrict(@Group(Application.USER_ROLE))
+    public static Result messages() {
+        final User localUser = getLocalUser(session());
+        return ok(messages.render(localUser));
+    }
+
 }

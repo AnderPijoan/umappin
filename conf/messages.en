@@ -156,6 +156,17 @@ editmap.message.controls=Use the map built-in controls at the top-right
 
 ### --- edit map END
 
+### --- messages START
+
+messages.index.title=Messages
+messages.message.controls=Manage your messages
+
+messages.received.title=Received Messages
+messages.group.title = Group Messages
+messages.sended.title =Sended Messages
+
+### --- messages END
+
 ### --- umappin general START
 
 umappin.title=uMappin

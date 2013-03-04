@@ -74,3 +74,16 @@ GET     /editmapold                controllers.Application.editmap
 GET     /profileold               controllers.Application.profile
 GET     /signupold               controllers.Application.signup
 
+
+GET     /editmap                 controllers.Application.editmap
+
+#Messages
+
+GET		/messages				controllers.Application.messages
+
+
+# messaging rest APIs
+GET     /rest/messages                   controllers.RestMessages.all
+
+GET     /rest/messages/:id               controllers.RestMessages.findById(id: String)
+

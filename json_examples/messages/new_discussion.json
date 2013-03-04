@@ -1,0 +1,11 @@
+{
+    "discussion":{
+        "subject": "This subject is to be created",
+        "message":{
+                "message":"This is the first one of the created discussion",
+                "prev_message": null //is the first one
+                //no user, the Rest have to know it
+            }
+
+    }
+}
