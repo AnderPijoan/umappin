@@ -12,9 +12,10 @@ import be.objectify.deadbolt.java.actions.Restrict;
 public class Templates extends Controller {
 
     /** PUBLIC **/
+    public static Result home() { return ok("templates/home.html"); }
     public static Result login() { return ok("templates/login.html"); }
     public static Result logout() { return ok("templates/logout.html"); }
-    public static Result signup() { return ok(signup.render(MyUsernamePasswordAuthProvider.SIGNUP_FORM)); }
+    public static Result signup() { return ok("templates/signup.html"); }
 
     /** RESTRICTED **/
     @Restrict(@Group(Application.USER_ROLE))

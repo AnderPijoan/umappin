@@ -48,7 +48,7 @@ GET     /assets/*file               controllers.Assets.at(path="/public", file)
 
 
 # Added sites Map
-GET     /home                   controllers.Application.index
+GET     /home                   controllers.Templates.home
 GET     /editmap                controllers.Templates.editmap
 GET     /userlist                  controllers.Templates.userlist
 
