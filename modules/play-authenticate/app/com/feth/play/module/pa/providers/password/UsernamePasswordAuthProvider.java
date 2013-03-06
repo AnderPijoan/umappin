@@ -88,13 +88,13 @@ public abstract class UsernamePasswordAuthProvider<R, UL extends UsernamePasswor
 			switch (r) {
 			case USER_EXISTS:
 				// The user exists already
-				return userExists(authUser).url();
+				return "User already exists";//userExists(authUser);
 			case USER_EXISTS_UNVERIFIED:
 			case USER_CREATED_UNVERIFIED:
 				// User got created as unverified
 				// Send validation email
 				sendVerifyEmailMailing(context, authUser);
-				return userUnverified(authUser).url();
+				return "Unverified User, click the link in your email";//userUnverified(authUser).url();
 			case USER_CREATED:
 				// continue to login...
 				return transformAuthUser(authUser, context);
@@ -109,7 +109,7 @@ public abstract class UsernamePasswordAuthProvider<R, UL extends UsernamePasswor
 			case USER_UNVERIFIED:
 				// The email of the user is not verified, yet - we won't allow
 				// him to log in
-				return userUnverified(authUser);
+				return "Unverified User, click the link in your email";//userUnverified(authUser).url();
                 //return userUnverified(authUser).url();
 			case USER_LOGGED_IN:
 				// The user exists and the given password was correct

@@ -91,8 +91,15 @@ public class Application extends Controller {
 		final Form<MySignup> filledForm = MyUsernamePasswordAuthProvider.SIGNUP_FORM
 				.bindFromRequest();
 		if (filledForm.hasErrors()) {
-			// User did not fill everything properly
-			return badRequest(signup.render(filledForm));
+
+            // User did not fill everything properly
+            Collection<List<ValidationError>> errors = filledForm.errors().values();
+            StringBuffer sb = new StringBuffer();
+            for (List<ValidationError> vel : errors)
+                for (ValidationError ve : vel)
+                    sb.append("<li>").append(ve.key()).append(": ").append(ve.message()).append("</li>");
+            return badRequest("<ul>" + sb.toString() + "</ul>");// "Fill the fields properly!");//signup.render(filledForm));
+
 		} else {
 			// Everything was filled
 			// do something with your part of the form before handling the user

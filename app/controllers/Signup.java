@@ -43,7 +43,7 @@ public class Signup extends Controller {
 
 	public static Result unverified() {
 		com.feth.play.module.pa.controllers.Authenticate.noCache(response());
-		return notFound(unverified.render());
+		return notFound("Unverified User");//unverified.render());
 	}
 
 	private static final Form<MyIdentity> FORGOT_PASSWORD_FORM = form(MyIdentity.class);
@@ -190,7 +190,7 @@ public class Signup extends Controller {
 
 	public static Result exists() {
 		com.feth.play.module.pa.controllers.Authenticate.noCache(response());
-		return ok(exists.render());
+		return ok("User exists");//exists.render());
 	}
 
 	public static Result verify(final String token) {

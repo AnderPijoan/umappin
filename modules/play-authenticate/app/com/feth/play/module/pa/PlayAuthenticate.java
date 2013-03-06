@@ -564,6 +564,11 @@ public abstract class PlayAuthenticate {
 				}
 
 				return loginAndRedirect(context, loginUser);
+
+            } else if (o instanceof Result) {
+
+                return (Result)o;
+
 			} else {
 				return Controller.internalServerError(Messages
 						.get("playauthenticate.core.exception.general"));

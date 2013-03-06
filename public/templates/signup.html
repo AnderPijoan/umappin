@@ -140,8 +140,8 @@
         $('#actionResult').css('display','none');
         var registerPost = $.post(
                 $('#registerForm').attr('action'),
-                "email=" + $('#email').val() + "&password=" + $('#password').val() +
-                    "name=" + $('#name').val() + "&repeatPassword=" + $('#repeatPassword').val()
+                "name=" + $('#name').val() + "&email=" + $('#email').val() +
+                    "&password=" + $('#password').val() + "&repeatPassword=" + $('#repeatPassword').val()
         );
         registerPost.done(function( data ) {
             $('#actionResult').css('display','block').empty().html(
