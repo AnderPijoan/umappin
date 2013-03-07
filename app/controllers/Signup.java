@@ -197,16 +197,18 @@ public class Signup extends Controller {
 		com.feth.play.module.pa.controllers.Authenticate.noCache(response());
 		final TokenAction ta = tokenIsValid(token, Type.EMAIL_VERIFICATION);
 		if (ta == null) {
-			return badRequest(no_token_or_invalid.render());
+			return badRequest(Messages.get("playauthenticate.verify_email.success"));//no_token_or_invalid.render());
 		}
 		final String email = ta.targetUser.email;
 		User.verify(ta.targetUser);
 		flash(Application.FLASH_MESSAGE_KEY,
 				Messages.get("playauthenticate.verify_email.success", email));
-		if (Application.getLocalUser(session()) != null) {
+		//if (Application.getLocalUser(session()) != null) {
 			return redirect(routes.Application.index());
-		} else {
+		/*
+        } else {
 			return redirect(routes.Application.login());
 		}
+		*/
 	}
 }
