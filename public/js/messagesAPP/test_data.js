@@ -1,3 +1,6 @@
+
+_.templateSettings.variable = "rc";
+
 //Messages
 var disc1 = new messagesApp.Discussion({
     "id":"123456",
