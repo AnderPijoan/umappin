@@ -124,9 +124,9 @@ public abstract class PlayAuthenticate {
 	}
 
 	private static final String ORIGINAL_URL = "pa.url.orig";
-	private static final String USER_KEY = "pa.u.id";
-	private static final String PROVIDER_KEY = "pa.p.id";
-	private static final String EXPIRES_KEY = "pa.u.exp";
+	public static final String USER_KEY = "pa.u.id";
+    public static final String PROVIDER_KEY = "pa.p.id";
+    public static final String EXPIRES_KEY = "pa.u.exp";
 	private static final String SESSION_ID_KEY = "pa.s.id";
 
 	public static Configuration getConfiguration() {

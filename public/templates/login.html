@@ -35,7 +35,7 @@
 
             <input type="submit" value="Login now" class="btn btn-primary"><br/>
             <br/>
-            <a href="javascript:void(0);" onclick="window.location.href = jsRoutes.controllers.Signup.forgotPassword($('#email').val() || null).absoluteURL();">Forgot your password?</a>
+            <a href="javascript:setTemplate('/login/password/forgot');">Forgot your password?</a>
 
         </form>
 
@@ -73,46 +73,45 @@
 
         </ul>
     </div>
+</div>
 
-    <script>
+<script>
 
-        function askOpenID(url) {
-            var openid = prompt("Please enter your OpenID:", "yourname.myopenid.com");
-            if(openid) {
-                window.location.href = url + "?p=" + encodeURIComponent(openid);
-            }
+    function askOpenID(url) {
+        var openid = prompt("Please enter your OpenID:", "yourname.myopenid.com");
+        if(openid) {
+            window.location.href = url + "?p=" + encodeURIComponent(openid);
         }
+    }
 
-        function submitLogin() {
-            $('#actionResult').css('display','none');
-            var loginPost = $.post(
-              $('#loginForm').attr('action'),
-              "email=" + $('#email').val() + "&password=" + $('#password').val()
+    function submitLogin() {
+        $('#actionResult').css('display','none');
+        var loginPost = $.post(
+          $('#loginForm').attr('action'),
+          "email=" + $('#email').val() + "&password=" + $('#password').val()
+        );
+        loginPost.done(function( data ) {
+            $.get(
+                '/sessionuser',
+                function(data) {
+                    updateSessionViews(data.name);
+                    $('#actionResult').css('display','block').empty().html(
+                            "<div class='alert alert-success'>User Authenticated</div>"
+                    );
+                    sessionStorage.setItem("user", JSON.stringify(data));
+                }
             );
-            loginPost.done(function( data ) {
-                $.get(
-                    '/sessionuser',
-                    function(data) {
-                        updateSessionViews(data.name);
-                        $('#actionResult').css('display','block').empty().html(
-                                "<div class='alert alert-success'>User Authenticated</div>"
-                        );
-                        sessionStorage.setItem("user", JSON.stringify(data));
-                    }
-                );
-            });
-            loginPost.error(function( data ) {
-                $('#actionResult').css('display','block').empty().html(
-                    "<div class='alert alert-error'>" + data.responseText + "</div>");
-            });
-        }
-
-        $('#loginForm').submit(function(event) {
-            event.preventDefault();
-            submitLogin();
         });
+        loginPost.error(function( data ) {
+            $('#actionResult').css('display','block').empty().html(
+                "<div class='alert alert-error'>" + data.responseText + "</div>");
+        });
+    }
 
-    </script>
+    $('#loginForm').submit(function(event) {
+        event.preventDefault();
+        submitLogin();
+    });
 
- </div>
+</script>
 

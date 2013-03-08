@@ -1,11 +1,14 @@
 package controllers;
 
+import com.feth.play.module.pa.providers.password.UsernamePasswordAuthProvider;
+import com.feth.play.module.pa.user.AuthUser;
 import models.TokenAction;
 import models.TokenAction.Type;
 import models.User;
 import play.data.Form;
 import play.i18n.Messages;
 import play.mvc.Controller;
+import play.mvc.Http;
 import play.mvc.Result;
 import providers.MyLoginUsernamePasswordAuthUser;
 import providers.MyUsernamePasswordAuthProvider;
@@ -201,11 +204,25 @@ public class Signup extends Controller {
 		}
 		final String email = ta.targetUser.email;
 		User.verify(ta.targetUser);
-		flash(Application.FLASH_MESSAGE_KEY,
-				Messages.get("playauthenticate.verify_email.success", email));
-		//if (Application.getLocalUser(session()) != null) {
+        User u = User.findByEmail(email);
+        Http.Session session = ctx().session();
+        session.put(PlayAuthenticate.USER_KEY, email);
+        session.put(PlayAuthenticate.PROVIDER_KEY, UsernamePasswordAuthProvider.PROVIDER_KEY);
+        /*
+        if (u.expires() != AuthUser.NO_EXPIRATION) {
+            session.put(PlayAuthenticate.EXPIRES_KEY, Long.toString(u.expires()));
+        } else {
+            session.remove(PlayAuthenticate.EXPIRES_KEY);
+        }
+        */
+
+        return redirect(routes.Application.index());
+        /*
+		flash(Application.FLASH_MESSAGE_KEY, Messages.get("playauthenticate.verify_email.success", email));
+
+		if (Application.getLocalUser(session()) != null) {
 			return redirect(routes.Application.index());
-		/*
+
         } else {
 			return redirect(routes.Application.login());
 		}

@@ -130,6 +130,13 @@
                 var usr = JSON.parse(json);
                 updateSessionViews(usr.name);
             } else {
+                var sessionRequest = $.get("/sessionuser");
+                sessionRequest.done(
+                        function(data) {
+                            updateSessionViews(data.name);
+                            sessionStorage.setItem("user", JSON.stringify(data));
+                        }
+                );
                 updateSessionViews("");
             }
             var lastTemplate = sessionStorage.getItem("lastTemplate");

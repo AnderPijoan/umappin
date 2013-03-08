@@ -49,7 +49,10 @@ public class UserREST extends Controller {
 
     public static Result getSessionUser() {
         final User localUser = Application.getLocalUser(session());
-        return ok(Json.toJson(localUser));
+        if (localUser != null)
+            return ok(Json.toJson(localUser));
+        else
+            return badRequest("No user logged in session");
     }
 
 }

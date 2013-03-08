@@ -65,9 +65,6 @@ public class Application extends Controller {
 			return badRequest("<ul>" + sb.toString() + "</ul>");// "Fill the fields properly!");//login.render(filledForm));
 		} else {
 			// Everything was filled
-            Result res = UsernamePasswordAuthProvider.handleLogin(ctx());
-
-
 			return UsernamePasswordAuthProvider.handleLogin(ctx());
 		}
 	}

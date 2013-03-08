@@ -16,6 +16,7 @@ public class Templates extends Controller {
     public static Result login() { return ok("templates/login.html"); }
     public static Result logout() { return ok("templates/logout.html"); }
     public static Result signup() { return ok("templates/signup.html"); }
+    public static Result forgotPassword() { return ok("templates/forgotPassword.html"); }
 
     /** RESTRICTED **/
     @Restrict(@Group(Application.USER_ROLE))

@@ -40,7 +40,7 @@ POST    /accounts/link              controllers.Account.doLink
 GET     /accounts/merge             controllers.Account.askMerge
 POST    /accounts/merge             controllers.Account.doMerge
 
-GET     /login/password/forgot     controllers.Signup.forgotPassword(email: String ?= "")
+GET     /login/password/forgot     controllers.Templates.forgotPassword
 POST    /login/password/forgot     controllers.Signup.doForgotPassword
 
 # Map static resources from the /public folder to the /assets URL path
@@ -73,6 +73,7 @@ GET     /loginold                   controllers.Application.login
 GET     /editmapold                controllers.Application.editmap
 GET     /profileold               controllers.Application.profile
 GET     /signupold               controllers.Application.signup
+GET     /login/password/forgotold     controllers.Signup.forgotPassword(email: String ?= "")
 
 
 GET     /editmap                 controllers.Application.editmap
