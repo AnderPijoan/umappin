@@ -1,5 +1,6 @@
 package controllers;
 
+import com.feth.play.module.pa.PlayAuthenticate;
 import com.feth.play.module.pa.providers.password.UsernamePasswordAuthProvider;
 import com.feth.play.module.pa.user.AuthUser;
 import models.TokenAction;
@@ -16,7 +17,7 @@ import providers.MyUsernamePasswordAuthProvider.MyIdentity;
 import providers.MyUsernamePasswordAuthUser;
 import views.html.account.signup.*;
 
-import com.feth.play.module.pa.PlayAuthenticate;
+
 
 import static play.data.Form.form;
 
@@ -66,7 +67,7 @@ public class Signup extends Controller {
 				.bindFromRequest();
 		if (filledForm.hasErrors()) {
 			// User did not fill in his/her email
-			return badRequest(password_forgot.render(filledForm));
+			return badRequest("Fill up a correct email");//password_forgot.render(filledForm));
 		} else {
 			// The email address given *BY AN UNKNWON PERSON* to the form - we
 			// should find out if we actually have a user with this email
@@ -77,11 +78,13 @@ public class Signup extends Controller {
 			// We don't want to expose whether a given email address is signed
 			// up, so just say an email has been sent, even though it might not
 			// be true - that's protecting our user privacy.
+            /*
 			flash(Application.FLASH_MESSAGE_KEY,
 					Messages.get(
 							"playauthenticate.reset_password.message.instructions_sent",
 							email));
-
+             */
+            String msg = Messages.get("playauthenticate.reset_password.message.instructions_sent", email);
 			final User user = User.findByEmail(email);
 			if (user != null) {
 				// yep, we have a user with this email that is active - we do
@@ -101,15 +104,19 @@ public class Signup extends Controller {
 					// with the password reset, as a "bad" user could then sign
 					// up with a fake email via OAuth and get it verified by an
 					// a unsuspecting user that clicks the link.
+                    /*
 					flash(Application.FLASH_MESSAGE_KEY,
 							Messages.get("playauthenticate.reset_password.message.email_not_verified"));
-
+                    */
+                    msg = Messages.get("playauthenticate.reset_password.message.email_not_verified");
 					// You might want to re-send the verification email here...
 					provider.sendVerifyEmailMailingAfterSignup(user, ctx());
 				}
-			}
-
-			return redirect(routes.Application.index());
+			}  else {
+                msg = "User not signed up";
+            }
+            return ok(msg);
+			//return redirect(routes.Application.index());
 		}
 	}
 
@@ -200,11 +207,11 @@ public class Signup extends Controller {
 		com.feth.play.module.pa.controllers.Authenticate.noCache(response());
 		final TokenAction ta = tokenIsValid(token, Type.EMAIL_VERIFICATION);
 		if (ta == null) {
-			return badRequest(Messages.get("playauthenticate.verify_email.success"));//no_token_or_invalid.render());
+            return redirect(routes.Application.tokenFail());
 		}
 		final String email = ta.targetUser.email;
 		User.verify(ta.targetUser);
-        User u = User.findByEmail(email);
+        //User u = User.findByEmail(email);
         Http.Session session = ctx().session();
         session.put(PlayAuthenticate.USER_KEY, email);
         session.put(PlayAuthenticate.PROVIDER_KEY, UsernamePasswordAuthProvider.PROVIDER_KEY);
@@ -216,7 +223,7 @@ public class Signup extends Controller {
         }
         */
 
-        return redirect(routes.Application.index());
+        return redirect(routes.Application.tokenSuccess());
         /*
 		flash(Application.FLASH_MESSAGE_KEY, Messages.get("playauthenticate.verify_email.success", email));
 

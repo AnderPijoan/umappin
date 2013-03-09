@@ -52,7 +52,7 @@ public class UserREST extends Controller {
         if (localUser != null)
             return ok(Json.toJson(localUser));
         else
-            return badRequest("No user logged in session");
+            return notFound("No user logged in session");
     }
 
 }

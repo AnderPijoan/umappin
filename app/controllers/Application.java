@@ -35,6 +35,14 @@ public class Application extends Controller {
         return redirect("/assets/index.html");
 	}
 
+    public static Result tokenSuccess() {
+        return redirect("/assets/tokenSuccess.html");
+    }
+
+    public static Result tokenFail() {
+        return redirect("/assets/tokenFail.html");
+    }
+
 	public static User getLocalUser(final Session session) {
 		final AuthUser currentAuthUser = PlayAuthenticate.getUser(session);
 		final User localUser = User.findByAuthUserIdentity(currentAuthUser);

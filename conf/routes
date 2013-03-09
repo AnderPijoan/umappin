@@ -24,6 +24,9 @@ GET     /authenticate/:provider/denied     controllers.Signup.oAuthDenied(provid
 GET     /accounts/verify/:token     controllers.Signup.verify(token: String)
 GET     /accounts/exists            controllers.Signup.exists
 
+GET     /tokenSuccess               controllers.Application.tokenSuccess
+GET     /tokenFail                  controllers.Application.tokenFail
+
 GET     /accounts/password/reset/:token     controllers.Signup.resetPassword(token: String)
 POST    /accounts/password/reset            controllers.Signup.doResetPassword
 
