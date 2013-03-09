@@ -62,4 +62,5 @@ GET     /rest/messages/:id               controllers.RestMessages.findById(id: S
 
 GET     /rest/awards                   controllers.RestAwards.all
 
-GET     /rest/awards/:id               controllers.RestAwards.findById(id: String)
+# Provisional: should be deleted after testing.
+GET     /rest/awards/:id               controllers.RestAwards.findByUserId(id: String)

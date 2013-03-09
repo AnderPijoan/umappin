@@ -2,11 +2,12 @@ package models;
 
 import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Id;
+import com.google.code.morphia.annotations.Reference;
+
 import controllers.MorphiaObject;
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -19,11 +20,14 @@ import java.util.List;
 public class AwardTrigger {
 
 	@Id
-	public String id;
+	public ObjectId id;
 	
 	public String triggerType;
 	
 	public int limit;
+	
+	@Reference
+	public Award award;
 	
 	public static List<AwardTrigger> all() {
         if (MorphiaObject.datastore != null) {

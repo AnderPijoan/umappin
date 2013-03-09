@@ -1,12 +1,12 @@
 package controllers;
 
 import models.Award;
+import models.UserAward;
 import play.mvc.Controller;
 import play.mvc.Result;
 
 import java.util.List;
 import static play.libs.Json.toJson;
-import static play.mvc.Results.ok;
 
 /**
  * User: igarri
@@ -24,6 +24,15 @@ public class RestAwards extends Controller{
 	public static Result findById(String id){
 		Award award = Award.findById(id);
 		return ok(toJson(award));
-
+	}
+	
+	// Provisional: this method should be implemented in the RestUser Class.
+	public static Result findByUserId(String userId) {
+		List<UserAward> userAwards = UserAward.findByUserId(userId);
+		if(userAwards == null){
+			return ok(toJson(userAwards)); //TODO: Shouldn't return an 'ok'.
+		}else{
+			return ok(toJson(userAwards));
+		}
 	}
 }

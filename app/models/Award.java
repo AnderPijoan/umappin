@@ -2,11 +2,12 @@ package models;
 
 import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Id;
+import com.google.code.morphia.annotations.Reference;
+
 import controllers.MorphiaObject;
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -19,13 +20,13 @@ import java.util.List;
 public class Award {
 	
 	@Id
-	public String id;
+	public ObjectId id;
 
 	public String name;
+	
+	public String description;
 
 	public int coins;
-	
-	public AwardTrigger trigger;  // Could an award be triggered by more than one Trigger? If yes, this should be a List.
 
 	public static List<Award> all() {
 		if (MorphiaObject.datastore != null) {
