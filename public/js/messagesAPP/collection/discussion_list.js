@@ -2,7 +2,7 @@ var messagesApp = messagesApp || {};
 
 (function(){
 	var DiscussionList =Backbone.Collection.extend({
-		model:messagesApp.Discussion,
+		model:messagesApp.DiscussionHeader,
 	
 
 

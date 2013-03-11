@@ -13,9 +13,9 @@ var messagesApp = messagesApp || {};
 
 			//messagesApp.Discussions.fetch();
 		},
-		addOne: function (discussion) {
+		addOne: function (discussionHeader) {
 			//Create ReceivedView and append it to the list
-			var view = new messagesApp.ReceivedView({ model: discussion });
+			var view = new messagesApp.ReceivedView({ model: discussionHeader });
 			$('#discussion_list').append(view.render().el);
 		},
 	});

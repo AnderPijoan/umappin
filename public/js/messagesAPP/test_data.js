@@ -24,7 +24,6 @@ var disc2 = new messagesApp.Discussion({
         "user_pic":"http://" //blank for now
          
     }
-        
 })
 
 messagesApp.Discussions.add(disc1);

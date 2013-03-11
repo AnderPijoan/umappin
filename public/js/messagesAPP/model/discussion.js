@@ -1,44 +1,17 @@
 var messagesApp = messagesApp || {};
 
 (function(){
-
-	messagesApp.Discussion = Backbone.Model.extend({
-
-		defaults:{
-			id: '',
-			subject: '',
-			message_number:0,
-			unread_messages:0,
-			user:null
+	var Discussion = Backbone.Model.extend({
+		initialize: function() {
+			console.log("New Discussion created");
 		},
-		initialize: function(attrs, opts){
-			/*attrs are
-			id
-			subject
-			message_number
-			unread_messages
-			user{
-				id
-				name
-				user_pic
-			}
-			*/
-
-			//test if there is a valid discussion
-			if (attrs != null &&attrs.id != null && attrs.subject !=null &&
-				attrs.message_number != null && attrs.unread_messages !=null &&
-				attrs.user !=null){
-				this.set(attrs);
-			}else{
-				console.error("New Discussion, something is wrong")
-				console.error(attrs);
-			}
-		}
-
+        defaults: {
+            id: '',
+            subject: '',
+            unread_messages:0,
+            messages:null, //array of messages (String)
+            to_friends:false,
+            receivers:null //array of users, with an id, name and user_pic
+        } 
 	});
-
-	
-}());
-
-
-
+})();
