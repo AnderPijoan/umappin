@@ -1,5 +1,5 @@
 //Messages
-var disc1 = new messagesApp.Discussion({
+var disc1 = new messagesApp.DiscussionHeader({
     "id":"123456",
     "subject": "This subject",
     "message_number":"5", //number of total messages
@@ -12,7 +12,7 @@ var disc1 = new messagesApp.Discussion({
     }
 });
 
-var disc2 = new messagesApp.Discussion({
+var disc2 = new messagesApp.DiscussionHeader({
 	
     "id":"64321",
     "subject": "This second subject",
