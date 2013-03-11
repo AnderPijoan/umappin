@@ -146,6 +146,7 @@
         registerPost.done(function( data ) {
             $('#actionResult').css('display','block').empty().html(
                     "<div class='alert alert-success'>User Signed Up! Check your email to confirm</div>");
+			$('#content').html('');
         });
         registerPost.error(function( data ) {
             $('#actionResult').css('display','block').empty().html(

@@ -38,9 +38,9 @@ var messagesApp = messagesApp || {};
             alert('clicked!');
             var disc3 = new messagesApp.Discussion({
 
-                "id":"64321",
-                "subject": "This second subject",
-                "message_number":"3", //number of total messages
+                "id":"12345",
+                "subject": "This third subject",
+                "message_number":"4", //number of total messages
                 "unread_messages":"0",
                 "user":{
                     "id":"124", //creator user id
