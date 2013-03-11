@@ -99,6 +99,7 @@
                             "<div class='alert alert-success'>User Authenticated</div>"
                     );
                     sessionStorage.setItem("user", JSON.stringify(data));
+                    $('#content').html('');
                 }
             );
         });

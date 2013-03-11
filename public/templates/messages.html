@@ -1,9 +1,3 @@
-<!Doctype html>
-<html>
-
-<head></head>
-
-<body>
 
 	<ul id='discussion_list'></ul>
 	
@@ -13,21 +7,12 @@
 	
 	<script type='text/template' id='discussion-list-template'>
 		<% _.each( rc, function( listItem ){ %>
-                <li>
-                    <%- listItem.subject %>
-                </li>
+            <li><a><%- listItem.subject %></a></li>
         <% }); %>
 	</script>
 
-	<script src="js/jquery.min.js"></script>
-	<script src="js/underscore-min.js"></script>
-	<script src="js/backbone-min.js"></script>
 	<script src="js/messagesApp/model/discussion.js"></script>
 	<script src="js/messagesApp/collection/discussion_list.js"></script>
 	<script src="js/messagesApp/view/receivedMessages_view.js"></script>
 	<script src="js/messagesApp/view/messagesApp_view.js"></script>
 	<script src="js/messagesApp/test_data.js"></script>
-
-</body>
-
-</html>

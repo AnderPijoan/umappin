@@ -12,6 +12,7 @@ import controllers.MorphiaObject;
 import org.bson.types.ObjectId;
 import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Id;
+import providers.MyUsernamePasswordAuthUser;
 
 @Entity
 public class LinkedAccount {
@@ -25,7 +26,7 @@ public class LinkedAccount {
 	public ObjectId id;
 
 	//@ManyToOne
-	public User user;
+	public ObjectId userId;
 
 	public String providerUserId;
 	public String providerKey;
@@ -39,7 +40,7 @@ public class LinkedAccount {
 
 	public static LinkedAccount findByProviderKey(final User user, String key) {
         return MorphiaObject.datastore.find(LinkedAccount.class)
-                .field("user").equal(user)
+                .field("userId").equal(user.id)
                 .field("providerKey").equal(key).get();
 		//return find.where().eq("user", user).eq("providerKey", key).findUnique();
 	}
@@ -47,6 +48,7 @@ public class LinkedAccount {
 	public static LinkedAccount create(final AuthUser authUser) {
 		final LinkedAccount ret = new LinkedAccount();
 		ret.update(authUser);
+        ret.save();
 		return ret;
 	}
 	
@@ -55,11 +57,15 @@ public class LinkedAccount {
 		this.providerUserId = authUser.getId();
 	}
 
+    public void setUserId(ObjectId userId) {
+        this.userId = userId;
+    }
+
 	public static LinkedAccount create(final LinkedAccount acc) {
 		final LinkedAccount ret = new LinkedAccount();
 		ret.providerKey = acc.providerKey;
 		ret.providerUserId = acc.providerUserId;
-
+        ret.save();
 		return ret;
 	}
 }

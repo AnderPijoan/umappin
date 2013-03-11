@@ -28,7 +28,7 @@ var disc2 = new messagesApp.Discussion({
          
     }
         
-})
+});
 
 messagesApp.Discussions.add(disc1);
 

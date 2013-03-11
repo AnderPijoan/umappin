@@ -149,7 +149,7 @@
         });
         registerPost.error(function( data ) {
             $('#actionResult').css('display','block').empty().html(
-                    "<div class='alert alert-error'>" + data.responseText + "</div>");
+                    "<div class='alert alert-info'>" + data.responseText + "</div>");
         });
     }
 

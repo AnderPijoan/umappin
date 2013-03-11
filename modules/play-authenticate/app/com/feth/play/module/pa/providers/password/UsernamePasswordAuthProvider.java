@@ -117,19 +117,16 @@ public abstract class UsernamePasswordAuthProvider<R, UL extends UsernamePasswor
 			case WRONG_PASSWORD:
 				// don't expose this - it might harm users privacy if anyone
 				// knows they signed up for our service
+                return "Incorrect password";
 			case NOT_FOUND:
 				// forward to login page
-				return onLoginUserNotFound(context);
+				return "User not found";
 			default:
 				throw new AuthException("Something in login went wrong");
 			}
 		} else {
 			return "";//PlayAuthenticate.getResolver().login().url();
 		}
-	}
-
-	protected String onLoginUserNotFound(Context context) {
-		return PlayAuthenticate.getResolver().login().url();
 	}
 
 	public static Result handleLogin(final Context ctx) {

@@ -25,7 +25,7 @@ var messagesApp = messagesApp || {};
 			*/
 
 			//test if there is a valid discussion
-			if (attrs != null &&attrs.id != null && attrs.subject !=null &&
+			if (attrs != null && attrs.id != null && attrs.subject !=null &&
 				attrs.message_number != null && attrs.unread_messages !=null &&
 				attrs.user !=null){
 				this.set(attrs);

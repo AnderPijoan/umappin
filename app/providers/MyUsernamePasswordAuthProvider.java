@@ -2,11 +2,9 @@ package providers;
 
 import com.feth.play.module.mail.Mailer.Mail.Body;
 import com.feth.play.module.pa.PlayAuthenticate;
-import com.feth.play.module.pa.exceptions.AuthException;
 import com.feth.play.module.pa.providers.password.UsernamePasswordAuthProvider;
 import com.feth.play.module.pa.providers.password.UsernamePasswordAuthUser;
 import controllers.routes;
-import play.mvc.Result;
 import models.LinkedAccount;
 import models.TokenAction;
 import models.TokenAction.Type;
@@ -75,6 +73,13 @@ public class MyUsernamePasswordAuthProvider
 		@Email
 		public String email;
 
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
 	}
 
 	public static class MyLogin extends MyIdentity
@@ -89,10 +94,11 @@ public class MyUsernamePasswordAuthProvider
 		public String getPassword() {
 			return password;
 		}
-        @Override
-        public String getEmail() {
-            return email;
+
+        public void setPassword(String password) {
+            this.password = password;
         }
+
 	}
 
 	public static class MySignup extends MyLogin {
@@ -101,8 +107,24 @@ public class MyUsernamePasswordAuthProvider
 		@MinLength(5)
 		public String repeatPassword;
 
+        public String getRepeatPassword() {
+            return repeatPassword;
+        }
+
+        public void setRepeatPassword(String repeatPassword) {
+            this.repeatPassword = repeatPassword;
+        }
+
 		@Required
 		public String name;
+
+        public String getName() {
+            return repeatPassword;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
 
 		public String validate() {
 			if (password == null || !password.equals(repeatPassword)) {
@@ -200,13 +222,13 @@ public class MyUsernamePasswordAuthProvider
 	@Override
 	protected MyLoginUsernamePasswordAuthUser buildLoginAuthUser(
 			final MyLogin login, final Context ctx) {
-		return new MyLoginUsernamePasswordAuthUser(login.getPassword(),
-				login.getEmail());
+		return new MyLoginUsernamePasswordAuthUser(login.getPassword(), login.getEmail());
 	}
 	
 
 	@Override
-	protected MyLoginUsernamePasswordAuthUser transformAuthUser(final MyUsernamePasswordAuthUser authUser, final Context context) {
+	protected MyLoginUsernamePasswordAuthUser transformAuthUser(
+            final MyUsernamePasswordAuthUser authUser, final Context context) {
 		return new MyLoginUsernamePasswordAuthUser(authUser.getEmail());
 	}
 
@@ -217,33 +239,20 @@ public class MyUsernamePasswordAuthProvider
 	}
 
 	@Override
-	protected String onLoginUserNotFound(final Context context) {
-        /*
-		context.flash()
-				.put(controllers.Application.FLASH_ERROR_KEY,
-						Messages.get("playauthenticate.password.login.unknown_user_or_pw"));
-		return super.onLoginUserNotFound(context);
-		*/
-        return Messages.get("playauthenticate.password.login.unknown_user_or_pw");
-	}
-
-	@Override
 	protected Body getVerifyEmailMailingBody(final String token,
 			final MyUsernamePasswordAuthUser user, final Context ctx) {
 
-		final boolean isSecure = getConfiguration().getBoolean(
-				SETTING_KEY_VERIFICATION_LINK_SECURE);
-		final String url = routes.Signup.verify(token).absoluteURL(
-				ctx.request(), isSecure);
+		final boolean isSecure = getConfiguration().getBoolean(SETTING_KEY_VERIFICATION_LINK_SECURE);
+		final String url = routes.Signup.verify(token).absoluteURL(ctx.request(), isSecure);
 
 		final Lang lang = Lang.preferred(ctx.request().acceptLanguages());
 		final String langCode = lang.code();
 
 		final String html = getEmailTemplate(
-				"views.html.account.signup.email.verify_email", langCode, url,
+				"views.html.account.email.verify_email", langCode, url,
 				token, user.getName(), user.getEmail());
 		final String text = getEmailTemplate(
-				"views.txt.account.signup.email.verify_email", langCode, url,
+				"views.txt.account.email.verify_email", langCode, url,
 				token, user.getName(), user.getEmail());
 
 		return new Body(text, html);
@@ -282,7 +291,7 @@ public class MyUsernamePasswordAuthProvider
 
 		final boolean isSecure = getConfiguration().getBoolean(
 				SETTING_KEY_PASSWORD_RESET_LINK_SECURE);
-		final String url = routes.Signup.resetPassword(token).absoluteURL(
+		final String url = routes.Signup.resetPassword(token, "").absoluteURL(
 				ctx.request(), isSecure);
 
 		final Lang lang = Lang.preferred(ctx.request().acceptLanguages());

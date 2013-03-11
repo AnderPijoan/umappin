@@ -49,9 +49,9 @@ playauthenticate.change_password.success=Hasło zostało zmienione.
 playauthenticate.password.signup.error.passwords_not_same=Hasła nie są takie same.
 playauthenticate.password.login.unknown_user_or_pw=Nieznany użytkownik lub złe hasło.
 
-playauthenticate.password.verify_signup.subject=PlayAuthenticate: Zakończ rejestrację
-playauthenticate.password.verify_email.subject=PlayAuthenticate: Potwierdź adres e-mail
-playauthenticate.password.reset_email.subject=PlayAuthenticate: Jak ustalić nowe hasło
+playauthenticate.password.verify_signup.subject=uMappin: Zakończ rejestrację
+playauthenticate.password.verify_email.subject=uMappin: Potwierdź adres e-mail
+playauthenticate.password.reset_email.subject=uMappin: Jak ustalić nowe hasło
 
 # play-authenticate: Additional translations
 
@@ -91,7 +91,7 @@ playauthenticate.link.account.ok=OK
 # play-authenticate: Signup folder translations
 
 playauthenticate.verify.email.title=Potwierdź adres e-mail
-playauthenticate.verify.email.requirement=Musisz potwierdzić swój adres e-mail, aby korzytać z PlayAuthenticate
+playauthenticate.verify.email.requirement=Musisz potwierdzić swój adres e-mail, aby korzytać z uMappin
 playauthenticate.verify.email.cta=Na wskazany adres została przesłana informacja. Skorzystaj z dołączonego do niej linku aby aktywować konto.
 
 playauthenticate.password.reset.title=Przywróć hasło
@@ -101,7 +101,7 @@ playauthenticate.password.forgot.title=Nie pamiętam hasła
 playauthenticate.password.forgot.cta=Prześlij instrukcję dot. przywracania hasła
 
 playauthenticate.oauth.access.denied.title=Dostęp OAuth zabroniony
-playauthenticate.oauth.access.denied.explanation=Jeśli chcesz używać PlayAuthenticate za pomocą OAuth, musisz zaakceptować połączenie.
+playauthenticate.oauth.access.denied.explanation=Jeśli chcesz używać uMappin za pomocą OAuth, musisz zaakceptować połączenie.
 playauthenticate.oauth.access.denied.alternative=Jeśli wolisz tego nie robić możesz również
 playauthenticate.oauth.access.denied.alternative.cta=zarejestrować się podając nazwę użytkownika i hasło
 

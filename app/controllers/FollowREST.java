@@ -15,7 +15,7 @@ import play.mvc.Result;
 import be.objectify.deadbolt.java.actions.Group;
 import be.objectify.deadbolt.java.actions.Restrict;
 
-public class FollowManager extends Controller {
+public class FollowREST extends Controller {
 
 	@Restrict(@Group(Application.USER_ROLE))
 	public static Result follow() {

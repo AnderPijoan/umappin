@@ -2,37 +2,49 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
+
+# ------------------------------- Main routes ---------------------------------
 # Home page
 GET     /                           controllers.Application.index
-
+# Javascript routes
 GET     /assets/javascript/routes.js    controllers.Application.jsRoutes
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.at(path="/public", file)
+# --------------------------------------------------------------------------
 
+
+
+# ----------------------------- Authentication routes -------------------------
 GET     /profile                    controllers.Templates.profile
 
 GET     /login                      controllers.Templates.login
 POST    /login                      controllers.Application.doLogin
 
 GET     /logout                     com.feth.play.module.pa.controllers.Authenticate.logout
-GET     /authenticate/:provider     com.feth.play.module.pa.controllers.Authenticate.authenticate(provider: String)
+GET     /logoutTemplate             controllers.Templates.logout
 
 GET     /signup                     controllers.Templates.signup
 POST    /signup                     controllers.Application.doSignup
 
-GET     /accounts/unverified        controllers.Signup.unverified
-GET     /authenticate/:provider/denied     controllers.Signup.oAuthDenied(provider: String)
-
 GET     /accounts/verify/:token     controllers.Signup.verify(token: String)
 GET     /accounts/exists            controllers.Signup.exists
-
 GET     /tokenSuccess               controllers.Application.tokenSuccess
 GET     /tokenFail                  controllers.Application.tokenFail
 
-GET     /accounts/password/reset/:token     controllers.Signup.resetPassword(token: String)
-POST    /accounts/password/reset            controllers.Signup.doResetPassword
+GET     /login/password/forgot      controllers.Templates.forgotPassword
+POST    /login/password/forgot      controllers.Signup.doForgotPassword
+GET     /accounts/password/reset/:token     controllers.Signup.resetPassword(token: String, errors: String ?= "")
+POST    /accounts/password/reset    controllers.Signup.doResetPassword
+GET     /passwordResetSuccess       controllers.Application.passwordResetSuccess
+GET     /passwordResetFail/:msg     controllers.Application.passwordResetFail(msg: String)
 
-GET    /accounts/password/change    controllers.Account.changePassword
-POST   /accounts/password/change    controllers.Account.doChangePassword
+GET     /accounts/password/change   controllers.Templates.changePassword
+POST    /accounts/password/change   controllers.Account.doChangePassword
+# --------------------------------------------------------------------------
 
+
+
+# ----------------- Authentication Unverified routes ----------------------
 GET     /accounts/verify            controllers.Account.verifyEmail
 
 GET     /accounts/add               controllers.Account.link
@@ -43,51 +55,37 @@ POST    /accounts/link              controllers.Account.doLink
 GET     /accounts/merge             controllers.Account.askMerge
 POST    /accounts/merge             controllers.Account.doMerge
 
-GET     /login/password/forgot     controllers.Templates.forgotPassword
-POST    /login/password/forgot     controllers.Signup.doForgotPassword
+GET     /authenticate/:provider     com.feth.play.module.pa.controllers.Authenticate.authenticate(provider: String)
 
-# Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.at(path="/public", file)
-
-
-# Added sites Map
-GET     /home                   controllers.Templates.home
-GET     /editmap                controllers.Templates.editmap
-GET     /userlist                  controllers.Templates.userlist
+GET     /accounts/unverified        controllers.Signup.unverified
+GET     /authenticate/:provider/denied     controllers.Signup.oAuthDenied(provider: String)
+# --------------------------------------------------------------------------
 
 
 
-
-GET      /follows               controllers.FollowManager.getFollows()
-POST     /follow             controllers.FollowManager.follow
-POST     /unfollow             controllers.FollowManager.unfollow
-
-GET     /logoutTemplate             controllers.Templates.logout
-
-# Map -  REST CRUD for Users
-GET     /users              controllers.UserREST.getUsers()
-GET     /users/:name        controllers.UserREST.getUser(name: String)
-POST    /users              controllers.UserREST.addUser()
-
-GET     /sessionuser         controllers.UserREST.getSessionUser
-
-# OLD ROUTES Map - REMOVE LATER ...
-GET     /loginold                   controllers.Application.login
-GET     /editmapold                controllers.Application.editmap
-GET     /profileold               controllers.Application.profile
-GET     /signupold               controllers.Application.signup
-GET     /login/password/forgotold     controllers.Signup.forgotPassword(email: String ?= "")
+# ---------------------------------- SITES ---------------------------------
+GET     /home                       controllers.Templates.home
+GET     /editmap                    controllers.Templates.editmap
+GET     /userlist                   controllers.Templates.userlist
+GET     /messages                   controllers.Templates.messages
+# --------------------------------------------------------------------------
 
 
-GET     /editmap                 controllers.Application.editmap
 
-#Messages
+# ------------------------------ REST Services -----------------------------
+# REST CRUD for Follows
+GET     /follows                    controllers.FollowREST.getFollows()
+POST    /follow                     controllers.FollowREST.follow
+POST    /unfollow                   controllers.FollowREST.unfollow
 
-GET		/messages				controllers.Application.messages
+# REST CRUD for Users
+GET     /users                      controllers.UserREST.getUsers()
+GET     /users/:name                controllers.UserREST.getUser(name: String)
+POST    /users                      controllers.UserREST.addUser()
 
+GET     /sessionuser                controllers.UserREST.getSessionUser
 
-# messaging rest APIs
-GET     /rest/messages                   controllers.RestMessages.all
-
-GET     /rest/messages/:id               controllers.RestMessages.findById(id: String)
-
+# REST CRUD for messages
+GET     /rest/messages              controllers.MessagesREST.all
+GET     /rest/messages/:id          controllers.MessagesREST.findById(id: String)
+# --------------------------------------------------------------------------

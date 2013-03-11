@@ -17,6 +17,7 @@ public class Templates extends Controller {
     public static Result logout() { return ok("templates/logout.html"); }
     public static Result signup() { return ok("templates/signup.html"); }
     public static Result forgotPassword() { return ok("templates/forgotPassword.html"); }
+    public static Result changePassword() { return ok("templates/changePassword.html"); }
 
     /** RESTRICTED **/
     @Restrict(@Group(Application.USER_ROLE))
@@ -25,5 +26,7 @@ public class Templates extends Controller {
 	public static Result profile() { return ok("templates/profile.html"); }
     @Restrict(@Group(Application.USER_ROLE))
     public static Result editmap() { return ok("templates/editmap.html"); }
+    @Restrict(@Group(Application.USER_ROLE))
+    public static Result messages() { return ok("templates/messages.html"); }
 
 }

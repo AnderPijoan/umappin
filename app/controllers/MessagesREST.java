@@ -13,19 +13,16 @@ import static play.mvc.Results.ok;
  * Date: 23/02/13
  * Time: 23.23
  */
-public class RestMessages extends Controller {
+public class MessagesREST extends Controller {
 
     public static Result all(){
-
         List<Message> messages = Message.all();
         return ok(toJson(messages));
     }
 
     public static Result findById(String id){
-
         Message message = Message.findById(id);
         return ok(toJson(message));
-
     }
 
 }
