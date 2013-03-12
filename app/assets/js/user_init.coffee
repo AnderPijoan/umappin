@@ -1,4 +1,4 @@
 users = new Users
-userview = new UserView
-userview.collection = users
+userview = new UserView users
 users.fetch
+console.log users

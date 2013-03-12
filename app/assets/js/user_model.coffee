@@ -1,4 +1,4 @@
-class User extends Backbone.Model
+class window.User extends Backbone.Model
   defaults:
     uuid: ''
     name: ''

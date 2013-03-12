@@ -1,9 +1,9 @@
-class UserView extends Backbone.View
-  el: 'ul#user'
+class window.UserView extends Backbone.View
+  el: 'ul#userlist'
   template: _.template $('#userlist-template').html()
-  collection: null
+  constructor: (@collection) ->
   initialize: ->
-    @listenTo Users, 'add', @add
+    @listenTo @collection, 'add', @add
   render: ->
     @el.html @template(@model.attributes)
     @
