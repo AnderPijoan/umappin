@@ -23,8 +23,7 @@ public class UserAward {
 	
 	public String userId;
 	
-	@Reference
-	public Award award;
+	public ObjectId award;
 	
 	public Date timeStamp;
 	

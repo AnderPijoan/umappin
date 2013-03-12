@@ -26,8 +26,7 @@ public class AwardTrigger {
 	
 	public int limit;
 	
-	@Reference
-	public Award award;
+	public ObjectId award;
 	
 	public static List<AwardTrigger> all() {
         if (MorphiaObject.datastore != null) {
