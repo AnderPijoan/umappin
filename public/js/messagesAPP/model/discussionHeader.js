@@ -34,9 +34,9 @@ var messagesApp = messagesApp || {};
 				console.error(attrs);
 			}
 		},validate: function(attrs){
-		     if !(attrs != null &&attrs.id != null && attrs.subject !=null &&
-             				attrs.message_number != null && attrs.unread_messages !=null &&
-             				attrs.user !=null){
+		     if (attrs == null &&attrs.id == null || attrs.subject ==null ||
+             				attrs.message_number == null || attrs.unread_messages ==null ||
+             				attrs.user ==null){
              				return "Error creating a DiscussionHeader";
              }
 		}
