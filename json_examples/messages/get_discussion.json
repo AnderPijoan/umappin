@@ -2,13 +2,16 @@
     "discussion":{
         "id":"123456",
         "subject":"This subject",
+        "unread_messages":1,
         "messages":[
             {
                 "id":"1111",
                 "message":"This is the first one",
                 "prev_message": null //is the first one
+                "read":true,
+                "time":"2013.04.13-10.30", //YYYY.MM.dd-hh:mm
                 "user":{
-                    "id":"123" //creator user id
+                    "id":"123", //creator user id
                     "name":"Jon Doe",
                     "user_pic":"http://" //blank for now
                  }
@@ -16,9 +19,11 @@
             {
                 "id":"2222",
                 "message":"This is the second one",
-                "prev_message": "1111"
+                "prev_message": "1111",
+                "read":true,
+                "time":"2013.04.13-10.30", //YYYY.MM.dd-hh:mm
                 "user":{
-                    "id":"124" //creator user id
+                    "id":"124", //creator user id
                     "name":"Pepe Gotera",
                     "user_pic":"http://" //blank for now
                  }
@@ -26,9 +31,11 @@
             {
                 "id":"3333",
                 "message":"This is another one",
-                "prev_message": "1111"  //more than one message can be in reply to the same one
+                "prev_message": "1111",  //more than one message can be in reply to the same one
+                "read":true,
+                "time":"2013.04.13-10.30", //YYYY.MM.dd-hh:mm
                 "user":{
-                    "id":"133" //creator user id
+                    "id":"133", //creator user id
                     "name":"Otilio",
                     "user_pic":"http://" //blank for now
                 }
@@ -37,9 +44,11 @@
             {
                 "id":"4444",
                 "message":"This is in reply to 3333",
-                "prev_message": "3333"
+                "prev_message": "3333",
+                "read":false,
+                "time":"2013.04.13-10.30", //YYYY.MM.dd-hh:mm
                 "user":{
-                    "id":"124" //creator user id
+                    "id":"124", //creator user id
                     "name":"Pepe Gotera",
                     "user_pic":"http://" //blank for now
                  }
