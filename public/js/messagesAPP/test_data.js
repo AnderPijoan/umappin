@@ -26,6 +26,11 @@ var disc2 = new messagesApp.DiscussionHeader({
     }
 })
 
+var disc3 = new messagesApp.DiscussionHeader({
+})
+
 messagesApp.Discussions.add(disc1);
 
 messagesApp.Discussions.add(disc2);
+
+messagesApp.Discussions.add(disc3);

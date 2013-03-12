@@ -23,7 +23,9 @@ var messagesApp = messagesApp || {};
 				user_pic
 			}
 			*/
-
+            this.on("error", function(model, error){
+                console.log(error);
+             });
 			//test if there is a valid discussion
 			if (attrs != null &&attrs.id != null && attrs.subject !=null &&
 				attrs.message_number != null && attrs.unread_messages !=null &&
