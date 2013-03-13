@@ -4,3 +4,5 @@ class window.User extends Backbone.Model
     name: ''
     firstName: ''
     lastName: ''
+    email: ''
+
