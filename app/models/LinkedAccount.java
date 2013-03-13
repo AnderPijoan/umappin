@@ -9,7 +9,6 @@ package models;
 import com.feth.play.module.pa.user.AuthUser;
 
 import controllers.MorphiaObject;
-import org.bson.types.ObjectId;
 import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Id;
 import providers.MyUsernamePasswordAuthUser;
@@ -23,10 +22,10 @@ public class LinkedAccount {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	public ObjectId id;
+	public String id;
 
 	//@ManyToOne
-	public ObjectId userId;
+	public String userId;
 
 	public String providerUserId;
 	public String providerKey;
@@ -57,7 +56,7 @@ public class LinkedAccount {
 		this.providerUserId = authUser.getId();
 	}
 
-    public void setUserId(ObjectId userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 

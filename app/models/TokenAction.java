@@ -8,7 +8,6 @@ import java.util.Date;
 //import javax.persistence.ManyToOne;
 
 import controllers.MorphiaObject;
-import org.bson.types.ObjectId;
 import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Id;
 
@@ -42,7 +41,7 @@ public class TokenAction {
 	private final static long VERIFICATION_TIME = 7 * 24 * 3600;
 
 	@Id
-	public ObjectId id;
+	public String id;
 
 	//@Column(unique = true)
 	public String token;

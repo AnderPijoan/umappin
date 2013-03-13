@@ -4,7 +4,6 @@ import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Id;
 import controllers.MorphiaObject;
 
-import org.bson.types.ObjectId;
 import play.Logger;
 
 import java.util.*;
@@ -15,33 +14,33 @@ public class Follows {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	public ObjectId id;
+	public String id;
 
-	public ObjectId userId;
+	public String userId;
 
-    public List<ObjectId> follows;
+    public List<String> follows;
 
-    public ObjectId getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(ObjectId id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public List<ObjectId> getFollows() {
+    public List<String> getFollows() {
         return follows;
     }
 
-    public void setFollows(List<ObjectId> follows) {
+    public void setFollows(List<String> follows) {
         this.follows = follows;
     }
 
-    public ObjectId getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(ObjectId userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
@@ -55,7 +54,7 @@ public class Follows {
     public static Follows create(User user) {
         final Follows follows = new Follows();
         follows.userId = user.id;
-        follows.follows = new ArrayList<ObjectId>();
+        follows.follows = new ArrayList<String>();
         follows.save();
         return follows;
     }
@@ -70,11 +69,11 @@ public class Follows {
         }
     }
 
-    public static Follows findById(ObjectId id) {
+    public static Follows findById(String id) {
         return MorphiaObject.datastore.find(Follows.class).field("_id").equal(id).get();
     }
 
-    public static Follows findByUserId(ObjectId id) {
+    public static Follows findByUserId(String id) {
         return MorphiaObject.datastore.find(Follows.class).field("userId").equal(id).get();
     }
 
@@ -88,7 +87,7 @@ public class Follows {
 
     public Follows follow(User user) {
         if (this.follows == null)
-            this.follows = new ArrayList<ObjectId>();
+            this.follows = new ArrayList<String>();
         this.follows.add(user.id);
         this.save();
         return this;

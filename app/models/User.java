@@ -21,7 +21,6 @@ import play.data.format.Formats;
 import java.util.*;
 import play.Logger;
 
-import org.bson.types.ObjectId;
 import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Id;
 import controllers.MorphiaObject;
@@ -37,7 +36,7 @@ public class User implements Subject {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	public ObjectId id;
+	public String id;
 
 	public String email;
 
@@ -72,7 +71,7 @@ public class User implements Subject {
     }
 
     public static void delete(String idToDelete) {
-        User toDelete = MorphiaObject.datastore.find(User.class).field("_id").equal(new ObjectId(idToDelete)).get();
+        User toDelete = MorphiaObject.datastore.find(User.class).field("_id").equal(new String(idToDelete)).get();
         if (toDelete != null) {
             Logger.info("toDelete: " + toDelete);
             MorphiaObject.datastore.delete(toDelete);
@@ -89,7 +88,7 @@ public class User implements Subject {
 
 	@Override
 	public String getIdentifier() {
-		return id.toString();
+		return id;
 	}
 
 	@Override
