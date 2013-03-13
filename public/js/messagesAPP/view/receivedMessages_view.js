@@ -15,7 +15,6 @@ var messagesApp = messagesApp || {};
 			return this;
 		}
 	});
-
 }());
 
 //var messagesApp.receivedDiscussions = new messagesApp.ReceivedView();
