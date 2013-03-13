@@ -49,9 +49,9 @@ playauthenticate.change_password.success=Mot de passe changé avec succès.
 playauthenticate.password.signup.error.passwords_not_same=Les mots de passe ne correspondent pas.
 playauthenticate.password.login.unknown_user_or_pw=Utilisateur et mot de passe inconnus.
 
-playauthenticate.password.verify_signup.subject=PlayAuthenticate: Finaliser votre enregistrement
-playauthenticate.password.verify_email.subject=PlayAuthenticate: Confirmer votre email
-playauthenticate.password.reset_email.subject=PlayAuthenticate: Comment changer votre mot de passe.
+playauthenticate.password.verify_signup.subject=uMappin: Finaliser votre enregistrement
+playauthenticate.password.verify_email.subject=uMappin: Confirmer votre email
+playauthenticate.password.reset_email.subject=uMappin: Comment changer votre mot de passe.
 
 # play-authenticate: Additional translations
 
@@ -91,7 +91,7 @@ playauthenticate.link.account.ok=OK
 # play-authenticate: Signup folder translations
 
 playauthenticate.verify.email.title=Verifier votre e-mail
-playauthenticate.verify.email.requirement=Avant d'utiliser PlayAuthenticate, vous devez d'abord vérifier votre email.
+playauthenticate.verify.email.requirement=Avant d'utiliser uMappin, vous devez d'abord vérifier votre email.
 playauthenticate.verify.email.cta=Un email a été envoyé à votre adresse avec des instructions pour vous connecter.
 
 playauthenticate.password.reset.title=Changer votre mot de passe
@@ -101,7 +101,7 @@ playauthenticate.password.forgot.title=Mot de passe oublié
 playauthenticate.password.forgot.cta=Envoyer les instructions pour changer le mot de passe
 
 playauthenticate.oauth.access.denied.title=Accès OAuth refusé
-playauthenticate.oauth.access.denied.explanation=Si vous voulez utiliser PlayAuthenticate avec OAuth, vous devez accepter la connexion.
+playauthenticate.oauth.access.denied.explanation=Si vous voulez utiliser uMappin avec OAuth, vous devez accepter la connexion.
 playauthenticate.oauth.access.denied.alternative=Si vous ne préférez pas accepter la connexion, vous pouvez toujours
 playauthenticate.oauth.access.denied.alternative.cta=vous enregistrer avec un nouveau compte.
 

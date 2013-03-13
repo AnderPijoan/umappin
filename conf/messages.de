@@ -47,9 +47,9 @@ playauthenticate.change_password.success=Das Passwort wurde erfolgreich geänder
 playauthenticate.password.signup.error.passwords_not_same=Die Passwörter stimmen nicht überein.
 playauthenticate.password.login.unknown_user_or_pw=Der Benutzer wurde nicht gefunden oder das Passwort stimmt nicht überein.
 
-playauthenticate.password.verify_signup.subject=PlayAuthenticate: Vervollständige deine Anmeldung
-playauthenticate.password.verify_email.subject=PlayAuthenticate: E-Mail-Adresse bestätigen
-playauthenticate.password.reset_email.subject=PlayAuthenticate: Anleitung zum Passwortzurücksetzen
+playauthenticate.password.verify_signup.subject=uMappin: Vervollständige deine Anmeldung
+playauthenticate.password.verify_email.subject=uMappin: E-Mail-Adresse bestätigen
+playauthenticate.password.reset_email.subject=uMappin: Anleitung zum Passwortzurücksetzen
 
 #  play-authenticate: Additional translations
 
@@ -89,7 +89,7 @@ playauthenticate.link.account.ok=OK
 #  play-authenticate: Signup folder translations
 
 playauthenticate.verify.email.title=E-Mail-Adresse bestätigen
-playauthenticate.verify.email.requirement=Du musst deine E-Mail-Adresse bestätigen, bevor du PlayAuthenticate nutzen kannst.
+playauthenticate.verify.email.requirement=Du musst deine E-Mail-Adresse bestätigen, bevor du uMappin nutzen kannst.
 playauthenticate.verify.email.cta=Eine E-Mail wurde zur registrierten E-Mail-Adresse versandt. Bitte öffne sie und klicke auf den enthaltenen Link, um deinen Account zu aktivieren.
 
 playauthenticate.password.reset.title=Passwort zurücksetzen
@@ -99,7 +99,7 @@ playauthenticate.password.forgot.title=Passwort vergessen
 playauthenticate.password.forgot.cta=Informationen zum Zurücksetzen versenden
 
 playauthenticate.oauth.access.denied.title=OAuth-Zugriff abgelehnt
-playauthenticate.oauth.access.denied.explanation=Wenn du PlayAuthenticate mit OAuth nutzen möchtest, musst du die Verbindung akzeptieren.
+playauthenticate.oauth.access.denied.explanation=Wenn du uMappin mit OAuth nutzen möchtest, musst du die Verbindung akzeptieren.
 playauthenticate.oauth.access.denied.alternative=Falls du dies lieber nicht tun möchtest, kannst du dich auch
 playauthenticate.oauth.access.denied.alternative.cta=mit Benutzername und Passwort registrieren
 
@@ -135,8 +135,8 @@ playauthenticate.profile.session_endless=Deine Benutzer-Identifikation ist {0} u
 playauthenticate.profile.password_change=Ändere/setze ein Passwort für deinen Benutzer
 
 # play-authenticate - sample: Index page
-playauthenticate.index.title=Willkommen bei PlayAuthenticate
-playauthenticate.index.intro=PlayAuthenticate Beispiel-Applikation
+playauthenticate.index.title=Willkommen bei uMappin
+playauthenticate.index.intro=uMappin Beispiel-Applikation
 playauthenticate.index.intro_2=Dies ist eine Blaupause für eine einfache Applikation mit Authentifikation.
 playauthenticate.index.intro_3=Schau dir die Navigation oben an, um einfache Beispielseiten inklusive der unterstützten Authentifikationsmethoden zu sehen.
 playauthenticate.index.heading=Überschrift

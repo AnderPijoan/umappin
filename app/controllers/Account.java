@@ -82,6 +82,7 @@ public class Account extends Controller {
 		return ok(link.render());
 	}
 
+    // TODO remove this method, it looks useless
 	@Restrict(@Group(Application.USER_ROLE))
 	public static Result verifyEmail() {
 		com.feth.play.module.pa.controllers.Authenticate.noCache(response());
@@ -101,37 +102,21 @@ public class Account extends Controller {
 					"playauthenticate.verify_email.error.set_email_first",
 					user.email));
 		}
-		return redirect(routes.Application.profile());
-	}
-
-	@Restrict(@Group(Application.USER_ROLE))
-	public static Result changePassword() {
-		com.feth.play.module.pa.controllers.Authenticate.noCache(response());
-		final User u = Application.getLocalUser(session());
-
-		if (!u.emailValidated) {
-			return ok(unverified.render());
-		} else {
-			return ok(password_change.render(PASSWORD_CHANGE_FORM));
-		}
+		return redirect(routes.Templates.profile()); // Changed 'Application' to 'Templates' ....
 	}
 
 	@Restrict(@Group(Application.USER_ROLE))
 	public static Result doChangePassword() {
 		com.feth.play.module.pa.controllers.Authenticate.noCache(response());
-		final Form<Account.PasswordChange> filledForm = PASSWORD_CHANGE_FORM
-				.bindFromRequest();
+		final Form<Account.PasswordChange> filledForm = PASSWORD_CHANGE_FORM.bindFromRequest();
 		if (filledForm.hasErrors()) {
 			// User did not select whether to link or not link
-			return badRequest(password_change.render(filledForm));
+			return badRequest(Application.getValidationErrorsHtml(filledForm.errors().values()));
 		} else {
 			final User user = Application.getLocalUser(session());
 			final String newPassword = filledForm.get().password;
-			user.changePassword(new MyUsernamePasswordAuthUser(newPassword),
-					true);
-			flash(Application.FLASH_MESSAGE_KEY,
-					Messages.get("playauthenticate.change_password.success"));
-			return redirect(routes.Application.profile());
+			user.changePassword(new MyUsernamePasswordAuthUser(newPassword), true);
+            return ok("Password changed succesfully");
 		}
 	}
 
@@ -154,7 +139,6 @@ public class Account extends Controller {
 			// account to link could not be found, silently redirect to login
 			return redirect(routes.Application.index());
 		}
-
 		final Form<Accept> filledForm = ACCEPT_FORM.bindFromRequest();
 		if (filledForm.hasErrors()) {
 			// User did not select whether to link or not link
@@ -162,10 +146,8 @@ public class Account extends Controller {
 		} else {
 			// User made a choice :)
 			final boolean link = filledForm.get().accept;
-			if (link) {
-				flash(Application.FLASH_MESSAGE_KEY,
-						Messages.get("playauthenticate.accounts.link.success"));
-			}
+			if (link)
+				flash(Application.FLASH_MESSAGE_KEY, Messages.get("playauthenticate.accounts.link.success"));
 			return PlayAuthenticate.link(ctx(), link);
 		}
 	}
@@ -175,14 +157,12 @@ public class Account extends Controller {
 		com.feth.play.module.pa.controllers.Authenticate.noCache(response());
 		// this is the currently logged in user
 		final AuthUser aUser = PlayAuthenticate.getUser(session());
-
 		// this is the user that was selected for a login
 		final AuthUser bUser = PlayAuthenticate.getMergeUser(session());
 		if (bUser == null) {
 			// user to merge with could not be found, silently redirect to login
 			return redirect(routes.Application.index());
 		}
-
 		// You could also get the local user object here via
 		// User.findByAuthUserIdentity(newUser)
 		return ok(ask_merge.render(ACCEPT_FORM, aUser, bUser));
@@ -193,14 +173,12 @@ public class Account extends Controller {
 		com.feth.play.module.pa.controllers.Authenticate.noCache(response());
 		// this is the currently logged in user
 		final AuthUser aUser = PlayAuthenticate.getUser(session());
-
 		// this is the user that was selected for a login
 		final AuthUser bUser = PlayAuthenticate.getMergeUser(session());
 		if (bUser == null) {
 			// user to merge with could not be found, silently redirect to login
 			return redirect(routes.Application.index());
 		}
-
 		final Form<Accept> filledForm = ACCEPT_FORM.bindFromRequest();
 		if (filledForm.hasErrors()) {
 			// User did not select whether to merge or not merge
@@ -208,10 +186,8 @@ public class Account extends Controller {
 		} else {
 			// User made a choice :)
 			final boolean merge = filledForm.get().accept;
-			if (merge) {
-				flash(Application.FLASH_MESSAGE_KEY,
-						Messages.get("playauthenticate.accounts.merge.success"));
-			}
+			if (merge)
+				flash(Application.FLASH_MESSAGE_KEY, Messages.get("playauthenticate.accounts.merge.success"));
 			return PlayAuthenticate.merge(ctx(), merge);
 		}
 	}
