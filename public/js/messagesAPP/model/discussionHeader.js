@@ -24,13 +24,13 @@ var messagesApp = messagesApp || {};
 				user_pic
 			}
 			*/
-
             //add the on invalid event
             this.on("invalid", function(model, error){
                 alert(error);
              });
             //validate the attributes and if correct set it to model
 			this.set(attrs, {validate: true});
+			console.log("DiscussionHeader created");
 		}
 	});	
 }());
