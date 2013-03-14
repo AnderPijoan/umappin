@@ -4,6 +4,7 @@ import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Id;
 import controllers.MorphiaObject;
 
+import org.bson.types.ObjectId;
 import play.Logger;
 
 import java.util.*;
@@ -55,6 +56,8 @@ public class Follows {
         final Follows follows = new Follows();
         follows.userId = user.id;
         follows.follows = new ArrayList<String>();
+        // Fix - Manually create an ObjectID and get its String UUID
+        follows.id = new ObjectId().toString();
         follows.save();
         return follows;
     }

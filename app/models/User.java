@@ -14,6 +14,7 @@ import com.feth.play.module.pa.user.FirstLastNameIdentity;
 
 import models.TokenAction.Type;
 
+import org.bson.types.ObjectId;
 import play.data.format.Formats;
 
 //import javax.persistence.*;
@@ -176,17 +177,15 @@ public class User implements Subject {
 		    user.lastName = lastName;
 		  }
 		}
-		user.save();
-		user.delete();
-		user.save();
-		// Fix - change the _id inside MongoDb from autogenerates ObjectID to the String UUID
-		//UpdateOperations<User> op = MorphiaObject.datastore.createUpdateOperations(User.class).set("_id", user.id);
-		//Query<User> updateQuery = MorphiaObject.datastore.createQuery(User.class).field("_id").equal(user.id);
-		//MorphiaObject.datastore.update(updateQuery, op);
+
+		// Fix - Manually create an ObjectID and get its String UUID
+        user.id = new ObjectId().toString();
+        user.save();
 		
         // Fix - adding the User to the LinkedAccount
         la.setUserId(user.id);
         la.save();
+
 		return user;
 	}
 

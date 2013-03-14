@@ -11,6 +11,7 @@ import com.feth.play.module.pa.user.AuthUser;
 import controllers.MorphiaObject;
 import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Id;
+import org.bson.types.ObjectId;
 import providers.MyUsernamePasswordAuthUser;
 
 @Entity
@@ -47,6 +48,8 @@ public class LinkedAccount {
 	public static LinkedAccount create(final AuthUser authUser) {
 		final LinkedAccount ret = new LinkedAccount();
 		ret.update(authUser);
+        // Fix - Manually create an ObjectID and get its String UUID
+        ret.id = new ObjectId().toString();
         ret.save();
 		return ret;
 	}

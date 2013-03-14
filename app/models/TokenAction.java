@@ -11,6 +11,7 @@ import controllers.MorphiaObject;
 import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Id;
 
+import org.bson.types.ObjectId;
 import play.data.format.Formats;
 //import play.db.ebean.Model;
 
@@ -93,6 +94,8 @@ public class TokenAction {
 		final Date created = new Date();
 		ua.created = created;
 		ua.expires = new Date(created.getTime() + VERIFICATION_TIME * 1000);
+        // Fix - Manually create an ObjectID and get its String UUID
+        ua.id = new ObjectId().toString();
 		ua.save();
 		return ua;
 	}
