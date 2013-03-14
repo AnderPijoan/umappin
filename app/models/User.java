@@ -24,6 +24,7 @@ import play.Logger;
 import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Id;
 import controllers.MorphiaObject;
+import com.google.code.morphia.query.*;
 
 /**
  * Initial version based on work by Steve Chaloner (steve@objectify.be) for
@@ -54,10 +55,13 @@ public class User implements Subject {
 	public boolean emailValidated;
 
     public void save() {
-        //Logger.debug("Saving " + this.name +" to " + MorphiaObject.datastore.getDB());
         MorphiaObject.datastore.save(this);
     }
-
+	
+	public void delete() {
+        MorphiaObject.datastore.delete(this);
+    }
+	
     public static List<User> all() {
         if (MorphiaObject.datastore != null) {
             return MorphiaObject.datastore.find(User.class).asList();
@@ -71,7 +75,7 @@ public class User implements Subject {
     }
 
     public static void delete(String idToDelete) {
-        User toDelete = MorphiaObject.datastore.find(User.class).field("_id").equal(new String(idToDelete)).get();
+        User toDelete = MorphiaObject.datastore.find(User.class).field("_id").equal(idToDelete).get();
         if (toDelete != null) {
             Logger.info("toDelete: " + toDelete);
             MorphiaObject.datastore.delete(toDelete);
@@ -173,6 +177,13 @@ public class User implements Subject {
 		  }
 		}
 		user.save();
+		user.delete();
+		user.save();
+		// Fix - change the _id inside MongoDb from autogenerates ObjectID to the String UUID
+		//UpdateOperations<User> op = MorphiaObject.datastore.createUpdateOperations(User.class).set("_id", user.id);
+		//Query<User> updateQuery = MorphiaObject.datastore.createQuery(User.class).field("_id").equal(user.id);
+		//MorphiaObject.datastore.update(updateQuery, op);
+		
         // Fix - adding the User to the LinkedAccount
         la.setUserId(user.id);
         la.save();
