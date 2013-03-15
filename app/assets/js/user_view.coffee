@@ -3,12 +3,9 @@ class window.UserView extends Backbone.View
   template: _.template $('#userlist-template').html()
   constructor: (@collection) ->
   initialize: ->
-    console.log @collection
-    @listenTo @collection, 'change', @add()
+    @listenTo @collection, 'add', @add()
   render: ->
-    console.log $el
-    @el.html @template @collection.toJSON()
+    $(@el).html @template @collection.toJSON()
     @
   add: ->
-    console.log @collection.toJSON()
     @render
