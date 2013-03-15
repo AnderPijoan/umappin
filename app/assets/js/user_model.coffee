@@ -1,8 +1,15 @@
 class window.User extends Backbone.Model
   defaults:
-    uuid: ''
+    id: ''
+    email: ''
     name: ''
     firstName: ''
     lastName: ''
-    email: ''
-
+    lastLogin: ''
+    active: ''
+    emailValidated: ''
+    roles: []
+    linkedAccounts: []
+    permissions: []
+    providers: []
+    identifier: ''

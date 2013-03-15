@@ -68,6 +68,7 @@ GET     /home                       controllers.Templates.home
 GET     /editmap                    controllers.Templates.editmap
 GET     /userlist                   controllers.Templates.userlist
 GET     /messages                   controllers.Templates.messages
+GET     /_users                     controllers.Templates._users
 # --------------------------------------------------------------------------
 
 

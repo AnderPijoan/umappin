@@ -28,5 +28,7 @@ public class Templates extends Controller {
     public static Result editmap() { return ok("templates/editmap.html"); }
     @Restrict(@Group(Application.USER_ROLE))
     public static Result messages() { return ok("templates/messages.html"); }
+    @Restrict(@Group(Application.USER_ROLE))
+    public static Result _users() { return ok("templates/_users.html"); }
 
 }
