@@ -18,11 +18,9 @@
 
             </ul>
         </div>
-        <div class="span9  " >
+        <div class="span9" id="messages_body" >
 
-            <ul id="discussion_list">
-
-            </ul>
+            
         </div>
 
 
@@ -41,13 +39,28 @@
 
 <!-- This is the discussions header template -->
 <script type="text/template" id="discussion-head-template">
+        <div class="span9 ">
             <div class="discussion_head">
-                <div class="discussion_subject"><a href="/messages/<%- id %>"><%- subject %></a></div>
+                <div class="discussion_subject"><a href="messages#/message/<%- id %>"><%- subject %></a></div>
                 <div class="discussion_author">
-                    <div class="author_name"><a href="/user/<%- user.id %>"><%- user.name %></div>
+                    <div class="author_name"><a href="/#/user/<%- user.id %>"><%- user.name %></a></div>
                 </div>  
             </div>
+        </div>
 </script>
+
+<!-- This is the template to show a discussion-->
+     <script type="text/template" id="messages-template">
+         <div class="span9 ">
+             <h2><%- subject %></h2>
+             <br/>
+             <div class="messages">
+                 <% _.each(messages, function(message){ %>
+                    <p class="message"><%= message %></p>
+                 <% }); %>
+             </div>
+         </div>
+     </script>
 
     <!-- scripts -->
     <!-- script src="http://openlayers.org/api/OpenLayers.js"></script -->
@@ -59,19 +72,20 @@
     <script src='@routes.Assets.at("js/backbone-min-0.9.js")'></script>
     <script src='@routes.Assets.at("js/messagesAPP/model/discussionHeader.js")'></script>
     <script src='@routes.Assets.at("js/messagesAPP/collection/discussionHeader_list.js")'></script>
+    <script src='@routes.Assets.at("js/messagesAPP/model/discussion.js")'></script>
     <script src='@routes.Assets.at("js/messagesAPP/view/receivedMessages_view.js")'></script>
     <script src='@routes.Assets.at("js/messagesAPP/view/messagesApp_view.js")'></script>
     <script src='@routes.Assets.at("js/messagesAPP/view/newDiscussion_view.js")'></script>
 
+
+
+    <script src='@routes.Assets.at("js/messagesAPP/view/discussionMessages_view.js")'></script>
+
+    <script src='@routes.Assets.at("js/messagesAPP/test_data.js")'></script>
     <script src='@routes.Assets.at("js/messagesAPP/routers/router.js")'></script>
 
 
-
-    <script src='@routes.Assets.at("js/messagesAPP/test_data.js")'></script>
-
-
-
-
     <script src="@routes.Application.jsRoutes" defer="defer"></script>
+
 
 }

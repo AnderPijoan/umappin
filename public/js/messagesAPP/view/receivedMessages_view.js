@@ -12,10 +12,10 @@ var messagesApp = messagesApp || {};
 		render: function(){
 			//return the template with the info of the model
 			$(this.el).html(this.template(this.model.toJSON()));
+			console.log("render received Discussions");
 			return this;
 		}
 	});
-
 }());
 
 //var messagesApp.receivedDiscussions = new messagesApp.ReceivedView();
