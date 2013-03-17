@@ -8,14 +8,14 @@ var messagesApp = messagesApp || {};
 		initialize: function () {
 			
 			//if the add method of Discussions is called  "this.addOne" whill be triggered
-			this.listenTo(messagesApp.Discussions, 'add', this.addOne);
+			this.listenTo(messagesApp.DiscussionHeaders, 'add', this.addOne);
 			
 
 			//messagesApp.Discussions.fetch();
 		},
 		addOne: function (discussion) {
 			//Create ReceivedView and append it to the list
-			var view = new messagesApp.ReceivedView({ model: discussion });
+			var view = new messagesApp.ReceivedView({ model: discussion});
 			$('#discussion_list').append(view.render().el);
 		},
 	});

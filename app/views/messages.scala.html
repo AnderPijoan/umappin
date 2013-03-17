@@ -18,25 +18,35 @@
 
             </ul>
         </div>
+        <div class="span9  " >
 
-        <ul id="discussion_list">
+            <ul id="discussion_list">
 
-        </ul>
-        
+            </ul>
+        </div>
+
 
     </div>
 </div>
 
+<div id="newDiscussion" style="display:none;">
+    
+        <label for="form_subject">Subject</label><input type="text" name="subject" id="form_subject"/><br/>
+        <label for="form_message">Message</label><textarea name="message" id="form_message" ></textarea><br />
+        <label for="form_all">All</label><input type="checkbox" name="all" id="form_all_check" />
+        <label for="form_receivers">Receivers</label><input type="text" name="receivers" id="form_receivers" /><br />
+        <button id="createDiscussionButton" class="bnt-large btn-success " >Send</button>
+</div>
+
+
 <!-- This is the discussions header template -->
 <script type="text/template" id="discussion-head-template">
-        <div class="span9  " >
             <div class="discussion_head">
                 <div class="discussion_subject"><a href="/messages/<%- id %>"><%- subject %></a></div>
                 <div class="discussion_author">
                     <div class="author_name"><a href="/user/<%- user.id %>"><%- user.name %></div>
                 </div>  
             </div>
-        </div>
 </script>
 
     <!-- scripts -->
@@ -47,10 +57,15 @@
 
 
     <script src='@routes.Assets.at("js/backbone-min-0.9.js")'></script>
-    <script src='@routes.Assets.at("js/messagesAPP/model/discussion.js")'></script>
-    <script src='@routes.Assets.at("js/messagesAPP/collection/discussion_list.js")'></script>
+    <script src='@routes.Assets.at("js/messagesAPP/model/discussionHeader.js")'></script>
+    <script src='@routes.Assets.at("js/messagesAPP/collection/discussionHeader_list.js")'></script>
     <script src='@routes.Assets.at("js/messagesAPP/view/receivedMessages_view.js")'></script>
     <script src='@routes.Assets.at("js/messagesAPP/view/messagesApp_view.js")'></script>
+    <script src='@routes.Assets.at("js/messagesAPP/view/newDiscussion_view.js")'></script>
+
+    <script src='@routes.Assets.at("js/messagesAPP/routers/router.js")'></script>
+
+
 
     <script src='@routes.Assets.at("js/messagesAPP/test_data.js")'></script>
 
