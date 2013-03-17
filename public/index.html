@@ -46,7 +46,7 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li><a href="Javascript:setTemplate('/profile')">Profile</a></li>
-                        <li><a href="/accounts/add">Link more providers</a></li>
+                        <li><a href="Javascript:setTemplate('/linkProvider')">Link more providers</a></li>
                         <li class="divider"></li>
                         <li><a href="Javascript:doLogout()"><i class="icon-off"></i> Sign out</a></li>
                     </ul>
@@ -57,7 +57,7 @@
                         <li class=""><a href="Javascript:setTemplate('/userlist')">User List</a></li>
                         <li class=""><a href="Javascript:setTemplate('/messages')">Messages</a></li>
                         <li class=""><a href="Javascript:setTemplate('/editmap')">Edit Map</a></li>
-                        <li class=""><a href="Javascript:setTemplate('/_users')">_Users</a></li>
+                        <li class=""><a href="Javascript:setTemplate('/account')">Account</a></li>
                         <li class="loggedout"><a href="Javascript:setTemplate('/signup')">Sign up</a></li>
 
                     </ul>
@@ -82,72 +82,14 @@
     </div> <!-- /container -->
 
     <!-- scripts -->
-    <script src="/assets/js/jquery.min.js"></script>
-    <script src="/assets/js/bootstrap.min.js"></script>
-    <script src="/assets/js/underscore-min.js"></script>
-    <script src="/assets/js/json2.js"></script>
-    <script src="/assets/js/backbone-min.js"></script>
+    <script src="/assets/js/lib/jquery.min.js"></script>
+    <script src="/assets/js/lib/bootstrap.min.js"></script>
+    <script src="/assets/js/lib/underscore-min.js"></script>
+    <script src="/assets/js/lib/json2.js"></script>
+    <script src="/assets/js/lib/backbone-min.js"></script>
     <script src="/assets/javascript/routes.js" defer="defer"></script>
 
-    <script>
-
-        function setTemplate(url) {
-            $('div#actionResult').css('display','none');
-            $('div#content').empty();
-            var templateGet = $.get( url );
-            templateGet.done(function( data ) {
-                $.get(
-                    data,
-                    function(template) {
-                        $('div#content').empty().html(template);
-                        sessionStorage.setItem("lastTemplate", url);
-                    }
-                )
-            });
-            templateGet.error(function( data ) {
-                $('div#actionResult').css('display','block').empty().html(
-                        "<div class='alert alert-error'>" + data.responseText + "</div>");
-            });
-        }
-
-        function updateSessionViews(username) {
-            $('.loggedout').css('display', username != "" ? 'none' : 'block');
-            $('.loggedin').css('display', username != "" ? 'block' : 'none').find('#username').text(username);
-        }
-
-        function doLogout() {
-            setTemplate('/logout');
-            sessionStorage.removeItem("user");
-            updateSessionViews("");
-        }
-
-        function home() {
-            sessionStorage.setItem("lastTemplate", "/home");
-            window.location.href = "/";
-        }
-
-        $(function() {
-            var json = sessionStorage.getItem("user");
-            if (json != null && json != undefined && json != "") {
-                var usr = JSON.parse(json);
-                updateSessionViews(usr.name);
-            } else {
-                var sessionRequest = $.get("/sessionuser");
-                sessionRequest.done(
-                        function(data) {
-                            updateSessionViews(data.name);
-                            sessionStorage.setItem("user", JSON.stringify(data));
-                        }
-                );
-                updateSessionViews("");
-            }
-            var lastTemplate = sessionStorage.getItem("lastTemplate");
-            if (lastTemplate == null || lastTemplate == "")
-                lastTemplate = "/home";
-            setTemplate(lastTemplate);
-        });
-
-    </script>
+    <script src="/assets/js/main.js"></script>
 
 </body>
 

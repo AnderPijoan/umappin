@@ -22,7 +22,7 @@ var messagesApp = messagesApp || {};
 
 		initialize: function () {
 			//if the add method of Discussions is called  "this.addOne" whill be triggered
-			this.listenTo(messagesApp.Discussions, 'add', this.addOne);
+			this.listenTo(this.model, 'add', this.addOne);
 			
 
 			//messagesApp.Discussions.fetch();

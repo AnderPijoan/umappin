@@ -1,4 +1,7 @@
-class window.User extends Backbone.Model
+window.Account or= {}
+
+class window.Account.User extends Backbone.Model
+
   defaults:
     id: ''
     email: ''

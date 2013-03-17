@@ -17,6 +17,8 @@ GET     /assets/*file               controllers.Assets.at(path="/public", file)
 # ----------------------------- Authentication routes -------------------------
 GET     /profile                    controllers.Templates.profile
 
+GET     /linkProvider               controllers.Templates.linkProvider
+
 GET     /login                      controllers.Templates.login
 POST    /login                      controllers.Application.doLogin
 
@@ -47,8 +49,6 @@ POST    /accounts/password/change   controllers.Account.doChangePassword
 # ----------------- Authentication Unverified routes ----------------------
 GET     /accounts/verify            controllers.Account.verifyEmail
 
-GET     /accounts/add               controllers.Account.link
-
 GET     /accounts/link              controllers.Account.askLink
 POST    /accounts/link              controllers.Account.doLink
 
@@ -63,12 +63,12 @@ GET     /authenticate/:provider/denied     controllers.Signup.oAuthDenied(provid
 
 
 
-# ---------------------------------- SITES ---------------------------------
+# -------------------------------- TEMPLATES -------------------------------
 GET     /home                       controllers.Templates.home
 GET     /editmap                    controllers.Templates.editmap
 GET     /userlist                   controllers.Templates.userlist
 GET     /messages                   controllers.Templates.messages
-GET     /_users                     controllers.Templates._users
+GET     /account                    controllers.Templates.account
 # --------------------------------------------------------------------------
 
 

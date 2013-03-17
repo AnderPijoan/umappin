@@ -1,13 +1,22 @@
+window.Account or= {}
+
 _.templateSettings.variable = 'rc'
 
-class window.UserView extends Backbone.View
+class window.Account.UsersView extends Backbone.View
+
   el: 'ul#userlist'
+
   template: _.template $('#userlist-template').html()
-  constructor: (@collection) ->
+
+  events:
+    "click li": "toc"
+
   initialize: ->
-    @collection.bind 'add', @add
+    @listenTo @collection, 'add', @render
+
   render: ->
     $(@el).html @template @collection.toJSON()
     @
-  add: ->
-    @render()
+
+  toc: ->
+    console.log 'toc'
