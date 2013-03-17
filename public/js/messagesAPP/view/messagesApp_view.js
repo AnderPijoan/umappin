@@ -18,6 +18,7 @@ messagesApp.DISCUSSION_LIST_BODY ='<ul id="discussion_list"></ul>';
 			//Create ReceivedView and append it to the list
 			console.log("add one message");
 			var view = new messagesApp.ReceivedView({ model: discussionHeader });
+
 			$('#discussion_list').append(view.render().el);
 		},
 		restartDiscussionHeaders: function(){

@@ -10,20 +10,33 @@ var messagesApp = messagesApp || {};
        		'received' : 'discussionHeaders',
        		''	: 	'discussionHeaders'
 		},
-
-
-		newDiscussion: function (param) {
-			var newDiscussionView = new messagesApp.NewDiscussionView();
-
-			newDiscussionView.showDiscussionForm();
+		initialize: function() {
+		    this.routesHit = 0;
+		    //keep count of number of routes handled by your application
+		    Backbone.history.on('route', function() { this.routesHit++; }, this);
+		},
+		//make backbone able to go previous page from JS
+		//we need it from bootstrap modal dialogs
+		back: function() {
+		    if(this.routesHit > 1) {
+		      //more than one route hit -> user did not land to current page directly
+		      window.history.back();
+		    } else {
+		      //otherwise go to the home page. Use replaceState if available so
+		      //the navigation doesn't create an extra history entry
+		      this.navigate('/', {trigger:true, replace:true});
+		    }
 		}
+
 	});
 
 	messagesApp.messagesRouter = new Workspace();
 
 
-    //var router = new Router;
-    
+	messagesApp.messagesRouter.on("route:newDiscussion", function(id){
+		var newDiscussionView = new messagesApp.NewDiscussionView();
+		newDiscussionView.showDiscussionForm();
+	});    
     messagesApp.messagesRouter.on("route:messages", function(id){
            view = new messagesApp.MessagesView({ model: disc1 });
            console.log("Backbone routing to message");
