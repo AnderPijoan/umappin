@@ -75,9 +75,11 @@ GET     /account                    controllers.Templates.account
 
 # ------------------------------ REST Services -----------------------------
 # REST CRUD for Follows
-GET     /follows                    controllers.FollowREST.getFollows()
-POST    /follow                     controllers.FollowREST.follow
-POST    /unfollow                   controllers.FollowREST.unfollow
+GET     /follows                    controllers.FollowREST.getAllFollows()
+GET     /follows/:id                controllers.FollowREST.getFollows(id: String)
+POST    /follows                    controllers.FollowREST.addFollows()
+PUT     /follows/:id                controllers.FollowREST.updateFollows(id: String)
+DELETE  /follows/:id                controllers.FollowREST.deleteFollows(id: String)
 
 # REST CRUD for Users
 GET     /users                      controllers.UserREST.getUsers()

@@ -46,15 +46,16 @@ public class Follows {
     }
 
 
-
-    public void save() {
-        //Logger.debug("Saving " + this.name +" to " + MorphiaObject.datastore.getDB());
+    // Creation methods
+    public Follows save() {
         MorphiaObject.datastore.save(this);
+        return this;
     }
 
-    public static Follows create(User user) {
+
+    public static Follows create(String userId) {
         final Follows follows = new Follows();
-        follows.userId = user.id;
+        follows.userId = userId;
         follows.follows = new ArrayList<String>();
         // Fix - Manually create an ObjectID and get its String UUID
         follows.id = new ObjectId().toString();
@@ -63,30 +64,55 @@ public class Follows {
     }
 
 
-
+    // Search methods
     public static List<Follows> all() {
         if (MorphiaObject.datastore != null) {
-            return MorphiaObject.datastore.find(Follows.class).asList();
-        } else {
-            return new ArrayList<Follows>();
+            List<Follows> res = MorphiaObject.datastore.find(Follows.class).asList();
+            if (res != null)
+                return res;
         }
+        return new ArrayList<Follows>();
     }
 
     public static Follows findById(String id) {
         return MorphiaObject.datastore.find(Follows.class).field("_id").equal(id).get();
     }
 
-    public static Follows findByUserId(String id) {
-        return MorphiaObject.datastore.find(Follows.class).field("userId").equal(id).get();
+    public static Follows findByUserId(String userId) {
+        return MorphiaObject.datastore.find(Follows.class).field("userId").equal(userId).get();
     }
 
 
+    // Delete methods
     public Follows delete() {
         MorphiaObject.datastore.delete(this);
         return this;
     }
 
+    public static Follows delete(String userId) {
+        Follows follows = findByUserId(userId);
+        if (follows != null)
+            return follows.delete();
+        return null;
+    }
 
+
+    // Update methods
+    public Follows update(List<String> follows) {
+        this.setFollows(follows);
+        return this.save();
+    }
+
+    public static Follows update(String userId, List<String> followList) {
+        Follows follows = findByUserId(userId);
+        if (follows != null)
+            return follows.update(followList);
+        return null;
+    }
+
+
+
+    // TODO Overview this!!!
 
     public Follows follow(User user) {
         if (this.follows == null)
@@ -99,7 +125,7 @@ public class Follows {
     public static Follows follow(User follower, User followed) {
         Follows follows = MorphiaObject.datastore.find(Follows.class).field("userId").equal(follower.id).get();
         if (follows == null)
-            follows = Follows.create(follower);
+            follows = Follows.create(follower.id);
         return follows.follow(followed);
     }
 
