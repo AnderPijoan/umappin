@@ -92,3 +92,4 @@ GET     /sessionuser                controllers.UserREST.getSessionUser
 GET     /rest/messages              controllers.MessagesREST.all
 GET     /rest/messages/:id          controllers.MessagesREST.findById(id: String)
 # --------------------------------------------------------------------------
+

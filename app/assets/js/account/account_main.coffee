@@ -2,17 +2,21 @@ window.Account or= {}
 
 Account.loadUsersData = () ->
   usr = new Account.User {id:"dummyId", name:"Patricio", email:"patri@patri.es"}
-  @users = new Account.Users
-  @usersview = new Account.UsersView collection: @users
-  that = @
-  @users.fetch
+  Account.users = new Account.Users
+  Account.usersview = new Account.UsersView collection: Account.users
+  Account.users.fetch
     success: ->
-      that.users.add usr
+      Account.users.add usr
+
+  Account.follows = new Account.Follows
+  Account.follows.fetch
+  console.log Account.follows
+
 
 Account.loadProfileData = () ->
-  @profile = new Account.User JSON.parse sessionStorage.getItem "user"
-  @profileview = new Account.ProfileView model: @profile
-  @profileview.render()
+  Account.profile = new Account.User JSON.parse sessionStorage.getItem "user"
+  Account.profileview = new Account.ProfileView model: Account.profile
+  Account.profileview.render()
 
 $ () ->
   Account.loadProfileData()

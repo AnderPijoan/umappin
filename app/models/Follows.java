@@ -17,8 +17,6 @@ public class Follows {
 	@Id
 	public String id;
 
-	public String userId;
-
     public List<String> follows;
 
     public String getId() {
@@ -37,15 +35,6 @@ public class Follows {
         this.follows = follows;
     }
 
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-
     // Creation methods
     public Follows save() {
         MorphiaObject.datastore.save(this);
@@ -55,7 +44,7 @@ public class Follows {
 
     public static Follows create(String userId) {
         final Follows follows = new Follows();
-        follows.userId = userId;
+        follows.id = userId;
         follows.follows = new ArrayList<String>();
         // Fix - Manually create an ObjectID and get its String UUID
         follows.id = new ObjectId().toString();
@@ -78,11 +67,6 @@ public class Follows {
         return MorphiaObject.datastore.find(Follows.class).field("_id").equal(id).get();
     }
 
-    public static Follows findByUserId(String userId) {
-        return MorphiaObject.datastore.find(Follows.class).field("userId").equal(userId).get();
-    }
-
-
     // Delete methods
     public Follows delete() {
         MorphiaObject.datastore.delete(this);
@@ -90,7 +74,7 @@ public class Follows {
     }
 
     public static Follows delete(String userId) {
-        Follows follows = findByUserId(userId);
+        Follows follows = findById(userId);
         if (follows != null)
             return follows.delete();
         return null;
@@ -104,7 +88,7 @@ public class Follows {
     }
 
     public static Follows update(String userId, List<String> followList) {
-        Follows follows = findByUserId(userId);
+        Follows follows = findById(userId);
         if (follows != null)
             return follows.update(followList);
         return null;

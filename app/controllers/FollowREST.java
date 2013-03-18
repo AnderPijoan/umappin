@@ -42,7 +42,7 @@ public class FollowREST extends Controller {
 
     // GET(ALL)
     @Restrict(@Group(Application.USER_ROLE))
-    public static Result getAllFollows(String userId) {
+    public static Result getAllFollows() {
         List<Follows> res = Follows.all();
         return ok(Json.toJson(res));
     }
@@ -50,7 +50,7 @@ public class FollowREST extends Controller {
     // GET
     @Restrict(@Group(Application.USER_ROLE))
     public static Result getFollows(String userId) {
-        Follows res = Follows.findByUserId(userId);
+        Follows res = Follows.findById(userId);
         if (res == null)
             res = Follows.create(userId);
         return ok(Json.toJson(res));
@@ -63,9 +63,9 @@ public class FollowREST extends Controller {
         if(json == null) {
             return badRequest("Expecting Json data");
         } else {
-            String userId = json.findPath("userId").getTextValue();
+            String userId = json.findPath("id").getTextValue();
             Follows follows = Follows.create(userId);
-            List<String> listFollows = json.findValuesAsText("follows");
+            List<String> listFollows = json.findValuesAsText("follow");
             follows.update(listFollows);
             return ok("");
         }
@@ -78,7 +78,7 @@ public class FollowREST extends Controller {
         if(json == null) {
             return badRequest("Expecting Json data");
         } else {
-            Follows follows = Follows.findByUserId(userId);
+            Follows follows = Follows.findById(userId);
             if (follows == null)
                 return  badRequest("Invalid Index");
             List<String> listFollows = json.findValuesAsText("follows");
@@ -90,7 +90,7 @@ public class FollowREST extends Controller {
     // DELETE
     @Restrict(@Group(Application.USER_ROLE))
     public static Result deleteFollows(String userId) {
-        Follows follows = Follows.findByUserId("userId");
+        Follows follows = Follows.findById("userId");
         if (follows != null) {
             Follows res = follows.delete();
             if (res != null)

@@ -22,14 +22,26 @@ class window.Account.UsersView extends Backbone.View
     elm = event.target
     tmp = $(elm).attr('id').split('_')
     fusr_id = tmp[tmp.length - 1]
-    if $(elm).text() == "Follow"
+    if $(elm).text() != "Unfollow"
       $(elm).text "Unfollow"
       @followUser fusr_id
     else
       $(elm).text "Follow"
       @unfollowUser fusr_id
 
-    followUser: (id) ->
+  followUser: (id) ->
+    profileFollows = Account.follows.get Account.profile.id
+    if profileFollows == undefined
+      profileFollows = new Account.Follow
+      profileFollows.set id: Account.profile.id
+      profileFollows.set follow: []
+      Account.follows.add profileFollows
+    profileFollows.get("follow").push id
+    console.log profileFollows
+    profileFollows.save()
 
+  unfollowUser: (id) ->
+    profileFollows = Account.follows.get Account.profile.id
+    profileFollows.follow.splice(profileFollows.follow.indexOf(id), 1)
+    profileFollows.save()
 
-    unfollowUser: (id) ->

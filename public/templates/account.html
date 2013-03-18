@@ -68,7 +68,8 @@
 
         <div class="span5">
             <ul style='list-style: none; margin-top: 1em'>
-                <% _.each( rc, function( user ) { %>
+                <% _.each( rc, function( user ) {
+                        if (user.id != Account.profile.id) { %>
                     <li class='user-entry'>
                         <div class='row'>
                             <div class="span1">
@@ -79,11 +80,19 @@
                                 <h3><%- user.name %></h3>
                             </div>
                             <div class="span1">
-                                <button type="button" class="btn btn-primary" id="follow_button_<%- user.id %>">Follow</button>
+                                <button type="button" class="btn btn-primary" id="follow_button_<%- user.id %>">
+                                    <% if (Account.follows.length > 0 &&
+                                           Account.follows.get(Account.profile.id).follow.contains(user.id)) { %>
+                                        Unfollow
+                                    <% } else { %>
+                                        Follow
+                                    <% } %>
+                                </button>
                             </div>
                         </div>
                     </li>
-                <% }); %>
+                <%  }
+                }); %>
             </ul>
         </div>
 
@@ -126,7 +135,9 @@
 </script>
 
 <script src="/assets/js/account/models/user_model.js"></script>
+<script src="/assets/js/account/models/follow_model.js"></script>
 <script src="/assets/js/account/collections/user_collection.js"></script>
+<script src="/assets/js/account/collections/follows_collection.js"></script>
 <script src="/assets/js/account/views/users_view.js"></script>
 <script src="/assets/js/account/views/profile_view.js"></script>
 
