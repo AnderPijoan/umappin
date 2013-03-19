@@ -9,8 +9,7 @@ var messagesApp = messagesApp || {};
 
 	    render: function() {
 	    	//changed to html() because replace, replaced the selected whole tag
-
-	         $(this.el).html(this.template(disc1.toJSON()));
+	        $(this.el).html(this.template(disc1.toJSON()));
             return this;
 	    }
 	});
