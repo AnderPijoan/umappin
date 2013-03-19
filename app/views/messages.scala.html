@@ -4,59 +4,111 @@
 
 <!-- styles -->
 <link href='@routes.Assets.at("css/ol/style.css")' rel="stylesheet">
-<link href='@routes.Assets.at("css/editmap.css")' rel="stylesheet">
+<link href='@routes.Assets.at("css/messagesApp.css")' rel="stylesheet">
 
 <h2>@Messages("messages.index.title")</h2>
 <p>@Messages("messages.message.controls")</p>
-
+<div class ="row">
+    <div class="span2 offset9">    
+        <a href="#newDiscussion" role="button" class="btn">New Message</a>
+    </div>
+</div>
 <div class="row">
+
     <div class="span3 bs-docs-sidebar">
         <ul class="nav nav-list bs-docs-sidenav " id="subsec_nav" >
             <li id="received_messages"class="active"><a tabindex="-1" href="#received">@Messages("messages.received.title")</a></li>
             <li id="sended_messages"><a tabindex ="-1" href="#sended">@Messages("messages.sended.title")</a><li>
              <li id="group_messages"><a tabindex ="-1" href="#sended">@Messages("messages.group.title")</a><li>
-
             </ul>
         </div>
+        <div class="span9" id="messages_body" >
 
-        <ul id="discussion_list">
+            
+        </div>
 
-        </ul>
-        
 
     </div>
 </div>
 
+
+ 
+<!-- Modal -->
+<div id="newDiscussion" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">New Message</h3>
+  </div>
+  <div class="modal-body">
+    <label for="form_subject">Subject</label><input type="text" name="subject" id="form_subject"/><br/>
+        <label for="form_message">Message</label><textarea name="message" id="form_message" ></textarea><br />
+        <label for="form_all">All</label><input type="checkbox" name="all" id="form_all_check" />
+        <label for="form_receivers">Receivers</label><input type="text" name="receivers" id="form_receivers" /><br />
+  </div>
+  <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+
+        <button id="send_new_discussion_button" class="bnt-large btn-success " >Send</button>
+  </div>
+</div>
+
+
+
+
+
 <!-- This is the discussions header template -->
 <script type="text/template" id="discussion-head-template">
-        <div class="span9  " >
+        <div class="span9 ">
             <div class="discussion_head">
-                <div class="discussion_subject"><a href="/messages/<%- id %>"><%- subject %></a></div>
+                <div class="discussion_subject"><a href="messages#/message/<%- id %>"><%- subject %></a></div>
                 <div class="discussion_author">
-                    <div class="author_name"><a href="/user/<%- user.id %>"><%- user.name %></div>
+                    <div class="author_name"><a href="/#/user/<%- user.id %>"><%- user.name %></a></div>
                 </div>  
             </div>
         </div>
 </script>
 
+<!-- This is the template to show a discussion-->
+     <script type="text/template" id="messages-template">
+         <div class="span9 ">
+             <h2><%- subject %></h2>
+             <br/>
+             <div class="messages">
+                 <% _.each(messages, function(message){ %>
+                    <p class="message"><%= message %></p>
+                    <div class="message_divider" />
+                    <br/>
+                 <% }); %>
+             </div>
+             <textarea id="sending_message" class="span4"></textarea>
+             <button id="reply">Reply</button>
+         </div>
+     </script>
+
     <!-- scripts -->
     <!-- script src="http://openlayers.org/api/OpenLayers.js"></script -->
-    <script src='@routes.Assets.at("js/jquery-1.9.1.min.js")'></script>
+    <!-- jquery is loaded by Play, if we load this 2 times some bootstrap code crash -->
+    <!-- <script src='@routes.Assets.at("js/jquery-1.9.1.min.js")'></script> -->
 
     <script src='@routes.Assets.at("js/underscore-min.js")'></script>
 
-
     <script src='@routes.Assets.at("js/backbone-min-0.9.js")'></script>
+    <script src='@routes.Assets.at("js/messagesAPP/model/discussionHeader.js")'></script>
+    <script src='@routes.Assets.at("js/messagesAPP/collection/discussionHeader_list.js")'></script>
     <script src='@routes.Assets.at("js/messagesAPP/model/discussion.js")'></script>
-    <script src='@routes.Assets.at("js/messagesAPP/collection/discussion_list.js")'></script>
     <script src='@routes.Assets.at("js/messagesAPP/view/receivedMessages_view.js")'></script>
     <script src='@routes.Assets.at("js/messagesAPP/view/messagesApp_view.js")'></script>
+    <script src='@routes.Assets.at("js/messagesAPP/view/newDiscussion_view.js")'></script>
+
+
+
+    <script src='@routes.Assets.at("js/messagesAPP/view/discussionMessages_view.js")'></script>
 
     <script src='@routes.Assets.at("js/messagesAPP/test_data.js")'></script>
-
-
+    <script src='@routes.Assets.at("js/messagesAPP/routers/router.js")'></script>
 
 
     <script src="@routes.Application.jsRoutes" defer="defer"></script>
+
 
 }

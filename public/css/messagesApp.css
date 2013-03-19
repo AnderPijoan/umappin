@@ -1,0 +1,14 @@
+footer {
+    text-align: center;
+}
+
+.message_divider {
+    background-color: #888888;
+    height: 1px;
+    width: 70%;
+    text-align: center;
+}
+.messages > p {
+    width: 70%;
+    text-align: justify;
+}

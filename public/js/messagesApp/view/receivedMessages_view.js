@@ -10,14 +10,13 @@ var messagesApp = messagesApp || {};
 		template: _.template($('#discussion-head-template').html()),
 		
 		render: function(){
-			console.log("rendering view " + $(this.el));
-			console.log(this.template(this.model.toJSON()));
-			//return the template with the info of the model
-			$(this.el).html(this.template(this.model.toJSON()));
+			//return the template with the info of the model and changed to 
+			//messages_body to have this one as the messages APP body
+			$('#messages_body').html(this.template(this.model.toJSON()));
+			console.log("render received Discussions");
 			return this;
 		}
 	});
-
 }());
 
 //var messagesApp.receivedDiscussions = new messagesApp.ReceivedView();
