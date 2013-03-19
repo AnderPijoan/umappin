@@ -76,12 +76,6 @@ public class Account extends Controller {
 	private static final Form<Accept> ACCEPT_FORM = form(Accept.class);
 	private static final Form<Account.PasswordChange> PASSWORD_CHANGE_FORM = form(Account.PasswordChange.class);
 
-	@SubjectPresent
-	public static Result link() {
-		com.feth.play.module.pa.controllers.Authenticate.noCache(response());
-		return ok(link.render());
-	}
-
     // TODO remove this method, it looks useless
 	@Restrict(@Group(Application.USER_ROLE))
 	public static Result verifyEmail() {

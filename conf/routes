@@ -17,6 +17,8 @@ GET     /assets/*file               controllers.Assets.at(path="/public", file)
 # ----------------------------- Authentication routes -------------------------
 GET     /profile                    controllers.Templates.profile
 
+GET     /linkProvider               controllers.Templates.linkProvider
+
 GET     /login                      controllers.Templates.login
 POST    /login                      controllers.Application.doLogin
 
@@ -47,8 +49,6 @@ POST    /accounts/password/change   controllers.Account.doChangePassword
 # ----------------- Authentication Unverified routes ----------------------
 GET     /accounts/verify            controllers.Account.verifyEmail
 
-GET     /accounts/add               controllers.Account.link
-
 GET     /accounts/link              controllers.Account.askLink
 POST    /accounts/link              controllers.Account.doLink
 
@@ -63,20 +63,23 @@ GET     /authenticate/:provider/denied     controllers.Signup.oAuthDenied(provid
 
 
 
-# ---------------------------------- SITES ---------------------------------
+# -------------------------------- TEMPLATES -------------------------------
 GET     /home                       controllers.Templates.home
 GET     /editmap                    controllers.Templates.editmap
 GET     /userlist                   controllers.Templates.userlist
 GET     /messages                   controllers.Templates.messages
+GET     /account                    controllers.Templates.account
 # --------------------------------------------------------------------------
 
 
 
 # ------------------------------ REST Services -----------------------------
 # REST CRUD for Follows
-GET     /follows                    controllers.FollowREST.getFollows()
-POST    /follow                     controllers.FollowREST.follow
-POST    /unfollow                   controllers.FollowREST.unfollow
+GET     /follows                    controllers.FollowREST.getAllFollows()
+GET     /follows/:id                controllers.FollowREST.getFollows(id: String)
+POST    /follows                    controllers.FollowREST.addFollows()
+PUT     /follows/:id                controllers.FollowREST.updateFollows(id: String)
+DELETE  /follows/:id                controllers.FollowREST.deleteFollows(id: String)
 
 # REST CRUD for Users
 GET     /users                      controllers.UserREST.getUsers()
@@ -89,3 +92,4 @@ GET     /sessionuser                controllers.UserREST.getSessionUser
 GET     /rest/messages              controllers.MessagesREST.all
 GET     /rest/messages/:id          controllers.MessagesREST.findById(id: String)
 # --------------------------------------------------------------------------
+

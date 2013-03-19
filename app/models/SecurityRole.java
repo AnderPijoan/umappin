@@ -23,7 +23,6 @@ import be.objectify.deadbolt.core.models.Role;
 import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Id;
 import controllers.MorphiaObject;
-import org.bson.types.ObjectId;
 
 import play.Logger;
 
@@ -41,7 +40,7 @@ public class SecurityRole  implements Role {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	public ObjectId id;
+	public String id;
 
 	public String roleName;
 
@@ -66,7 +65,7 @@ public class SecurityRole  implements Role {
 
     public static void delete(String idToDelete) {
         SecurityRole toDelete = MorphiaObject.datastore.find(SecurityRole.class)
-                                    .field("_id").equal(new ObjectId(idToDelete)).get();
+                                    .field("_id").equal(new String(idToDelete)).get();
         if (toDelete != null) {
             Logger.info("toDelete: " + toDelete);
             MorphiaObject.datastore.delete(toDelete);

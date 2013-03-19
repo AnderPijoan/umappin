@@ -10,6 +10,7 @@ import com.feth.play.module.pa.exceptions.AuthException;
 
 import controllers.routes;
 
+import org.bson.types.ObjectId;
 import play.Application;
 import play.GlobalSettings;
 import play.mvc.Call;
@@ -96,6 +97,8 @@ public class Global extends GlobalSettings {
             for (final String roleName : Arrays.asList(controllers.Application.USER_ROLE)) {
                 final SecurityRole role = new SecurityRole();
                 role.roleName = roleName;
+                // Fix - Manually create an ObjectID and get its String UUID
+                role.id = new ObjectId().toString();
                 role.save();
             }
         }
