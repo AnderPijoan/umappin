@@ -19,7 +19,7 @@ public class Follows {
 
     public String userId;
 
-    public List<String> follows;
+    public List<String> follow;
 
     public String getId() {
         return id;
@@ -37,12 +37,12 @@ public class Follows {
         this.userId = userId;
     }
 
-    public List<String> getFollows() {
-        return follows;
+    public List<String> getFollow() {
+        return follow;
     }
 
-    public void setFollows(List<String> follows) {
-        this.follows = follows;
+    public void setFollow(List<String> follows) {
+        this.follow = follows;
     }
 
     // Creation methods
@@ -55,7 +55,7 @@ public class Follows {
     public static Follows create(String userId) {
         final Follows follows = new Follows();
         follows.userId = userId;
-        follows.follows = new ArrayList<String>();
+        follows.follow = new ArrayList<String>();
         // Fix - Manually create an ObjectID and get its String UUID
         follows.id = new ObjectId().toString();
         follows.save();
@@ -97,7 +97,7 @@ public class Follows {
 
     // Update methods
     public Follows update(List<String> follows) {
-        this.setFollows(follows);
+        this.setFollow(follows);
         return this.save();
     }
 
@@ -113,9 +113,9 @@ public class Follows {
     // TODO Overview this!!!
 
     public Follows follow(User user) {
-        if (this.follows == null)
-            this.follows = new ArrayList<String>();
-        this.follows.add(user.id);
+        if (this.follow == null)
+            this.follow = new ArrayList<String>();
+        this.follow.add(user.id);
         this.save();
         return this;
     }
@@ -130,7 +130,7 @@ public class Follows {
     public Follows unfollow(User followed) {
         //Followed toUnfollow = MorphiaObject.datastore.find(Followed.class).field("userId").equal(followed.id).get();
         if (followed != null) {
-            this.follows.remove(followed.id);
+            this.follow.remove(followed.id);
             this.save();
         }
         return this;

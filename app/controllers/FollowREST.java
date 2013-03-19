@@ -17,6 +17,7 @@ import be.objectify.deadbolt.java.actions.Restrict;
 import providers.MyUsernamePasswordAuthProvider;
 import providers.MyUsernamePasswordAuthUser;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FollowREST extends Controller {
@@ -65,8 +66,11 @@ public class FollowREST extends Controller {
         } else {
             String userId = json.findPath("userId").getTextValue();
             Follows follows = Follows.create(userId);
-            List<String> listFollows = json.findValuesAsText("follow");
-            follows.update(listFollows);
+            List<String> flist = new ArrayList<String>();
+            JsonNode listFollows = json.findPath("follow");
+            for (JsonNode node:listFollows)
+                flist.add(node.asText());
+            follows.update(flist);
             return ok(Json.toJson(follows));
         }
     }
@@ -80,17 +84,20 @@ public class FollowREST extends Controller {
         } else {
             Follows follows = Follows.findById(id);
             if (follows == null)
-                return  badRequest("Invalid Index");
-            List<String> listFollows = json.findValuesAsText("follows");
-            follows.update(listFollows);
+                return  notFound("Invalid Index");
+            List<String> flist = new ArrayList<String>();
+            JsonNode listFollows = json.findPath("follow");
+            for (JsonNode node:listFollows)
+                flist.add(node.asText());
+            follows.update(flist);
             return ok(Json.toJson(follows));
         }
     }
 
     // DELETE
     @Restrict(@Group(Application.USER_ROLE))
-    public static Result deleteFollows(String userId) {
-        Follows follows = Follows.findByUserId("userId");
+    public static Result deleteFollows(String id) {
+        Follows follows = Follows.findById(id);
         if (follows != null) {
             Follows res = follows.delete();
             if (res != null)

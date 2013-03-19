@@ -80,12 +80,11 @@
                                 <h3><%- user.name %></h3>
                             </div>
                             <div class="span1">
-                                <button type="button" class="btn btn-primary" id="follow_button_<%- user.id %>">
-                                    <% if (Account.follows.length > 0 &&
-                                           Account.follows.get(Account.profile.id).follow.contains(user.id)) { %>
-                                        Unfollow
+                                <button type="button" class="btn btn-primary" id="follow_button_<%- user.id %>">                                    <% if (Account.follows.length > 0 &&
+                             Account.follows.getByUserId(Account.profile.id).get("follow").indexOf(user.id) != -1) { %>
+                                       Unfollow
                                     <% } else { %>
-                                        Follow
+                                       Follow
                                     <% } %>
                                 </button>
                             </div>
