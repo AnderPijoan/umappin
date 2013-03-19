@@ -30,18 +30,20 @@ class window.Account.UsersView extends Backbone.View
       @unfollowUser fusr_id
 
   followUser: (id) ->
-    profileFollows = Account.follows.get Account.profile.id
+    profileFollows = Account.follows.getByUserId Account.profile.id
+    console.log profileFollows
     if profileFollows == undefined
       profileFollows = new Account.Follow
-      profileFollows.set id: Account.profile.id
+      profileFollows.set userId: Account.profile.id
       profileFollows.set follow: []
       Account.follows.add profileFollows
     profileFollows.get("follow").push id
-    console.log profileFollows
+    #console.log profileFollows
     profileFollows.save()
+    #console.log profileFollows
 
   unfollowUser: (id) ->
-    profileFollows = Account.follows.get Account.profile.id
+    profileFollows = Account.follows.get userId: Account.profile.id
     profileFollows.follow.splice(profileFollows.follow.indexOf(id), 1)
     profileFollows.save()
 

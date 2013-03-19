@@ -49,10 +49,10 @@ public class FollowREST extends Controller {
 
     // GET
     @Restrict(@Group(Application.USER_ROLE))
-    public static Result getFollows(String userId) {
-        Follows res = Follows.findById(userId);
+    public static Result getFollows(String id) {
+        Follows res = Follows.findById(id);
         if (res == null)
-            res = Follows.create(userId);
+            return notFound("Follows not found");
         return ok(Json.toJson(res));
     }
 
@@ -63,40 +63,40 @@ public class FollowREST extends Controller {
         if(json == null) {
             return badRequest("Expecting Json data");
         } else {
-            String userId = json.findPath("id").getTextValue();
+            String userId = json.findPath("userId").getTextValue();
             Follows follows = Follows.create(userId);
             List<String> listFollows = json.findValuesAsText("follow");
             follows.update(listFollows);
-            return ok("");
+            return ok(Json.toJson(follows));
         }
     }
 
     // PUT
     @Restrict(@Group(Application.USER_ROLE))
-    public static Result updateFollows(String userId) {
+    public static Result updateFollows(String id) {
         JsonNode json = request().body().asJson();
         if(json == null) {
             return badRequest("Expecting Json data");
         } else {
-            Follows follows = Follows.findById(userId);
+            Follows follows = Follows.findById(id);
             if (follows == null)
                 return  badRequest("Invalid Index");
             List<String> listFollows = json.findValuesAsText("follows");
             follows.update(listFollows);
-            return ok("");
+            return ok(Json.toJson(follows));
         }
     }
 
     // DELETE
     @Restrict(@Group(Application.USER_ROLE))
     public static Result deleteFollows(String userId) {
-        Follows follows = Follows.findById("userId");
+        Follows follows = Follows.findByUserId("userId");
         if (follows != null) {
             Follows res = follows.delete();
             if (res != null)
-                return ok("");
+                return ok(Json.toJson(res));
         }
-        return null;
+        return notFound("Follows not found");
     }
 
 }

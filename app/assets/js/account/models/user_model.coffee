@@ -3,7 +3,7 @@ window.Account or= {}
 class window.Account.User extends Backbone.Model
 
   defaults:
-    id: ''
+    id: null
     email: ''
     name: ''
     firstName: ''

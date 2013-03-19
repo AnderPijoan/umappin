@@ -10,8 +10,6 @@ Account.loadUsersData = () ->
 
   Account.follows = new Account.Follows
   Account.follows.fetch
-  console.log Account.follows
-
 
 Account.loadProfileData = () ->
   Account.profile = new Account.User JSON.parse sessionStorage.getItem "user"
