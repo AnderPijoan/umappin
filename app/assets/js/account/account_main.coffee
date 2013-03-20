@@ -1,9 +1,8 @@
 window.Account or= {}
 
 Account.loadUsersData = () ->
-  usr = new Account.User {id:"dummyId", name:"Patricio", email:"patri@patri.es"}
   Account.users = new Account.Users
-  Account.usersview = new Account.UsersView collection: Account.users
+  Account.usersview = new Account.UsersView Account.users, Account.profile
   Account.users.fetch()
 
   Account.follows = new Account.Follows

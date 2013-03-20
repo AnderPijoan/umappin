@@ -23,7 +23,50 @@
         </div>
 
         <div class="tab-pane fade" id="users">
-            <div id='users-list'></div>
+            <div id='users-list'>
+
+                <div class="row">
+
+                    <div class="span3">
+                        <form class="navbar-search pull-left">
+                            <input type="search"  placeholder="Search" class='input-medium'>
+                        </form>
+                    </div>
+
+                    <div class="btn-group span3" data-toggle="buttons-checkbox">
+                        <button type="button" class="btn btn-primary">Following</button>
+                        <button type="button" class="btn btn-primary">Followed By</button>
+                    </div>
+
+                </div>
+
+                <div class="row">
+
+                    <div class="span1">
+                        <h4>Order By:</h4>
+                    </div>
+
+                    <div class="span2">
+                        <select>
+                            <option>Name</option>
+                            <option>Email</option>
+                            <option>Discussions</option>
+                            <option>Awards</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="row">
+
+                    <div class="span5">
+                        <ul style='list-style: none; margin-top: 1em' id='userlist'></ul>
+                    </div>
+
+                </div>
+
+            </div>
+
         </div>
 
     </div>
@@ -67,7 +110,7 @@
     <div class="row">
 
         <div class="span5">
-            <ul style='list-style: none; margin-top: 1em'>
+            <ul style='list-style: none; margin-top: 1em' id='userlist'>
                 <% _.each( rc, function( user ) {
                         if (user.id != Account.profile.id) { %>
                     <li class='user-entry'>
@@ -98,6 +141,17 @@
     </div>
 
 </script>
+
+
+<script type='text/template' id='user-row-template'>
+    <button type="button" class="btn btn-primary"><%=rc%></button>
+</script>
+
+
+<script type='text/template' id='user-follows-template'>
+    <button type="button" class="btn btn-primary"><%=rc%></button>
+</script>
+
 
 <script type='text/template' id='userprofile-template'>
 
