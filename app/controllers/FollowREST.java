@@ -1,46 +1,21 @@
 package controllers;
 
-
+import models.Followed;
 import models.Follows;
-import models.User;
-
-
 import org.codehaus.jackson.JsonNode;
 import play.libs.Json;
-import play.mvc.Http.Request;
 import play.mvc.*;
 
 import play.mvc.Result;
-
 import be.objectify.deadbolt.java.actions.Group;
 import be.objectify.deadbolt.java.actions.Restrict;
-import providers.MyUsernamePasswordAuthProvider;
-import providers.MyUsernamePasswordAuthUser;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class FollowREST extends Controller {
 
-    // TODO review this two
-
-	@Restrict(@Group(Application.USER_ROLE))
-	public static Result follow() {
-		final User follower = Application.getLocalUser(session());
-        String followedName =  request().body().asFormUrlEncoded().get("name")[0];
-        Follows res = Follows.follow(follower, User.findByName(followedName));
-        return res != null ? ok("") : notFound("Could not follow");
-	}
-
-    @Restrict(@Group(Application.USER_ROLE))
-    public static Result unfollow() {
-        final User follower = Application.getLocalUser(session());
-        String followedName =  request().body().asFormUrlEncoded().get("name")[0];
-        Follows res = Follows.unfollow(follower, User.findByName(followedName));
-        return res != null ? ok("") : notFound("Could not unfollow");
-    }
-
-
+    /** ---------------------------------- FOLLOWS --------------------------------------- **/
+    
     // GET(ALL)
     @Restrict(@Group(Application.USER_ROLE))
     public static Result getAllFollows() {
@@ -105,5 +80,74 @@ public class FollowREST extends Controller {
         }
         return notFound("Follows not found");
     }
+
+
+    /** ---------------------------------- FOLLOWED --------------------------------------- **/
+
+    // GET(ALL)
+    @Restrict(@Group(Application.USER_ROLE))
+    public static Result getAllFollowed() {
+        List<Followed> res = Followed.all();
+        return ok(Json.toJson(res));
+    }
+
+    // GET
+    @Restrict(@Group(Application.USER_ROLE))
+    public static Result getFollowed(String id) {
+        Followed res = Followed.findById(id);
+        if (res == null)
+            return notFound("Followed not found");
+        return ok(Json.toJson(res));
+    }
+
+    // POST
+    @Restrict(@Group(Application.USER_ROLE))
+    public static Result addFollowed() {
+        JsonNode json = request().body().asJson();
+        if(json == null) {
+            return badRequest("Expecting Json data");
+        } else {
+            String userId = json.findPath("userId").getTextValue();
+            Followed follows = Followed.create(userId);
+            List<String> flist = new ArrayList<String>();
+            JsonNode listFollowed = json.findPath("follow");
+            for (JsonNode node:listFollowed)
+                flist.add(node.asText());
+            follows.update(flist);
+            return ok(Json.toJson(follows));
+        }
+    }
+
+    // PUT
+    @Restrict(@Group(Application.USER_ROLE))
+    public static Result updateFollowed(String id) {
+        JsonNode json = request().body().asJson();
+        if(json == null) {
+            return badRequest("Expecting Json data");
+        } else {
+            Followed follows = Followed.findById(id);
+            if (follows == null)
+                return  notFound("Invalid Index");
+            List<String> flist = new ArrayList<String>();
+            JsonNode listFollowed = json.findPath("follow");
+            for (JsonNode node:listFollowed)
+                flist.add(node.asText());
+            follows.update(flist);
+            return ok(Json.toJson(follows));
+        }
+    }
+
+    // DELETE
+    @Restrict(@Group(Application.USER_ROLE))
+    public static Result deleteFollowed(String id) {
+        Followed follows = Followed.findById(id);
+        if (follows != null) {
+            Followed res = follows.delete();
+            if (res != null)
+                return ok(Json.toJson(res));
+        }
+        return notFound("Followed not found");
+    }
+    
 
 }

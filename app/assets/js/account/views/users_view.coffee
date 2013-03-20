@@ -29,13 +29,25 @@ class window.Account.UsersView extends Backbone.View
       $(elm).text "Follow"
       @unfollowUser fusr_id
 
+  getFollow: (fcollection, id) ->
+    followItem = fcollection.getByUserId id
+    if followItem == undefined
+      followItem = new fcollection
+      followItem.set userId: id
+      followItem.set follow: []
+      fcollection.add followItem
+    followItem
+
   followUser: (id) ->
+    ###
     profileFollows = Account.follows.getByUserId Account.profile.id
     if profileFollows == undefined
       profileFollows = new Account.Follow
       profileFollows.set userId: Account.profile.id
       profileFollows.set follow: []
       Account.follows.add profileFollows
+    ###
+    profileFollows = getFollow  Account.follows, Account.profile.id
     profileFollows.get("follow").push id
     profileFollows.save()
 
