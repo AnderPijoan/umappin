@@ -26,9 +26,18 @@ public class RestAwards extends Controller{
 		return ok(toJson(award));
 	}
 	
-	// Provisional: this method should be implemented in the RestUser Class.
 	public static Result findByUserId(String userId) {
 		List<UserAward> userAwards = UserAward.findByUserId(userId);
+		if(userAwards == null){
+			return ok(toJson(userAwards)); //TODO: Shouldn't return an 'ok'.
+		}else{
+			return ok(toJson(userAwards));
+		}
+	}
+	
+	// How should be the route??
+	public static Result findNewByUserId(String userId) {
+		List<UserAward> userAwards = UserAward.findNewByUserId(userId);
 		if(userAwards == null){
 			return ok(toJson(userAwards)); //TODO: Shouldn't return an 'ok'.
 		}else{
