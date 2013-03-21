@@ -15,8 +15,6 @@ import java.util.List;
 
 public class FollowREST extends Controller {
 
-    /** ---------------------------------- FOLLOWS --------------------------------------- **/
-    
     // GET(ALL)
     @Restrict(@Group(Application.USER_ROLE))
     public static Result getAllFollows() {
@@ -24,68 +22,6 @@ public class FollowREST extends Controller {
         return ok(Json.toJson(res));
     }
 
-    // GET
-    @Restrict(@Group(Application.USER_ROLE))
-    public static Result getFollows(String id) {
-        Follow res = Follows.findById(id);
-        if (res == null)
-            return notFound("Follows not found");
-        return ok(Json.toJson(res));
-    }
-
-    // POST
-    @Restrict(@Group(Application.USER_ROLE))
-    public static Result addFollows() {
-        JsonNode json = request().body().asJson();
-        if(json == null) {
-            return badRequest("Expecting Json data");
-        } else {
-            String userId = json.findPath("userId").getTextValue();
-            Follow follows = Follows.create(userId);
-            List<String> flist = new ArrayList<String>();
-            JsonNode listFollows = json.findPath("follow");
-            for (JsonNode node:listFollows)
-                flist.add(node.asText());
-            follows.update(flist);
-            return ok(Json.toJson(follows));
-        }
-    }
-
-    // PUT
-    @Restrict(@Group(Application.USER_ROLE))
-    public static Result updateFollows(String id) {
-        JsonNode json = request().body().asJson();
-        if(json == null) {
-            return badRequest("Expecting Json data");
-        } else {
-            Follow follows = Follows.findById(id);
-            if (follows == null)
-                return  notFound("Invalid Index");
-            List<String> flist = new ArrayList<String>();
-            JsonNode listFollows = json.findPath("follow");
-            for (JsonNode node:listFollows)
-                flist.add(node.asText());
-            follows.update(flist);
-            return ok(Json.toJson(follows));
-        }
-    }
-
-    // DELETE
-    @Restrict(@Group(Application.USER_ROLE))
-    public static Result deleteFollows(String id) {
-        Follow follows = Follows.findById(id);
-        if (follows != null) {
-            Follow res = follows.delete();
-            if (res != null)
-                return ok(Json.toJson(res));
-        }
-        return notFound("Follows not found");
-    }
-
-
-    /** ---------------------------------- FOLLOWED --------------------------------------- **/
-
-    // GET(ALL)
     @Restrict(@Group(Application.USER_ROLE))
     public static Result getAllFollowed() {
         List<Followed> res = Followed.all();
@@ -93,62 +29,90 @@ public class FollowREST extends Controller {
     }
 
     // GET
-    @Restrict(@Group(Application.USER_ROLE))
+    public static Result getFollows(String id) {
+        return getFollow(Follows.findById(id));
+    }
+
     public static Result getFollowed(String id) {
-        Followed res = Followed.findById(id);
-        if (res == null)
-            return notFound("Followed not found");
-        return ok(Json.toJson(res));
+        return getFollow(Followed.findById(id));
+    }
+
+    @Restrict(@Group(Application.USER_ROLE))
+    public static <T extends Follow> Result getFollow(T follow) {
+        if (follow == null)
+            return notFound("Follows not found");
+        return ok(Json.toJson(follow));
     }
 
     // POST
-    @Restrict(@Group(Application.USER_ROLE))
+    public static Result addFollows() {
+        return addFollow(new Follows());
+    }
+
     public static Result addFollowed() {
+        return addFollow(new Followed());
+    }
+
+    @Restrict(@Group(Application.USER_ROLE))
+    private static <T extends Follow> Result addFollow(T follow) {
         JsonNode json = request().body().asJson();
         if(json == null) {
             return badRequest("Expecting Json data");
         } else {
             String userId = json.findPath("userId").getTextValue();
-            Followed follows = Followed.create(userId);
+            follow.init(userId);
             List<String> flist = new ArrayList<String>();
-            JsonNode listFollowed = json.findPath("follow");
-            for (JsonNode node:listFollowed)
+            JsonNode listFollows = json.findPath("follow");
+            for (JsonNode node:listFollows)
                 flist.add(node.asText());
-            follows.update(flist);
-            return ok(Json.toJson(follows));
+            follow.update(flist);
+            return ok(Json.toJson(follow));
         }
     }
 
     // PUT
-    @Restrict(@Group(Application.USER_ROLE))
+    public static Result updateFollows(String id) {
+        return updateFollow(Follows.findById(id));
+    }
+
     public static Result updateFollowed(String id) {
+        return updateFollow(Followed.findById(id));
+    }
+
+    @Restrict(@Group(Application.USER_ROLE))
+    public static <T extends Follow> Result updateFollow(T follow) {
         JsonNode json = request().body().asJson();
         if(json == null) {
             return badRequest("Expecting Json data");
         } else {
-            Followed follows = Followed.findById(id);
-            if (follows == null)
+            if (follow == null)
                 return  notFound("Invalid Index");
             List<String> flist = new ArrayList<String>();
-            JsonNode listFollowed = json.findPath("follow");
-            for (JsonNode node:listFollowed)
+            JsonNode listFollows = json.findPath("follow");
+            for (JsonNode node:listFollows)
                 flist.add(node.asText());
-            follows.update(flist);
-            return ok(Json.toJson(follows));
+            follow.update(flist);
+            return ok(Json.toJson(follow));
         }
     }
 
     // DELETE
-    @Restrict(@Group(Application.USER_ROLE))
+    public static Result deleteFollows(String id) {
+        return deleteFollow(Follows.findById(id));
+    }
+
     public static Result deleteFollowed(String id) {
-        Followed follows = Followed.findById(id);
-        if (follows != null) {
-            Followed res = follows.delete();
+        return deleteFollow(Followed.findById(id));
+    }
+
+    @Restrict(@Group(Application.USER_ROLE))
+    public static <T extends Follow> Result deleteFollow(T follow) {
+        if (follow != null) {
+            Follow res = follow.delete();
             if (res != null)
                 return ok(Json.toJson(res));
         }
-        return notFound("Followed not found");
+        return notFound("Follows not found");
     }
-    
 
 }

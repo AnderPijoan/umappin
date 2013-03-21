@@ -6,16 +6,15 @@ class window.Account.UserRowView extends Backbone.View
 
   refUser: null
   followsView: null
-
+  followedView: null
   tagName: 'li'
-
   className: 'user-entry'
-
   template: _.template $('#user-row-template').html()
 
   initialize: -> 
     @listenTo @model, 'change', @render
     @refUser = @options.refUser
+
     follows = Account.follows.getByUserId @refUser.get 'id'
     if follows == undefined
       follows = new Account.Follow
@@ -23,10 +22,21 @@ class window.Account.UserRowView extends Backbone.View
       follows.set follow: []
       Account.follows.add follows
       follows.save() # Here  to decide whether to use local/session storage as cache
+
+    followed = Account.followed.getByUserId @model.get 'id'
+    if followed == undefined
+      followed = new Account.Follow
+      followed.set userId: @model.get 'id'
+      followed.set follow: []
+      Account.followed.add followed
+      followed.save() # Here  to decide whether to use local/session storage as cache
+
     @followsView = new Account.UserFollowsView model: follows, followed: @model.get 'id'
+    @followedView = new Account.UserFollowedView model: followed, followed: @refUser.get 'id'
 
   render: ->   
     @$el.html @template @model.attributes
     @$el.find('div.row').append @followsView.render().el
+    @$el.find('div.row').append @followedView.render().el
     @
 

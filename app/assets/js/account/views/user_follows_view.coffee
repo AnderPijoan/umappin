@@ -5,9 +5,7 @@ _.templateSettings.variable = 'rc'
 class window.Account.UserFollowsView extends Backbone.View
 
   followed: null
-
   tagName: 'div'
-
   className: 'span1'
 
   events:
@@ -20,18 +18,25 @@ class window.Account.UserFollowsView extends Backbone.View
     @followed = @options.followed
     
   render: ->
-    console.log @model.get("follow")
     text = if @model.get("follow").indexOf(@followed) != -1  then 'Unfollow' else 'Follow'
     @$el.html @template text
     @
 
   follow: () ->
-    if @model.get("follow").indexOf(@followed) == -1
-      @model.get("follow").push @followed
-    else
-      @model.get("follow").splice(@model.get("follow").indexOf(@followed), 1)
-    # Here  to decide whether to use local/session storage as cache
-    @model.save()
+    followedObj = Account.followed.getByUserId @followed
+    followsPos = @model.get("follow").indexOf @followed
+    followedPos = followedObj.get("follow").indexOf @model.get "id"
 
-    @model.trigger('change')
-    #@render()
+    if followsPos == -1
+      @model.get("follow").push @followed
+      if followedPos == -1
+        followedObj.get("follow").push @model.get "id"
+    else
+      @model.get("follow").splice followsPos, 1
+      if followedPos != -1
+        followedObj.get("follow").splice followedPos, 1
+
+    @model.save() # Here  to decide whether to use local/session storage as cache
+    followedObj.save() # Here  to decide whether to use local/session storage as cache
+    @model.trigger 'change'
+    followedObj.trigger 'change'

@@ -59,7 +59,7 @@
 
                 <div class="row">
 
-                    <div class="span5">
+                    <div class="span6">
                         <ul style='list-style: none; margin-top: 1em' id='userlist'></ul>
                     </div>
 
@@ -73,76 +73,6 @@
 
 </div>
 
-<!--script type='text/template' id='userlist-template'>
-
-    <div class="row">
-
-        <div class="span3">
-            <form class="navbar-search pull-left">
-                <input type="search"  placeholder="Search" class='input-medium'>
-            </form>
-        </div>
-
-        <div class="btn-group span3" data-toggle="buttons-checkbox">
-            <button type="button" class="btn btn-primary">Following</button>
-            <button type="button" class="btn btn-primary">Followed By</button>
-        </div>
-
-    </div>
-
-    <div class="row">
-
-        <div class="span1">
-            <h4>Order By:</h4>
-        </div>
-
-        <div class="span2">
-            <select>
-                <option>Name</option>
-                <option>Email</option>
-                <option>Discussions</option>
-                <option>Awards</option>
-            </select>
-        </div>
-
-    </div>
-
-    <div class="row">
-
-        <div class="span5">
-            <ul style='list-style: none; margin-top: 1em' id='userlist'>
-                <% _.each( rc, function( user ) {
-                        if (user.id != Account.profile.id) { %>
-                    <li class='user-entry'>
-                        <div class='row'>
-                            <div class="span1">
-                                <img class="image img-rounded" src="/assets/img/140x140.gif" alt="placeholder image"
-                                    height="32" width="32">
-                            </div>
-                            <div class="span2">
-                                <h3><%- user.name %></h3>
-                            </div>
-                            <div class="span1">
-                                <button type="button" class="btn btn-primary" id="follow_button_<%- user.id %>">                                    <% if (Account.follows.length > 0 &&
-                             Account.follows.getByUserId(Account.profile.id).get("follow").indexOf(user.id) != -1) { %>
-                                       Unfollow
-                                    <% } else { %>
-                                       Follow
-                                    <% } %>
-                                </button>
-                            </div>
-                        </div>
-                    </li>
-                <%  }
-                }); %>
-            </ul>
-        </div>
-
-    </div>
-
-</script-->
-
-
 <script type='text/template' id='user-row-template'>
   <div class='row'>
     <div class="span1">
@@ -155,9 +85,12 @@
   </div>
 </script>
 
-
 <script type='text/template' id='user-follows-template'>
     <button class="btn btn-primary"><%=rc%></button>
+</script>
+
+<script type='text/template' id='user-followed-template'>
+    <label class=""><%=rc%></label>
 </script>
 
 
@@ -199,7 +132,9 @@
 <script src="/assets/js/account/models/follow_model.js"></script>
 <script src="/assets/js/account/collections/user_collection.js"></script>
 <script src="/assets/js/account/collections/follows_collection.js"></script>
+<script src="/assets/js/account/collections/followed_collection.js"></script>
 <script src="/assets/js/account/views/user_follows_view.js"></script>
+<script src="/assets/js/account/views/user_followed_view.js"></script>
 <script src="/assets/js/account/views/user_row_view.js"></script>
 <script src="/assets/js/account/views/users_view.js"></script>
 <script src="/assets/js/account/views/profile_view.js"></script>

@@ -9,11 +9,6 @@ import java.util.List;
 @Entity
 public class Follows extends Follow {
 
-    // Creation methods
-    public static Follow create(String userId) {
-        return new Follows().init(userId);
-    }
-
     // Search methods
     public static List<Follows> all() {
         if (MorphiaObject.datastore != null) {
