@@ -1,5 +1,6 @@
 package controllers;
 
+import models.Follow;
 import models.Followed;
 import models.Follows;
 import org.codehaus.jackson.JsonNode;
@@ -26,7 +27,7 @@ public class FollowREST extends Controller {
     // GET
     @Restrict(@Group(Application.USER_ROLE))
     public static Result getFollows(String id) {
-        Follows res = Follows.findById(id);
+        Follow res = Follows.findById(id);
         if (res == null)
             return notFound("Follows not found");
         return ok(Json.toJson(res));
@@ -40,7 +41,7 @@ public class FollowREST extends Controller {
             return badRequest("Expecting Json data");
         } else {
             String userId = json.findPath("userId").getTextValue();
-            Follows follows = Follows.create(userId);
+            Follow follows = Follows.create(userId);
             List<String> flist = new ArrayList<String>();
             JsonNode listFollows = json.findPath("follow");
             for (JsonNode node:listFollows)
@@ -57,7 +58,7 @@ public class FollowREST extends Controller {
         if(json == null) {
             return badRequest("Expecting Json data");
         } else {
-            Follows follows = Follows.findById(id);
+            Follow follows = Follows.findById(id);
             if (follows == null)
                 return  notFound("Invalid Index");
             List<String> flist = new ArrayList<String>();
@@ -72,9 +73,9 @@ public class FollowREST extends Controller {
     // DELETE
     @Restrict(@Group(Application.USER_ROLE))
     public static Result deleteFollows(String id) {
-        Follows follows = Follows.findById(id);
+        Follow follows = Follows.findById(id);
         if (follows != null) {
-            Follows res = follows.delete();
+            Follow res = follows.delete();
             if (res != null)
                 return ok(Json.toJson(res));
         }
