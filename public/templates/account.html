@@ -73,7 +73,7 @@
 
 </div>
 
-<script type='text/template' id='userlist-template'>
+<!--script type='text/template' id='userlist-template'>
 
     <div class="row">
 
@@ -140,16 +140,24 @@
 
     </div>
 
-</script>
+</script-->
 
 
 <script type='text/template' id='user-row-template'>
-    <button type="button" class="btn btn-primary"><%=rc%></button>
+  <div class='row'>
+    <div class="span1">
+        <img class="image img-rounded" src="/assets/img/140x140.gif" alt="placeholder image"
+            height="32" width="32">
+    </div>
+    <div class="span2">
+        <h3><%=rc.name%></h3>
+    </div>
+  </div>
 </script>
 
 
 <script type='text/template' id='user-follows-template'>
-    <button type="button" class="btn btn-primary"><%=rc%></button>
+    <button class="btn btn-primary"><%=rc%></button>
 </script>
 
 
@@ -191,6 +199,8 @@
 <script src="/assets/js/account/models/follow_model.js"></script>
 <script src="/assets/js/account/collections/user_collection.js"></script>
 <script src="/assets/js/account/collections/follows_collection.js"></script>
+<script src="/assets/js/account/views/user_follows_view.js"></script>
+<script src="/assets/js/account/views/user_row_view.js"></script>
 <script src="/assets/js/account/views/users_view.js"></script>
 <script src="/assets/js/account/views/profile_view.js"></script>
 

@@ -5,27 +5,35 @@ _.templateSettings.variable = 'rc'
 class window.Account.UsersView extends Backbone.View
 
   refUser = null
-
-  userRowViews = []
+  userRowViews = null
 
   el: 'ul#userlist'
-  ###
-  events:
-    "click li button": "follow"
-  ###
-  constructor: (@collection, @userRef) ->
 
   initialize: ->
-    @listenTo @collection, 'change reset add remove', @render
-    @collection.each (row) ->
-      @userRowViews.push new Account.UserRowView row, @refUser
-
+    @listenTo @collection, 'reset ', @render
+    @refUser = @options.refUser
 
   render: ->
-    @userRowViews.each (view) ->
-       @$el.append view.render().el
+    @userRowViews = []
+    @$el.html ''
+    _this = @
+    @collection.each (row) ->
+      if row.get('id') != _this.refUser.get('id')
+        view = new Account.UserRowView model: row, refUser: _this.refUser
+        _this.userRowViews.push view
+        _this.$el.append view.render().el
     @
 
+    
+    
+    
+    
+    ###
+  events:
+    "click li button": "follow"
+  ###  
+    
+    
     ###
   follow: (event) ->
     elm = event.target
