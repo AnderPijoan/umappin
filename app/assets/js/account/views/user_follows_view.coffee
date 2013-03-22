@@ -23,14 +23,15 @@ class window.Account.UserFollowsView extends Backbone.View
     @
 
   follow: () ->
+    console.log @followed
     followedObj = Account.followed.getByUserId @followed
     followsPos = @model.get("follow").indexOf @followed
-    followedPos = followedObj.get("follow").indexOf @model.get "id"
+    followedPos = followedObj.get("follow").indexOf @model.get "userId"
 
     if followsPos == -1
       @model.get("follow").push @followed
       if followedPos == -1
-        followedObj.get("follow").push @model.get "id"
+        followedObj.get("follow").push @model.get "userId"
     else
       @model.get("follow").splice followsPos, 1
       if followedPos != -1

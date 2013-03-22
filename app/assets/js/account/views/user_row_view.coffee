@@ -23,16 +23,16 @@ class window.Account.UserRowView extends Backbone.View
       Account.follows.add follows
       follows.save() # Here  to decide whether to use local/session storage as cache
 
-    followed = Account.followed.getByUserId @model.get 'id'
+    followed = Account.followed.getByUserId @refUser.get 'id'
     if followed == undefined
       followed = new Account.Follow
-      followed.set userId: @model.get 'id'
+      followed.set userId: @refUser.get 'id'
       followed.set follow: []
       Account.followed.add followed
       followed.save() # Here  to decide whether to use local/session storage as cache
 
     @followsView = new Account.UserFollowsView model: follows, followed: @model.get 'id'
-    @followedView = new Account.UserFollowedView model: followed, followed: @refUser.get 'id'
+    @followedView = new Account.UserFollowedView model: followed, followed: @model.get 'id'
 
   render: ->   
     @$el.html @template @model.attributes

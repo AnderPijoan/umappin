@@ -6,7 +6,7 @@ class window.Account.UserFollowedView extends Backbone.View
 
   followed: null
   tagName: 'div'
-  className: 'span1'
+  className: 'span2'
 
   template: _.template $('#user-followed-template').html()
 
