@@ -1,12 +1,12 @@
 window.Account or= {}
 
 Account.loadUsersData = () ->
+  Account.users = new Account.Users
   Account.follows = new Account.Follows
   Account.followed = new Account.Followed
 
-  Account.users = new Account.Users
-  Account.usersview = new Account.UsersView collection: Account.users, refUser: Account.profile
-  
+  Account.usersview = new Account.UsersView collection: Account.users, follows: Account.follows, followed: Account.followed, refUser: Account.profile
+
   Account.follows.fetch
     success: () ->
       Account.followed.fetch

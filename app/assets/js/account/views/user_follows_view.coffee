@@ -4,6 +4,7 @@ _.templateSettings.variable = 'rc'
 
 class window.Account.UserFollowsView extends Backbone.View
 
+  follows: null
   followed: null
   tagName: 'div'
   className: 'span1'
@@ -14,30 +15,29 @@ class window.Account.UserFollowsView extends Backbone.View
   template: _.template $('#user-follows-template').html()
 
   initialize: ->
-    @listenTo @model, 'change', @render
+    @follows = @options.follows
     @followed = @options.followed
-    
+    @listenTo @follows, 'change', @render
+
   render: ->
-    text = if @model.get("follow").indexOf(@followed) != -1  then 'Unfollow' else 'Follow'
+    text = if @follows.get("follow").indexOf(@model.get "id") != -1  then 'Unfollow' else 'Follow'
     @$el.html @template text
     @
 
   follow: () ->
-    console.log @followed
-    followedObj = Account.followed.getByUserId @followed
-    followsPos = @model.get("follow").indexOf @followed
-    followedPos = followedObj.get("follow").indexOf @model.get "userId"
+    followsPos = @follows.get("follow").indexOf @model.get "id"
+    followedPos = @followed.get("follow").indexOf @follows.get "userId"
 
     if followsPos == -1
-      @model.get("follow").push @followed
+      @follows.get("follow").push @model.get "id"
       if followedPos == -1
-        followedObj.get("follow").push @model.get "userId"
+        @followed.get("follow").push @follows.get "userId"
     else
-      @model.get("follow").splice followsPos, 1
+      @follows.get("follow").splice followsPos, 1
       if followedPos != -1
-        followedObj.get("follow").splice followedPos, 1
+        @followed.get("follow").splice followedPos, 1
 
-    @model.save() # Here  to decide whether to use local/session storage as cache
-    followedObj.save() # Here  to decide whether to use local/session storage as cache
-    @model.trigger 'change'
-    followedObj.trigger 'change'
+    @follows.save() # Here  to decide whether to use local/session storage as cache
+    @followed.save() # Here  to decide whether to use local/session storage as cache
+    @follows.trigger 'change'
+    @followed.trigger 'change'

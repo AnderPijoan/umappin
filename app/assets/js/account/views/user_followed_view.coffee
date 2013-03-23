@@ -11,10 +11,10 @@ class window.Account.UserFollowedView extends Backbone.View
   template: _.template $('#user-followed-template').html()
 
   initialize: ->
-    @listenTo @model, 'change', @render
     @followed = @options.followed
+    @listenTo @followed, 'change', @render
 
   render: ->
-    text = if @model.get("follow").indexOf(@followed) != -1  then 'Follower' else 'Non Follower'
+    text = if @followed.get("follow").indexOf(@model.get "id") != -1  then 'Follower' else 'Non Follower'
     @$el.html @template text
     @
