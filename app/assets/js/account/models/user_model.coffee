@@ -1,7 +1,7 @@
 window.Account or= {}
 
 class window.Account.User extends Backbone.Model
-
+  urlRoot: "/users"
   defaults:
     id: null
     email: ''

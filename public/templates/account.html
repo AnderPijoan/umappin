@@ -1,14 +1,8 @@
-<style xmlns="http://www.w3.org/1999/html">
-
-    .user-entry {
-        margin: 0.5em;
-        padding: 0.5em;
-        background-color: #eeeeee
-    }
-
-</style>
+<!------------------------------------- Styles -------------------------------------->
+<link href="/assets/css/account/account.min.css" rel="stylesheet">
 
 
+<!------------------------------------- HTML -------------------------------------->
 <div class="well">
 
     <ul class="nav nav-tabs">
@@ -60,7 +54,7 @@
                 <div class="row">
 
                     <div class="span7">
-                        <ul style='list-style: none; margin-top: 1em' id='userlist'></ul>
+                        <ul id='userlist'></ul>
                     </div>
 
                 </div>
@@ -73,6 +67,8 @@
 
 </div>
 
+
+<!------------------------------------- Templates -------------------------------------->
 <script type='text/template' id='user-row-template'>
   <div class='row'>
     <div class="span1">
@@ -95,7 +91,6 @@
 
 
 <script type='text/template' id='userprofile-template'>
-
     <div class="span2">
         <a href="javascript:void(0)">
             <img class="image img-rounded" src="/assets/img/140x140.gif" alt="placeholder image"
@@ -112,7 +107,6 @@
         <label><%- new Date(rc.lastLogin).toLocaleString() %></label><br/>
         <button id="profile-modify-button" class="btn btn-primary">Update</button>
     </div>
-
     <div class="span4">
         <label>First Name</label>
         <input type="text" value="<%- rc.firstName %>" class="input-xlarge">
@@ -125,20 +119,8 @@
         <label>Address</label>
         <textarea rows="3" class="input-xlarge"><%- rc.address %></textarea>
     </div>
-
 </script>
 
-<script src="/assets/js/account/models/user_model.js"></script>
-<script src="/assets/js/account/models/follow_model.js"></script>
-<script src="/assets/js/account/collections/user_collection.js"></script>
-<script src="/assets/js/account/collections/follow_collection.js"></script>
-<script src="/assets/js/account/collections/follows_collection.js"></script>
-<script src="/assets/js/account/collections/followed_collection.js"></script>
-<script src="/assets/js/account/views/user_follows_view.js"></script>
-<script src="/assets/js/account/views/user_followed_view.js"></script>
-<script src="/assets/js/account/views/user_row_view.js"></script>
-<script src="/assets/js/account/views/users_view.js"></script>
-<script src="/assets/js/account/views/profile_view.js"></script>
 
+<!------------------------------------- Scripts -------------------------------------->
 <script src="/assets/js/account/account_main.js"></script>
-
