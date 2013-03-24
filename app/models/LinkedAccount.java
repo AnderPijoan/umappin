@@ -9,9 +9,10 @@ package models;
 import com.feth.play.module.pa.user.AuthUser;
 
 import controllers.MorphiaObject;
-import org.bson.types.ObjectId;
 import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Id;
+import org.bson.types.ObjectId;
+import providers.MyUsernamePasswordAuthUser;
 
 @Entity
 public class LinkedAccount {
@@ -22,10 +23,10 @@ public class LinkedAccount {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	public ObjectId id;
+	public String id;
 
 	//@ManyToOne
-	public User user;
+	public String userId;
 
 	public String providerUserId;
 	public String providerKey;
@@ -39,7 +40,7 @@ public class LinkedAccount {
 
 	public static LinkedAccount findByProviderKey(final User user, String key) {
         return MorphiaObject.datastore.find(LinkedAccount.class)
-                .field("user").equal(user)
+                .field("userId").equal(user.id)
                 .field("providerKey").equal(key).get();
 		//return find.where().eq("user", user).eq("providerKey", key).findUnique();
 	}
@@ -47,6 +48,9 @@ public class LinkedAccount {
 	public static LinkedAccount create(final AuthUser authUser) {
 		final LinkedAccount ret = new LinkedAccount();
 		ret.update(authUser);
+        // Fix - Manually create an ObjectID and get its String UUID
+        ret.id = new ObjectId().toString();
+        ret.save();
 		return ret;
 	}
 	
@@ -55,11 +59,15 @@ public class LinkedAccount {
 		this.providerUserId = authUser.getId();
 	}
 
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
 	public static LinkedAccount create(final LinkedAccount acc) {
 		final LinkedAccount ret = new LinkedAccount();
 		ret.providerKey = acc.providerKey;
 		ret.providerUserId = acc.providerUserId;
-
+        ret.save();
 		return ret;
 	}
 }

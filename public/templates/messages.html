@@ -1,0 +1,101 @@
+
+	<h2>Messages</h2>
+<p>Manage your messages)</p>
+<div class ="row">
+    <div class="span2 offset9">    
+        <a href="#newDiscussion" role="button" class="btn">New Message</a>
+    </div>
+</div>
+<div class="row">
+
+    <div class="span3 bs-docs-sidebar">
+        <ul class="nav nav-list bs-docs-sidenav " id="subsec_nav" >
+            <li id="received_messages"class="active"><a tabindex="-1" href="#received">Messages</a></li>
+            
+            </ul>
+        </div>
+        <div class="span9" id="messages_body" >
+
+            
+        </div>
+
+
+    </div>
+</div>
+
+
+ 
+<!-- Modal -->
+<div id="newDiscussion" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">New Message</h3>
+  </div>
+  <div class="modal-body">
+    <label for="form_subject">Subject</label><input type="text" name="subject" id="form_subject"/><br/>
+        <label for="form_message">Message</label><textarea name="message" id="form_message" ></textarea><br />
+        <label for="form_all">All</label><input type="checkbox" name="all" id="form_all_check" />
+        <label for="form_receivers">Receivers</label><input type="text" name="receivers" id="form_receivers" /><br />
+  </div>
+  <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+
+        <button id="send_new_discussion_button" class="bnt-large btn-success " >Send</button>
+  </div>
+</div>
+
+
+
+
+
+<!-- This is the discussions header template -->
+<script type="text/template" id="discussion-head-template">
+        <div class="span9 ">
+            <div class="discussion_head">
+                <div class="discussion_subject"><a href="#/message/<%- id %>"><%- subject %></a></div>
+                <div class="discussion_author">
+                    <div class="author_name"><a href="/#/user/<%- user.id %>"><%- user.name %></a></div>
+                </div>  
+            </div>
+        </div>
+</script>
+
+<!-- This is the template to show a discussion-->
+     <script type="text/template" id="messages-template">
+         <div class="span9 ">
+             <h2><%- subject %></h2>
+             <br/>
+             <div class="messages">
+                 <% _.each(messages, function(message){ %>
+                    <p class="message"><%= message %></p>
+                    <div class="message_divider" />
+                    <br/>
+                 <% }); %>
+             </div>
+             <textarea id="sending_message" class="span4"></textarea>
+             <button id="reply">Reply</button>
+         </div>
+     </script>
+
+    <script src="/assets/js/messagesAPP/messagesAPP.js"></script>
+
+	<script src="/assets/js/messagesApp/model/discussion.js"></script>
+	<script src="/assets/js/messagesApp/view/receivedMessages_view.js"></script>
+	<script src="/assets/js/messagesApp/view/messagesApp_view.js"></script>
+
+
+
+    <script src="/assets/js/messagesAPP/model/discussionHeader.js"></script>
+    <script src="/assets/js/messagesAPP/collection/discussionHeader_list.js"></script>
+    <script src="/assets/js/messagesAPP/model/discussion.js"></script>
+    <script src="/assets/js/messagesAPP/view/receivedMessages_view.js"></script>
+    <script src="/assets/js/messagesAPP/view/messagesApp_view.js"></script>
+    <script src="/assets/js/messagesAPP/view/newDiscussion_view.js"></script>
+
+
+
+    <script src="/assets/js/messagesAPP/view/discussionMessages_view.js"></script>
+
+    <script src="/assets/js/messagesAPP/test_data.js"></script>
+    <script src="/assets/js/messagesAPP/routers/router.js"></script>
+

@@ -4,6 +4,7 @@ import be.objectify.deadbolt.core.models.Permission;
 import be.objectify.deadbolt.core.models.Role;
 import be.objectify.deadbolt.core.models.Subject;
 
+import com.feth.play.module.pa.providers.password.UsernamePasswordAuthProvider;
 import com.feth.play.module.pa.providers.password.UsernamePasswordAuthUser;
 import com.feth.play.module.pa.user.AuthUser;
 import com.feth.play.module.pa.user.AuthUserIdentity;
@@ -13,6 +14,7 @@ import com.feth.play.module.pa.user.FirstLastNameIdentity;
 
 import models.TokenAction.Type;
 
+import org.bson.types.ObjectId;
 import play.data.format.Formats;
 
 //import javax.persistence.*;
@@ -20,10 +22,10 @@ import play.data.format.Formats;
 import java.util.*;
 import play.Logger;
 
-import org.bson.types.ObjectId;
 import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Id;
 import controllers.MorphiaObject;
+import com.google.code.morphia.query.*;
 
 /**
  * Initial version based on work by Steve Chaloner (steve@objectify.be) for
@@ -36,7 +38,7 @@ public class User implements Subject {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	public ObjectId id;
+	public String id;
 
 	public String email;
 
@@ -54,10 +56,13 @@ public class User implements Subject {
 	public boolean emailValidated;
 
     public void save() {
-        //Logger.debug("Saving " + this.name +" to " + MorphiaObject.datastore.getDB());
         MorphiaObject.datastore.save(this);
     }
-
+	
+	public void delete() {
+        MorphiaObject.datastore.delete(this);
+    }
+	
     public static List<User> all() {
         if (MorphiaObject.datastore != null) {
             return MorphiaObject.datastore.find(User.class).asList();
@@ -66,8 +71,12 @@ public class User implements Subject {
         }
     }
 
+    public static User findByName(String name) {
+        return MorphiaObject.datastore.find(User.class).field("name").equal(name).get();
+    }
+
     public static void delete(String idToDelete) {
-        User toDelete = MorphiaObject.datastore.find(User.class).field("_id").equal(new ObjectId(idToDelete)).get();
+        User toDelete = MorphiaObject.datastore.find(User.class).field("_id").equal(idToDelete).get();
         if (toDelete != null) {
             Logger.info("toDelete: " + toDelete);
             MorphiaObject.datastore.delete(toDelete);
@@ -76,23 +85,15 @@ public class User implements Subject {
         }
     }
 
-
-
-    //public static final Finder<ObjectId, User> find = new Finder<ObjectId, User>(ObjectId.class, User.class);
-
 	//@ManyToMany
 	public List<SecurityRole> roles;
 
 	//@OneToMany(cascade = CascadeType.ALL)
 	public List<LinkedAccount> linkedAccounts;
 
-	//@ManyToMany
-	public List<UserPermission> permissions;
-
 	@Override
-	public String getIdentifier()
-	{
-		return id.toString();
+	public String getIdentifier() {
+		return id;
 	}
 
 	@Override
@@ -100,31 +101,15 @@ public class User implements Subject {
 		return roles;
 	}
 
-	@Override
-	public List<? extends Permission> getPermissions() {
-		return permissions;
-	}
+    @Override
+    public List<? extends Permission> getPermissions() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
 
-	public static boolean existsByAuthUserIdentity(final AuthUserIdentity identity) {
+    public static boolean existsByAuthUserIdentity(final AuthUserIdentity identity) {
         return findByAuthUserIdentity(identity) != null;
-        /*
-		final ExpressionList<User> exp;
-		if (identity instanceof UsernamePasswordAuthUser) {
-			exp = getUsernamePasswordAuthUserFind((UsernamePasswordAuthUser) identity);
-		} else {
-			exp = getAuthUserFind(identity);
-		}
-		return exp.findRowCount() > 0;
-		*/
 	}
 
-    /*
-	private static ExpressionList<User> getAuthUserFind(final AuthUserIdentity identity) {
-		return find.where().eq("active", true)
-				.eq("linkedAccounts.providerUserId", identity.getId())
-				.eq("linkedAccounts.providerKey", identity.getProvider());
-	}
-    */
 
 	public static User findByAuthUserIdentity(final AuthUserIdentity identity) {
 		if (identity == null) {
@@ -137,8 +122,6 @@ public class User implements Subject {
                     .field("linkedAccounts.providerUserId").equal(identity.getId())
                     .field("active").equal(true)
                     .field("linkedAccounts.providerKey").equal(identity.getProvider()).get();
-
-			//return getAuthUserFind(identity).findUnique();
 		}
 	}
 
@@ -147,43 +130,31 @@ public class User implements Subject {
                 .field("email").equal(identity.getEmail())
                 .field("active").equal(true)
                 .field("linkedAccounts.providerKey").equal(identity.getProvider()).get();
-		//return getUsernamePasswordAuthUserFind(identity).findUnique();
 	}
-
-   /*
-	private static ExpressionList<User> getUsernamePasswordAuthUserFind(final UsernamePasswordAuthUser identity) {
-		return getEmailUserFind(identity.getEmail()).eq("linkedAccounts.providerKey", identity.getProvider());
-	}
-    */
 
 	public void merge(final User otherUser) {
 		for (final LinkedAccount acc : otherUser.linkedAccounts) {
 			this.linkedAccounts.add(LinkedAccount.create(acc));
 		}
 		// do all other merging stuff here - like resources, etc.
-
 		// deactivate the merged user that got added to this one
 		otherUser.active = false;
         MorphiaObject.datastore.save(Arrays.asList(new User[]{otherUser, this}));
-		//Ebean.save(Arrays.asList(new User[] { otherUser, this }));
 	}
 
 	public static User create(final AuthUser authUser) {
 		final User user = new User();
-		user.roles = Collections.singletonList(SecurityRole
-				.findByRoleName(controllers.Application.USER_ROLE));
-		// user.permissions = new ArrayList<UserPermission>();
-		// user.permissions.add(UserPermission.findByValue("printers.edit"));
+		user.roles = Collections.singletonList(
+                SecurityRole.findByRoleName(controllers.Application.USER_ROLE));
 		user.active = true;
 		user.lastLogin = new Date();
-		user.linkedAccounts = Collections.singletonList(LinkedAccount
-                .create(authUser));
+        LinkedAccount la = LinkedAccount.create(authUser);
+		user.linkedAccounts = Collections.singletonList(la);
 
 		if (authUser instanceof EmailIdentity) {
 			final EmailIdentity identity = (EmailIdentity) authUser;
-			// Remember, even when getting them from FB & Co., emails should be
-			// verified within the application as a security breach there might
-			// break your security as well!
+			// Remember, even when getting them from FB & Co., emails should be verified within t
+			// he application as a security breach there might break your security as well!
 			user.email = identity.getEmail();
 			user.emailValidated = false;
 		}
@@ -191,9 +162,8 @@ public class User implements Subject {
 		if (authUser instanceof NameIdentity) {
 			final NameIdentity identity = (NameIdentity) authUser;
 			final String name = identity.getName();
-			if (name != null) {
+			if (name != null)
 				user.name = name;
-			}
 		}
 		
 		if (authUser instanceof FirstLastNameIdentity) {
@@ -208,9 +178,14 @@ public class User implements Subject {
 		  }
 		}
 
-		user.save();
-		// user.saveManyToManyAssociations("roles");
-		// user.saveManyToManyAssociations("permissions");
+		// Fix - Manually create an ObjectID and get its String UUID
+        user.id = new ObjectId().toString();
+        user.save();
+		
+        // Fix - adding the User to the LinkedAccount
+        la.setUserId(user.id);
+        la.save();
+
 		return user;
 	}
 
@@ -244,14 +219,7 @@ public class User implements Subject {
 	public static User findByEmail(final String email) {
         return MorphiaObject.datastore.find(User.class).field("email").equal(email)
                                                         .field("active").equal(true).get();
-		//return getEmailUserFind(email).findUnique();
 	}
-
-    /*
-	private static List<User> getEmailUserFind(final String email) {
-		return find.where().eq("active", true).eq("email", email);
-	}
-    */
 
 	public LinkedAccount getAccountByProvider(final String providerKey) {
 		return LinkedAccount.findByProviderKey(this, providerKey);
@@ -270,7 +238,7 @@ public class User implements Subject {
 		if (a == null) {
 			if (create) {
 				a = LinkedAccount.create(authUser);
-				a.user = this;
+				a.setUserId(this.id);
 			} else {
 				throw new RuntimeException(
 						"Account not enabled for password usage");
@@ -278,6 +246,10 @@ public class User implements Subject {
 		}
 		a.providerUserId = authUser.getHashedPassword();
 		a.save();
+        for (final LinkedAccount acc : this.linkedAccounts)
+            if (UsernamePasswordAuthProvider.PROVIDER_KEY.equals(acc.providerKey))
+                acc.providerUserId = authUser.getHashedPassword();
+        this.save();
 	}
 
 	public void resetPassword(final UsernamePasswordAuthUser authUser,

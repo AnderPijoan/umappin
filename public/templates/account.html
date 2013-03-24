@@ -1,0 +1,145 @@
+<style xmlns="http://www.w3.org/1999/html">
+
+    .user-entry {
+        margin: 0.5em;
+        padding: 0.5em;
+        background-color: #eeeeee
+    }
+
+</style>
+
+
+<div class="well">
+
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="#profile" data-toggle="tab">Profile</a></li>
+        <li><a href="#users" data-toggle="tab" onclick='Account.loadUsersData()'>Users</a></li>
+    </ul>
+
+    <div id="myTabContent" class="tab-content">
+
+        <div class="tab-pane active in" id="profile">
+            <form id="profile-form"></form>
+        </div>
+
+        <div class="tab-pane fade" id="users">
+            <div id='users-list'></div>
+        </div>
+
+    </div>
+
+</div>
+
+<script type='text/template' id='userlist-template'>
+
+    <div class="row">
+
+        <div class="span3">
+            <form class="navbar-search pull-left">
+                <input type="search"  placeholder="Search" class='input-medium'>
+            </form>
+        </div>
+
+        <div class="btn-group span3" data-toggle="buttons-checkbox">
+            <button type="button" class="btn btn-primary">Following</button>
+            <button type="button" class="btn btn-primary">Followed By</button>
+        </div>
+
+    </div>
+
+    <div class="row">
+
+        <div class="span1">
+            <h4>Order By:</h4>
+        </div>
+
+        <div class="span2">
+            <select>
+                <option>Name</option>
+                <option>Email</option>
+                <option>Discussions</option>
+                <option>Awards</option>
+            </select>
+        </div>
+
+    </div>
+
+    <div class="row">
+
+        <div class="span5">
+            <ul style='list-style: none; margin-top: 1em'>
+                <% _.each( rc, function( user ) {
+                        if (user.id != Account.profile.id) { %>
+                    <li class='user-entry'>
+                        <div class='row'>
+                            <div class="span1">
+                                <img class="image img-rounded" src="/assets/img/140x140.gif" alt="placeholder image"
+                                    height="32" width="32">
+                            </div>
+                            <div class="span2">
+                                <h3><%- user.name %></h3>
+                            </div>
+                            <div class="span1">
+                                <button type="button" class="btn btn-primary" id="follow_button_<%- user.id %>">
+                                    <% if (Account.follows.length > 0 &&
+                                           Account.follows.get(Account.profile.id).follow.contains(user.id)) { %>
+                                        Unfollow
+                                    <% } else { %>
+                                        Follow
+                                    <% } %>
+                                </button>
+                            </div>
+                        </div>
+                    </li>
+                <%  }
+                }); %>
+            </ul>
+        </div>
+
+    </div>
+
+</script>
+
+<script type='text/template' id='userprofile-template'>
+
+    <div class="span2">
+        <a href="javascript:void(0)">
+            <img class="image img-rounded" src="/assets/img/140x140.gif" alt="placeholder image"
+                height="140" width="140">
+        </a>
+        <br/><br/>
+        <label>Username</label>
+        <input type="text" value="<%- rc.name %>" class="input-medium" required>
+        <a href="Javascript:setTemplate('/accounts/password/change')">
+            Change Account password
+        </a>
+        <br/><br/>
+        <h4>Last login Date: </h4>
+        <label><%- new Date(rc.lastLogin).toLocaleString() %></label><br/>
+        <button id="profile-modify-button" class="btn btn-primary">Update</button>
+    </div>
+
+    <div class="span4">
+        <label>First Name</label>
+        <input type="text" value="<%- rc.firstName %>" class="input-xlarge">
+        <label>Last Name</label>
+        <input type="text" value="<%- rc.lastName %>" class="input-xlarge">
+        <label>Email</label>
+        <input type="text" value="<%- rc.email %>" class="input-xlarge" required>
+        <label>Phone</label>
+        <input type="text" value="<%- rc.phone %>" class="input-xlarge">
+        <label>Address</label>
+        <textarea rows="3" class="input-xlarge"><%- rc.address %></textarea>
+    </div>
+
+</script>
+
+<script src="/assets/js/account/models/user_model.js"></script>
+<script src="/assets/js/account/models/follow_model.js"></script>
+<script src="/assets/js/account/collections/user_collection.js"></script>
+<script src="/assets/js/account/collections/follows_collection.js"></script>
+<script src="/assets/js/account/views/users_view.js"></script>
+<script src="/assets/js/account/views/profile_view.js"></script>
+
+<script src="/assets/js/account/account_main.js"></script>
+

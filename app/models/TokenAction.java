@@ -8,10 +8,10 @@ import java.util.Date;
 //import javax.persistence.ManyToOne;
 
 import controllers.MorphiaObject;
-import org.bson.types.ObjectId;
 import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Id;
 
+import org.bson.types.ObjectId;
 import play.data.format.Formats;
 //import play.db.ebean.Model;
 
@@ -42,7 +42,7 @@ public class TokenAction {
 	private final static long VERIFICATION_TIME = 7 * 24 * 3600;
 
 	@Id
-	public ObjectId id;
+	public String id;
 
 	//@Column(unique = true)
 	public String token;
@@ -94,6 +94,8 @@ public class TokenAction {
 		final Date created = new Date();
 		ua.created = created;
 		ua.expires = new Date(created.getTime() + VERIFICATION_TIME * 1000);
+        // Fix - Manually create an ObjectID and get its String UUID
+        ua.id = new ObjectId().toString();
 		ua.save();
 		return ua;
 	}
