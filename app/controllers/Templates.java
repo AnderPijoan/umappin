@@ -18,8 +18,6 @@ public class Templates extends Controller {
     public static Result changePassword() { return ok("/assets/templates/changePassword.html"); }
 
     /** RESTRICTED **/
-    @Restrict(@Group(Application.USER_ROLE))
-    public static Result userlist() { return ok("/assets/templates/userlist.html"); }
 	@Restrict(@Group(Application.USER_ROLE))
 	public static Result profile() { return ok("/assets/templates/profile.html"); }
     @Restrict(@Group(Application.USER_ROLE))

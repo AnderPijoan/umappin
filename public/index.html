@@ -35,7 +35,7 @@
                 <a class="brand" href="Javascript:home()">uMappin</a>
 
                 <div class="btn-group pull-right loggedout">
-                    <a href="Javascript:setTemplate('/login')" class="btn btn-primary btn-mini ">Log in</a>
+                    <a href="Javascript:navTo('login')" class="btn btn-primary btn-mini ">Log in</a>
                 </div>
 
                 <div class="btn-group pull-right loggedin" accesskey="" id="loggedControl">
@@ -45,8 +45,8 @@
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="Javascript:setTemplate('/profile')">Profile</a></li>
-                        <li><a href="Javascript:setTemplate('/linkProvider')">Link more providers</a></li>
+                        <li><a href="Javascript:navTo('profile')">Profile</a></li>
+                        <li><a href="Javascript:navTo('linkProvider')">Link more providers</a></li>
                         <li class="divider"></li>
                         <li><a href="Javascript:doLogout()"><i class="icon-off"></i> Sign out</a></li>
                     </ul>
@@ -54,11 +54,10 @@
 
                 <div class="nav-collapse">
                     <ul class="nav">
-                        <li class=""><a href="Javascript:setTemplate('/userlist')">User List</a></li>
-                        <li class=""><a href="Javascript:setTemplate('/messages')">Messages</a></li>
-                        <li class=""><a href="Javascript:setTemplate('/editmap')">Edit Map</a></li>
-                        <li class=""><a href="Javascript:setTemplate('/account')">Account</a></li>
-                        <li class="loggedout"><a href="Javascript:setTemplate('/signup')">Sign up</a></li>
+                        <li class=""><a href="Javascript:navTo('messages')">Messages</a></li>
+                        <li class=""><a href="Javascript:navTo('editmap')">Edit Map</a></li>
+                        <li class=""><a href="Javascript:navTo('account')">Account</a></li>
+                        <li class="loggedout"><a href="Javascript:navTo('signup')">Sign up</a></li>
 
                     </ul>
                 </div><!--/.nav-collapse -->
@@ -73,11 +72,20 @@
 
         <hr>
         <footer>
-            <p>&copy; 2013 uMappin. Licensed under Apache License, Version 2.0. View details <a href="#">here</a>.</p>
-            <p><small>
-                Styles by <a href="http://twitter.github.com/bootstrap/index.html" target="_blank">Twitter Bootstrap</a>
-                &middot; Provider icons by <a href="http://prlloyd.com/Pf4al8" target="_blank">Paul Robert Lloyd</a>
-            </small></p>
+            <p>
+                &copy; 2013 uMappin. Licensed under Apache License, Version 2.0. View details
+                <a href="#">here</a>.
+            </p>
+            <p>
+                <small>
+                    Styles by
+                    <a href="http://twitter.github.com/bootstrap/index.html" target="_blank">
+                        Twitter Bootstrap
+                    </a>
+                    &middot; Provider icons by
+                    <a href="http://prlloyd.com/Pf4al8" target="_blank">Paul Robert Lloyd</a>
+                </small>
+            </p>
         </footer>
     </div> <!-- /container -->
 
@@ -87,7 +95,10 @@
     <script src="/assets/js/lib/underscore-min.js"></script>
     <script src="/assets/js/lib/json2.js"></script>
     <script src="/assets/js/lib/backbone-min.js"></script>
-    <script src="/assets/js/lib/backbone-subroute.js"></script>
+
+    <script src="/assets/js/lib/require.js"></script>
+
+    <script src="/assets/javascript/routes.js" defer="defer"></script>
 
     <script src="/assets/js/main.js"></script>
 

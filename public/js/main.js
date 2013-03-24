@@ -33,7 +33,16 @@ function home() {
     window.location.href = "/";
 }
 
+function navTo(url) {
+    mainRouter.navigate(url, {trigger: true});
+}
+
 $(function() {
+
+    requirejs(['/assets/js/router.js'], function() {
+        window.mainRouter || (window.mainRouter = new MainRouter());
+        Backbone.history.start();
+    });
 
     var json = sessionStorage.getItem("user");
     if (json != null && json != undefined && json != "") {

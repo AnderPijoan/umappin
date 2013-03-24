@@ -71,6 +71,10 @@ public class User implements Subject {
         }
     }
 
+    public static User findById(String id) {
+        return MorphiaObject.datastore.find(User.class).field("_id").equal(id).get();
+    }
+
     public static User findByName(String name) {
         return MorphiaObject.datastore.find(User.class).field("name").equal(name).get();
     }
