@@ -7,13 +7,15 @@ import java.util.List;
 
 import models.Discussion;
 import models.Message;
+import models.User;
 
+import org.bson.types.ObjectId;
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.node.ObjectNode;
 
 import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
-import scala.reflect.internal.Types.ConstantType;
 
 public class DiscussionREST extends Controller {
 
@@ -22,16 +24,47 @@ public class DiscussionREST extends Controller {
 		if (discussions.size() == 0) {
 			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
 		} else {
-			return ok(Json.toJson(discussions));
+			
+			ObjectNode response = Json.newObject();
+			response.put("discussions", Json.toJson(discussions));
+			
+			return ok(response);
 		}
 	}
 
 	public static Result getDiscussion(String id) {
+		Discussion discussion =  Discussion.findById(new ObjectId(id));
+		if (discussion == null) {
+			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
+		} else {
+
+			ObjectNode discussionNode = Json.newObject();
+			discussionNode.put("id", discussion.id.toString());
+			discussionNode.put("subject", discussion.subject);
+			discussionNode.put("messages", Json.toJson(discussion.getMessages()));
+			
+			ObjectNode response = Json.newObject();
+			response.put("discussion", Json.toJson(discussionNode));
+			
+			return ok(response);
+		}
+	}
+	
+	public static Result getDiscussion(ObjectId id) {
 		Discussion discussion =  Discussion.findById(id);
 		if (discussion == null) {
 			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
 		} else {
-			return ok(Json.toJson(discussion));
+
+			ObjectNode discussionNode = Json.newObject();
+			discussionNode.put("id", discussion.id.toString());
+			discussionNode.put("subject", discussion.subject);
+			discussionNode.put("messages", Json.toJson(discussion.getMessages()));
+			
+			ObjectNode response = Json.newObject();
+			response.put("discussion", Json.toJson(discussionNode));
+			
+			return ok(response);
 		}
 	}
 
@@ -52,48 +85,72 @@ public class DiscussionREST extends Controller {
 		JsonNode json = request().body().asJson();
 		if(json == null) {
 			return badRequest(Constants.JSON_EMPTY.toString());
-		} else {
-			Discussion discussion = new Discussion();
-			discussion.messages = new ArrayList<Message>();
-			discussion.subject = json.findPath("subject").getTextValue();
-			Message message = new Message();
-			message.body = json.findPath("body").getTextValue();
-			message.save();
-			discussion.addMessage(message);
-			discussion.save();
-			return ok("New discussion " + discussion.id + " created");
 		}
+		final User user = Application.getLocalUser(session());
+		if (user == null){
+			return badRequest(Constants.USER_NOT_LOGGED_IN.toString());
+		}
+
+		Discussion discussion = new Discussion();
+		discussion.messages = new ArrayList<Message>();
+		discussion.subject = json.findPath("subject").getTextValue();
+		Message message = new Message();
+		message.body = json.findPath("body").getTextValue();
+		message.writerId = user.id.toString();
+		message.save();
+		discussion.addMessage(message);
+		discussion.save();
+		return ok("New discussion " + discussion.id + " created");
 	}
 
 	public static Result reply(String id){
 		JsonNode json = request().body().asJson();
 		if(json == null) {
 			return badRequest(Constants.JSON_EMPTY.toString());
-		} else {
-			Discussion discussion = Discussion.findById(id);
-			Message message = new Message();
-			message.body = json.findPath("body").getTextValue();
-			discussion.addMessage(message);
-			return ok(toJson(discussion));
 		}
+		final User user = Application.getLocalUser(session());
+		if (user == null){
+			return badRequest(Constants.USER_NOT_LOGGED_IN.toString());
+		}
+		Discussion discussion = Discussion.findById(id);
+		if (discussion == null){
+			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
+		}
+		Message message = new Message();
+		message.body = json.findPath("body").getTextValue();
+		message.writerId = user.id.toString();
+		message.save();
+		discussion.addMessage(message);
+		discussion.save();
+		return ok(toJson(discussion));
+
 	}
 
 	public static Result replyToMessage(String id, String msgId){
 		JsonNode json = request().body().asJson();
 		if(json == null) {
 			return badRequest(Constants.JSON_EMPTY.toString());
+		}
+		final User user = Application.getLocalUser(session());
+		if (user == null){
+			return badRequest(Constants.USER_NOT_LOGGED_IN.toString());
+		}
+		Discussion discussion = Discussion.findById(id);
+		if (discussion == null){
+			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
+		}
+		Message msg = Message.findById(msgId);
+		if(discussion.messages.contains(msg)){
+			Message message = new Message();
+			message.body = json.findPath("body").getTextValue();
+			message.replyToMsg = msg.id.toString();
+			message.writerId = user.id.toString();
+			message.save();
+			discussion.addMessage(message);
+			discussion.save();
+			return ok(toJson(discussion));
 		} else {
-			Discussion discussion = Discussion.findById(id);
-			Message msg = Message.findById(msgId);
-			if(discussion.messages.contains(msg)){
-				Message message = new Message();
-				message.body = json.findPath("body").getTextValue();
-				message.replyToMsg = msg.id;
-				discussion.addMessage(message);
-				return ok(toJson(discussion));
-			} else {
-				return badRequest(Constants.MESSAGES_EMPTY.toString());
-			}
+			return badRequest(Constants.MESSAGES_EMPTY.toString());
 		}
 	}
 }

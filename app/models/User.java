@@ -106,7 +106,14 @@ public class User implements Subject {
         return findByAuthUserIdentity(identity) != null;
 	}
 
-
+    public static User findById(String id){
+    	return MorphiaObject.datastore.get(User.class, new ObjectId(id));
+    }
+    
+    public static User findById(ObjectId id){
+    	return MorphiaObject.datastore.get(User.class, id);
+    }
+    
 	public static User findByAuthUserIdentity(final AuthUserIdentity identity) {
 		if (identity == null) {
 			return null;

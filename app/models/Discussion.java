@@ -22,7 +22,7 @@ import controllers.MorphiaObject;
 public class Discussion {
 
 	@Id
-	public String id;
+	public ObjectId id;
 
 	public String subject;
 
@@ -39,18 +39,41 @@ public class Discussion {
 		}
 	}
 	
-	public String save() {
+	public ObjectId save() {
 		timeStamp = new Date();
 		MorphiaObject.datastore.save(this);
 		return this.id;
 	}
 	
 	public static Discussion findById(String id) {
-		return MorphiaObject.datastore.get(Discussion.class, new ObjectId(id));
+		Discussion discussion = MorphiaObject.datastore.get(Discussion.class, new ObjectId(id));
+		if (discussion == null){
+			return null;
+		} else {
+			return discussion;
+		}
+	}
+	
+	public static Discussion findById(ObjectId id) {
+		Discussion discussion = MorphiaObject.datastore.get(Discussion.class, id);
+		if (discussion == null){
+			return null;
+		} else {
+			return discussion;
+		}
 	}
 	
 	public Message findMessageById(String id) {
 		Message message = MorphiaObject.datastore.get(Message.class, new ObjectId(id));
+		if (this.messages.contains(message)){
+			return message;
+		} else {
+			return null;
+		}
+	}
+	
+	public Message findMessageById(ObjectId id) {
+		Message message = MorphiaObject.datastore.get(Message.class, id);
 		if (this.messages.contains(message)){
 			return message;
 		} else {

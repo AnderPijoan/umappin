@@ -86,12 +86,12 @@ POST    /users                      controllers.UserREST.addUser()
 GET     /sessionuser                controllers.UserREST.getSessionUser
 
 # REST CRUD for discussions
-GET     /discussions                controllers.DiscussionREST.getDiscussions()
-GET     /discussions/:id            controllers.DiscussionREST.getDiscussion(id: String)
-GET     /discussions/:id/:msgid     controllers.DiscussionREST.getMessage(id: String, msgid: String)
-POST    /discussions                controllers.DiscussionREST.addDiscussion()
-POST	/discussions/:id            controllers.DiscussionREST.reply(id: String)
-POST	/discussions/:id/:msgid     controllers.DiscussionREST.replyToMessage(id: String, msgid: String)
+GET     /discussions/               controllers.User2DiscussionREST.getDiscussions()
+GET     /discussions/:id            controllers.User2DiscussionREST.getDiscussion(id: String)
+GET     /discussions/:id/:msgid     controllers.User2DiscussionREST.getMessage(id: String, msgid: String)
+POST    /discussions                controllers.User2DiscussionREST.addDiscussion()
+POST	/discussions/:id            controllers.User2DiscussionREST.reply(id: String)
+POST	/discussions/:id/:msgid     controllers.User2DiscussionREST.replyToMessage(id: String, msgid: String)
 
 # REST CRUD for messages
 GET     /messages                   controllers.MessageREST.getMessages()

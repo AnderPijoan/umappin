@@ -21,10 +21,12 @@ import java.util.List;
 public class Message {
 
 	@Id
-	public String id;
+	public ObjectId id;
 
 	public String body;
 
+	public String writerId;
+	
 	@Reference
 	public String replyToMsg;
 
@@ -38,12 +40,16 @@ public class Message {
 		}
 	}
 
-	public String save() {
+	public ObjectId save() {
 		timeStamp = new Date();
 		MorphiaObject.datastore.save(this);
 		return this.id;
 	}
 
+	public static Message findById(ObjectId id) {
+		return MorphiaObject.datastore.get(Message.class, id);
+	}
+	
 	public static Message findById(String id) {
 		return MorphiaObject.datastore.get(Message.class, new ObjectId(id));
 	}
