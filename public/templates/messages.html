@@ -52,9 +52,9 @@
 <script type="text/template" id="discussion-head-template">
         <div class="span9 ">
             <div class="discussion_head">
-                <div class="discussion_subject"><a href="#messages/message/<%- id %>"><%- subject %></a></div>
+                <div class="discussion_subject"><a href="#messages/message/<%- rc.id %>"><%- rc.subject %></a></div>
                 <div class="discussion_author">
-                    <div class="author_name"><a href="/#/user/<%- user.id %>"><%- user.name %></a></div>
+                    <div class="author_name"><a href="/#/user/<%- rc.user.id %>"><%- rc.user.name %></a></div>
                 </div>  
             </div>
         </div>
@@ -63,10 +63,10 @@
 <!-- This is the template to show a discussion-->
      <script type="text/template" id="messages-template">
          <div class="span9 ">
-             <h2><%- subject %></h2>
+             <h2><%- rc.subject %></h2>
              <br/>
              <div class="messages">
-                 <% _.each(messages, function(message){ %>
+                 <% _.each(rc.messages, function(message){ %>
                     <p class="message"><%= message %></p>
                     <div class="message_divider" />
                     <br/>
@@ -77,18 +77,18 @@
          </div>
      </script>
 
-    <script src="/assets/js/messagesAPP/messagesAPP.js"></script>
-
+    <script src="/assets/js/messagesAPP/messagesApp.js"></script>
+    <!--
 	<script src="/assets/js/messagesApp/model/discussion.js"></script>
 	<script src="/assets/js/messagesApp/view/receivedMessages_view.js"></script>
 	<script src="/assets/js/messagesApp/view/messagesApp_view.js"></script>
-
+    -->
 
 
     <script src="/assets/js/messagesAPP/model/discussionHeader.js"></script>
     <script src="/assets/js/messagesAPP/collection/discussionHeader_list.js"></script>
-    <script src="/assets/js/messagesAPP/model/discussion.js"></script>
-    <script src="/assets/js/messagesAPP/view/receivedMessages_view.js"></script>
+    <script src="/assets/js/messagesApp/model/discussion.js"></script>
+    <script src="/assets/js/messagesApp/view/receivedMessages_view.js"></script>
     <script src="/assets/js/messagesAPP/view/messagesApp_view.js"></script>
     <script src="/assets/js/messagesAPP/view/newDiscussion_view.js"></script>
 
@@ -96,5 +96,5 @@
 
     <script src="/assets/js/messagesAPP/view/discussionMessages_view.js"></script>
 
-    <script src="/assets/js/messagesAPP/test_data.js"></script>
+    <script src="/assets/js/messagesApp/test_data.js"></script>
 

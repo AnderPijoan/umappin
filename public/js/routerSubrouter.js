@@ -1,5 +1,5 @@
 var umappin = umappin || {};
-requirejs(['/assets/js/messagesApp/routers/router.js']);
+requirejs(['/assets/js/messagesAPP/routers/router.js']);
 umappin.Routers ={};
 umappin.Router = Backbone.Router.extend({
 
@@ -8,11 +8,10 @@ umappin.Router = Backbone.Router.extend({
         "messages/*subroute"                 : "invokeMessages",
     },
     invokeMessages: function(subroute) {
-    	//setTemplate('messages');
-    	console.log("to messages subrouter...");
-      	if (!umappin.Routers.messagesRouter) {
-            umappin.Routers.messagesRouter = new messagesApp.Router("messages/");
-        }
+          console.log("to messages subrouter...");
+          if (!umappin.Routers.messagesRouter) {
+              umappin.Routers.messagesRouter = new messagesApp.Router("messages/");
+          }
     },
     
   });

@@ -28,18 +28,24 @@ messagesApp.Router = Backbone.SubRoute.extend({
 	    }
 	},
 	messages: function(id){
-       view = new messagesApp.MessagesView({ model: disc1 });
-       console.log("Backbone routing to message");
-      // setTemplate('messages');
-       $('#messages_body').html(view.render().el);      
+                setTemplate ("/messages", function() {
+                       view = new messagesApp.MessagesView({ model: disc1 });
+                       console.log("Backbone routing to message");
+                      // setTemplate('messages');
+                       $('#messages_body').html(view.render().el);   
+                });   
 	},
 	discussionHeaders: function(){
+	       setTemplate ("/messages", function() {
 		console.log("routing received");
-    	messagesApp.DiscussionHeaders.loadDiscussions();
+    		messagesApp.DiscussionHeaders.loadDiscussions();
+	       });
 	},
 	newDiscussion: function(id){
+                    setTemplate ("/messages", function() {
 		var newDiscussionView = new messagesApp.NewDiscussionView();
 		newDiscussionView.showDiscussionForm();
+                   });
 	}
 
 });

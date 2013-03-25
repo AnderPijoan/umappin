@@ -1,4 +1,4 @@
-function setTemplate(url) {
+function setTemplate(url, callback) {
     $('div#actionResult').css('display','none');
     $('div#content').empty();
     var templateGet = $.get( url );
@@ -8,6 +8,7 @@ function setTemplate(url) {
             function(template) {
                 $('div#content').empty().html(template);
                 sessionStorage.setItem("lastTemplate", url);
+                if (callback) callback.call(this);
             }
         )
     });
@@ -58,9 +59,10 @@ $(function() {
         );
         updateSessionViews("");
     }
+    /*
     var lastTemplate = sessionStorage.getItem("lastTemplate");
     if (lastTemplate == null || lastTemplate == "")
         lastTemplate = "/home";
     setTemplate(lastTemplate);
-
+    */
 });

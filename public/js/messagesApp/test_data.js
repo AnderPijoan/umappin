@@ -1,5 +1,5 @@
 
-_.templateSettings.variable = "rc";
+
 
 //Messages
 /*

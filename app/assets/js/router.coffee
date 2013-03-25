@@ -18,7 +18,7 @@ class window.MainRouter extends Backbone.Router
   editmap: () ->
     setTemplate "/editmap"
   messages: () ->
-    setTemplate "/messages"
+    @navigate "messages/", trigger: true
   login: () ->
     setTemplate "/login"
   linkProvider: () ->
