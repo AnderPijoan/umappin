@@ -14,6 +14,7 @@ import com.feth.play.module.pa.user.FirstLastNameIdentity;
 
 import models.TokenAction.Type;
 
+import org.bson.types.ObjectId;
 import play.data.format.Formats;
 
 //import javax.persistence.*;
@@ -21,10 +22,10 @@ import play.data.format.Formats;
 import java.util.*;
 import play.Logger;
 
-import org.bson.types.ObjectId;
 import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Id;
 import controllers.MorphiaObject;
+import com.google.code.morphia.query.*;
 
 /**
  * Initial version based on work by Steve Chaloner (steve@objectify.be) for
@@ -37,7 +38,7 @@ public class User implements Subject {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	public ObjectId id;
+	public String id;
 
 	public String email;
 
@@ -55,10 +56,13 @@ public class User implements Subject {
 	public boolean emailValidated;
 
     public void save() {
-        //Logger.debug("Saving " + this.name +" to " + MorphiaObject.datastore.getDB());
         MorphiaObject.datastore.save(this);
     }
-
+	
+	public void delete() {
+        MorphiaObject.datastore.delete(this);
+    }
+	
     public static List<User> all() {
         if (MorphiaObject.datastore != null) {
             return MorphiaObject.datastore.find(User.class).asList();
@@ -72,7 +76,7 @@ public class User implements Subject {
     }
 
     public static void delete(String idToDelete) {
-        User toDelete = MorphiaObject.datastore.find(User.class).field("_id").equal(new ObjectId(idToDelete)).get();
+        User toDelete = MorphiaObject.datastore.find(User.class).field("_id").equal(idToDelete).get();
         if (toDelete != null) {
             Logger.info("toDelete: " + toDelete);
             MorphiaObject.datastore.delete(toDelete);
@@ -89,7 +93,7 @@ public class User implements Subject {
 
 	@Override
 	public String getIdentifier() {
-		return id.toString();
+		return id;
 	}
 
 	@Override
@@ -180,10 +184,15 @@ public class User implements Subject {
 		    user.lastName = lastName;
 		  }
 		}
-		user.save();
+
+		// Fix - Manually create an ObjectID and get its String UUID
+        user.id = new ObjectId().toString();
+        user.save();
+		
         // Fix - adding the User to the LinkedAccount
         la.setUserId(user.id);
         la.save();
+
 		return user;
 	}
 
