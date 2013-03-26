@@ -32,10 +32,10 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </a>
-                <a class="brand" href="Javascript:home()">uMappin</a>
+                <a class="brand" href="/">uMappin</a>
 
                 <div class="btn-group pull-right loggedout">
-                    <a href="Javascript:navTo('login')" class="btn btn-primary btn-mini ">Log in</a>
+                    <a href="#login" class="btn btn-primary btn-mini ">Log in</a>
                 </div>
 
                 <div class="btn-group pull-right loggedin" accesskey="" id="loggedControl">
@@ -45,19 +45,19 @@
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="Javascript:navTo('profile')">Profile</a></li>
-                        <li><a href="Javascript:navTo('linkProvider')">Link more providers</a></li>
+                        <li><a href="#account">Profile</a></li>
+                        <li><a href="#linkProvider">Link more providers</a></li>
                         <li class="divider"></li>
-                        <li><a href="Javascript:doLogout()"><i class="icon-off"></i> Sign out</a></li>
+                        <li><a href="#logout"><i class="icon-off"></i> Sign out</a></li>
                     </ul>
                 </div>
 
                 <div class="nav-collapse">
                     <ul class="nav">
-                        <li class=""><a href="Javascript:navTo('messages')">Messages</a></li>
-                        <li class=""><a href="Javascript:navTo('editmap')">Edit Map</a></li>
-                        <li class=""><a href="Javascript:navTo('account')">Account</a></li>
-                        <li class="loggedout"><a href="Javascript:navTo('signup')">Sign up</a></li>
+                        <li class="loggedin"><a href="#messages/">Messages</a></li>
+                        <li class="loggedin"><a href="#editmap">Edit Map</a></li>
+                        <li class="loggedin"><a href="#account">Account</a></li>
+                        <li class="loggedout"><a href="#signup">Sign up</a></li>
 
                     </ul>
                 </div><!--/.nav-collapse -->
@@ -68,7 +68,7 @@
     <div class="container" id="appBody">
 
         <div id="actionResult"></div>
-        <div id="content"></div>
+        <div id="content"><h1>HOME</h1></div>
 
         <hr>
         <footer>
@@ -98,8 +98,6 @@
     <script src="/assets/js/lib/backbone-subroute.js"></script>
 
     <script src="/assets/js/lib/require.js"></script>
-
-    <script src="/assets/js/routerSubrouter.js"></script>
 
     <script src="/assets/js/main.js"></script>
 

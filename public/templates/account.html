@@ -91,7 +91,7 @@
 
 
 <script type='text/template' id='userprofile-template'>
-    <div class="span2">
+    <div class="span3">
         <a href="javascript:void(0)">
             <img class="image img-rounded" src="/assets/img/140x140.gif" alt="placeholder image"
                 height="140" width="140">
@@ -99,12 +99,19 @@
         <br/><br/>
         <label>Username</label>
         <input type="text" value="<%- rc.name %>" class="input-medium" required>
-        <a href="Javascript:setTemplate('/accounts/password/change')">
+        <br/>
+        <a href="#changePassword">
             Change Account password
         </a>
         <br/><br/>
         <h4>Last login Date: </h4>
         <label><%- new Date(rc.lastLogin).toLocaleString() %></label><br/>
+        Account providers:
+        <img alt="password icon" title="password" src="/assets/icons/password-24x24.png">
+        <br/><br/>
+        Logged in with:
+        <img alt="password icon" title="password" src="/assets/icons/password-24x24.png"><br/>
+        <br/>
         <button id="profile-modify-button" class="btn btn-primary">Update</button>
     </div>
     <div class="span4">

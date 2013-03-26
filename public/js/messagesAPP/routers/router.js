@@ -28,7 +28,7 @@ messagesApp.Router = Backbone.SubRoute.extend({
 	    }
 	},
 	messages: function(id){
-                setTemplate ("/messages", function() {
+                setTemplate ("/assets/templates/messages.html", function() {
                        view = new messagesApp.MessagesView({ model: disc1 });
                        console.log("Backbone routing to message");
                       // setTemplate('messages');
@@ -36,13 +36,13 @@ messagesApp.Router = Backbone.SubRoute.extend({
                 });   
 	},
 	discussionHeaders: function(){
-	       setTemplate ("/messages", function() {
+	       setTemplate ("/assets/templates/messages.html", function() {
 		console.log("routing received");
     		messagesApp.DiscussionHeaders.loadDiscussions();
 	       });
 	},
 	newDiscussion: function(id){
-                    setTemplate ("/messages", function() {
+                    setTemplate ("/assets/templates/messages.html", function() {
 		var newDiscussionView = new messagesApp.NewDiscussionView();
 		newDiscussionView.showDiscussionForm();
                    });

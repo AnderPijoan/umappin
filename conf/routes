@@ -17,17 +17,10 @@ GET     /assets/*file               controllers.Assets.at(path="/public", file)
 
 
 # ----------------------------- Authentication routes -------------------------
-GET     /profile                    controllers.Templates.profile
-
-GET     /linkProvider               controllers.Templates.linkProvider
-
-GET     /login                      controllers.Templates.login
 POST    /login                      controllers.Application.doLogin
 
 GET     /logout                     com.feth.play.module.pa.controllers.Authenticate.logout
-GET     /logoutTemplate             controllers.Templates.logout
 
-GET     /signup                     controllers.Templates.signup
 POST    /signup                     controllers.Application.doSignup
 
 GET     /accounts/verify/:token     controllers.Signup.verify(token: String)
@@ -35,14 +28,12 @@ GET     /accounts/exists            controllers.Signup.exists
 GET     /tokenSuccess               controllers.Application.tokenSuccess
 GET     /tokenFail                  controllers.Application.tokenFail
 
-GET     /login/password/forgot      controllers.Templates.forgotPassword
 POST    /login/password/forgot      controllers.Signup.doForgotPassword
 GET     /accounts/password/reset/:token     controllers.Signup.resetPassword(token: String, errors: String ?= "")
 POST    /accounts/password/reset    controllers.Signup.doResetPassword
 GET     /passwordResetSuccess       controllers.Application.passwordResetSuccess
 GET     /passwordResetFail/:msg     controllers.Application.passwordResetFail(msg: String)
 
-GET     /accounts/password/change   controllers.Templates.changePassword
 POST    /accounts/password/change   controllers.Account.doChangePassword
 # --------------------------------------------------------------------------
 
@@ -62,16 +53,6 @@ GET     /authenticate/:provider     com.feth.play.module.pa.controllers.Authenti
 GET     /accounts/unverified        controllers.Signup.unverified
 GET     /authenticate/:provider/denied     controllers.Signup.oAuthDenied(provider: String)
 # --------------------------------------------------------------------------
-
-
-
-# -------------------------------- TEMPLATES -------------------------------
-GET     /home                       controllers.Templates.home
-GET     /editmap                    controllers.Templates.editmap
-GET     /messages                   controllers.Templates.messages
-GET     /account                    controllers.Templates.account
-# --------------------------------------------------------------------------
-
 
 
 # ------------------------------ REST Services -----------------------------

@@ -18,12 +18,10 @@ Account._loadUsersData = () ->
           Account.users.fetch()
 
 Account._loadProfileData = () ->
-  usrParams = mainRouter.params ? JSON.parse sessionStorage.getItem "user"
+  usrParams = umappin.router.params ? JSON.parse sessionStorage.getItem "user"
   Account.profile = new Account.User usrParams
   Account.profile.fetch()
-
   Account.profileview = new Account.ProfileView model: Account.profile
-  #Account.profileview.render()
 
 Account.loadProfileData = () ->
   requirejs [
@@ -62,8 +60,4 @@ Account.loadUsersData = () ->
 $ () ->
   Account.usersview = null
   Account.loadProfileData()
-
-
-
-
-
+  

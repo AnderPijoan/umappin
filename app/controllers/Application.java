@@ -31,8 +31,8 @@ public class Application extends Controller {
 
     // Home page  will remove if all auth modules adapted
 	public static Result index() {
-        return ok(main.render("", "", Html.apply("TODO: Some content here")));
-        //return redirect("/assets/index.html");
+        //return ok(main.render("", "", Html.apply("TODO: Some content here")));
+        return redirect("/");
 	}
 
     /** ------ The next methods handle the followed links from email ------ **/

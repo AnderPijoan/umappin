@@ -47,7 +47,7 @@ public class Global extends GlobalSettings {
 			@Override
 			public Call login() {
 				// Your login page
-				return routes.Templates.login();
+				return routes.Application.index();//return routes.Templates.login();
 			}
 
 			@Override
@@ -59,7 +59,7 @@ public class Global extends GlobalSettings {
 
 			@Override
 			public Call afterLogout() {
-				return routes.Templates.logout();
+				return routes.Application.index();//routes.Templates.logout();
 			}
 
 			@Override
