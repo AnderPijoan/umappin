@@ -2,15 +2,14 @@ window.Account or= {}
 
 _.templateSettings.variable = 'rc'
 
-class window.Account.UsersView extends Backbone.View
-
+class window.Account.UsersListView extends Backbone.View
   follows = null
   followed = null
   refUser = null
   el: 'ul#userlist'
 
   initialize: ->
-    @listenTo @collection, 'reset ', @render
+    @listenTo @collection, 'reset sort ', @render
     @follows = @options.follows
     @followed = @options.followed
     @refUser = @options.refUser

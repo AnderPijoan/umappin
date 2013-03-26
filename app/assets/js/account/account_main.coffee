@@ -5,7 +5,7 @@ Account._loadUsersData = () ->
   Account.follows = new Account.Follows
   Account.followed = new Account.Followed
 
-  Account.usersview = new Account.UsersView
+  Account.usersFiltersView = new Account.UsersFiltersView
     collection: Account.users
     follows: Account.follows
     followed: Account.followed
@@ -33,7 +33,7 @@ Account.loadProfileData = () ->
       Account._loadProfileData()
 
 Account.loadUsersData = () ->
-  if !Account.usersview
+  if !Account.usersListView
     requirejs [
       '/assets/js/account/collections/user_collection.js'
       '/assets/js/account/models/follow_model.js'
@@ -53,11 +53,12 @@ Account.loadUsersData = () ->
               '/assets/js/account/views/user_row_view.js'
             ], () ->
               requirejs [
-                '/assets/js/account/views/users_view.js'
+                '/assets/js/account/views/users_filters_view.js'
+                '/assets/js/account/views/users_list_view.js'
               ], () ->
                 Account._loadUsersData()
 
 $ () ->
-  Account.usersview = null
+  Account.usersListView = null
   Account.loadProfileData()
   

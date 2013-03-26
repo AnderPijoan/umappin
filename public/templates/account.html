@@ -17,7 +17,7 @@
         </div>
 
         <div class="tab-pane fade" id="users">
-            <div id='users-list'>
+            <div id='users-filters'>
 
                 <div class="row">
 
@@ -41,11 +41,11 @@
                     </div>
 
                     <div class="span2">
-                        <select>
-                            <option>Name</option>
-                            <option>Email</option>
-                            <option>Discussions</option>
-                            <option>Awards</option>
+                        <select id='orderFilter'>
+                            <option value='name'>Name</option>
+                            <option value='lastLogin'>Last Login</option>
+                            <option value='discussions'>Discussions</option>
+                            <option value='awards'>Awards</option>
                         </select>
                     </div>
 
