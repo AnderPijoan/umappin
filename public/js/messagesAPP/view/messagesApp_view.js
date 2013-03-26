@@ -1,34 +1,61 @@
 var messagesApp = messagesApp || {};
-messagesApp.DISCUSSION_LIST_BODY ='<ul id="discussion_list"></ul>';
+
 
 //this is the view controller for the all messages APP
 (function(){
 	messagesApp.AppView = Backbone.View.extend({
-		el: 'body',
+
+        events: {
+            "click li>a": "addMore"
+        },
+
+        el: 'ul#discussion_list',
+
+		//set the discussion template
+		template: _.template($('#discussion-list-template').html()),
+		
+		render: function(){
+			//return the template with the info of the model
+			this.$el.html(this.template(this.model.toJSON()));
+			return this;
+		},
+
 		initialize: function () {
-			
 			//if the add method of Discussions is called  "this.addOne" whill be triggered
-			this.listenTo(messagesApp.DiscussionHeaders, 'add', this.addOneDiscussionHeader);
-			this.listenTo(messagesApp.DiscussionHeaders, 'reset', this.restartDiscussionHeaders);
+			this.listenTo(this.model, 'add', this.addOne);
+			
 
 			//messagesApp.Discussions.fetch();
 		},
-		//Discussion Headers methods
-		addOneDiscussionHeader: function (discussionHeader) {
+		addOne: function (discussion) {
+            this.render()
 			//Create ReceivedView and append it to the list
-			console.log("add one message");
-			var view = new messagesApp.ReceivedView({ model: discussionHeader });
-
-			$('#discussion_list').append(view.render().el);
+			//$('#discussion_list').html(this.render().el);
+			//var view = new messagesApp.ReceivedView({ model: discussion });
+			//$('#discussion_list').append(view.render().el);
 		},
-		restartDiscussionHeaders: function(){
-			console.log('Changed to received discussions');
-			$('#messages_body').html(messagesApp.DISCUSSION_LIST_BODY);
-		}
+        addMore: function () {
+            alert('clicked!');
+            var disc3 = new messagesApp.Discussion({
 
-		//End Discussions Headers methods
+                "id":"12345",
+                "subject": "This third subject",
+                "message_number":"4", //number of total messages
+                "unread_messages":"0",
+                "user":{
+                    "id":"124", //creator user id
+                    "name":"Pepe Gotera",
+                    "user_pic":"http://" //blank for now
+
+                }
+
+            });
+            messagesApp.Discussions.add(disc3);
+
+        }
+		
 	});
 })();
 
 //created here ... it will be at another place,...
-var appView = new messagesApp.AppView();
+var appView = new messagesApp.AppView({ model: messagesApp.Discussions });
