@@ -9,7 +9,6 @@ class window.Account.UsersListView extends Backbone.View
   el: 'ul#userlist'
 
   initialize: ->
-    @listenTo @collection, 'reset sort ', @render
     @follows = @options.follows
     @followed = @options.followed
     @refUser = @options.refUser
