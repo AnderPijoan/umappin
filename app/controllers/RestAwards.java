@@ -35,7 +35,7 @@ public class RestAwards extends Controller{
 		}
 	}
 	
-	// How should be the route??
+	// TODO: Method to collect non-readed User Awards. How should be the route??
 	public static Result findNewByUserId(String userId) {
 		List<UserAward> userAwards = UserAward.findNewByUserId(userId);
 		if(userAwards == null){
@@ -44,4 +44,16 @@ public class RestAwards extends Controller{
 			return ok(toJson(userAwards));
 		}
 	}
+	
+	public static Result findByAwardTypeLimit(String triggerType, int limit) {
+		List<Award> awardsWon = AwardTrigger.findByAwardTypeLimit(triggerType, limit);
+		if(awardsWon == null) {
+			return ok(toJson(awardsWon)); //TODO: Shouldn't return an 'ok'.
+		}else{
+			return ok(toJson(awardsWon));
+		}
+		}
+	}
 }
+
+

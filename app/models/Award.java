@@ -27,6 +27,8 @@ public class Award {
 	public String description;
 
 	public int coins;
+	
+	// public int points;
 
 	public static List<Award> all() {
 		if (MorphiaObject.datastore != null) {

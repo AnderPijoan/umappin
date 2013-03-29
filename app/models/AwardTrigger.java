@@ -36,11 +36,16 @@ public class AwardTrigger {
         }
     }
 	
-	public AwardTrigger findByID(String id) {
+	public static AwardTrigger findByID(String id) {
 		return MorphiaObject.datastore.get(AwardTrigger.class, new ObjectId(id));
 	}
 	
-	public List<AwardTrigger> find(String type) {
-		return MorphiaObject.datastore.find(AwardTrigger.class).field(triggerType).equal(type).asList();
+	public static List<AwardTrigger> find(String type) {
+		return MorphiaObject.datastore.find(AwardTrigger.class).field("triggerType").equal(type).asList();
+	}
+	
+	public static List<Award> findByAwardTypeLimit(String type, int limit) {
+		List<Award> awards;
+		return MorphiaObject.datastore.find(AwardTrigger.class).field("triggerType").equal(type).asList();
 	}
 }
