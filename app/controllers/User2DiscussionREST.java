@@ -26,6 +26,9 @@ public class User2DiscussionREST extends Controller {
 			return badRequest(Constants.USER_NOT_LOGGED_IN.toString());
 		}
 		User2Discussion user2disc = MorphiaObject.datastore.get(User2Discussion.class, user.id.toString());
+		if (user2disc == null) {
+			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
+		}
 		List<Discussion> discussions = user2disc.all();
 		if (discussions.size() == 0) {
 			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
@@ -44,6 +47,9 @@ public class User2DiscussionREST extends Controller {
 			return badRequest(Constants.USER_NOT_LOGGED_IN.toString());
 		}
 		User2Discussion user2disc = MorphiaObject.datastore.get(User2Discussion.class, user.id.toString());
+		if (user2disc == null) {
+			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
+		}
 		Discussion discussion = user2disc.findDiscussionById(discussionId);
 		if (discussion == null) {
 			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
