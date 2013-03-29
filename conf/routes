@@ -60,6 +60,7 @@ GET     /rest/messages/:id               controllers.RestMessages.findById(id: S
 
 # awards rest APIs
 
-GET     /rest/awards                   controllers.RestAwards.all
-GET     /rest/awards/:type/:limit      controllers.RestAwards.findByAwardTypeLimit(type: String, limit: Integer)
-GET     /rest/user/:id/awards           controllers.RestAwards.findByUserId(id: String)
+GET     /rest/awards					controllers.RestAwards.all
+GET     /rest/awards/:type/:limit		controllers.RestAwards.findByAwardTypeLimit(type: String, limit: Integer)
+GET     /rest/user/:id/awards			controllers.RestAwards.findByUserId(id: String)
+POST	/rest/user/:id/awards			controllers.RestAwards.saveUserAward(id: String)

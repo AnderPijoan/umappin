@@ -2,6 +2,7 @@ package controllers;
 
 import models.Award;
 import models.AwardTrigger;
+import models.User;
 import models.UserAward;
 import play.libs.Json;
 import play.mvc.Controller;
@@ -12,6 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.bson.types.ObjectId;
+import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
 
 import static play.libs.Json.toJson;
@@ -75,11 +77,21 @@ public class RestAwards extends Controller{
 			return ok(toJson(awardWon));
 		}
 	}
-	/*
-	public static Result saveUserAward() {
-		
+
+	public static Result saveUserAward(String userId) {
+		JsonNode json = request().body().asJson();
+		if(json == null) {
+			return badRequest("No award received");
+		}
+		UserAward userAward = new UserAward();
+		userAward.userId = userId;
+		userAward.award = new ObjectId(json.findPath("id").asText());
+		if(userAward.save() == null) {
+			return badRequest("User Award Not Saved");
+		}else {
+			return ok("User Award Saved");
+		}
 	}
-	*/
 }
 
 
