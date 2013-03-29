@@ -44,8 +44,14 @@ public class AwardTrigger {
 		return MorphiaObject.datastore.find(AwardTrigger.class).field("triggerType").equal(type).asList();
 	}
 	
-	public static List<Award> findByAwardTypeLimit(String type, int limit) {
-		List<Award> awards;
-		return MorphiaObject.datastore.find(AwardTrigger.class).field("triggerType").equal(type).asList();
+	public static Award findByAwardTypeLimit(String type, Integer limit) {
+		Award awards = null;
+		AwardTrigger awardsString =  MorphiaObject.datastore.find(AwardTrigger.class)
+											.field("triggerType").equal(type)
+											.field("limit").equal(limit).get();
+		if(awardsString != null) {
+			awards = Award.findById(awardsString.award.toString());
+		}
+		return awards;
 	}
 }

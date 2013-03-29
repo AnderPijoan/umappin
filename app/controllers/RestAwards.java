@@ -1,6 +1,7 @@
 package controllers;
 
 import models.Award;
+import models.AwardTrigger;
 import models.UserAward;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -29,7 +30,7 @@ public class RestAwards extends Controller{
 	public static Result findByUserId(String userId) {
 		List<UserAward> userAwards = UserAward.findByUserId(userId);
 		if(userAwards == null){
-			return ok(toJson(userAwards)); //TODO: Shouldn't return an 'ok'.
+			return badRequest("No Awards Found");
 		}else{
 			return ok(toJson(userAwards));
 		}
@@ -39,21 +40,25 @@ public class RestAwards extends Controller{
 	public static Result findNewByUserId(String userId) {
 		List<UserAward> userAwards = UserAward.findNewByUserId(userId);
 		if(userAwards == null){
-			return ok(toJson(userAwards)); //TODO: Shouldn't return an 'ok'.
+			return badRequest("No Awards Found");
 		}else{
 			return ok(toJson(userAwards));
 		}
 	}
 	
 	public static Result findByAwardTypeLimit(String triggerType, int limit) {
-		List<Award> awardsWon = AwardTrigger.findByAwardTypeLimit(triggerType, limit);
-		if(awardsWon == null) {
-			return ok(toJson(awardsWon)); //TODO: Shouldn't return an 'ok'.
+		Award awardWon = AwardTrigger.findByAwardTypeLimit(triggerType, limit);
+		if(awardWon == null) {
+			return badRequest("No Awards Found");
 		}else{
-			return ok(toJson(awardsWon));
-		}
+			return ok(toJson(awardWon));
 		}
 	}
+	/*
+	public static Result saveUserAward() {
+		
+	}
+	*/
 }
 
 
