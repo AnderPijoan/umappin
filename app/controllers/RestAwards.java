@@ -3,10 +3,17 @@ package controllers;
 import models.Award;
 import models.AwardTrigger;
 import models.UserAward;
+import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+
+import org.bson.types.ObjectId;
+import org.codehaus.jackson.node.ObjectNode;
+
 import static play.libs.Json.toJson;
 
 /**
@@ -23,7 +30,7 @@ public class RestAwards extends Controller{
 	}
 
 	public static Result findById(String id){
-		Award award = Award.findById(id);
+		Award award = Award.findById(new ObjectId(id));
 		return ok(toJson(award));
 	}
 	
@@ -32,7 +39,21 @@ public class RestAwards extends Controller{
 		if(userAwards == null){
 			return badRequest("No Awards Found");
 		}else{
-			return ok(toJson(userAwards));
+			ObjectNode userAwardNode;
+			UserAward userAward;
+			List<ObjectNode> userAwardList = new ArrayList<ObjectNode>();
+			Iterator<UserAward> i = userAwards.iterator();
+			while(i.hasNext()) {
+				userAward = i.next();
+				userAwardNode = Json.newObject();
+				userAwardNode.put("award", Json.toJson(Award.findById(userAward.award)));
+				userAwardNode.put("timeStamp", Json.toJson(userAward.timeStamp));
+				userAwardNode.put("isNew", userAward.isNew);
+			
+				userAwardList.add(userAwardNode);
+			}
+			
+			return ok(Json.toJson(userAwardList));
 		}
 	}
 	

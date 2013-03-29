@@ -45,13 +45,9 @@ public class AwardTrigger {
 	}
 	
 	public static Award findByAwardTypeLimit(String type, Integer limit) {
-		Award awards = null;
-		AwardTrigger awardsString =  MorphiaObject.datastore.find(AwardTrigger.class)
+		AwardTrigger awardTrigger =  MorphiaObject.datastore.find(AwardTrigger.class)
 											.field("triggerType").equal(type)
 											.field("limit").equal(limit).get();
-		if(awardsString != null) {
-			awards = Award.findById(awardsString.award.toString());
-		}
-		return awards;
+		return awardTrigger !=null ? Award.findById(awardTrigger.award) : null;
 	}
 }

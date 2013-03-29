@@ -34,7 +34,7 @@ public class UserAward {
 		isNew = true;
 		MorphiaObject.datastore.save(this);
 		return this.userId;
-}
+	}
 	
 	public static List<UserAward> findByUserId(String userId) {
 		//Incorporar Awards en el JSON.

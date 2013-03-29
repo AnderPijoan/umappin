@@ -38,7 +38,7 @@ public class Award {
 		}
 	}
 
-	public static Award findById(String id) {
-		return MorphiaObject.datastore.get(Award.class, new ObjectId(id));
+	public static Award findById(ObjectId id) {
+		return MorphiaObject.datastore.get(Award.class, id);
 	}
 }
