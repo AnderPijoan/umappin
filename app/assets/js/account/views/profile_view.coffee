@@ -6,7 +6,6 @@ class window.Account.ProfileView extends Backbone.View
 
   events:
     "click button":  "update"
-    "change input":  "update"
 
   el: "form#profile-form"
 
@@ -16,8 +15,9 @@ class window.Account.ProfileView extends Backbone.View
     @listenTo @model, 'change', @render
 
   render: ->
-    $(@el).append @template @model.attributes
+    $(@el).html @template @model.attributes
     @
 
   update: ->
-    console.log "Ahh"
+    # TODO
+    console.log "TODO"

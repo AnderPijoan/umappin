@@ -1,20 +1,12 @@
-function setTemplate(url) {
-    $('div#actionResult').css('display','none');
-    $('div#content').empty();
-    var templateGet = $.get( url );
-    templateGet.done(function( data ) {
-        $.get(
-            data,
+function setTemplate(url, callback) {
+    $('div#actionResult').empty();
+    $.get(
+            url,
             function(template) {
                 $('div#content').empty().html(template);
-                sessionStorage.setItem("lastTemplate", url);
+                if (callback) callback.call(this);
             }
-        )
-    });
-    templateGet.error(function( data ) {
-        $('div#actionResult').css('display','block').empty().html(
-            "<div class='alert alert-error'>" + data.responseText + "</div>");
-    });
+        );
 }
 
 function updateSessionViews(username) {
@@ -22,19 +14,15 @@ function updateSessionViews(username) {
     $('.loggedin').css('display', username != "" ? 'block' : 'none').find('#username').text(username);
 }
 
-function doLogout() {
-    setTemplate('/logout');
-    sessionStorage.removeItem("user");
-    updateSessionViews("");
-}
-
-function home() {
-    sessionStorage.setItem("lastTemplate", "/home");
-    window.location.href = "/";
-}
-
 $(function() {
-
+    // Initialize main routing namespace
+    window.umappin = window.umappin || {};
+    // Initialize the main router
+    requirejs(['/assets/js/router.js'], function() {
+        umappin.router || (umappin.router = new umappin.Router());
+        Backbone.history.start();
+    });
+    // Check the user session
     var json = sessionStorage.getItem("user");
     if (json != null && json != undefined && json != "") {
         var usr = JSON.parse(json);
@@ -49,9 +37,4 @@ $(function() {
         );
         updateSessionViews("");
     }
-    var lastTemplate = sessionStorage.getItem("lastTemplate");
-    if (lastTemplate == null || lastTemplate == "")
-        lastTemplate = "/home";
-    setTemplate(lastTemplate);
-
 });

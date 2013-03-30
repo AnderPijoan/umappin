@@ -16,7 +16,10 @@ var messagesApp = messagesApp || {};
 		showDiscussionForm: function (){
 			console.log('some');
 			this.$el.on('hide',function(){
-				messagesApp.messagesRouter.back();
+				//Call back function from messages Router
+				//impl. in messagesApp/routeps/router.js
+				//It can be changed if /app/assets/js/router.coffee is changed
+				umappin.router.subroutes.messagesRouter.back();
 			}).modal('show');
 
 		},

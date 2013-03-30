@@ -1,6 +1,7 @@
 var messagesApp = messagesApp || {};
 
 (function(){
+
     messagesApp.Discussion = Backbone.Model.extend({
 
         validate: function(attrs){

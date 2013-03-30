@@ -7,24 +7,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class Follows extends Follow {
+public class Followed extends Follow {
 
     // Search methods
-    public static List<Follows> all() {
+    public static List<Followed> all() {
         if (MorphiaObject.datastore != null) {
-            List<Follows> res = MorphiaObject.datastore.find(Follows.class).asList();
+            List<Followed> res = MorphiaObject.datastore.find(Followed.class).asList();
             if (res != null)
                 return res;
         }
-        return new ArrayList<Follows>();
+        return new ArrayList<Followed>();
     }
 
     public static Follow findById(String id) {
-        return MorphiaObject.datastore.find(Follows.class).field("_id").equal(id).get();
+        return MorphiaObject.datastore.find(Followed.class).field("_id").equal(id).get();
     }
 
     public static Follow findByUserId(String userId) {
-        return MorphiaObject.datastore.find(Follows.class).field("userId").equal(userId).get();
+        return MorphiaObject.datastore.find(Followed.class).field("userId").equal(userId).get();
     }
 
     // Delete method

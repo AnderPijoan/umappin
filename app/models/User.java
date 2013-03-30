@@ -71,6 +71,10 @@ public class User implements Subject {
         }
     }
 
+    public static User findById(String id) {
+        return MorphiaObject.datastore.find(User.class).field("_id").equal(id).get();
+    }
+
     public static User findByName(String name) {
         return MorphiaObject.datastore.find(User.class).field("name").equal(name).get();
     }
@@ -110,6 +114,8 @@ public class User implements Subject {
         return findByAuthUserIdentity(identity) != null;
 	}
 
+/*
+3 times the same method ¿?¿?
     public static User findById(String id){
     	return MorphiaObject.datastore.get(User.class, new ObjectId(id));
     }
@@ -117,6 +123,7 @@ public class User implements Subject {
     public static User findById(ObjectId id){
     	return MorphiaObject.datastore.get(User.class, id);
     }
+    */
     
 	public static User findByAuthUserIdentity(final AuthUserIdentity identity) {
 		if (identity == null) {
