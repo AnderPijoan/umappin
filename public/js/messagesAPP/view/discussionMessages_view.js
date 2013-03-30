@@ -1,5 +1,5 @@
 var messagesApp = messagesApp || {};
-
+_.templateSettings.variable = "rc";
 (function(){
 	//this is the view controller for the messages of a discussion
 

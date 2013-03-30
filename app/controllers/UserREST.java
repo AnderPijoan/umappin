@@ -24,8 +24,8 @@ public class UserREST extends Controller {
         }
     }
 
-    public static Result getUser(String user) {
-        User usr =  User.findByName(user);
+    public static Result getUser(String id) {
+        User usr =  User.findById(id);
         if (usr == null) {
             return badRequest(Constants.USERS_EMPTY.toString());
         } else {

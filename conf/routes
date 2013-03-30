@@ -5,7 +5,9 @@
 
 # ------------------------------- Main routes ---------------------------------
 # Home page
-GET     /                           controllers.Application.index
+GET     /                           controllers.Assets.at(path="/public", file="index.html")
+# this is a workaround for oAuth call
+GET     /main                       controllers.Application.index
 # Javascript routes
 GET     /assets/javascript/routes.js    controllers.Application.jsRoutes
 # Map static resources from the /public folder to the /assets URL path
@@ -15,17 +17,10 @@ GET     /assets/*file               controllers.Assets.at(path="/public", file)
 
 
 # ----------------------------- Authentication routes -------------------------
-GET     /profile                    controllers.Templates.profile
-
-GET     /linkProvider               controllers.Templates.linkProvider
-
-GET     /login                      controllers.Templates.login
 POST    /login                      controllers.Application.doLogin
 
 GET     /logout                     com.feth.play.module.pa.controllers.Authenticate.logout
-GET     /logoutTemplate             controllers.Templates.logout
 
-GET     /signup                     controllers.Templates.signup
 POST    /signup                     controllers.Application.doSignup
 
 GET     /accounts/verify/:token     controllers.Signup.verify(token: String)
@@ -33,14 +28,12 @@ GET     /accounts/exists            controllers.Signup.exists
 GET     /tokenSuccess               controllers.Application.tokenSuccess
 GET     /tokenFail                  controllers.Application.tokenFail
 
-GET     /login/password/forgot      controllers.Templates.forgotPassword
 POST    /login/password/forgot      controllers.Signup.doForgotPassword
 GET     /accounts/password/reset/:token     controllers.Signup.resetPassword(token: String, errors: String ?= "")
 POST    /accounts/password/reset    controllers.Signup.doResetPassword
 GET     /passwordResetSuccess       controllers.Application.passwordResetSuccess
 GET     /passwordResetFail/:msg     controllers.Application.passwordResetFail(msg: String)
 
-GET     /accounts/password/change   controllers.Templates.changePassword
 POST    /accounts/password/change   controllers.Account.doChangePassword
 # --------------------------------------------------------------------------
 
@@ -62,17 +55,6 @@ GET     /authenticate/:provider/denied     controllers.Signup.oAuthDenied(provid
 # --------------------------------------------------------------------------
 
 
-
-# -------------------------------- TEMPLATES -------------------------------
-GET     /home                       controllers.Templates.home
-GET     /editmap                    controllers.Templates.editmap
-GET     /userlist                   controllers.Templates.userlist
-GET     /messages                   controllers.Templates.messages
-GET     /account                    controllers.Templates.account
-# --------------------------------------------------------------------------
-
-
-
 # ------------------------------ REST Services -----------------------------
 # REST CRUD for Follows
 GET     /follows                    controllers.FollowREST.getAllFollows()
@@ -81,9 +63,16 @@ POST    /follows                    controllers.FollowREST.addFollows()
 PUT     /follows/:id                controllers.FollowREST.updateFollows(id: String)
 DELETE  /follows/:id                controllers.FollowREST.deleteFollows(id: String)
 
+# REST CRUD for Followed
+GET     /followed                    controllers.FollowREST.getAllFollowed()
+GET     /followed/:id                controllers.FollowREST.getFollowed(id: String)
+POST    /followed                    controllers.FollowREST.addFollowed()
+PUT     /followed/:id                controllers.FollowREST.updateFollowed(id: String)
+DELETE  /followed/:id                controllers.FollowREST.deleteFollowed(id: String)
+
 # REST CRUD for Users
 GET     /users                      controllers.UserREST.getUsers()
-GET     /users/:name                controllers.UserREST.getUser(name: String)
+GET     /users/:id                  controllers.UserREST.getUser(id: String)
 POST    /users                      controllers.UserREST.addUser()
 
 GET     /sessionuser                controllers.UserREST.getSessionUser

@@ -16,7 +16,7 @@ var messagesApp = messagesApp || {};
 		showDiscussionForm: function (){
 			console.log('some');
 			this.$el.on('hide',function(){
-				messagesApp.messagesRouter.back();
+				umappin.Routers.messagesRouter.back();
 			}).modal('show');
 
 		},
