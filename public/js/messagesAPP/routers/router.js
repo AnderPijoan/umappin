@@ -28,24 +28,34 @@ messagesApp.Router = Backbone.SubRoute.extend({
 	    }
 	},
 	messages: function(id){
-                setTemplate ("/assets/templates/messages.html", function() {
-                       view = new messagesApp.MessagesView({ model: disc1 });
-                       console.log("Backbone routing to message");
-                      // setTemplate('messages');
-                       $('#messages_body').html(view.render().el);   
-                });   
+		this.loadTemplateIfNeed(function(){
+               view = new messagesApp.MessagesView({ model: disc1 });
+               console.log("Backbone routing to message");
+              // setTemplate('messages');
+               $('#messages_body').html(view.render().el);   
+        });   
 	},
 	discussionHeaders: function(){
-	       setTemplate ("/assets/templates/messages.html", function() {
-		console.log("routing received");
+		this.loadTemplateIfNeed(function(){
+			console.log("routing received");
     		messagesApp.DiscussionHeaders.loadDiscussions();
-	       });
+	    });
 	},
 	newDiscussion: function(id){
-                    setTemplate ("/assets/templates/messages.html", function() {
-		var newDiscussionView = new messagesApp.NewDiscussionView();
-		newDiscussionView.showDiscussionForm();
-                   });
+		this.loadTemplateIfNeed(function(){
+			console.log('newDiscussion');
+			var newDiscussionView = new messagesApp.NewDiscussionView();
+			newDiscussionView.showDiscussionForm();
+        });
+	},
+	loadTemplateIfNeed:function(callback){
+		//it reloads the template only if not set
+		if($('#messages_body').length ==0){
+			setTemplate ("/assets/templates/messages.html", callback);
+
+		}else{		
+			callback();
+		}
 	}
 
 });

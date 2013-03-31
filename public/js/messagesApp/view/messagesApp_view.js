@@ -11,7 +11,6 @@ messagesApp.DISCUSSION_LIST_BODY ='<ul id="discussion_list"></ul>';
 			this.listenTo(messagesApp.DiscussionHeaders, 'add', this.addOneDiscussionHeader);
 			this.listenTo(messagesApp.DiscussionHeaders, 'reset', this.restartDiscussionHeaders);
 
-
 			//messagesApp.Discussions.fetch();
 		},
 		//Discussion Headers methods

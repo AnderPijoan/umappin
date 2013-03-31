@@ -128,8 +128,19 @@ public class User2DiscussionREST extends Controller {
 		}
 		user2disc.discussionIds.add(discussion.id.toString());
 		user2disc.save();
+
+
+		//Copy of getDiscussion
+		ObjectNode discussionNode = Json.newObject();
+		discussionNode.put("id", discussion.id.toString());
+		discussionNode.put("subject", discussion.subject);
+		discussionNode.put("messages", Json.toJson(discussion.getMessages()));
+
+		ObjectNode response = Json.newObject();
+
+		return ok(discussionNode);
 		
-		return ok("New discussion " + discussion.id + " created");
+		//return ok("New discussion " + discussion.id + " created");
 	}
 	
 	public static Result reply(String id) {

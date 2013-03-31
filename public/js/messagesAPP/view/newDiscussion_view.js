@@ -16,7 +16,10 @@ var messagesApp = messagesApp || {};
 		showDiscussionForm: function (){
 			console.log('some');
 			this.$el.on('hide',function(){
-				umappin.Routers.messagesRouter.back();
+				//Call back function from messages Router
+				//impl. in messagesApp/routeps/router.js
+				//It can be changed if /app/assets/js/router.coffee is changed
+				umappin.router.subroutes.messagesRouter.back();
 			}).modal('show');
 
 		},
@@ -40,19 +43,27 @@ var messagesApp = messagesApp || {};
 				receivers = this.$el.find('#form_receivers').val().split(',');
 			}
 
-			var some={
-				"discussion":{
-					"subject": "'"+subject+"'",
-					"message":{
-						"message":"'"+message+"'",
-					},
-					"to_friends": toFriends,
-					"receiver_users": receivers,
-
-
-				}
+			var newDiscussion={
+				"subject": "'"+subject+"'",
+				"messages":{
+					"message":"'"+message+"'",
+				},
+				"to_friends": toFriends,
+				"receivers": receivers,
 			};
-			console.log("Create Message "+subject);
+
+
+			var a = new messagesApp.Discussion(newDiscussion);
+			messagesApp.DiscussionCollection.add(a);
+
+			a.save({}, {  // se genera POST /usuarios  - contenido: {nombre:'Alfonso'}
+			    success:function(){
+			        // Suponiendo que el servidor ha devuelto el objeto {"id": 1}
+			        alert(a.id);  // imprime 1
+			    }
+			});
+
+			//console.error(some);
 			//checx if the discussion have been send
 			if(true){
 				//clean the form

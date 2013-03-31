@@ -114,7 +114,10 @@ public class User implements Subject {
         return findByAuthUserIdentity(identity) != null;
 	}
 
-    /*public static User findById(String id){
+
+    /*
+	3 times the same method ¿?¿?
+    public static User findById(String id){
     	return MorphiaObject.datastore.get(User.class, new ObjectId(id));
     }*/
     

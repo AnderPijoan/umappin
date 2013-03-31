@@ -2,6 +2,7 @@ var messagesApp = messagesApp || {};
 
 (function(){
 	var DiscussionHeaderList =Backbone.Collection.extend({
+
 		model:messagesApp.DiscussionHeader,
 		loadDiscussions:function(){
 			//here we load all discussions from the server side,... now from json File
@@ -13,12 +14,9 @@ var messagesApp = messagesApp || {};
 				});
 			});
 		}
-	
-
 
 	});
 
 	// Create our global collection of **Discussions**.
 	messagesApp.DiscussionHeaders = new DiscussionHeaderList();
 }());
-
