@@ -32,7 +32,7 @@ public class Global extends GlobalSettings {
         Logger.debug("** Starting Application **");
         try {
             //MorphiaObject.mongo = new Mongo("10.172.104.17", 27017);
-        	MorphiaObject.mongo = new Mongo("localhost", 27017);
+        	MorphiaObject.mongo = new Mongo("127.0.0.1", 27017);
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }

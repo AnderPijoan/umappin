@@ -1,1 +1,1 @@
-# Play Authenticate sample Java application
+# Play Authenticate sample Java application.

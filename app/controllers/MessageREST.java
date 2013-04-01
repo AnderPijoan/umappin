@@ -21,7 +21,7 @@ public class MessageREST extends Controller {
 		if (messages.size() == 0) {
 			return badRequest(Constants.MESSAGES_EMPTY.toString());
 		} else {
-			return ok(Json.toJson(messages));
+			return ok(Json.toJson(Message.messagesToObjectNodes(messages)));
 		}
 	}
 
@@ -30,7 +30,7 @@ public class MessageREST extends Controller {
 		if (message == null){
 			return badRequest(Constants.MESSAGES_EMPTY.toString());
 		} else {
-		return ok(toJson(message));
+		return ok(toJson(Message.messageToObjectNode(message)));
 		}
 	}
 }
