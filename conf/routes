@@ -72,9 +72,8 @@ DELETE  /followed/:id                controllers.FollowREST.deleteFollowed(id: S
 
 # REST CRUD for Users
 GET     /users                      controllers.UserREST.getUsers()
-GET     /users/:id                controllers.UserREST.getUser(id: String)
+GET     /users/:id                	controllers.UserREST.getUser(id: String)
 POST    /users                      controllers.UserREST.addUser()
-
 GET     /sessionuser                controllers.UserREST.getSessionUser
 
 # REST CRUD for discussions
@@ -85,5 +84,10 @@ POST    /discussions                controllers.User2DiscussionREST.addDiscussio
 POST	/discussions/:id            controllers.User2DiscussionREST.reply(id: String)
 POST	/discussions/:id/:msgid     controllers.User2DiscussionREST.replyToMessage(id: String, msgid: String)
 
-# --------------------------------------------------------------------------
+# REST CRUD for awards
+GET     /rest/awards					controllers.AwardREST.all
+GET     /rest/awards/:type/:limit		controllers.AwardREST.findByAwardTypeLimit(type: String, limit: Integer)
+GET     /rest/user/:id/awards			controllers.AwardREST.findByUserId(id: String)
+POST	/rest/user/:id/awards			controllers.AwardREST.saveUserAward(id: String)
 
+# --------------------------------------------------------------------------
