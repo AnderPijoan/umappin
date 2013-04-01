@@ -18,24 +18,21 @@ import org.codehaus.jackson.node.ObjectNode;
 
 import static play.libs.Json.toJson;
 
-/**
- * User: igarri
- * Date: 01/03/13
- * Time: 17.25
- */
-
-public class RestAwards extends Controller{
+public class AwardREST extends Controller{
 	
+	// GET
 	public static Result all(){
 		List<Award> awards = Award.all();
 		return ok(toJson(awards));
 	}
 
+	// GET
 	public static Result findById(String id){
 		Award award = Award.findById(new ObjectId(id));
 		return ok(toJson(award));
 	}
 	
+	// GET
 	public static Result findByUserId(String userId) {
 		List<UserAward> userAwards = UserAward.findByUserId(userId);
 		if(userAwards == null){
@@ -59,7 +56,9 @@ public class RestAwards extends Controller{
 		}
 	}
 	
-	// TODO: Method to collect non-readed User Awards. How should be the route??
+	// TODO: 	Method to collect non-read User Awards. How should be the route??
+	//			It also should update the non-read flags to read if the call is made
+	//			by the awards owner.
 	public static Result findNewByUserId(String userId) {
 		List<UserAward> userAwards = UserAward.findNewByUserId(userId);
 		if(userAwards == null){
@@ -69,6 +68,7 @@ public class RestAwards extends Controller{
 		}
 	}
 	
+	// GET
 	public static Result findByAwardTypeLimit(String triggerType, int limit) {
 		Award awardWon = AwardTrigger.findByAwardTypeLimit(triggerType, limit);
 		if(awardWon == null) {
@@ -78,6 +78,7 @@ public class RestAwards extends Controller{
 		}
 	}
 
+	// POST
 	public static Result saveUserAward(String userId) {
 		JsonNode json = request().body().asJson();
 		if(json == null) {
