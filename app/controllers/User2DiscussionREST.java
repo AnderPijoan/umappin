@@ -1,7 +1,5 @@
 package controllers;
 
-import static play.libs.Json.toJson;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -33,10 +31,10 @@ public class User2DiscussionREST extends Controller {
 		if (discussions.size() == 0) {
 			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
 		} else {
-			
 			ObjectNode response = Json.newObject();
-			response.put("discussions", Json.toJson(discussions));
+			response.put("discussions", Json.toJson(Discussion.discussionsToObjectNodes(discussions)));
 			
+			// Return the response
 			return ok(response);
 		}
 	}
@@ -53,15 +51,12 @@ public class User2DiscussionREST extends Controller {
 		Discussion discussion = user2disc.findDiscussionById(discussionId);
 		if (discussion == null) {
 			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
-		} 
-		ObjectNode discussionNode = Json.newObject();
-		discussionNode.put("id", discussion.id.toString());
-		discussionNode.put("subject", discussion.subject);
-		discussionNode.put("messages", Json.toJson(discussion.getMessages()));
+		}
 
 		ObjectNode response = Json.newObject();
-		response.put("discussion", Json.toJson(discussionNode));
+		response.put("discussion", Json.toJson(Discussion.discussionToObjectNode(discussion)));
 
+		// Return the response
 		return ok(response);
 	}
 	
@@ -79,7 +74,9 @@ public class User2DiscussionREST extends Controller {
 		if (message == null){
 			return badRequest(Constants.MESSAGES_EMPTY.toString());
 		}
-		return ok(Json.toJson(message));
+		
+		// Return a copy of the message
+		return ok(Json.toJson(Message.messageToObjectNode(message)));
 	}
 	
 	public static Result addDiscussion() {
@@ -91,12 +88,13 @@ public class User2DiscussionREST extends Controller {
 		if(json == null) {
 			return badRequest(Constants.JSON_EMPTY.toString());
 		}
-		Discussion discussion = new Discussion();		// Create discussion
-		discussion.messages = new ArrayList<Message>();
-		discussion.subject = json.findPath("subject").getTextValue();
 		
+		Discussion discussion = new Discussion();		// Create discussion
+		discussion.messageIds = new ArrayList<String>();
+		discussion.subject = json.findPath("subject").getTextValue();
+
 		Message message = new Message();		// Create message
-		message.body = json.findPath("body").getTextValue();
+		message.message = json.findPath("message").getTextValue();
 		message.writerId = user.id.toString();
 		message.save(); // Save Message
 		
@@ -129,18 +127,8 @@ public class User2DiscussionREST extends Controller {
 		user2disc.discussionIds.add(discussion.id.toString());
 		user2disc.save();
 
-
-		//Copy of getDiscussion
-		ObjectNode discussionNode = Json.newObject();
-		discussionNode.put("id", discussion.id.toString());
-		discussionNode.put("subject", discussion.subject);
-		discussionNode.put("messages", Json.toJson(discussion.getMessages()));
-
-		ObjectNode response = Json.newObject();
-
-		return ok(discussionNode);
-		
-		//return ok("New discussion " + discussion.id + " created");
+		//Return a copy of the discussion
+		return ok(Json.toJson(Discussion.discussionToObjectNode(discussion)));
 	}
 	
 	public static Result reply(String id) {
@@ -157,14 +145,15 @@ public class User2DiscussionREST extends Controller {
 			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
 		}
 		Message message = new Message();
-		message.body = json.findPath("body").getTextValue();
+		message.message = json.findPath("message").getTextValue();
 		message.writerId = user.id.toString();
 		message.save();
 		
 		discussion.addMessage(message);
 		discussion.save(); // Save discussion
 		
-		return ok("New message " + message.id + " created");
+		// Return a copy of the discussion
+		return ok(Json.toJson(Discussion.discussionToObjectNode(discussion)));
 	}
 	
 	public static Result replyToMessage(String id, String msgId){
@@ -180,18 +169,22 @@ public class User2DiscussionREST extends Controller {
 		if (discussion == null){
 			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
 		}
-		Message msg = Message.findById(msgId);
-		if(discussion.messages.contains(msg)){
+		
+		// If the message replying to its really from this discussion
+		Message msg = discussion.findMessageById(msgId);
+		if(msg != null){
 			Message message = new Message();
-			message.body = json.findPath("body").getTextValue();
+			message.message = json.findPath("message").getTextValue();
 			message.replyToMsg = msg.id.toString();
 			message.writerId = user.id.toString();
-			message.save();
-			discussion.addMessage(message);
-			discussion.save();
-			return ok(toJson(discussion));
+			message.save(); // Save Message
+			
+			discussion.addMessage(message); // Add message to its discussion
+			discussion.save(); // Save Discussion
+			
+			// Return a copy of the discussion
+			return ok(Discussion.discussionToObjectNode(discussion));
 		}
 		return badRequest(Constants.MESSAGES_EMPTY.toString());
 	}
-	
 }

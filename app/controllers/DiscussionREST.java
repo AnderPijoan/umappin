@@ -77,7 +77,7 @@ public class DiscussionREST extends Controller {
 			if (message == null){
 				return badRequest(Constants.MESSAGES_EMPTY.toString());
 			}
-			return ok(Json.toJson(message));
+			return ok(Json.toJson(Message.messageToObjectNode(message)));
 		}
 	}
 
@@ -92,15 +92,18 @@ public class DiscussionREST extends Controller {
 		}
 
 		Discussion discussion = new Discussion();
-		discussion.messages = new ArrayList<Message>();
+		discussion.messageIds = new ArrayList<String>();
 		discussion.subject = json.findPath("subject").getTextValue();
+		
 		Message message = new Message();
-		message.body = json.findPath("body").getTextValue();
+		message.message = json.findPath("body").getTextValue();
 		message.writerId = user.id.toString();
-		message.save();
-		discussion.addMessage(message);
-		discussion.save();
-		return ok("New discussion " + discussion.id + " created");
+		message.save(); // Save message
+		
+		discussion.addMessage(message); // Add message to discussion
+		discussion.save(); // Save discussion
+		
+		return ok(Discussion.discussionToObjectNode(discussion));
 	}
 
 	public static Result reply(String id){
@@ -117,12 +120,12 @@ public class DiscussionREST extends Controller {
 			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
 		}
 		Message message = new Message();
-		message.body = json.findPath("body").getTextValue();
+		message.message = json.findPath("body").getTextValue();
 		message.writerId = user.id.toString();
 		message.save();
 		discussion.addMessage(message);
 		discussion.save();
-		return ok(toJson(discussion));
+		return ok(toJson(Discussion.discussionToObjectNode(discussion)));
 
 	}
 
@@ -139,16 +142,18 @@ public class DiscussionREST extends Controller {
 		if (discussion == null){
 			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
 		}
-		Message msg = Message.findById(msgId);
-		if(discussion.messages.contains(msg)){
+		Message msg = discussion.findMessageById(msgId);
+		if(msg != null){
 			Message message = new Message();
-			message.body = json.findPath("body").getTextValue();
+			message.message = json.findPath("body").getTextValue();
 			message.replyToMsg = msg.id.toString();
 			message.writerId = user.id.toString();
-			message.save();
-			discussion.addMessage(message);
-			discussion.save();
-			return ok(toJson(discussion));
+			message.save(); // Save message
+			
+			discussion.addMessage(message); // Add message to discussion
+			discussion.save(); // Save discussion
+			
+			return ok(toJson(Discussion.discussionToObjectNode(discussion)));
 		} else {
 			return badRequest(Constants.MESSAGES_EMPTY.toString());
 		}
