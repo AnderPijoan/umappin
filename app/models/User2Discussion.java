@@ -1,7 +1,6 @@
 package models;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.bson.types.ObjectId;
@@ -29,7 +28,7 @@ public class User2Discussion {
 		if (MorphiaObject.datastore != null) {
 			List<Discussion> result = new ArrayList<Discussion>();
 			for (String id : this.discussionIds){
-				result.add(MorphiaObject.datastore.get(Discussion.class, id));
+				result.add(MorphiaObject.datastore.get(Discussion.class, new ObjectId(id)));
 			}
 			return result;
 		} else {
@@ -48,7 +47,7 @@ public class User2Discussion {
 	
 	public Discussion findDiscussionById(String id) {
 		if (this.discussionIds.contains(id)){
-			return MorphiaObject.datastore.get(Discussion.class, id);
+			return MorphiaObject.datastore.get(Discussion.class, new ObjectId(id));
 		} else {
 			return null;
 		}

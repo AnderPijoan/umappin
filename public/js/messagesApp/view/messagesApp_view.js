@@ -1,5 +1,4 @@
 var messagesApp = messagesApp || {};
-
 messagesApp.DISCUSSION_LIST_BODY ='<ul id="discussion_list"></ul>';
 
 //this is the view controller for the all messages APP
