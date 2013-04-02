@@ -30,7 +30,7 @@ public class Discussion {
 
 	public String subject;
 
-	public List<String> messageIds;
+	public List<String> messageIds = new ArrayList<String>();
 
 	public Date timeStamp;
 	
