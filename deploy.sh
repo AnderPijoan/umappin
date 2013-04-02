@@ -6,7 +6,7 @@ git pull origin master
 pidof java |xargs kill 
 play clean compile stage
 rm -r /var/www/umappin
-mkdir var/www/umappin
+mkdir /var/www/umappin
 cp -r target/scala-2.10/resource_managed/main/public/. /var/www/umappin/
 cp -r public/. /var/www/umappin/
 for x in 000 100; do 
