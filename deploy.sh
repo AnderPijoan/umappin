@@ -7,7 +7,7 @@ pidof java |xargs kill
 play clean compile stage
 cp -r target/scala-2.10/resource_managed/main/public/. /var/www/umappin/
 cp -r public/. /var/www/umappin/
-for x in 000 100;
- do 
+for x in 000 100; do 
    target/start -Dpidfile.path=p$x -Dhttp.port=9$x&	
 done
+target/start -Dpidfile.path=/dev/null -Dhttp.port=8001&
