@@ -38,21 +38,7 @@ public class AwardREST extends Controller{
 		if(userAwards == null){
 			return badRequest("No Awards Found");
 		}else{
-			ObjectNode userAwardNode;
-			UserAward userAward;
-			List<ObjectNode> userAwardList = new ArrayList<ObjectNode>();
-			Iterator<UserAward> i = userAwards.iterator();
-			while(i.hasNext()) {
-				userAward = i.next();
-				userAwardNode = Json.newObject();
-				userAwardNode.put("award", Json.toJson(Award.findById(userAward.award)));
-				userAwardNode.put("timeStamp", Json.toJson(userAward.timeStamp));
-				userAwardNode.put("isNew", userAward.isNew);
-			
-				userAwardList.add(userAwardNode);
-			}
-			
-			return ok(Json.toJson(userAwardList));
+			return ok(Json.toJson(UserAward.userAwardsToObjectNodes(userAwards)));
 		}
 	}
 	
@@ -64,7 +50,7 @@ public class AwardREST extends Controller{
 		if(userAwards == null){
 			return badRequest("No Awards Found");
 		}else{
-			return ok(toJson(userAwards));
+			return ok(Json.toJson(UserAward.userAwardsToObjectNodes(userAwards)));
 		}
 	}
 	
@@ -74,7 +60,7 @@ public class AwardREST extends Controller{
 		if(awardWon == null) {
 			return badRequest("No Awards Found");
 		}else{
-			return ok(toJson(awardWon));
+			return ok(toJson(Award.awardToObjectNode(awardWon)));
 		}
 	}
 
