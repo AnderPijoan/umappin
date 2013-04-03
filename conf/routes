@@ -91,3 +91,13 @@ GET     /rest/user/:id/awards			controllers.AwardREST.findByUserId(id: String)
 POST	/rest/user/:id/awards			controllers.AwardREST.saveUserAward(id: String)
 
 # --------------------------------------------------------------------------
+
+
+# TESTINGG!!!
+GET     /items                    controllers.ItemREST.getItems()
+GET     /items/:id                controllers.ItemREST.getItem(id: String)
+POST    /items                    controllers.ItemREST.addItem()
+PUT     /items/:id                controllers.ItemREST.updateItem(id: String)
+DELETE  /items/:id                controllers.ItemREST.deleteItem(id: String)
+
+POST    /items/test/:name              controllers.ItemREST.addTestItem(name: String)
