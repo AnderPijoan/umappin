@@ -69,9 +69,21 @@ public class Message {
 	 * @return ObjectNode ready for use in toJson
 	 */
 	public static ObjectNode messageToObjectNode (Message message){
+		
+		User user = User.findById(message.writerId);
+		if (user == null){
+			return null;
+		}
+		
+		ObjectNode userNode = Json.newObject();
+		userNode.put("id", user.id.toString());
+		userNode.put("name", user.name);
+		userNode.put("firstName", user.firstName);
+		userNode.put("lastName", user.lastName);
+		
 		ObjectNode messageNode = Json.newObject();
 		messageNode.put("id", message.id.toString());
-		messageNode.put("writerId", message.writerId.toString());
+		messageNode.put("user", userNode);
 		messageNode.put("message", message.message.toString());
 		messageNode.put("timeStamp", message.id.getTime());
 		return messageNode;

@@ -15,11 +15,15 @@ import com.feth.play.module.pa.user.FirstLastNameIdentity;
 import models.TokenAction.Type;
 
 import org.bson.types.ObjectId;
+import org.codehaus.jackson.node.ObjectNode;
+
 import play.data.format.Formats;
+import play.libs.Json;
 
 //import javax.persistence.*;
 
 import java.util.*;
+
 import play.Logger;
 
 import com.google.code.morphia.annotations.Entity;
@@ -271,6 +275,28 @@ public class User implements Subject {
 		// You might want to wrap this into a transaction
 		this.changePassword(authUser, create);
 		TokenAction.deleteByUser(this, Type.PASSWORD_RESET);
+	}
+	
+	/** Parses a message list and prepares it for exporting to JSON
+	 * @param msgs Message list
+	 * @return List of ObjectNodes ready for use in toJson
+	 */
+	public static List<ObjectNode> usersToObjectNodes (List<User> usrs){
+	List<ObjectNode> users = new ArrayList<ObjectNode>();
+		for(User user : usrs){
+			users.add(userToObjectNode(user));
+		}
+		return users;
+	}
+	
+	/** Parses a message and prepares it for exporting to JSON
+	 * @param message A message
+	 * @return ObjectNode ready for use in toJson
+	 */
+	public static ObjectNode userToObjectNode (User user){
+		ObjectNode userNode = Json.newObject();
+		// TODO implement to have a XToObjectNode in each model
+		return userNode;
 	}
 	
 }
