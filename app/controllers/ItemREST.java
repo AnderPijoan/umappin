@@ -69,15 +69,4 @@ public class ItemREST extends Controller {
         }
     }
 
-    public static Result addTestItem(String name) {
-        if(name == null) {
-            return badRequest(Constants.JSON_EMPTY.toString());
-        } else {
-            Item item = new Item();
-            item.itemName = name;
-            item.save();
-            return ok(item.toJson());
-        }
-    }
-
 }

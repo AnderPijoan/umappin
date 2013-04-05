@@ -100,4 +100,3 @@ POST    /items                    controllers.ItemREST.addItem()
 PUT     /items/:id                controllers.ItemREST.updateItem(id: String)
 DELETE  /items/:id                controllers.ItemREST.deleteItem(id: String)
 
-POST    /items/test/:name              controllers.ItemREST.addTestItem(name: String)

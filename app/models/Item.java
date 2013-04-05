@@ -16,9 +16,7 @@ public class Item {
 
 	@Id
 	public ObjectId id;
-
 	public String itemName;
-
 	public String itemDesc;
 
 	public static List<Item> all() {

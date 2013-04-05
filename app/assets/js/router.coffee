@@ -12,6 +12,7 @@ class umappin.Router extends Backbone.Router
     'linkProvider':   'linkProvider'
     'forgotPassword':   'forgotPassword'
     'changePassword':   'changePassword'
+    'test':   'test'
 
   account: (id) ->
     @params = if id? then id: id else null
@@ -37,3 +38,5 @@ class umappin.Router extends Backbone.Router
     setTemplate "/assets/templates/forgotPassword.html"
   changePassword: () ->
     setTemplate "/assets/templates/changePassword.html"
+  test: () ->
+    setTemplate "/assets/templates/test.html"
