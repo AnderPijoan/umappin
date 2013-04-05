@@ -19,16 +19,15 @@ public class Item {
 	public String itemName;
 	public String itemDesc;
 
-	public static List<Item> all() {
-		if (MorphiaObject.datastore != null) {
-			return MorphiaObject.datastore.find(Item.class).asList();
-		} else {
-			return new ArrayList<Item>();
-		}
+	public static <T extends Item> List<T> all(Class<T> klass) {
+		if (MorphiaObject.datastore != null)
+			return MorphiaObject.datastore.find(klass).asList();
+		else
+			return new ArrayList<T>();
 	}
 
-	public static Item findById(String id) {
-		return MorphiaObject.datastore.get(Item.class, new ObjectId(id));
+	public static <T extends Item> T findById(String id, Class<T> klass) {
+		return MorphiaObject.datastore.get(klass, new ObjectId(id));
 	}
 
     public void save() {
@@ -39,10 +38,17 @@ public class Item {
         MorphiaObject.datastore.delete(this);
     }
 
-    public static Item create() {
-       Item item = new Item();
-       item.save();
-       return item;
+    public static <T extends Item> T create(Class<T> klass) {
+        T item = null;
+        try {
+            item = klass.newInstance();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        item.save();
+        return item;
     }
 
 	public JsonNode toJson() {
@@ -51,10 +57,10 @@ public class Item {
         return json;
 	}
 
-    public static Item fromJson(JsonNode json) {
+    public static <T extends Item> T fromJson(JsonNode json, Class<T> klass) {
         if (json.findValue("id") != null)
             ((ObjectNode)json).putPOJO("id", new ObjectId(json.findValue("id").asText()));
-        return  Json.fromJson(json, Item.class);
+        return  Json.fromJson(json, klass);
     }
 
 }
