@@ -1,16 +1,34 @@
 defaultSync = Backbone.sync
+
 Backbone.sync = (method, model, options) ->
   if typeof(window.localStorage) != 'undefined'
-    url = if model.id then model.url() else model.url
     optionsSuccess = options.success
+    url = if $.isFunction model.url then model.url() else model.url
+    aURL = url.split '/'
+
     options.success = (model, resp, options) ->
-      window.localStorage.setItem url, JSON.stringify resp
+      if aURL.length < 3
+        switch method
+          when "read", "create", "update"
+            window.localStorage.setItem url, JSON.stringify resp
+          when "delete"
+            window.localStorage.removeItem url
+      else
+        switch method
+          when "read", "create", "update"
+            window.localStorage.setItem url, JSON.stringify resp
+          when "delete"
+            window.localStorage.removeItem url
       optionsSuccess model, resp, options unless not optionsSuccess
+
     console.log window.localStorage
-    if method == "read"
-      item = window.localStorage.getItem url
-      if item
-        optionsSuccess model, (JSON.parse item), options
-        return
+
+    data = switch method
+      when "read"
+        coll = JSON.parse window.localStorage.getItem aURL[1]
+        if aURL.length < 3 then coll else _.find coll, (mdl) -> mdl.id is aURL[2]
+      when "create", "update", "delete" then model.attributes
+    if data and optionsSuccess
+      setTimeout (() -> optionsSuccess model, data, options), 1
 
   defaultSync(method, model, options)

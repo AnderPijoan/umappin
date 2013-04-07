@@ -12,7 +12,7 @@ class window.Account.ProfileView extends Backbone.View
   template: _.template $('#userprofile-template').html()
 
   initialize: ->
-    @listenTo @model, 'change', @render
+    @listenTo @model, 'reset change', @render
 
   render: ->
     $(@el).html @template @model.attributes

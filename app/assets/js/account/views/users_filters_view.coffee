@@ -17,10 +17,11 @@ class window.Account.UsersFiltersView extends Backbone.View
     'keyup #textFilter':           'filterByText'
 
   initialize: ->
-    @listenTo @collection, 'reset sort', @render
     @follows = @options.follows
     @followed = @options.followed
     @refUser = @options.refUser
+    @listenTo @collection, 'reset sort change', @render
+    @listenTo @follows, 'change', @render
 
   filterByText: (event) ->
     @textFilter = event.target.value

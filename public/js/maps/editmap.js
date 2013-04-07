@@ -409,7 +409,8 @@ function saveSessionToLocal() {
 /** ----------------------------------------------------------------------------------- **/
 /** ----------------------------------- MAIN -------------------------------------- **/
 /** ---------------------------------------------------------------------------------- **/
-setTimeout(function() {
+window.Map = window.Map || {}
+Map.init = function() {
     /** ----------------- Map declaration / initialization ------------------ **/
     OpenLayers.ImgPath = "/assets/img/ol/";
     var olMap = new OLMap();
@@ -420,4 +421,4 @@ setTimeout(function() {
         olMap.changeSource($('#mapSource').val());
     });
 
-}, 100);
+}

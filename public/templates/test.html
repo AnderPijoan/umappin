@@ -1,36 +1,35 @@
+<script>
+    var restURL = "http://192.168.1.140:9000/items";
+    $('button').click(function() {
+        var params =  ['PUT','DELETE', 'GET'].indexOf($(this).text()) != -1 ? $('#idInput').val() : "";
+        var fullURL = restURL + ($('#idInput').val() != "" ? "/" + params : "");
+        var req = $.ajax({
+            url: fullURL,
+            type: $(this).text(),
+            contentType: "application/json",
+            data: JSON.stringify({"itemName": $('#nameInput').val(), "itemDesc": $('#descInput').val()})
+        });
+        req.done(function(result) {
+            console.log(result);
+        });
+    })
+</script>
 
-    <script>
-        var restURL = "http://192.168.1.140:9000/items";
-        $('button').click(function() {
-            var params =  ['PUT','DELETE', 'GET'].indexOf($(this).text()) != -1 ? $('#idInput').val() : "";
-            var fullURL = restURL + ($('#idInput').val() != "" ? "/" + params : "");
-            var req = $.ajax({
-                url: fullURL,
-                type: $(this).text(),
-                contentType: "application/json",
-                data: JSON.stringify({"itemName": $('#nameInput').val(), "itemDesc": $('#descInput').val()})
-            });
-            req.done(function(result) {
-                console.log(result);
-            });
-        })
-    </script>
-
-    <form id="dummy-form">
-        <div class='row'>
-            <div class='span3'>
-                <label>Id</label>
-                <input type="text" id ='idInput'>
-                <label>Name</label>
-                <input type="text" id ='nameInput'>
-                <label>Desc</label>
-                <input type="text" id ='descInput'>
-            </div>
-            <div class='span1'>
-                <button>GET</button>
-                <button>POST</button>
-                <button>PUT</button>
-                <button>DELETE</button>
-            </div>
+<form id="dummy-form">
+    <div class='row'>
+        <div class='span3'>
+            <label>Id</label>
+            <input type="text" id ='idInput'>
+            <label>Name</label>
+            <input type="text" id ='nameInput'>
+            <label>Desc</label>
+            <input type="text" id ='descInput'>
         </div>
-    </form>
+        <div class='span1'>
+            <button>GET</button>
+            <button>POST</button>
+            <button>PUT</button>
+            <button>DELETE</button>
+        </div>
+    </div>
+</form>

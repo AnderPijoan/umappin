@@ -39,6 +39,7 @@ public class ItemREST extends Controller {
         if(json == null) {
             return badRequest(Constants.JSON_EMPTY.toString());
         } else {
+            ((ObjectNode)json).remove("id");
             T item = T.fromJson(json, klass);
             item.save();
             return ok(item.toJson());

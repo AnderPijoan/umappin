@@ -11,14 +11,12 @@ Account._loadUsersData = () ->
     followed: Account.followed
     refUser: Account.profile
 
-  Account.follows.fetch
-    success: () ->
-      Account.followed.fetch
-        success: () ->
-          Account.users.fetch()
+  Account.follows.fetch()
+  Account.followed.fetch()
+  Account.users.fetch()
 
 Account._loadProfileData = () ->
-  usrParams = umappin.router.params ? JSON.parse sessionStorage.getItem "user"
+  usrParams = umappin.router.params ? id: (JSON.parse sessionStorage.getItem "user").id
   Account.profile = new Account.User usrParams
   Account.profile.fetch()
   Account.profileview = new Account.ProfileView model: Account.profile
@@ -58,7 +56,7 @@ Account.loadUsersData = () ->
               ], () ->
                 Account._loadUsersData()
 
-$ () ->
+Account.init = () ->
   Account.usersListView = null
   Account.loadProfileData()
   
