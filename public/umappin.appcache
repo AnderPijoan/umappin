@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# 2013-04-07
+# 2013-04-08(v5)
 
 # Main page & icon
 favicon.ico
@@ -150,3 +150,5 @@ css/ol/img/view_previous_on.png
 css/ol/img/zoom-panel.png
 css/ol/img/zoom-panel-NOALPHA.png
 
+NETWORK:
+*
