@@ -10,15 +10,14 @@ Backbone.sync = (method, model, options) ->
       if method is 'read' and not resp.id
         window.localStorage.setItem url, JSON.stringify resp 
       else
-        coll = JSON.parse window.localStorage.getItem "/#{aURL[1]}"
+        coll = (JSON.parse window.localStorage.getItem "/#{aURL[1]}") or []
         mdl = _.find coll, (mdl) -> mdl.id is resp.id
         switch method
           when "read", "create", "update"
             if mdl then coll[coll.indexOf mdl] = resp else coll.push resp           
           when "delete"
             coll = _.without coll, mdl
-            #coll = coll.splice (coll.indexOf mdl), 1
-        window.localStorage.setItem "/#{aURL[1]}", JSON.stringify coll              
+        window.localStorage.setItem "/#{aURL[1]}", JSON.stringify coll
       optionsSuccess model, resp, options unless not optionsSuccess
 
     console.log window.localStorage

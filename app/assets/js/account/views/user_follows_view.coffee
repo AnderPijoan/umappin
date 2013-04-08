@@ -37,7 +37,7 @@ class window.Account.UserFollowsView extends Backbone.View
       if followedPos != -1
         @followed.get("follow").splice followedPos, 1
 
-    @follows.save() # Here  to decide whether to use local/session storage as cache
-    @followed.save() # Here  to decide whether to use local/session storage as cache
-    @follows.trigger 'change'
-    @followed.trigger 'change'
+    @follows.save (resp) ->
+      @follows.trigger 'change'
+    @followed.save (resp) ->
+     @followed.trigger 'change'
