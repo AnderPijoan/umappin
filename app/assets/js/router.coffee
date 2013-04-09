@@ -6,6 +6,7 @@ class umappin.Router extends Backbone.Router
     'account/:id':     'account'
     'signup':            'signup'
     'editmap':         'editmap'
+    'ideditor':         'ideditor'
     'messages/*subroute':     'messages'
     'login':              'login'
     'logout':            'logout'
@@ -29,6 +30,9 @@ class umappin.Router extends Backbone.Router
     requirejs ['/assets/js/lib/OpenLayers.js'], () ->
       requirejs ['/assets/js/maps/editmap.js'], () ->
         setTimeout (() -> Map.init()), 100
+
+  ideditor: () ->
+    setTemplate "/assets/templates/ideditor.html"
 
   messages: () ->
     subroutes = @subroutes
