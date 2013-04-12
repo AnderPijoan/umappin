@@ -39,6 +39,29 @@ public class User2DiscussionREST extends Controller {
 		}
 	}
 	
+	
+	public static Result getUnreadDiscussions(){
+		final User user = Application.getLocalUser(session());
+		if (user == null){
+			return badRequest(Constants.USER_NOT_LOGGED_IN.toString());
+		}
+		User2Discussion user2disc = MorphiaObject.datastore.get(User2Discussion.class, user.id.toString());
+		if (user2disc == null) {
+			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
+		}
+		List<Discussion> discussions = user2disc.unread();
+		if (discussions.size() == 0) {
+			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
+		} else {
+			ObjectNode response = Json.newObject();
+			response.put("discussions", Json.toJson(Discussion.discussionsToObjectNodes(discussions)));
+			
+			// Return the response
+			return ok(response);
+		}
+	}
+
+	
 	public static Result getDiscussion(String discussionId) {
 		final User user = Application.getLocalUser(session());
 		if (user == null){
@@ -53,6 +76,8 @@ public class User2DiscussionREST extends Controller {
 			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
 		}
 
+		user2disc.setReadTimeStamp(discussion.id.toString());
+		
 		ObjectNode response = Json.newObject();
 		response.put("discussion", Json.toJson(Discussion.discussionToObjectNode(discussion)));
 

@@ -7,11 +7,10 @@ import java.util.List;
 import org.bson.types.ObjectId;
 import org.codehaus.jackson.node.ObjectNode;
 
-import play.Logger;
+
+import play.data.format.Formats;
 import play.libs.Json;
 
-import com.feth.play.module.pa.user.AuthUser;
-import com.google.code.morphia.annotations.Embedded;
 import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Id;
 
@@ -32,7 +31,8 @@ public class Discussion {
 
 	public List<String> messageIds = new ArrayList<String>();
 
-	public Date timeStamp;
+	@Formats.DateTime(pattern = "yyyy-MM-dd HH:mm:ss")
+	public Date lastWrote;
 	
 	public static List<Discussion> all() {
 		if (MorphiaObject.datastore != null) {
@@ -43,7 +43,7 @@ public class Discussion {
 	}
 	
 	public ObjectId save() {
-		timeStamp = new Date();
+		lastWrote = new Date();
 		MorphiaObject.datastore.save(this);
 		return this.id;
 	}
@@ -95,6 +95,7 @@ public class Discussion {
 	
 	public void addMessage(Message message) {
 		this.messageIds.add(message.id.toString());
+		this.lastWrote = new Date();
 		this.save();
 	}
 	
@@ -119,6 +120,7 @@ public class Discussion {
 		discussionNode.put("id", discussion.id.toString());
 		discussionNode.put("subject", discussion.subject);
 		discussionNode.put("timeStamp", discussion.id.getTime());
+		discussionNode.put("lastWrote", discussion.lastWrote.toString());
 		discussionNode.put("messages", Json.toJson(Message.messagesToObjectNodes(discussion.getMessages())));
 		return discussionNode;
 	}

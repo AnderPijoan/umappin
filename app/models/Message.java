@@ -1,6 +1,5 @@
 package models;
 
-import com.google.code.morphia.annotations.Embedded;
 import com.google.code.morphia.annotations.Id;
 import com.google.code.morphia.annotations.Reference;
 
@@ -18,7 +17,6 @@ import java.util.List;
  * Date: 23/02/13
  * Time: 22.44
  */
-@Embedded
 public class Message {
 
 	@Id

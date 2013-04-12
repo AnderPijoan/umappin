@@ -78,6 +78,7 @@ GET     /sessionuser                controllers.UserREST.getSessionUser
 
 # REST CRUD for discussions
 GET     /discussions                controllers.User2DiscussionREST.getDiscussions()
+GET     /discussions/unread         controllers.User2DiscussionREST.getUnreadDiscussions()
 GET     /discussions/:id            controllers.User2DiscussionREST.getDiscussion(id: String)
 GET     /discussions/:id/:msgid     controllers.User2DiscussionREST.getMessage(id: String, msgid: String)
 POST    /discussions                controllers.User2DiscussionREST.addDiscussion()
