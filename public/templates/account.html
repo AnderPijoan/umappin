@@ -1,5 +1,5 @@
 <!------------------------------------- Styles -------------------------------------->
-<link href="/assets/css/account/account.min.css" rel="stylesheet">
+<link href="/assets/css/account.min.css" rel="stylesheet">
 
 
 <!------------------------------------- HTML -------------------------------------->
@@ -98,11 +98,8 @@
         </a>
         <br/><br/>
         <label>Username</label>
-        <input type="text" value="<%- rc.name %>" class="input-medium" required>
-        <br/>
-        <a href="#changePassword">
-            Change Account password
-        </a>
+        <input type="text" value="<%- rc.name %>" class="input-medium" required><br/>
+        <a href="#changePassword">Change Account password</a>
         <br/><br/>
         <h4>Last login Date: </h4>
         <label><%- new Date(rc.lastLogin).toLocaleString() %></label><br/>
@@ -110,9 +107,10 @@
         <img alt="password icon" title="password" src="/assets/icons/password-24x24.png">
         <br/><br/>
         Logged in with:
-        <img alt="password icon" title="password" src="/assets/icons/password-24x24.png"><br/>
-        <br/>
-        <button id="profile-modify-button" class="btn btn-primary">Update</button>
+        <img alt="password icon" title="password" src="/assets/icons/password-24x24.png">
+        <% if (!rc.readonly) { %>
+            <br/><br/><button id="profile-modify-button" class="btn btn-primary">Update</button>
+        <% } %>
     </div>
     <div class="span4">
         <label>First Name</label>
@@ -127,7 +125,3 @@
         <textarea rows="3" class="input-xlarge"><%- rc.address %></textarea>
     </div>
 </script>
-
-
-<!------------------------------------- Scripts -------------------------------------->
-<!--script src="/assets/js/account/account_main.js"></script-->

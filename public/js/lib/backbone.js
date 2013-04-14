@@ -68,7 +68,7 @@
   var eventSplitter = /\s+/;
 
   // Implement fancy features of the Events API such as multiple event
-  // names `"change blur"` and jQuery-style event maps `{change: action}`
+  // names `"change blur"` and jQuery-style event map `{change: action}`
   // in terms of the existing API.
   var eventsApi = function(obj, action, name, rest) {
     if (!name) return true;

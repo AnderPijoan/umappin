@@ -12,7 +12,7 @@ class window.Account.UserFollowedView extends Backbone.View
 
   initialize: ->
     @followed = @options.followed
-    @listenTo @followed, 'change', @render
+    @listenTo @followed, 'change reset', @render
 
   render: ->
     text = if @followed.get("follow").indexOf(@model.get "id") != -1  then 'Follower' else 'Non Follower'

@@ -1,52 +1,43 @@
 <div class="span3">
-
-    <script type="text/javascript">
-        function askOpenID(url) {
-            var openid = prompt("Please enter your OpenID:", "yourname.myopenid.com");
-            if(openid) {
-                window.location.href = url + "?p=" + encodeURIComponent(openid);
-            }
-        }
-    </script>
-
     <ul class="providers">
-
         <li>
             <a href="/authenticate/twitter">
                 <img alt="twitter icon" title="twitter" src="/assets/icons/twitter-24x24.png">
             </a>
         </li>
-
         <li>
             <a href="/authenticate/google">
                 <img alt="google icon" title="google" src="/assets/icons/google-24x24.png">
             </a>
         </li>
-
         <li>
             <a href="/authenticate/linkedin">
                 <img alt="linkedin icon" title="linkedin" src="/assets/icons/linkedin-24x24.png">
             </a>
         </li>
-
         <li>
             <a href="/authenticate/facebook">
                 <img alt="facebook icon" title="facebook" src="/assets/icons/facebook-24x24.png">
             </a>
         </li>
-
         <li>
             <a href="javascript:void(0);" onclick="askOpenID('/authenticate/openid');">
                 <img alt="openid icon" title="openid" src="/assets/icons/openid-24x24.png">
             </a>
         </li>
-
         <li>
             <a href="/authenticate/foursquare">
                 <img alt="foursquare icon" title="foursquare" src="/assets/icons/foursquare-24x24.png">
             </a>
         </li>
-
     </ul>
-
 </div>
+
+<script type="text/javascript">
+    function askOpenID(url) {
+        var openid = prompt("Please enter your OpenID:", "yourname.myopenid.com");
+        if(openid) {
+            window.location.href = url + "?p=" + encodeURIComponent(openid);
+        }
+    }
+</script>
