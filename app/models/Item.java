@@ -9,6 +9,7 @@ import org.codehaus.jackson.node.ObjectNode;
 import play.libs.Json;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 @Entity
@@ -16,8 +17,6 @@ public class Item {
 
 	@Id
 	public ObjectId id;
-	public String itemName;
-	public String itemDesc;
 
 	public static <T extends Item> List<T> all(Class<T> klass) {
 		if (MorphiaObject.datastore != null)
@@ -58,9 +57,19 @@ public class Item {
 	}
 
     public static <T extends Item> T fromJson(JsonNode json, Class<T> klass) {
-        if (json.findValue("id") != null)
+        return Json.fromJson(fromJson(json), klass);
+    }
+
+    public static JsonNode fromJson(JsonNode json) {
+        Iterator<JsonNode> it = json.getElements();
+        while (it.hasNext()) {
+            JsonNode jsn = it.next();
+            if (jsn.isArray() || jsn.isContainerNode())
+               jsn = fromJson(jsn);
+        }
+        if (json.has("id"))
             ((ObjectNode)json).putPOJO("id", new ObjectId(json.findValue("id").asText()));
-        return  Json.fromJson(json, klass);
+        return json;
     }
 
 }

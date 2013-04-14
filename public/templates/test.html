@@ -18,7 +18,7 @@
 </form>
 
 <script>
-    var restURL = "//items";
+    var restURL = "/items";
     $('button').click(function() {
         var params =  ['PUT','DELETE', 'GET'].indexOf($(this).text()) != -1 ? $('#idInput').val() : "";
         var fullURL = restURL + ($('#idInput').val() != "" ? "/" + params : "");
@@ -26,7 +26,7 @@
             url: fullURL,
             type: $(this).text(),
             contentType: "application/json",
-            data: JSON.stringify({"itemName": $('#nameInput').val(), "itemDesc": $('#descInput').val()})
+            data: JSON.stringify({"subName": $('#nameInput').val(), "subDesc": $('#descInput').val()})
         });
         req.done(function(result) {
             console.log(result);

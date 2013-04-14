@@ -71,9 +71,12 @@ PUT     /followed/:id                controllers.FollowREST.updateFollowed(id: S
 DELETE  /followed/:id                controllers.FollowREST.deleteFollowed(id: String)
 
 # REST CRUD for Users
-GET     /users                      controllers.UserREST.getUsers()
-GET     /users/:id                  controllers.UserREST.getUser(id: String)
-POST    /users                      controllers.UserREST.addUser()
+GET     /users                      controllers.UserREST.getAll()
+GET     /users/:id                  controllers.UserREST.get(id: String)
+POST    /users                      controllers.UserREST.post()
+PUT     /users/:id                  controllers.UserREST.put(id: String)
+DELETE  /users/:id                  controllers.UserREST.delete(id: String)
+
 GET     /sessionuser                controllers.UserREST.getSessionUser
 
 # REST CRUD for discussions

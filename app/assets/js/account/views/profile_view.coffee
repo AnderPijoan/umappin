@@ -18,12 +18,24 @@ class window.Account.ProfileView extends Backbone.View
 
   render: ->
     data = @model.attributes
-    data.readonly = @readonly
-    $(@el).html @template data
+    #data.readonly = @readonly
+    $(@el).html @template { data, readonly: @readonly }
     $(@el).find('input[type=text], textarea').attr('readonly', @readonly)
     @
 
+  validate: ->
+    name = @$el.find('#profile-name').val()
+    email = @$el.find('#profile-email').val()
+    name != '' and email.match /^\w.+@\w.+\.\w.+$/g
   update: ->
-    # TODO
     if !@readonly
-      console.log "TODO"
+      if @validate
+        @model.save
+          name: @$el.find('#profile-name').val()
+          email: @$el.find('#profile-email').val()
+          firstName: @$el.find('#profile-firstname').val()
+          lastName: @$el.find('#profile-lastname').val()
+      else
+        $('#actionResult').css('display','block').empty().html(
+          "<div class='alert alert-error'>" + data.responseText + "</div>")
+

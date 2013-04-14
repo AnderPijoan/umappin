@@ -3,7 +3,6 @@ package models;
 import be.objectify.deadbolt.core.models.Permission;
 import be.objectify.deadbolt.core.models.Role;
 import be.objectify.deadbolt.core.models.Subject;
-
 import com.feth.play.module.pa.providers.password.UsernamePasswordAuthProvider;
 import com.feth.play.module.pa.providers.password.UsernamePasswordAuthUser;
 import com.feth.play.module.pa.user.AuthUser;
@@ -11,93 +10,50 @@ import com.feth.play.module.pa.user.AuthUserIdentity;
 import com.feth.play.module.pa.user.EmailIdentity;
 import com.feth.play.module.pa.user.NameIdentity;
 import com.feth.play.module.pa.user.FirstLastNameIdentity;
-
 import models.TokenAction.Type;
-
-import org.bson.types.ObjectId;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.node.ArrayNode;
+import org.codehaus.jackson.node.JsonNodeFactory;
+import org.codehaus.jackson.node.ObjectNode;
 import play.data.format.Formats;
-
-//import javax.persistence.*;
-
 import java.util.*;
-import play.Logger;
-
 import com.google.code.morphia.annotations.Entity;
-import com.google.code.morphia.annotations.Id;
 import controllers.MorphiaObject;
-import com.google.code.morphia.query.*;
 
-/**
- * Initial version based on work by Steve Chaloner (steve@objectify.be) for
- * Deadbolt2
- */
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
-public class User implements Subject {
+public class User extends Item implements Subject {
 
 	private static final long serialVersionUID = 1L;
 
-	@Id
-	public String id;
+    /** ------------------------ Attributes ------------------------- **/
 
 	public String email;
-
 	public String name;
-	
 	public String firstName;
-	
 	public String lastName;
-
+    public String phone;
+    public String address;
+    public String identifier;
 	@Formats.DateTime(pattern = "yyyy-MM-dd HH:mm:ss")
 	public Date lastLogin;
-
 	public boolean active;
-
 	public boolean emailValidated;
+    @JsonIgnore
+    public List<Permission> permissions;
+    //@ManyToMany
+    public List<SecurityRole> roles;
+    //@OneToMany(cascade = CascadeType.ALL)
+    public List<LinkedAccount> linkedAccounts;
 
-    public void save() {
-        MorphiaObject.datastore.save(this);
-    }
-	
-	public void delete() {
-        MorphiaObject.datastore.delete(this);
-    }
-	
-    public static List<User> all() {
-        if (MorphiaObject.datastore != null) {
-            return MorphiaObject.datastore.find(User.class).asList();
-        } else {
-            return new ArrayList<User>();
-        }
-    }
 
-    public static User findById(String id) {
-        return MorphiaObject.datastore.find(User.class).field("_id").equal(id).get();
-    }
+    /** ------------------------ Getters / Setters ------------------------- **/
 
-    public static User findByName(String name) {
-        return MorphiaObject.datastore.find(User.class).field("name").equal(name).get();
-    }
-
-    public static void delete(String idToDelete) {
-        User toDelete = MorphiaObject.datastore.find(User.class).field("_id").equal(idToDelete).get();
-        if (toDelete != null) {
-            Logger.info("toDelete: " + toDelete);
-            MorphiaObject.datastore.delete(toDelete);
-        } else {
-            Logger.debug("ID No Found: " + idToDelete);
-        }
-    }
-
-	//@ManyToMany
-	public List<SecurityRole> roles;
-
-	//@OneToMany(cascade = CascadeType.ALL)
-	public List<LinkedAccount> linkedAccounts;
-
-	@Override
+    @Override
 	public String getIdentifier() {
-		return id;
+		return id.toString();
 	}
 
 	@Override
@@ -107,24 +63,16 @@ public class User implements Subject {
 
     @Override
     public List<? extends Permission> getPermissions() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
+
+
+    /** ------------------------ Authentication methods -------------------------- **/
 
     public static boolean existsByAuthUserIdentity(final AuthUserIdentity identity) {
         return findByAuthUserIdentity(identity) != null;
 	}
 
-
-    /*
-	3 times the same method ¿?¿?
-    public static User findById(String id){
-    	return MorphiaObject.datastore.get(User.class, new ObjectId(id));
-    }*/
-    
-    public static User findById(ObjectId id){
-    	return MorphiaObject.datastore.get(User.class, id);
-    }
-    
 	public static User findByAuthUserIdentity(final AuthUserIdentity identity) {
 		if (identity == null) {
 			return null;
@@ -167,8 +115,8 @@ public class User implements Subject {
 
 		if (authUser instanceof EmailIdentity) {
 			final EmailIdentity identity = (EmailIdentity) authUser;
-			// Remember, even when getting them from FB & Co., emails should be verified within t
-			// he application as a security breach there might break your security as well!
+			// Remember, even when getting them from FB & Co., emails should be verified within
+			// the application as a security breach there might break your security as well!
 			user.email = identity.getEmail();
 			user.emailValidated = false;
 		}
@@ -191,13 +139,9 @@ public class User implements Subject {
 		    user.lastName = lastName;
 		  }
 		}
-
-		// Fix - Manually create an ObjectID and get its String UUID
-        user.id = new ObjectId().toString();
         user.save();
-		
         // Fix - adding the User to the LinkedAccount
-        la.setUserId(user.id);
+        la.setUserId(user.id.toString());
         la.save();
 
 		return user;
@@ -252,7 +196,7 @@ public class User implements Subject {
 		if (a == null) {
 			if (create) {
 				a = LinkedAccount.create(authUser);
-				a.setUserId(this.id);
+				a.setUserId(this.id.toString());
 			} else {
 				throw new RuntimeException(
 						"Account not enabled for password usage");
@@ -272,5 +216,19 @@ public class User implements Subject {
 		this.changePassword(authUser, create);
 		TokenAction.deleteByUser(this, Type.PASSWORD_RESET);
 	}
-	
+
+    /** ------------ User model needs special ObjectIds handling ------------- **/
+    public JsonNode userToJson() {
+        JsonNode json = this.toJson();
+        ArrayNode aux = new ArrayNode(JsonNodeFactory.instance);
+        for (LinkedAccount la : this.linkedAccounts)
+            aux.add(la.toJson());
+        ((ObjectNode)json).put("linkedAccounts", aux);
+        aux = new ArrayNode(JsonNodeFactory.instance);
+        for (SecurityRole sr : this.roles)
+            aux.add(sr.toJson());
+        ((ObjectNode)json).put("roles", aux);
+        return json;
+    }
+
 }

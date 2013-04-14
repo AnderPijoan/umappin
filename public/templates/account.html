@@ -94,12 +94,14 @@
     <div class="span3">
         <a href="javascript:void(0)">
             <img class="image img-rounded" src="/assets/img/140x140.gif" alt="placeholder image"
-                height="140" width="140">
+                 height="140" width="140">
         </a>
         <br/><br/>
         <label>Username</label>
-        <input type="text" value="<%- rc.name %>" class="input-medium" required><br/>
-        <a href="#changePassword">Change Account password</a>
+        <input type="text" value="<%- rc.data.name %>" class="input-medium" required  id='profile-name'><br/>
+        <% if (!rc.readonly) { %>
+            <a href="#changePassword">Change Account password</a>
+        <% } %>
         <br/><br/>
         <h4>Last login Date: </h4>
         <label><%- new Date(rc.lastLogin).toLocaleString() %></label><br/>
@@ -114,14 +116,14 @@
     </div>
     <div class="span4">
         <label>First Name</label>
-        <input type="text" value="<%- rc.firstName %>" class="input-xlarge">
+        <input type="text" value="<%- rc.data.firstName %>" class="input-xlarge" id='profile-firstname'>
         <label>Last Name</label>
-        <input type="text" value="<%- rc.lastName %>" class="input-xlarge">
+        <input type="text" value="<%- rc.data.lastName %>" class="input-xlarge" id='profile-lastname'>
         <label>Email</label>
-        <input type="text" value="<%- rc.email %>" class="input-xlarge" required>
+        <input type="text" value="<%- rc.data.email %>" class="input-xlarge" required  id='profile-email'>
         <label>Phone</label>
-        <input type="text" value="<%- rc.phone %>" class="input-xlarge">
+        <input type="text" value="<%- rc.data.phone %>" class="input-xlarge" id='profile-phone'>
         <label>Address</label>
-        <textarea rows="3" class="input-xlarge"><%- rc.address %></textarea>
+        <textarea rows="3" class="input-xlarge" id='profile-address'><%- rc.address %></textarea>
     </div>
 </script>
