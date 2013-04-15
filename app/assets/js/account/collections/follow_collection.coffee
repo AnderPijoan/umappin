@@ -15,5 +15,5 @@ class window.Account.FollowCollection extends Backbone.Collection
       follow.set userId: id
       follow.set follow: []
       coll.add follow
-      follow.save() # Here  to decide whether to use local/session storage as cache
+      follow.save()# success: (resp) -> follow.set id: resp.id
     follow

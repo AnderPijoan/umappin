@@ -37,7 +37,7 @@ public class Application extends Controller {
 
     /** ------ The next methods handle the followed links from email ------ **/
     public static Result tokenSuccess() {
-        return badRequest(auth_result.render("Account Activation", "alert-sucess", "Account activated"));
+        return ok(auth_result.render("Account Activation", "alert-sucess", "Account activated"));
     }
 
     public static Result tokenFail() {
@@ -49,7 +49,7 @@ public class Application extends Controller {
     }
 
     public static Result passwordResetFail(String msg) {
-        return ok(auth_result.render("Password Reset", "alert-error", msg));
+        return badRequest(auth_result.render("Password Reset", "alert-error", msg));
     }
     /** -------------------------------------------------------------------- **/
 
