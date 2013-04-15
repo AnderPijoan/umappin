@@ -14,7 +14,7 @@ class window.Account.UserRowView extends Backbone.View
   template: _.template $('#user-row-template').html()
 
   initialize: -> 
-    @listenTo @model, 'change', @render
+    @listenTo @model, 'change reset', @render
     @follows = @options.follows
     @followed = @options.followed
     @usrFollowed = @options.usrFollowed

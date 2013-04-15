@@ -68,7 +68,7 @@ public class Message {
 	 */
 	public static ObjectNode messageToObjectNode (Message message){
 		
-		User user = User.findById(message.writerId);
+		User user = User.findById(message.writerId, User.class);
 		if (user == null){
 			return null;
 		}
