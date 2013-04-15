@@ -1,5 +1,6 @@
 pids
-jar
+/lib
+/modules/*/lib
 logs
 project/project
 project/target
