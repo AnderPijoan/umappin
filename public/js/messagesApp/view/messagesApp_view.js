@@ -8,22 +8,19 @@ messagesApp.DISCUSSION_LIST_BODY ='<ul id="discussion_list"></ul>';
 		initialize: function () {
 			
 			//if the add method of Discussions is called  "this.addOne" whill be triggered
-			this.listenTo(messagesApp.DiscussionHeaders, 'add', this.addOneDiscussionHeader);
-			this.listenTo(messagesApp.DiscussionHeaders, 'reset', this.restartDiscussionHeaders);
+			this.listenTo(messagesApp.DiscussionCollection, 'all', this.renderDiscussions);
 
-			//messagesApp.Discussions.fetch();
 		},
 		//Discussion Headers methods
-		addOneDiscussionHeader: function (discussionHeader) {
-			//Create ReceivedView and append it to the list
-			console.log("add one message");
-			var view = new messagesApp.ReceivedView({ model: discussionHeader });
+		
+		
+		renderDiscussions: function(){
+			$('#messages_body').html('<ul id="discussion_list"> </ul>');
 
-			$('#discussion_list').append(view.render().el);
-		},
-		restartDiscussionHeaders: function(){
-			console.log('Changed to received discussions');
-			$('#messages_body').html(messagesApp.DISCUSSION_LIST_BODY);
+			messagesApp.DiscussionCollection.each(function(discussion){
+			   	var view = new messagesApp.ReceivedView({ model: discussion});
+			   	$('#discussion_list').append(view.render().el);
+			});	
 		}
 
 		//End Discussions Headers methods
