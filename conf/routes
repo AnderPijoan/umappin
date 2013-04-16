@@ -57,18 +57,18 @@ GET     /authenticate/:provider/denied     controllers.Signup.oAuthDenied(provid
 
 # ------------------------------ REST Services -----------------------------
 # REST CRUD for Follows
-GET     /follows                    controllers.FollowREST.getAllFollows()
-GET     /follows/:id                controllers.FollowREST.getFollows(id: String)
-POST    /follows                    controllers.FollowREST.addFollows()
-PUT     /follows/:id                controllers.FollowREST.updateFollows(id: String)
-DELETE  /follows/:id                controllers.FollowREST.deleteFollows(id: String)
+GET     /follows                    controllers.FollowsREST.getAllFollows()
+GET     /follows/:id                controllers.FollowsREST.getFollows(id: String)
+POST    /follows                    controllers.FollowsREST.addFollows()
+PUT     /follows/:id                controllers.FollowsREST.updateFollows(id: String)
+DELETE  /follows/:id                controllers.FollowsREST.deleteFollows(id: String)
 
 # REST CRUD for Followed
-GET     /followed                    controllers.FollowREST.getAllFollowed()
-GET     /followed/:id                controllers.FollowREST.getFollowed(id: String)
-POST    /followed                    controllers.FollowREST.addFollowed()
-PUT     /followed/:id                controllers.FollowREST.updateFollowed(id: String)
-DELETE  /followed/:id                controllers.FollowREST.deleteFollowed(id: String)
+GET     /followed                    controllers.FollowedREST.getAllFollowed()
+GET     /followed/:id                controllers.FollowedREST.getFollowed(id: String)
+POST    /followed                    controllers.FollowedREST.addFollowed()
+PUT     /followed/:id                controllers.FollowedREST.updateFollowed(id: String)
+DELETE  /followed/:id                controllers.FollowedREST.deleteFollowed(id: String)
 
 # REST CRUD for Users
 GET     /users                      controllers.UserREST.getAll()

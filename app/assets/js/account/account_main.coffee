@@ -11,8 +11,8 @@ Account._loadUsersData = () ->
     followed: Account.followed
     refUser: Account.profile
 
-  Account.follows.fetch success: () ->
-    Account.followed.fetch success: () ->
+  Account.follows.fetch complete: () ->
+    Account.followed.fetch complete: () ->
       Account.users.fetch()
 
 Account._loadSessionData = (callback) ->
