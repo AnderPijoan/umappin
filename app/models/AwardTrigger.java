@@ -37,7 +37,8 @@ public class AwardTrigger {
 	
 	// Search for the award Triggers of one specific type.
 	public static List<AwardTrigger> find(String type) {
-		return MorphiaObject.datastore.find(AwardTrigger.class).field("triggerType").equal(type).asList();
+		return MorphiaObject.datastore.find(AwardTrigger.class).field("triggerType").
+											equal(type).asList();
 	}
 	
 	// Search for the awards of one specific type and one specific limit.

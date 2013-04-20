@@ -21,6 +21,8 @@ public class Award {
 	public String name;
 	
 	public String description;
+	
+	// Award picture..
 
 	public int coins;
 	
