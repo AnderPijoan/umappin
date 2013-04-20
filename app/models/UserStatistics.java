@@ -25,21 +25,22 @@ public class UserStatistics {
 		return MorphiaObject.datastore.get(UserStatistics.class, new ObjectId(userId));
 	}
 	
-	public UserStatistics updateByUserId(String userId, Map<String, Integer> newStatistics) {
+	public static UserStatistics updateByUserId(String userId, Map<String, Integer> newStatistics) {
 		UserStatistics userStatistics = findByUserId(userId);
 		if(userStatistics == null) {
-			userStatistics = this.init(userId);
+			userStatistics = UserStatistics.init(userId);
 		}
 		//TODO: update each item
         userStatistics.update();
         return userStatistics;
     }
 	
-	public UserStatistics init(String userId) {
-        this.userId = userId;
-        this.statistics = new HashMap<String, Integer>();
+	public static UserStatistics init(String userId) {
+		UserStatistics userStatistics = new UserStatistics();
+		userStatistics.userId = userId;
+		userStatistics.statistics = new HashMap<String, Integer>();
         //TODO: initialize the hashmap values to 0...
-        return this;
+        return userStatistics;
     }
 	
 	public UserStatistics save() {
