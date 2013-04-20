@@ -17,12 +17,15 @@ import controllers.MorphiaObject;
 @Entity
 public class UserStatistics {
 	@Id
+	public ObjectId id;
+	
 	public String userId;
 
 	public Map<String, Integer> statistics = new HashMap<String, Integer>();
 
 	public static UserStatistics findByUserId(String userId) {
-		return MorphiaObject.datastore.get(UserStatistics.class, new ObjectId(userId));
+		return	MorphiaObject.datastore.find(UserStatistics.class).
+				field("userId").equal(userId).get();
 	}
 	
 	public static UserStatistics updateByUserId(String userId, Map<String, Integer> newStatistics) {
