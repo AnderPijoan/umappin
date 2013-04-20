@@ -38,14 +38,14 @@ public class UserAward {
 		return	MorphiaObject.datastore.find(UserAward.class).
 				field("userId").equal(userId).order("-timeStamp").asList();
 	}
-	
+	/*	
 	// Search for all the non-read awards of an user.
 	public static List<UserAward> findNewByUserId(String userId) {
 		return	MorphiaObject.datastore.find(UserAward.class).
 				field("userId").equal(userId).
 				field("isNew").equal(true).order("-timeStamp").asList();
 	}
-	
+	*/
 	// TODO: Method to update the non-read awards.
 	
 	/** Parses an user award list and prepares it for exporting to JSON
@@ -66,7 +66,7 @@ public class UserAward {
 	 */
 	public static ObjectNode userAwardToObjectNode (UserAward userAward){
 		ObjectNode awardNode = Json.newObject();
-		awardNode.put("award", Json.toJson(Award.findById(userAward.award)));
+		awardNode.put("award", Award.awardToObjectNode(Award.findById(userAward.award)));
 		awardNode.put("timeStamp", Json.toJson(userAward.timeStamp));
 		awardNode.put("isNew", userAward.isNew);
 		return awardNode;

@@ -1,6 +1,7 @@
 package controllers;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.Map;
 
 import models.UserStatistics;
@@ -21,10 +22,9 @@ public class UserStatisticsREST extends Controller {
 	public static Result findByUserId(String userId) {
 		UserStatistics userStatistics = UserStatistics.findByUserId(userId);
 		if(userStatistics == null){
-			return badRequest(Constants.STATISTICS_EMPTY.toString());
-		}else{
-			return ok(Json.toJson(UserStatistics.userStatisticsToObjectNode(userStatistics)));
+			userStatistics = UserStatistics.init(userId).save();
 		}
+		return ok(Json.toJson(UserStatistics.userStatisticsToObjectNode(userStatistics)));
 	}
 
 	// PUT
@@ -35,6 +35,7 @@ public class UserStatisticsREST extends Controller {
 		if(json == null) {
 			return badRequest(Constants.JSON_EMPTY.toString());
 		}
+		// Parse the received json:
 		try{
 			statistics = mapper
 				.readValue(json.findPath("statistics"), new TypeReference<Map<String,Integer>>() { });
@@ -45,7 +46,17 @@ public class UserStatisticsREST extends Controller {
 		}catch(IOException e){
 			return badRequest(Constants.STATISTICS_PARSE_ERROR.toString());
 		}
-		UserStatistics userStatistics = UserStatistics.updateByUserId(userId, statistics);
+		// Retrieve the existing Statistics:
+		UserStatistics userStatistics = UserStatistics.findByUserId(userId);
+		if(userStatistics == null){
+			userStatistics = UserStatistics.init(userId);
+		}
+		Iterator<String> it = statistics.keySet().iterator();
+		String key;
+		while (it.hasNext()) {
+			key = it.next();
+			userStatistics.updateStatistic(key, statistics.get(key));
+		}
 		return ok(UserStatistics.userStatisticsToObjectNode(userStatistics));
 	}
 }

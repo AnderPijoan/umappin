@@ -42,10 +42,11 @@ public class AwardTrigger {
 	}
 	
 	// Search for the awards of one specific type and one specific limit.
-	public static Award findByAwardTypeLimit(String type, Integer limit) {
+	public static Award findByAwardTypeLimit(String type, Integer bottomLimit, Integer topLimit) {
 		AwardTrigger awardTrigger =  MorphiaObject.datastore.find(AwardTrigger.class)
 											.field("triggerType").equal(type)
-											.field("limit").equal(limit).get();
+											.field("limit").greaterThan(bottomLimit)
+											.field("limit").lessThanOrEq(topLimit).get();
 		return awardTrigger !=null ? Award.findById(awardTrigger.award) : null;
 	}
 }

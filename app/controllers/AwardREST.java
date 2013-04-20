@@ -19,7 +19,7 @@ import org.codehaus.jackson.node.ObjectNode;
 import static play.libs.Json.toJson;
 
 public class AwardREST extends Controller{
-	
+	/*
 	// GET
 	public static Result all(){
 		List<Award> awards = Award.all();
@@ -78,7 +78,7 @@ public class AwardREST extends Controller{
 		}else {
 			return ok("User Award Saved");
 		}
-	}
+	}*/
 }
 
 
