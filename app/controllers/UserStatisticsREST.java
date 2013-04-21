@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 
+import models.User;
 import models.UserStatistics;
 
 import org.codehaus.jackson.JsonNode;
@@ -20,15 +21,22 @@ public class UserStatisticsREST extends Controller {
 
 	// GET
 	public static Result findByUserId(String userId) {
+		final User connectedUser = Application.getLocalUser(session());
 		UserStatistics userStatistics = UserStatistics.findByUserId(userId);
 		if(userStatistics == null){
 			userStatistics = UserStatistics.init(userId).save();
+		}else if(userId == connectedUser.getIdentifier()) { // set to false the non-read data flags...
+			UserStatistics userStatisticsRead = userStatistics;
+			userStatisticsRead.setRead();
+			userStatisticsRead.save();
 		}
 		return ok(Json.toJson(UserStatistics.userStatisticsToObjectNode(userStatistics)));
 	}
 
 	// PUT
 	public static Result updateUserStatistics(String userId) {
+		final User connectedUser = Application.getLocalUser(session());
+		boolean isConnectedUser = (userId == connectedUser.getIdentifier());
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode json = request().body().asJson();
 		Map<String, Integer> statistics;
@@ -57,6 +65,11 @@ public class UserStatisticsREST extends Controller {
 			key = it.next();
 			userStatistics.updateStatistic(key, statistics.get(key));
 		}
+		UserStatistics userStatisticsToUpdate = userStatistics;
+		if(isConnectedUser){
+			userStatisticsToUpdate.setRead();
+		}
+		userStatisticsToUpdate.update();
 		return ok(UserStatistics.userStatisticsToObjectNode(userStatistics));
 	}
 }

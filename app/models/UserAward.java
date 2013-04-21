@@ -26,27 +26,16 @@ public class UserAward {
 	public boolean isNew;
 	
 	// Save the award.
-	public String save() {
-		timeStamp = new Date();
-		isNew = true;
-		MorphiaObject.datastore.save(this);
-		return this.userId;
+	public UserAward(String userId, Award award) {
+		this.userId = userId;
+		this.award = award.id;
+		this.timeStamp = new Date();
+		this.isNew = true;
 	}
 	
-	// Search for all the awards of an user.
-	public static List<UserAward> findByUserId(String userId) {
-		return	MorphiaObject.datastore.find(UserAward.class).
-				field("userId").equal(userId).order("-timeStamp").asList();
+	public void setRead() {
+		this.isNew = false;
 	}
-	/*	
-	// Search for all the non-read awards of an user.
-	public static List<UserAward> findNewByUserId(String userId) {
-		return	MorphiaObject.datastore.find(UserAward.class).
-				field("userId").equal(userId).
-				field("isNew").equal(true).order("-timeStamp").asList();
-	}
-	*/
-	// TODO: Method to update the non-read awards.
 	
 	/** Parses an user award list and prepares it for exporting to JSON
 	 * @param userAwardList UserAward list

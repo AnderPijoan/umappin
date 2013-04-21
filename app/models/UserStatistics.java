@@ -19,6 +19,9 @@ import controllers.MorphiaObject;
 
 @Entity
 public class UserStatistics {
+	
+	private static final int LEVEL_FACTOR = 500;
+	
 	@Id
 	public ObjectId id;
 	
@@ -58,7 +61,26 @@ public class UserStatistics {
 	}
 	
 	private void updateAwards(String statistic, Integer previousValue, Integer newValue) {
-		//TODO
+		List<Award> achievedAwards = Award.findByAwardTypeLimit(statistic, previousValue, newValue);
+		if(achievedAwards != null){
+			for(Award award : achievedAwards) {
+				this.userAwards.add(new UserAward(statistic, award));
+				this.points += award.points;
+			}
+			updateLevel();
+		}
+	}
+	
+	private void updateLevel() {
+		int newLevel = this.calculateLevel();
+		if(newLevel != this.level){
+			this.newLevel = true;
+			this.level = newLevel;
+		}
+	}
+	
+	private int calculateLevel() {
+		return this.points / LEVEL_FACTOR;
 	}
 	
 	public static UserStatistics init(String userId) {
@@ -67,6 +89,13 @@ public class UserStatistics {
         //TODO: initialize the hashmap values to 0...
         return userStatistics;
     }
+	
+	public void setRead() {
+		this.newLevel = false;
+		for(UserAward userAward : this.userAwards) {
+			userAward.setRead();
+		}
+	}
 	
 	public UserStatistics save() {
 		MorphiaObject.datastore.save(this);

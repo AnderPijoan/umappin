@@ -28,6 +28,26 @@ public class Award {
 	
 	public int points;
 
+	public String awardType;
+	
+	public int limit;
+	
+	
+	// Search for the award Triggers of one specific type.
+	public static List<Award> findByType(String type) {
+		return MorphiaObject.datastore.find(Award.class).field("awardType").
+											equal(type).asList();
+	}
+	
+	// Search for the awards of one specific type and one specific limit.
+	public static List<Award> findByAwardTypeLimit(String type, Integer bottomLimit, Integer topLimit) {
+		List<Award> awardList =  MorphiaObject.datastore.find(Award.class)
+											.field("awardType").equal(type)
+											.field("limit").greaterThan(bottomLimit)
+											.field("limit").lessThanOrEq(topLimit).asList();
+		return awardList;
+	}
+	
 	// Get all the awards.
 	public static List<Award> all() {
 		if (MorphiaObject.datastore != null) {
@@ -69,7 +89,8 @@ public class Award {
 		awardNode.put("name", award.name);
 		awardNode.put("description", award.description);
 		awardNode.put("coins", award.coins);
-		awardNode.put("points", award.points);
+		awardNode.put("awardType", award.awardType);
+		awardNode.put("limit", award.limit);
 		return awardNode;
 	}
 }
