@@ -110,7 +110,3 @@ GET    /rest/photos/:id/content      controllers.PhotosREST.getPhotoContent(id: 
 
 #updates and get the metadata
 GET     /rest/photos/:id             controllers.PhotosREST.getPhoto(id: String)
-
-
-
-
