@@ -21,11 +21,15 @@ public class UserStatisticsREST extends Controller {
 
 	// GET
 	public static Result findByUserId(String userId) {
+		boolean isConnectedUser = false;
 		final User connectedUser = Application.getLocalUser(session());
+		if(connectedUser != null){
+			isConnectedUser = (userId == connectedUser.getIdentifier());
+		}
 		UserStatistics userStatistics = UserStatistics.findByUserId(userId);
 		if(userStatistics == null){
 			userStatistics = UserStatistics.init(userId).save();
-		}else if(userId == connectedUser.getIdentifier()) { // set to false the non-read data flags...
+		}else if(isConnectedUser) { // set to false the non-read data flags...
 			UserStatistics userStatisticsRead = userStatistics;
 			userStatisticsRead.setRead();
 			userStatisticsRead.save();
@@ -35,8 +39,11 @@ public class UserStatisticsREST extends Controller {
 
 	// PUT
 	public static Result updateUserStatistics(String userId) {
+		boolean isConnectedUser = false;
 		final User connectedUser = Application.getLocalUser(session());
-		boolean isConnectedUser = (userId == connectedUser.getIdentifier());
+		if(connectedUser != null){
+			isConnectedUser = (userId == connectedUser.getIdentifier());
+		}
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode json = request().body().asJson();
 		Map<String, Integer> statistics;
