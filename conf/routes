@@ -33,7 +33,7 @@ GET     /tokenFail                  controllers.Application.tokenFail
 
 GET     /login/password/forgot      controllers.Templates.forgotPassword
 POST    /login/password/forgot      controllers.Signup.doForgotPassword
-GET     /accounts/password/reset/:token     controllers.Signup.resetPassword(token: String, errors: String ?= "")
+GET     /accounts/password/reset/:token     controllers.Signup.resetPassword(token: String, errors: java.lang.String ?= "")
 POST    /accounts/password/reset    controllers.Signup.doResetPassword
 GET     /passwordResetSuccess       controllers.Application.passwordResetSuccess
 GET     /passwordResetFail/:msg     controllers.Application.passwordResetFail(msg: String)
@@ -89,3 +89,28 @@ GET     /sessionuser                controllers.UserREST.getSessionUser
 GET     /rest/messages              controllers.MessagesREST.all
 GET     /rest/messages/:id          controllers.MessagesREST.findById(id: String)
 # --------------------------------------------------------------------------
+
+
+# ------------------------------ Photos ------------------------------------
+GET     /photos/manager              controllers.Photos.manager
+
+#allocates a new photo by sending the metadata
+POST    /rest/photos                 controllers.PhotosREST.newPhoto()
+DELETE  /rest/photos/:id             controllers.PhotosREST.deletePhoto(id: String)
+POST    /rest/photos/:id             controllers.PhotosREST.updatePhoto(id: String)
+
+
+#POST for photoContent carried within multipart/form-data
+POST   /rest/photos/:id/content      controllers.PhotosREST.uploadMultipartContent(id: String)
+
+
+#'quality' is dummy, this parameter is never read
+GET    /rest/photos/:id/content      controllers.PhotosREST.getPhotoContent(id: String)
+
+
+#updates and get the metadata
+GET     /rest/photos/:id             controllers.PhotosREST.getPhoto(id: String)
+
+
+
+
