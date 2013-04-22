@@ -3,11 +3,13 @@ package controllers;
 import static play.libs.Json.toJson;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import models.Discussion;
 import models.Message;
 import models.User;
+import models.User2Discussion;
 
 import org.bson.types.ObjectId;
 import org.codehaus.jackson.JsonNode;
@@ -25,10 +27,7 @@ public class DiscussionREST extends Controller {
 			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
 		} else {
 			
-			ObjectNode response = Json.newObject();
-			response.put("discussions", Json.toJson(discussions));
-			
-			return ok(response);
+			return ok(Json.toJson(Discussion.discussionsToObjectNodes(discussions)));
 		}
 	}
 
@@ -37,16 +36,7 @@ public class DiscussionREST extends Controller {
 		if (discussion == null) {
 			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
 		} else {
-
-			ObjectNode discussionNode = Json.newObject();
-			discussionNode.put("id", discussion.id.toString());
-			discussionNode.put("subject", discussion.subject);
-			discussionNode.put("messages", Json.toJson(discussion.getMessages()));
-			
-			ObjectNode response = Json.newObject();
-			response.put("discussion", Json.toJson(discussionNode));
-			
-			return ok(response);
+			return ok(Json.toJson(Discussion.discussionToFullObjectNode(discussion)));
 		}
 	}
 	
@@ -55,22 +45,13 @@ public class DiscussionREST extends Controller {
 		if (discussion == null) {
 			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
 		} else {
-
-			ObjectNode discussionNode = Json.newObject();
-			discussionNode.put("id", discussion.id.toString());
-			discussionNode.put("subject", discussion.subject);
-			discussionNode.put("messages", Json.toJson(discussion.getMessages()));
-			
-			ObjectNode response = Json.newObject();
-			response.put("discussion", Json.toJson(discussionNode));
-			
-			return ok(response);
+			return ok(Json.toJson(Discussion.discussionToFullObjectNode(discussion)));
 		}
 	}
 
 	public static Result getMessage(String id, String msgId) {
 		Discussion discussion =  Discussion.findById(id);
-		if (discussion == null) {
+		if (discussion == null || !discussion.messageIds.contains(msgId)) {
 			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
 		} else {
 			Message message = Message.findById(msgId);
@@ -93,7 +74,14 @@ public class DiscussionREST extends Controller {
 
 		Discussion discussion = new Discussion();
 		discussion.messageIds = new ArrayList<String>();
+		discussion.userIds = new ArrayList<String>();
 		discussion.subject = json.findPath("subject").getTextValue();
+		
+		Iterator<JsonNode> userIds = json.findPath("receiver_users").getElements();
+		while(userIds.hasNext()){
+			String userId = userIds.next().toString();
+			discussion.userIds.add(userId);
+		}
 		
 		Message message = new Message();
 		message.message = json.findPath("body").getTextValue();
@@ -103,7 +91,7 @@ public class DiscussionREST extends Controller {
 		discussion.addMessage(message); // Add message to discussion
 		discussion.save(); // Save discussion
 		
-		return ok(Discussion.discussionToObjectNode(discussion));
+		return ok(Discussion.discussionToFullObjectNode(discussion));
 	}
 
 	public static Result reply(String id){
@@ -116,7 +104,7 @@ public class DiscussionREST extends Controller {
 			return badRequest(Constants.USER_NOT_LOGGED_IN.toString());
 		}
 		Discussion discussion = Discussion.findById(id);
-		if (discussion == null){
+		if (discussion == null || !discussion.userIds.contains(user.id)){
 			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
 		}
 		Message message = new Message();
@@ -125,7 +113,7 @@ public class DiscussionREST extends Controller {
 		message.save();
 		discussion.addMessage(message);
 		discussion.save();
-		return ok(toJson(Discussion.discussionToObjectNode(discussion)));
+		return ok(toJson(Discussion.discussionToFullObjectNode(discussion)));
 
 	}
 
@@ -139,7 +127,7 @@ public class DiscussionREST extends Controller {
 			return badRequest(Constants.USER_NOT_LOGGED_IN.toString());
 		}
 		Discussion discussion = Discussion.findById(id);
-		if (discussion == null){
+		if (discussion == null || !discussion.userIds.contains(user.id)){
 			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
 		}
 		Message msg = discussion.findMessageById(msgId);
@@ -153,7 +141,7 @@ public class DiscussionREST extends Controller {
 			discussion.addMessage(message); // Add message to discussion
 			discussion.save(); // Save discussion
 			
-			return ok(toJson(Discussion.discussionToObjectNode(discussion)));
+			return ok(toJson(Discussion.discussionToFullObjectNode(discussion)));
 		} else {
 			return badRequest(Constants.MESSAGES_EMPTY.toString());
 		}

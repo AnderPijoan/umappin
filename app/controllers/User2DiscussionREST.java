@@ -13,10 +13,9 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
 
 import play.libs.Json;
-import play.mvc.Controller;
 import play.mvc.Result;
 
-public class User2DiscussionREST extends Controller {
+public class User2DiscussionREST extends ItemREST {
 
 	public static Result getDiscussions() {
 		final User user = Application.getLocalUser(session());
@@ -82,7 +81,7 @@ public class User2DiscussionREST extends Controller {
 		user2disc.setReadTimeStamp(discussion.id.toString());
 		
 		ObjectNode response = Json.newObject();
-		response.put("discussion", Json.toJson(Discussion.discussionToObjectNode(discussion)));
+		response.put("discussion", Json.toJson(Discussion.discussionToFullObjectNode(discussion)));
 
 		// Return the response
 		return ok(response);
@@ -119,6 +118,7 @@ public class User2DiscussionREST extends Controller {
 		
 		Discussion discussion = new Discussion();		// Create discussion
 		discussion.messageIds = new ArrayList<String>();
+		discussion.userIds = new ArrayList<String>();
 		discussion.subject = json.findPath("subject").getTextValue();
 
 		Message message = new Message();		// Create message
@@ -138,10 +138,13 @@ public class User2DiscussionREST extends Controller {
 			if (user2disc == null){
 				user2disc = new User2Discussion();
 				user2disc.userId = userId;
+				discussion.userIds.add(userId);
 				user2disc.discussionIds = new ArrayList<String>();
+				user2disc.save();
 			}
-			user2disc.discussionIds.add(discussion.id.toString());
-			user2disc.save();
+			
+			user2disc.discussionIds.add(discussion.id.toString()); // Add discussions id to this user
+			user2disc.save(); // Save user2discussion
 		}
 		
 		// Add discussion to sender
@@ -150,13 +153,15 @@ public class User2DiscussionREST extends Controller {
 		if (user2disc == null){
 			user2disc = new User2Discussion();
 			user2disc.userId = user.id.toString();
+			discussion.userIds.add(user.id.toString());
 			user2disc.discussionIds = new ArrayList<String>();
 		}
+		
 		user2disc.discussionIds.add(discussion.id.toString());
 		user2disc.save();
 
 		//Return a copy of the discussion
-		return ok(Json.toJson(Discussion.discussionToObjectNode(discussion)));
+		return ok(Json.toJson(Discussion.discussionToFullObjectNode(discussion)));
 	}
 	
 	public static Result reply(String id) {
@@ -169,9 +174,10 @@ public class User2DiscussionREST extends Controller {
 			return badRequest(Constants.JSON_EMPTY.toString());
 		}
 		Discussion discussion = Discussion.findById(id);
-		if (discussion == null){
+		if (discussion == null || !discussion.userIds.contains(user.id.toString())){
 			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
 		}
+		
 		Message message = new Message();
 		message.message = json.findPath("message").getTextValue();
 		message.writerId = user.id.toString();
@@ -181,7 +187,7 @@ public class User2DiscussionREST extends Controller {
 		discussion.save(); // Save discussion
 		
 		// Return a copy of the discussion
-		return ok(Json.toJson(Discussion.discussionToObjectNode(discussion)));
+		return ok(Json.toJson(Discussion.discussionToFullObjectNode(discussion)));
 	}
 	
 	public static Result replyToMessage(String id, String msgId){
@@ -194,7 +200,7 @@ public class User2DiscussionREST extends Controller {
 			return badRequest(Constants.JSON_EMPTY.toString());
 		}
 		Discussion discussion = Discussion.findById(id);
-		if (discussion == null){
+		if (discussion == null || !discussion.userIds.contains(user.id.toString())){
 			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
 		}
 		
@@ -211,7 +217,7 @@ public class User2DiscussionREST extends Controller {
 			discussion.save(); // Save Discussion
 			
 			// Return a copy of the discussion
-			return ok(Discussion.discussionToObjectNode(discussion));
+			return ok(Discussion.discussionToFullObjectNode(discussion));
 		}
 		return badRequest(Constants.MESSAGES_EMPTY.toString());
 	}
