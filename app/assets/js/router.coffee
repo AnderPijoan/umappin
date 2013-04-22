@@ -24,7 +24,7 @@ class umappin.Router extends Backbone.Router
   editmap: () ->
     setTemplate "/assets/templates/map.html", () ->
       requirejs ['/assets/js/lib/leaflet.min.js'], () ->
-        requirejs ['/assets/js/lib/leaflet.draw.min.js'], () ->
+        requirejs ['/assets/js/lib/leaflet.draw.js'], () ->
           requirejs ['/assets/js/map/map.js'], () ->
             Map.init()
 
