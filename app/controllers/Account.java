@@ -96,7 +96,7 @@ public class Account extends Controller {
 					"playauthenticate.verify_email.error.set_email_first",
 					user.email));
 		}
-		return redirect(routes.Templates.profile()); // Changed 'Application' to 'Templates' ....
+		return redirect(routes.Application.index()); // Changed 'Application' to 'Templates' ....
 	}
 
 	@Restrict(@Group(Application.USER_ROLE))

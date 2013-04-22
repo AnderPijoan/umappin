@@ -1,15 +1,13 @@
 package controllers;
 
-import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import com.google.code.morphia.query.Query;
-import com.mongodb.util.JSON;
 import models.User;
 import play.Routes;
+import play.api.templates.Html;
 import play.data.Form;
 import play.data.validation.ValidationError;
 import play.mvc.*;
@@ -19,7 +17,6 @@ import providers.MyUsernamePasswordAuthProvider;
 import providers.MyUsernamePasswordAuthProvider.MyLogin;
 import providers.MyUsernamePasswordAuthProvider.MySignup;
 
-import scala.util.parsing.json.JSONArray;
 import views.html.account.*;
 
 import com.feth.play.module.pa.PlayAuthenticate;
@@ -32,14 +29,15 @@ public class Application extends Controller {
 	public static final String FLASH_ERROR_KEY = "error";
 	public static final String USER_ROLE = "user";
 
-    // Home page
+    // Home page  will remove if all auth modules adapted
 	public static Result index() {
-        return redirect("/assets/index.html");
+        //return ok(main.render("", "", Html.apply("TODO: Some content here")));
+        return redirect("/");
 	}
 
     /** ------ The next methods handle the followed links from email ------ **/
     public static Result tokenSuccess() {
-        return badRequest(auth_result.render("Account Activation", "alert-sucess", "Account activated"));
+        return ok(auth_result.render("Account Activation", "alert-sucess", "Account activated"));
     }
 
     public static Result tokenFail() {
@@ -51,7 +49,7 @@ public class Application extends Controller {
     }
 
     public static Result passwordResetFail(String msg) {
-        return ok(auth_result.render("Password Reset", "alert-error", msg));
+        return badRequest(auth_result.render("Password Reset", "alert-error", msg));
     }
     /** -------------------------------------------------------------------- **/
 

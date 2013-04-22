@@ -5,9 +5,12 @@ import java.util.Date;
 import java.util.List;
 
 import org.bson.types.ObjectId;
+import org.codehaus.jackson.node.ObjectNode;
 
-import com.feth.play.module.pa.user.AuthUser;
-import com.google.code.morphia.annotations.Embedded;
+
+import play.data.format.Formats;
+import play.libs.Json;
+
 import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Id;
 
@@ -26,10 +29,12 @@ public class Discussion {
 
 	public String subject;
 
-	@Embedded
-	public List<Message> messages;
+	public List<String> messageIds = new ArrayList<String>();
+	
+	public List<String> userIds = new ArrayList<String>();
 
-	public Date timeStamp;
+	@Formats.DateTime(pattern = "yyyy-MM-dd HH:mm:ss")
+	public Date lastWrote = new Date();
 	
 	public static List<Discussion> all() {
 		if (MorphiaObject.datastore != null) {
@@ -40,7 +45,7 @@ public class Discussion {
 	}
 	
 	public ObjectId save() {
-		timeStamp = new Date();
+		lastWrote = new Date();
 		MorphiaObject.datastore.save(this);
 		return this.id;
 	}
@@ -64,8 +69,8 @@ public class Discussion {
 	}
 	
 	public Message findMessageById(String id) {
-		Message message = MorphiaObject.datastore.get(Message.class, new ObjectId(id));
-		if (this.messages.contains(message)){
+		if (this.messageIds.contains(id)){
+			Message message = MorphiaObject.datastore.get(Message.class, new ObjectId(id));
 			return message;
 		} else {
 			return null;
@@ -73,8 +78,8 @@ public class Discussion {
 	}
 	
 	public Message findMessageById(ObjectId id) {
-		Message message = MorphiaObject.datastore.get(Message.class, id);
-		if (this.messages.contains(message)){
+		if (this.messageIds.contains(id.toString())){
+			Message message = MorphiaObject.datastore.get(Message.class, id);
 			return message;
 		} else {
 			return null;
@@ -82,11 +87,58 @@ public class Discussion {
 	}
 	
 	public List<Message> getMessages() {
+		List<Message> messages = new ArrayList<Message>();
+		for(String id : this.messageIds){
+			Message message = MorphiaObject.datastore.get(Message.class, new ObjectId(id));
+			messages.add(message);
+		}
 		return messages;
 	}
 	
 	public void addMessage(Message message) {
-		this.messages.add(message);
+		this.messageIds.add(message.id.toString());
+		this.lastWrote = new Date();
 		this.save();
+	}
+	
+	/** Parses a discussion list and prepares it for exporting to JSON
+	 * @param dscs Discussion list
+	 * @return List of ObjectNodes ready for use in toJson
+	 */
+	public static List<ObjectNode> discussionsToObjectNodes (List<Discussion> dscs){
+		List<ObjectNode> discussions = new ArrayList<ObjectNode>();
+			for(Discussion discussion : dscs){
+				discussions.add(discussionToShortObjectNode(discussion));
+			}
+			return discussions;
+		}
+	
+	/** Parses a discussion and prepares it for exporting to JSON
+	 * @param discussion A discussion
+	 * @return ObjectNode ready for use in toJson
+	 */
+	public static ObjectNode discussionToShortObjectNode (Discussion discussion){
+		ObjectNode discussionNode = Json.newObject();
+		discussionNode.put("id", discussion.id.toString());
+		discussionNode.put("subject", discussion.subject);
+		discussionNode.put("users", Json.toJson(discussion.userIds));
+		discussionNode.put("timeStamp", discussion.id.getTime());
+		discussionNode.put("lastWrote", discussion.lastWrote.toString());
+		return discussionNode;
+	}
+	
+	/** Parses a discussion and prepares it for exporting to JSON
+	 * @param discussion A discussion
+	 * @return ObjectNode ready for use in toJson
+	 */
+	public static ObjectNode discussionToFullObjectNode (Discussion discussion){
+		ObjectNode discussionNode = Json.newObject();
+		discussionNode.put("id", discussion.id.toString());
+		discussionNode.put("subject", discussion.subject);
+		discussionNode.put("users", Json.toJson(discussion.userIds));
+		discussionNode.put("timeStamp", discussion.id.getTime());
+		discussionNode.put("lastWrote", discussion.lastWrote.toString());
+		discussionNode.put("messages", Json.toJson(Message.messagesToObjectNodes(discussion.getMessages())));
+		return discussionNode;
 	}
 }

@@ -2,7 +2,9 @@ package models;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.bson.types.ObjectId;
 
@@ -17,19 +19,24 @@ import controllers.MorphiaObject;
  * Time: 12:34
  */
 @Entity
-public class User2Discussion {
+public class User2Discussion extends Item {
 
+    /** ------------------------ Attributes ------------------------- **/
+	
 	@Id
 	public String userId;
 	
 	public List<String> discussionIds;
 	
+	public Map<String, Date> lastReadTimeStamp = new HashMap<String, Date>();
+	
+    /** ------------------------- Methods -------------------------- **/
 	
 	public List<Discussion> all() {
 		if (MorphiaObject.datastore != null) {
 			List<Discussion> result = new ArrayList<Discussion>();
 			for (String id : this.discussionIds){
-				result.add(MorphiaObject.datastore.get(Discussion.class, id));
+				result.add(MorphiaObject.datastore.get(Discussion.class, new ObjectId(id)));
 			}
 			return result;
 		} else {
@@ -37,9 +44,23 @@ public class User2Discussion {
 		}
 	}
 	
-	public String save() {
+	public List<Discussion> unread() {
+		if (MorphiaObject.datastore != null) {
+			List<Discussion> result = new ArrayList<Discussion>();
+			for (String id : this.discussionIds){
+				
+				Discussion discussion = MorphiaObject.datastore.get(Discussion.class, new ObjectId(id));
+				if(discussion.lastWrote.after(lastReadTimeStamp.get(discussion.id.toString())))
+					result.add(discussion);
+			}
+			return result;
+		} else {
+			return new ArrayList<Discussion>();
+		}
+	}
+	
+	public void save() {
 		MorphiaObject.datastore.save(this);
-		return this.userId;
 	}
 	
 	public static User2Discussion findById(String id) {
@@ -48,7 +69,8 @@ public class User2Discussion {
 	
 	public Discussion findDiscussionById(String id) {
 		if (this.discussionIds.contains(id)){
-			return MorphiaObject.datastore.get(Discussion.class, id);
+			lastReadTimeStamp.put(id, new Date());
+			return MorphiaObject.datastore.get(Discussion.class, new ObjectId(id));
 		} else {
 			return null;
 		}
@@ -61,6 +83,10 @@ public class User2Discussion {
 		} else {
 			return null;
 		}
+	}
+	
+	public void setReadTimeStamp(String id){
+		lastReadTimeStamp.put(id, new Date());
 	}
 	
 }

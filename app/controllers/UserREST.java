@@ -1,39 +1,42 @@
 package controllers;
 
+import be.objectify.deadbolt.java.actions.Group;
+import be.objectify.deadbolt.java.actions.Restrict;
 import models.User;
-
 import org.codehaus.jackson.JsonNode;
-
+import org.codehaus.jackson.node.ObjectNode;
 import play.libs.Json;
-import play.mvc.Controller;
 import play.mvc.Result;
 import providers.MyUsernamePasswordAuthUser;
-
 import providers.MyUsernamePasswordAuthProvider.MySignup;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class UserREST extends Controller {
+public class UserREST extends ItemREST {
 
-    public static Result getUsers() {
-        List<User> users =  User.all();
+    public static Result getAll() {
+        List<User> users =  User.all(User.class);
         if (users.size() == 0) {
-            return badRequest(Constants.USERS_EMPTY.toString());
+            return notFound(Constants.JSON_EMPTY.toString());
         } else {
-            return ok(Json.toJson(users));
+            List<JsonNode> nodes = new ArrayList();
+            for (User usr : users)
+                if (usr.emailValidated)
+                nodes.add(usr.userToJson());
+            return ok(Json.toJson(nodes));
         }
     }
 
-    public static Result getUser(String user) {
-        User usr =  User.findByName(user);
-        if (usr == null) {
-            return badRequest(Constants.USERS_EMPTY.toString());
-        } else {
-            return ok(Json.toJson(usr));
-        }
+    public static Result get(String id) {
+        User usr = User.findById(id, User.class);
+        if (usr.emailValidated)
+            return ok(usr.userToJson());
+        else
+            return notFound(Constants.JSON_EMPTY.toString());
     }
 
-    public static Result addUser() {
+    public static Result post() {
         JsonNode json = request().body().asJson();
         if(json == null) {
             return badRequest(Constants.JSON_EMPTY.toString());
@@ -47,10 +50,36 @@ public class UserREST extends Controller {
         }
     }
 
+    @Restrict(@Group(Application.USER_ROLE))
+    public static Result put(String id) {
+        JsonNode json = request().body().asJson();
+        if(json == null || id == null) {
+            return badRequest(Constants.JSON_EMPTY.toString());
+        } else if (User.findById(id, User.class) == null) {
+            return notFound(Constants.JSON_EMPTY.toString());
+        } else {
+            ((ObjectNode)json).put("id", id);
+            User usr = User.fromJson(json, User.class);
+            usr.save();
+            return ok(usr.userToJson());
+        }
+    }
+
+    @Restrict(@Group(Application.USER_ROLE))
+    public static Result delete(String id) {
+        User item = User.findById(id, User.class);
+        if (item == null) {
+            return notFound(Constants.JSON_EMPTY.toString());
+        } else {
+            item.delete();
+            return ok(item.userToJson());
+        }
+    }
+
     public static Result getSessionUser() {
         final User localUser = Application.getLocalUser(session());
         if (localUser != null)
-            return ok(Json.toJson(localUser));
+            return ok(localUser.userToJson());
         else
             return notFound(Constants.USER_NOT_LOGGED_IN.toString());
     }

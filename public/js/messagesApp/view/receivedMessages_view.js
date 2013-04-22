@@ -1,5 +1,5 @@
 var messagesApp = messagesApp || {};
-
+_.templateSettings.variable = "rc";
 (function(){
 	//this is the view controller for the all discussions (the list of discussions)
 
@@ -12,7 +12,9 @@ var messagesApp = messagesApp || {};
 		render: function(){
 			//return the template with the info of the model and changed to 
 			//messages_body to have this one as the messages APP body
-			$('#messages_body').html(this.template(this.model.toJSON()));
+			//$('#messages_body').html(this.template(this.model.toJSON()));
+			//return the template with the info of the model
+			$(this.el).html(this.template(this.model.toJSON()));
 			console.log("render received Discussions");
 			return this;
 		}

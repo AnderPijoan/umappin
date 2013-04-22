@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"><!-- manifest="/assets/umappin._appcache"-->
 
 <head>
 
@@ -8,9 +8,13 @@
     <!-- meta -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- mobile devices -->
+    <meta name='viewport' content='initial-scale=1.0 maximum-scale=1.0'>
+    <meta name='apple-mobile-web-app-capable' content='yes' />
+    <meta name='apple-mobile-web-app-status-bar-style' content='black-translucent' />
     <meta name="description" content="uMappin Play 2.1 Application">
     <meta name="author" content="uMappin Deusto Team">
-
+    <link href="/assets/favicon.ico" rel="icon" type="image/x-icon" />
     <!-- styles -->
     <link href="/assets/css/main.min.css" rel="stylesheet">
     <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
@@ -32,10 +36,10 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </a>
-                <a class="brand" href="Javascript:home()">uMappin</a>
+                <a class="brand" href="/">uMappin</a>
 
                 <div class="btn-group pull-right loggedout">
-                    <a href="Javascript:setTemplate('/login')" class="btn btn-primary btn-mini ">Log in</a>
+                    <a href="#login" class="btn btn-primary btn-mini ">Log in</a>
                 </div>
 
                 <div class="btn-group pull-right loggedin" accesskey="" id="loggedControl">
@@ -45,50 +49,60 @@
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="Javascript:setTemplate('/profile')">Profile</a></li>
-                        <li><a href="Javascript:setTemplate('/linkProvider')">Link more providers</a></li>
+                        <li><a href="#account">Profile</a></li>
+                        <li><a href="#linkProvider">Link more providers</a></li>
                         <li class="divider"></li>
-                        <li><a href="Javascript:doLogout()"><i class="icon-off"></i> Sign out</a></li>
+                        <li><a href="#logout"><i class="icon-off"></i> Sign out</a></li>
                     </ul>
                 </div>
 
                 <div class="nav-collapse">
                     <ul class="nav">
-                        <li class=""><a href="Javascript:setTemplate('/userlist')">User List</a></li>
-                        <li class=""><a href="Javascript:setTemplate('/messages')">Messages</a></li>
-                        <li class=""><a href="Javascript:setTemplate('/editmap')">Edit Map</a></li>
-                        <li class=""><a href="Javascript:setTemplate('/account')">Account</a></li>
-                        <li class="loggedout"><a href="Javascript:setTemplate('/signup')">Sign up</a></li>
-
+                        <li class="loggedin"><a href="#messages/">Messages</a></li>
+                        <li class="loggedin"><a href="#editmap">Edit Map</a></li>
+                        <li class="loggedin"><a href="#account">Account</a></li>
+                        <li class="loggedout"><a href="#signup">Sign up</a></li>
+                        <li class=""><a href="#test">RestTest</a></li>
+                        <li class="loggedout"><a href="#synctest">SyncTest</a></li>
                     </ul>
                 </div><!--/.nav-collapse -->
             </div>
         </div>
     </div>
 
-    <div class="container">
+    <div class="container" id="appBody">
 
         <div id="actionResult"></div>
-        <div id="content"></div>
+        <div id="content"><h1>HOME</h1></div>
 
         <hr>
         <footer>
-            <p>&copy; 2013 uMappin. Licensed under Apache License, Version 2.0. View details <a href="#">here</a>.</p>
-            <p><small>
-                Styles by <a href="http://twitter.github.com/bootstrap/index.html" target="_blank">Twitter Bootstrap</a>
-                &middot; Provider icons by <a href="http://prlloyd.com/Pf4al8" target="_blank">Paul Robert Lloyd</a>
-            </small></p>
+            <p>
+                &copy; 2013 uMappin. Licensed under Apache License, Version 2.0. View details
+                <a href="#">here</a>.
+            </p>
+            <p>
+                <small>
+                    Styles by
+                    <a href="http://twitter.github.com/bootstrap/index.html" target="_blank">
+                        Twitter Bootstrap
+                    </a>
+                    &middot; Provider icons by
+                    <a href="http://prlloyd.com/Pf4al8" target="_blank">Paul Robert Lloyd</a>
+                </small>
+            </p>
         </footer>
     </div> <!-- /container -->
 
     <!-- scripts -->
     <script src="/assets/js/lib/jquery.min.js"></script>
     <script src="/assets/js/lib/bootstrap.min.js"></script>
-    <script src="/assets/js/lib/underscore-min.js"></script>
+    <script src="/assets/js/lib/underscore.min.js"></script>
     <script src="/assets/js/lib/json2.js"></script>
-    <script src="/assets/js/lib/backbone-min.js"></script>
-    <script src="/assets/javascript/routes.js" defer="defer"></script>
-
+    <script src="/assets/js/lib/backbone.min.js"></script>
+    <script src="/assets/js/lib/backbone.subroute.js"></script>
+    <script src="/assets/js/lib/require.min.js"></script>
+    <!--script src="/assets/js/backbone.custom.js"></script-->
     <script src="/assets/js/main.js"></script>
 
 </body>
