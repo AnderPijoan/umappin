@@ -92,10 +92,14 @@
 
 <script type='text/template' id='userprofile-template'>
     <div class="span3">
-        <a href="javascript:void(0)">
-            <img class="image img-rounded" src="/assets/img/140x140.gif" alt="placeholder image"
-                 height="140" width="140">
-        </a>
+        <% if (rc.data.profilePicture !== '') { %>
+            <a href="javascript:void(0)">
+                <img class="image img-rounded" src="/rest/photos/<%=rc.data.profilePicture%>/content" alt="placeholder image"
+                     height="140" width="140">
+            </a>
+        <% } else { %>
+            <div id="dropProfilePicture">Drop or Click</div>
+        <% } %>
         <br/><br/>
         <label>Username</label>
         <input type="text" value="<%- rc.data.name %>" class="input-medium" required  id='profile-name'><br/>
