@@ -30,6 +30,8 @@ public class Discussion {
 	public String subject;
 
 	public List<String> messageIds = new ArrayList<String>();
+	
+	public List<String> userIds = new ArrayList<String>();
 
 	@Formats.DateTime(pattern = "yyyy-MM-dd HH:mm:ss")
 	public Date lastWrote = new Date();
@@ -106,7 +108,7 @@ public class Discussion {
 	public static List<ObjectNode> discussionsToObjectNodes (List<Discussion> dscs){
 		List<ObjectNode> discussions = new ArrayList<ObjectNode>();
 			for(Discussion discussion : dscs){
-				discussions.add(discussionToObjectNode(discussion));
+				discussions.add(discussionToShortObjectNode(discussion));
 			}
 			return discussions;
 		}
@@ -115,10 +117,25 @@ public class Discussion {
 	 * @param discussion A discussion
 	 * @return ObjectNode ready for use in toJson
 	 */
-	public static ObjectNode discussionToObjectNode (Discussion discussion){
+	public static ObjectNode discussionToShortObjectNode (Discussion discussion){
 		ObjectNode discussionNode = Json.newObject();
 		discussionNode.put("id", discussion.id.toString());
 		discussionNode.put("subject", discussion.subject);
+		discussionNode.put("users", Json.toJson(discussion.userIds));
+		discussionNode.put("timeStamp", discussion.id.getTime());
+		discussionNode.put("lastWrote", discussion.lastWrote.toString());
+		return discussionNode;
+	}
+	
+	/** Parses a discussion and prepares it for exporting to JSON
+	 * @param discussion A discussion
+	 * @return ObjectNode ready for use in toJson
+	 */
+	public static ObjectNode discussionToFullObjectNode (Discussion discussion){
+		ObjectNode discussionNode = Json.newObject();
+		discussionNode.put("id", discussion.id.toString());
+		discussionNode.put("subject", discussion.subject);
+		discussionNode.put("users", Json.toJson(discussion.userIds));
 		discussionNode.put("timeStamp", discussion.id.getTime());
 		discussionNode.put("lastWrote", discussion.lastWrote.toString());
 		discussionNode.put("messages", Json.toJson(Message.messagesToObjectNodes(discussion.getMessages())));

@@ -243,8 +243,9 @@ public class User extends Item implements Subject {
 	}
 	
 
-
     /** ------------ User model needs special ObjectIds handling ------------- **/
+	
+	
     public JsonNode userToJson() {
         JsonNode json = this.toJson();
         ArrayNode aux = new ArrayNode(JsonNodeFactory.instance);

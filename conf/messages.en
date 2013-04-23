@@ -174,3 +174,8 @@ umappin.message.description=uMappin: a Maps Social Network
 
 
 ### --- umappin general END
+
+
+### --- photos START
+messages.photos.upload=upload
+### --- photos END
