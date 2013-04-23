@@ -32,7 +32,7 @@ public class Discussion {
 	public List<String> messageIds = new ArrayList<String>();
 
 	@Formats.DateTime(pattern = "yyyy-MM-dd HH:mm:ss")
-	public Date lastWrote;
+	public Date lastWrote = new Date();
 	
 	public static List<Discussion> all() {
 		if (MorphiaObject.datastore != null) {

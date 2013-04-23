@@ -31,11 +31,14 @@ public class User2DiscussionREST extends Controller {
 		if (discussions.size() == 0) {
 			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
 		} else {
-			ObjectNode response = Json.newObject();
-			response.put("discussions", Json.toJson(Discussion.discussionsToObjectNodes(discussions)));
+			//No parent node nedded
+
+			//ObjectNode response = Json.newObject();
+			//response.put("discussions", Json.toJson(Discussion.discussionsToObjectNodes(discussions)));
+			return ok(Json.toJson(Discussion.discussionsToObjectNodes(discussions)));
 			
 			// Return the response
-			return ok(response);
+			//return ok(response);
 		}
 	}
 	

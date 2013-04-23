@@ -38,7 +38,7 @@ messagesApp.Router = Backbone.SubRoute.extend({
 	discussionHeaders: function(){
 		this.loadTemplateIfNeed(function(){
 			console.log("routing received");
-    		messagesApp.DiscussionHeaders.loadDiscussions();
+    		messagesApp.DiscussionCollection.fetch();
 	    });
 	},
 	newDiscussion: function(id){
