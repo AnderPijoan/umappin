@@ -6,9 +6,8 @@ messagesApp.DISCUSSION_LIST_BODY ='<ul id="discussion_list"></ul>';
 	messagesApp.AppView = Backbone.View.extend({
 		el: 'body',
 		initialize: function () {
-			
-			//if the add method of Discussions is called  "this.addOne" whill be triggered
-			this.listenTo(messagesApp.DiscussionCollection, 'all', this.renderDiscussions);
+			//triggered on sync
+			this.listenTo(messagesApp.DiscussionCollection, 'sync', this.renderDiscussions);
 
 		},
 		//Discussion Headers methods
@@ -16,7 +15,6 @@ messagesApp.DISCUSSION_LIST_BODY ='<ul id="discussion_list"></ul>';
 		
 		renderDiscussions: function(){
 			$('#messages_body').html('<ul id="discussion_list"> </ul>');
-
 			messagesApp.DiscussionCollection.each(function(discussion){
 			   	var view = new messagesApp.ReceivedView({ model: discussion});
 			   	$('#discussion_list').append(view.render().el);
