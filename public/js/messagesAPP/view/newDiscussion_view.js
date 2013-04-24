@@ -49,7 +49,7 @@ var messagesApp = messagesApp || {};
 					"message":"'"+message+"'",
 				},
 				"to_friends": toFriends,
-				"receivers": receivers,
+				"receiver_users": receivers,
 			};
 
 			var a = new messagesApp.Discussion(newDiscussion);
