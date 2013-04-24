@@ -105,22 +105,15 @@ PUT     /items/:id                controllers.SubItemREST.put(id: String)
 DELETE  /items/:id                controllers.SubItemREST.delete(id: String)
 
 # ------------------------------ Photos ------------------------------------
+# Picture manager
 GET     /photos/manager              controllers.Photos.manager
 
-#allocates a new photo by sending the metadata
-POST    /rest/photos                 controllers.PhotosREST.newPhoto()
-DELETE  /rest/photos/:id             controllers.PhotosREST.deletePhoto(id: String)
-POST    /rest/photos/:id             controllers.PhotosREST.updatePhoto(id: String)
+# REST CRUD for pictures
+GET     /photos/:id             controllers.PhotosREST.getPhoto(id: String)
+POST    /photos                 controllers.PhotosREST.newPhoto()
+PUT     /photos/:id             controllers.PhotosREST.updatePhoto(id: String)
+DELETE  /photos/:id             controllers.PhotosREST.deletePhoto(id: String)
 
-
-#POST for photoContent carried within multipart/form-data
-POST   /rest/photos/:id/content      controllers.PhotosREST.uploadMultipartContent(id: String)
-
-
-#'quality' is dummy, this parameter is never read
-GET    /rest/photos/:id/content      controllers.PhotosREST.getPhotoContent(id: String)
-
-
-#updates and get the metadata
-GET     /rest/photos/:id             controllers.PhotosREST.getPhoto(id: String)
-
+# REST CRUD for pictures content
+GET     /photos/:id/content      controllers.PhotosREST.getPhotoContent(id: String)
+POST    /photos/:id/content      controllers.PhotosREST.uploadMultipartContent(id: String)

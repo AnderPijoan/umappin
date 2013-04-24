@@ -1,0 +1,18 @@
+<% if (rc.data && rc.data.content) { %>
+    <img class="image img-rounded" src="<%=rc.data.content.fileBytes%>"
+         alt="placeholder image" height="140" width="140">
+<% } else if (rc.data && !rc.data.content) { %>
+    <img class="image img-rounded" src=""
+         alt="placeholder image" height="140" width="140">
+<% } else if (!rc.readonly) { %>
+    <div id="dropPicture">Drop or Click</div>
+<% } %>
+
+<% if (rc.showInfo && rc.data) { %>
+    <div id='pictureInfo'>
+        <ul>
+            <li><strong><%=rc.data.title%></strong><%=rc.data.type || 'n/a'%></li>
+            <li>created: <%=rc.data.created ? rc.data.created.toLocaleDateString() : 'n/a'%></li>
+        </ul>
+    </div>
+<% } %>
