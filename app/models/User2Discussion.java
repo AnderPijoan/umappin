@@ -19,8 +19,10 @@ import controllers.MorphiaObject;
  * Time: 12:34
  */
 @Entity
-public class User2Discussion {
+public class User2Discussion extends Item {
 
+    /** ------------------------ Attributes ------------------------- **/
+	
 	@Id
 	public String userId;
 	
@@ -28,6 +30,7 @@ public class User2Discussion {
 	
 	public Map<String, Date> lastReadTimeStamp = new HashMap<String, Date>();
 	
+    /** ------------------------- Methods -------------------------- **/
 	
 	public List<Discussion> all() {
 		if (MorphiaObject.datastore != null) {
@@ -56,9 +59,8 @@ public class User2Discussion {
 		}
 	}
 	
-	public String save() {
+	public void save() {
 		MorphiaObject.datastore.save(this);
-		return this.userId;
 	}
 	
 	public static User2Discussion findById(String id) {

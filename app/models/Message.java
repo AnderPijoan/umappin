@@ -76,8 +76,7 @@ public class Message {
 		ObjectNode userNode = Json.newObject();
 		userNode.put("id", user.id.toString());
 		userNode.put("name", user.name);
-		userNode.put("firstName", user.firstName);
-		userNode.put("lastName", user.lastName);
+		userNode.put("photo", "http://paginaspersonales.deusto.es/dipina/images/photo-txikia2.jpg");
 		
 		ObjectNode messageNode = Json.newObject();
 		messageNode.put("id", message.id.toString());
