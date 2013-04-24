@@ -16,7 +16,7 @@ import java.util.List;
 public class Item {
 
 	@Id
-	public ObjectId id;
+	public ObjectId id = new ObjectId();
 
 	public static <T extends Item> List<T> all(Class<T> klass) {
 		if (MorphiaObject.datastore != null)

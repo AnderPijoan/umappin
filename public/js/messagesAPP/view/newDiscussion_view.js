@@ -52,10 +52,8 @@ var messagesApp = messagesApp || {};
 				"receivers": receivers,
 			};
 
-
 			var a = new messagesApp.Discussion(newDiscussion);
 			messagesApp.DiscussionCollection.add(a);
-
 			a.save({}, {  // se genera POST /usuarios  - contenido: {nombre:'Alfonso'}
 			    success:function(){
 			        // Suponiendo que el servidor ha devuelto el objeto {"id": 1}
@@ -80,5 +78,8 @@ var messagesApp = messagesApp || {};
 		}
 	});
 })();
+
+messagesApp.newDiscussionView = new messagesApp.NewDiscussionView();
+
 
 

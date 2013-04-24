@@ -45,13 +45,13 @@ messagesApp.Router = Backbone.SubRoute.extend({
 	newDiscussion: function(id){
 		this.loadTemplateIfNeed(function(){
 			console.log('newDiscussion');
-			var newDiscussionView = new messagesApp.NewDiscussionView();
-			newDiscussionView.showDiscussionForm();
+			messagesApp.newDiscussionView.showDiscussionForm();
         });
 	},
 	loadTemplateIfNeed:function(callback){
 		//it reloads the template only if not set
 		if($('#messages_body').length ==0){
+			console.log("Load Messages template");
 			setTemplate ("/assets/templates/messages.html", callback);
 
 		}else{		
