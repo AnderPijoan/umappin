@@ -258,7 +258,7 @@ public class User extends Item implements Subject {
         for (SecurityRole sr : this.roles)
             aux.add(sr.toJson());
         ((ObjectNode)json).put("roles", aux);
-        ((ObjectNode)json).put("profilePicture", profilePicture.toString());
+        ((ObjectNode)json).put("profilePicture", profilePicture != null ? profilePicture.toString() : "");
         return json;
     }
 
