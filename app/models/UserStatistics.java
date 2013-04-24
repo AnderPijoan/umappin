@@ -13,6 +13,7 @@ import com.google.code.morphia.annotations.Embedded;
 import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Id;
 import com.google.code.morphia.mapping.Mapper;
+import com.google.code.morphia.query.QueryResults;
 import com.google.code.morphia.query.UpdateOperations;
 
 import controllers.MorphiaObject;
@@ -35,12 +36,14 @@ public class UserStatistics {
 
 	public Map<String, Integer> statistics = new HashMap<String, Integer>();
 	
-	@Embedded
-	public List<UserAward> userAwards = new ArrayList<UserAward>();
+	@Embedded("UserAwards")
+	public List<UserAwards> userAwards = new ArrayList<UserAwards>();
 
 	public static UserStatistics findByUserId(String userId) {
-		return	MorphiaObject.datastore.find(UserStatistics.class).
-				field("userId").equal(userId).get();
+		QueryResults<UserStatistics> aux =	MorphiaObject.datastore.find(UserStatistics.class).
+				field("userId").equal(userId);
+		System.out.println("Elmts: "+aux.get().userAwards.size());
+		return aux.get();
 	}
 	
 	public static UserStatistics updateByUserId(String userId, Map<String, Integer> newStatistics) {
@@ -64,7 +67,7 @@ public class UserStatistics {
 		List<Award> achievedAwards = Award.findByAwardTypeLimit(statistic, previousValue, newValue);
 		if(achievedAwards != null){
 			for(Award award : achievedAwards) {
-				this.userAwards.add(new UserAward(statistic, award));
+				this.userAwards.add(new UserAwards(statistic, award));
 				this.points += award.points;
 			}
 			updateLevel();
@@ -92,8 +95,8 @@ public class UserStatistics {
 	
 	public void setRead() {
 		this.newLevel = false;
-		for(UserAward userAward : this.userAwards) {
-			userAward.setRead();
+		for(UserAwards userAward : this.userAwards) {
+			//userAward.setRead();
 		}
 	}
 	
@@ -125,8 +128,8 @@ public class UserStatistics {
 		statisticsNode.put("level", userStatistics.level);
 		statisticsNode.put("newLevel", userStatistics.newLevel);
 		statisticsNode.put("statistics", Json.toJson(userStatistics.statistics));
-		statisticsNode.put("userAwards", Json.toJson(UserAward
-				.userAwardsToObjectNodes(userStatistics.userAwards)));
+		statisticsNode.put("userAwards", Json.toJson(UserAwards.userAwardsToObjectNodes(userStatistics.userAwards)));
 		return statisticsNode;
 	}
 }
+
