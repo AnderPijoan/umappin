@@ -18,6 +18,7 @@ import play.mvc.Result;
 public class User2DiscussionREST extends ItemREST {
 
 	public static Result getDiscussions() {
+
 		final User user = Application.getLocalUser(session());
 		if (user == null){
 			return badRequest(Constants.USER_NOT_LOGGED_IN.toString());
@@ -97,12 +98,16 @@ public class User2DiscussionREST extends ItemREST {
 	}
 	
 	public static Result addDiscussion() {
+		System.out.println("Add discussion");
+
 		final User user = Application.getLocalUser(session());
+
 		if (user == null){
 			return badRequest(Constants.USER_NOT_LOGGED_IN.toString());
 		}
 		JsonNode json = request().body().asJson();
 		if(json == null) {
+			System.out.println("JSON EMpty");
 			return badRequest(Constants.JSON_EMPTY.toString());
 		}
 		
@@ -120,7 +125,7 @@ public class User2DiscussionREST extends ItemREST {
 		discussion.save(); // Save discussion
 		
 		// Add discussion to all readers
-		Iterator<JsonNode> userIds = json.findPath("receiver_users").getElements();
+		Iterator<JsonNode> userIds = json.findPath("users").getElements();
 		while(userIds.hasNext()){
 			String userId = userIds.next().toString();
 			User2Discussion user2disc = MorphiaObject.datastore.get(User2Discussion.class, userId);

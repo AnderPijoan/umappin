@@ -4,11 +4,7 @@ var messagesApp = messagesApp || {};
 
     messagesApp.Discussion = Backbone.Model.extend({
 
-        validate: function(attrs){
-            if (attrs.receivers==null || attrs.messages==null) {
-                return "Error creating a Discussion";
-            }
-        },
+    
 
         initialize: function(attrs, options) {
             /*this.on("invalid", function(model, error){

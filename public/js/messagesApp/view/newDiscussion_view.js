@@ -49,15 +49,14 @@ var messagesApp = messagesApp || {};
 					"message":"'"+message+"'",
 				},
 				"to_friends": toFriends,
-				"receiver_users": receivers,
+				"users": receivers,
 			};
 
 			var a = new messagesApp.Discussion(newDiscussion);
 			messagesApp.DiscussionCollection.add(a);
-			a.save({}, {  // se genera POST /usuarios  - contenido: {nombre:'Alfonso'}
+			a.save({}, {  
 			    success:function(){
-			        // Suponiendo que el servidor ha devuelto el objeto {"id": 1}
-			        alert(a.id);  // imprime 1
+			        alert(a.id);
 			    }
 			});
 
