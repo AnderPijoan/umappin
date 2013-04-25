@@ -16,9 +16,9 @@ class window.Account.ProfileView extends Backbone.View
   initialize: ->
     @readonly = @options.readonly
     @listenTo @model, 'reset change', @render
-    picture = new Photo id: @model.profilePicture
-    @pictureView = new PictureView { model: picture, readonly: @readonly, showInfo: true }
-    if @model.profilePicture then picture.fetch()
+    picture = new Photo id: @model.get "profilePicture"
+    @pictureView = new PictureView { model: picture, readonly: @readonly, showInfo: false, onSave: () => @model.save { profilePicture: picture.get "id" } }
+    if @model.get "profilePicture" then picture.fetch()
 
 
   render: ->
