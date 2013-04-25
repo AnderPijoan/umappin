@@ -30,14 +30,8 @@ public class User2DiscussionREST extends ItemREST {
 		if (discussions.size() == 0) {
 			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
 		} else {
-			//No parent node nedded
-
-			//ObjectNode response = Json.newObject();
-			//response.put("discussions", Json.toJson(Discussion.discussionsToObjectNodes(discussions)));
-			return ok(Json.toJson(Discussion.discussionsToObjectNodes(discussions)));
-			
 			// Return the response
-			//return ok(response);
+			return ok(Json.toJson(Discussion.discussionsToObjectNodes(discussions)));
 		}
 	}
 	
@@ -55,11 +49,8 @@ public class User2DiscussionREST extends ItemREST {
 		if (discussions.size() == 0) {
 			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
 		} else {
-			ObjectNode response = Json.newObject();
-			response.put("discussions", Json.toJson(Discussion.discussionsToObjectNodes(discussions)));
-			
 			// Return the response
-			return ok(response);
+			return ok(Json.toJson(Discussion.discussionsToObjectNodes(discussions)));
 		}
 	}
 
@@ -78,13 +69,10 @@ public class User2DiscussionREST extends ItemREST {
 			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
 		}
 
-		user2disc.setReadTimeStamp(discussion.id.toString());
-		
-		ObjectNode response = Json.newObject();
-		response.put("discussion", Json.toJson(Discussion.discussionToFullObjectNode(discussion)));
+		user2disc.setRead(discussion.id.toString(), true);
 
 		// Return the response
-		return ok(response);
+		return ok(Json.toJson(Discussion.discussionToFullObjectNode(discussion)));
 	}
 	
 	public static Result getMessage(String discussionId, String messageId) {
@@ -101,6 +89,8 @@ public class User2DiscussionREST extends ItemREST {
 		if (message == null){
 			return badRequest(Constants.MESSAGES_EMPTY.toString());
 		}
+		
+		user2disc.setRead(discussion.id.toString(), true);
 		
 		// Return a copy of the message
 		return ok(Json.toJson(Message.messageToObjectNode(message)));
@@ -140,10 +130,11 @@ public class User2DiscussionREST extends ItemREST {
 				user2disc.userId = userId;
 				discussion.userIds.add(userId);
 				user2disc.discussionIds = new ArrayList<String>();
+				user2disc.unread = new ArrayList<String>();
 				user2disc.save();
 			}
 			
-			user2disc.discussionIds.add(discussion.id.toString()); // Add discussions id to this user
+			user2disc.addDiscussion(discussion.id.toString()); // Add discussions id to this user
 			user2disc.save(); // Save user2discussion
 		}
 		
@@ -155,9 +146,10 @@ public class User2DiscussionREST extends ItemREST {
 			user2disc.userId = user.id.toString();
 			discussion.userIds.add(user.id.toString());
 			user2disc.discussionIds = new ArrayList<String>();
+			user2disc.unread = new ArrayList<String>();
 		}
 		
-		user2disc.discussionIds.add(discussion.id.toString());
+		user2disc.addDiscussion(discussion.id.toString());
 		user2disc.save();
 
 		//Return a copy of the discussion
@@ -185,6 +177,13 @@ public class User2DiscussionREST extends ItemREST {
 		
 		discussion.addMessage(message);
 		discussion.save(); // Save discussion
+		
+		// Create a list of all the users except me
+		List <String> otherUsers = discussion.userIds;
+		otherUsers.remove(user.id.toString());
+		
+		setUsersDiscussionUnread(discussion.id.toString(), otherUsers);
+
 		
 		// Return a copy of the discussion
 		return ok(Json.toJson(Discussion.discussionToFullObjectNode(discussion)));
@@ -216,9 +215,35 @@ public class User2DiscussionREST extends ItemREST {
 			discussion.addMessage(message); // Add message to its discussion
 			discussion.save(); // Save Discussion
 			
+			// Create a list of all the users except me
+			List <String> otherUsers = discussion.userIds;
+			otherUsers.remove(user.id.toString());
+			
+			setUsersDiscussionUnread(discussion.id.toString(), otherUsers);
+			
 			// Return a copy of the discussion
 			return ok(Discussion.discussionToFullObjectNode(discussion));
 		}
 		return badRequest(Constants.MESSAGES_EMPTY.toString());
+	}
+	
+	/** Change discussion to unread for this users
+	 * @param discussionId
+	 * @param userIds
+	 */
+	public static void setUsersDiscussionUnread(String discussionId, List<String> userIds){
+		
+		for (String userId : userIds){
+			User2Discussion user2disc = MorphiaObject.datastore.get(User2Discussion.class, userId.toString());
+			
+			// If is users first discussion, create new User2Discussion
+			if (user2disc == null){
+				user2disc = new User2Discussion();
+				user2disc.userId = userId.toString();
+				user2disc.discussionIds = new ArrayList<String>();
+				user2disc.unread = new ArrayList<String>();
+			}
+			user2disc.setRead(discussionId, false);
+		}
 	}
 }

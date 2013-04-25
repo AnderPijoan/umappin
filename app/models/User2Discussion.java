@@ -1,7 +1,6 @@
 package models;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +27,7 @@ public class User2Discussion extends Item {
 	
 	public List<String> discussionIds;
 	
-	public Map<String, Date> lastReadTimeStamp = new HashMap<String, Date>();
+	public List<String> unread = new ArrayList<String>(); // Only unread discussions ids are stored
 	
     /** ------------------------- Methods -------------------------- **/
 	
@@ -47,10 +46,8 @@ public class User2Discussion extends Item {
 	public List<Discussion> unread() {
 		if (MorphiaObject.datastore != null) {
 			List<Discussion> result = new ArrayList<Discussion>();
-			for (String id : this.discussionIds){
-				
+			for (String id : this.unread){
 				Discussion discussion = MorphiaObject.datastore.get(Discussion.class, new ObjectId(id));
-				if(discussion.lastWrote.after(lastReadTimeStamp.get(discussion.id.toString())))
 					result.add(discussion);
 			}
 			return result;
@@ -69,7 +66,7 @@ public class User2Discussion extends Item {
 	
 	public Discussion findDiscussionById(String id) {
 		if (this.discussionIds.contains(id)){
-			lastReadTimeStamp.put(id, new Date());
+			setRead(id, true); // We set the discussion to read
 			return MorphiaObject.datastore.get(Discussion.class, new ObjectId(id));
 		} else {
 			return null;
@@ -79,14 +76,33 @@ public class User2Discussion extends Item {
 	public Discussion findDiscussionById(ObjectId oid) {
 		String id = oid.toString();
 		if (this.discussionIds.contains(id)){
+			setRead(id, true); // We set the discussion to read
 			return MorphiaObject.datastore.get(Discussion.class, id);
 		} else {
 			return null;
 		}
 	}
 	
-	public void setReadTimeStamp(String id){
-		lastReadTimeStamp.put(id, new Date());
+	/** Adds a new discussionId to the list and also to the unread list
+	 * @param id
+	 */
+	public void addDiscussion(String id){
+		if (!this.discussionIds.contains(id)){
+			this.discussionIds.add(id);
+			setRead(id, false);
+		}
+	}
+	
+	/** Sets the discussionId to read or unread
+	 * @param id
+	 * @param read
+	 */
+	public void setRead(String id, boolean read){
+		if (read){
+			unread.remove(id);
+		} else if (!unread.contains(id)) {
+			unread.add(id);
+		}
 	}
 	
 }
