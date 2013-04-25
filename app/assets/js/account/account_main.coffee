@@ -28,12 +28,11 @@ Account._loadProfileData = () ->
 
 Account.loadProfileData = () ->
   requirejs ['/assets/js/common/models/photo_model.js'], () ->
-    requirejs ['/assets/js/common/models/photo_content_model.js'], () ->
-      requirejs ['/assets/js/account/models/user_model.js'], () ->
-        requirejs ['/assets/js/common/views/picture_view.js'], () ->
-          requirejs ['/assets/js/account/views/profile_view.js'], () ->
-            Account._loadSessionData () ->
-              Account._loadProfileData()
+    requirejs ['/assets/js/account/models/user_model.js'], () ->
+      requirejs ['/assets/js/common/views/picture_view.js'], () ->
+        requirejs ['/assets/js/account/views/profile_view.js'], () ->
+          Account._loadSessionData () ->
+            Account._loadProfileData()
 
 Account.loadUsersData = () ->
   if !Account.usersFiltersView

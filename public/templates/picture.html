@@ -1,18 +1,20 @@
-<% if (rc.data && rc.data.content) { %>
-    <img class="image img-rounded" src="<%=rc.data.content.fileBytes%>"
+<!------------------------------------- Styles -------------------------------------->
+<link href="/assets/css/picture.min.css" rel="stylesheet">
+
+
+<!------------------------------------- HTML -------------------------------------->
+<% if (rc.data.get_content_location) { %>
+    <img class="image img-rounded" src="<%=rc.data.get_content_location%>"
          alt="placeholder image" height="140" width="140">
-<% } else if (rc.data && !rc.data.content) { %>
-    <img class="image img-rounded" src=""
-         alt="placeholder image" height="140" width="140">
+    <% if (rc.showInfo) { %>
+        <div id='pictureInfo'>
+            <ul>
+                <li><strong><%=rc.data.title%></strong></li>
+                <li><%=rc.data.date_created ? new Date(rc.data.date_created).toLocaleString() : 'n/a'%></li>
+            </ul>
+        </div>
+    <% } %>
 <% } else if (!rc.readonly) { %>
     <div id="dropPicture">Drop or Click</div>
 <% } %>
 
-<% if (rc.showInfo && rc.data) { %>
-    <div id='pictureInfo'>
-        <ul>
-            <li><strong><%=rc.data.title%></strong><%=rc.data.type || 'n/a'%></li>
-            <li>created: <%=rc.data.created ? rc.data.created.toLocaleDateString() : 'n/a'%></li>
-        </ul>
-    </div>
-<% } %>

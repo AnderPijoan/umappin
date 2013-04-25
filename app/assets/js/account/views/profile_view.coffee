@@ -26,7 +26,7 @@ class window.Account.ProfileView extends Backbone.View
     #data.readonly = @readonly
     $(@el).html @template { data: data, readonly: @readonly }
     $(@el).find('input[type=text], textarea').attr('readonly', @readonly)
-    $(@el).find('#profilePictureHolder').append @pictureView.render()
+    $(@el).find('#profilePictureHolder').append @pictureView.render().el
     @
 
   validate: ->

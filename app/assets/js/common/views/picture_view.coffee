@@ -18,9 +18,10 @@ class window.PictureView extends Backbone.View
   initialize: ->
     @readonly = @options.readonly
     @showInfo = @options.showInfo
-    @listenTo @model, 'reset change', @render
+    @listenTo @model, 'reset save update change', @render
 
   render: ->
+    console.log @model
     data = @model.attributes
     if @template
       $(@el).html @template { data: data, readonly: @readonly, showInfo: @showInfo }
@@ -33,5 +34,5 @@ class window.PictureView extends Backbone.View
   dragOverPicture: (e) ->
     Photo.dragOverHandler e
 
-  dropPicture: (e) ->
-    Photo.dropHandler e, 'pictureInfo'
+  dropPicture: (e) =>
+    @model.dropHandler e
