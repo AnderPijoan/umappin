@@ -48,13 +48,13 @@ js/account/views/users_filters_view.js
 js/account/views/users_list_view.js
 
 # Messages Module JS scripts
-js/messagesAPP/messagesApp.js
-js/messagesAPP/model/discussionHeader.js
-js/messagesAPP/collection/discussionCollection.js
-js/messagesAPP/collection/discussionHeader_list.js
-js/messagesAPP/routers/router.js
-js/messagesAPP/view/discussionMessages_view.js
-js/messagesAPP/view/newDiscussion_view.js
+js/messagesApp/messagesApp.js
+js/messagesApp/model/discussionHeader.js
+js/messagesApp/collection/discussionCollection.js
+js/messagesApp/collection/discussionHeader_list.js
+js/messagesApp/routers/router.js
+js/messagesApp/view/discussionMessages_view.js
+js/messagesApp/view/newDiscussion_view.js
 js/messagesApp/model/discussion.js
 js/messagesApp/collection/discussion_list.js
 js/messagesApp/view/messagesApp_view.js

@@ -8,7 +8,7 @@ var messagesApp = messagesApp || {};
 			//here we load all discussions from the server side,... now from json File
 			this.reset();
 			console.log("reset Received Discussions");
-			$.getJSON("/assets/js/messagesAPP/test/discussion_header.json", function(data) {
+			$.getJSON("/assets/js/messagesApp/test/discussion_header.json", function(data) {
 			    $.each(data, function(key, val) {
 				    messagesApp.DiscussionHeaders.add(val);
 				});
