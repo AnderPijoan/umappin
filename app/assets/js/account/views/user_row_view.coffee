@@ -24,6 +24,15 @@ class window.Account.UserRowView extends Backbone.View
 
   render: ->   
     @$el.html @template @model.attributes
+    picture = new Photo id: @model.get "profilePicture"
+    @pictureView = new PictureView
+      model: picture
+      readonly: true
+      showInfo: false
+      picWidth: '2em'
+      picHeight: '2em'
+    if @model.get "profilePicture" then picture.fetch()
+    @$el.find('div.row .span1').first().html @pictureView.render().el
     @$el.find('div.row').append @followsView.render().el
     @$el.find('div.row').append @followedView.render().el
     @

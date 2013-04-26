@@ -6,6 +6,8 @@ class window.PictureView extends Backbone.View
   onSave: null
   templatePath: "/assets/templates/picture.html"
   template: null
+  picWidth: '10em'
+  picHeight: '10em'
 
   events:
     #"click img":  "browsePicture"
@@ -20,6 +22,8 @@ class window.PictureView extends Backbone.View
     @readonly = @options.readonly
     @showInfo = @options.showInfo
     @onSave = @options.onSave
+    @picWidth = @options.picWidth
+    @picHeight = @options.picHeight
     @listenTo @model, 'reset save update change', @render
 
   render: ->
@@ -27,6 +31,7 @@ class window.PictureView extends Backbone.View
     data = @model.attributes
     if @template
       $(@el).html @template { data: data, readonly: @readonly, showInfo: @showInfo }
+      $(@el).find('img').css('width', @picWidth).css('height', @picHeight)
     else
       $.get @templatePath, (resp) =>
         @template = _.template resp

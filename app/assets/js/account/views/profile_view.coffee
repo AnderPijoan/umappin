@@ -16,16 +16,23 @@ class window.Account.ProfileView extends Backbone.View
   initialize: ->
     @readonly = @options.readonly
     @listenTo @model, 'reset change', @render
-    picture = new Photo id: @model.get "profilePicture"
-    @pictureView = new PictureView { model: picture, readonly: @readonly, showInfo: false, onSave: () => @model.save { profilePicture: picture.get "id" } }
-    if @model.get "profilePicture" then picture.fetch()
-
 
   render: ->
     data = @model.attributes
     #data.readonly = @readonly
     $(@el).html @template { data: data, readonly: @readonly }
     $(@el).find('input[type=text], textarea').attr('readonly', @readonly)
+    
+    picture = new Photo id: @model.get "profilePicture"
+    @pictureView = new PictureView 
+      model: picture
+      readonly: @readonly
+      showInfo: false
+      picWidth: '15em'
+      picHeight: '15em'
+      onSave: () => @model.save { profilePicture: picture.get "id" } 
+      
+    if @model.get "profilePicture" then picture.fetch()
     $(@el).find('#profilePictureHolder').append @pictureView.render().el
     @
 

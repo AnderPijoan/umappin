@@ -23,10 +23,8 @@ Account._loadProfileData = () ->
   usrParams = umappin.router.params ? id: (JSON.parse sessionStorage.getItem "user").id
   Account.profile = new Account.User usrParams
   Account.readonly = umappin.router.params?
-  Account.profile.fetch success: () ->
-    Account.profileview = new Account.ProfileView model: Account.profile, readonly: Account.readonly
-
-
+  Account.profileview = new Account.ProfileView model: Account.profile, readonly: Account.readonly
+  Account.profile.fetch()
 
 Account.loadProfileData = () ->
   requirejs ['/assets/js/common/models/photo_model.js'], () ->
