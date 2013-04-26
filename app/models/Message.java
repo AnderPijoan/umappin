@@ -24,10 +24,10 @@ public class Message {
 
 	public String message;
 
-	public String writerId;
+	public ObjectId writerId;
 	
 	@Reference
-	public String replyToMsg;
+	public ObjectId replyToMsg; // ID of the message this message is replying to
 
 	public static List<Message> all() {
 		if (MorphiaObject.datastore != null) {
@@ -39,7 +39,7 @@ public class Message {
 
 	public ObjectId save() {
 		MorphiaObject.datastore.save(this);
-		return this.id;
+		return id;
 	}
 
 	public static Message findById(ObjectId id) {
