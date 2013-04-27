@@ -44,9 +44,9 @@ var messagesApp = messagesApp || {};
 			}
 
 			var newDiscussion={
-				"subject": "'"+subject+"'",
+				"subject": subject,
 				"messages":{
-					"message":"'"+message+"'",
+					"message":message,
 				},
 				"to_friends": toFriends,
 				"users": receivers,
