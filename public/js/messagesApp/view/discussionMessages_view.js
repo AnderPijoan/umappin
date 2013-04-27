@@ -13,7 +13,8 @@ _.templateSettings.variable = "rc";
 
 	    render: function() {
 	    	//changed to html() because replace, replaced the selected whole tag
-	        $(this.el).html(this.template(disc1.toJSON()));
+	        $(this.el).html(this.template(this.model.toJSON()));
+            console.log("rendering");
             return this;
 	    },
         reply: function(ev) {

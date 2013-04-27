@@ -1,6 +1,6 @@
 
 	<h2>Messages</h2>
-<p>Manage your messages)</p>
+<p>Manage your messages</p>
 <div class ="row">
     <div class="span2 offset9">    
         <a href="#messages/newDiscussion" role="button" class="btn">New Message</a>
@@ -66,8 +66,8 @@
              <h2><%- rc.subject %></h2>
              <br/>
              <div class="messages">
-                 <% _.each(rc.messages, function(message){ %>
-                    <p class="message"><%= message %></p>
+                 <% _.each(rc.messages, function(messageObject){ %>
+                    <p class="message"><%= messageObject.message %></p>
                     <div class="message_divider" />
                     <br/>
                  <% }); %>
@@ -79,11 +79,11 @@
      <script src="/assets/js/messagesApp/model/discussion.js"></script>
 
     <script src="/assets/js/messagesApp/view/receivedMessages_view.js"></script>
-    <script src="/assets/js/messagesAPP/view/messagesApp_view.js"></script>
-    <script src="/assets/js/messagesAPP/view/newDiscussion_view.js"></script>
+    <script src="/assets/js/messagesApp/view/messagesApp_view.js"></script>
+    <script src="/assets/js/messagesApp/view/newDiscussion_view.js"></script>
 
 
 
-    <script src="/assets/js/messagesAPP/view/discussionMessages_view.js"></script>
+    <script src="/assets/js/messagesApp/view/discussionMessages_view.js"></script>
 
 
