@@ -4,7 +4,9 @@ mongo test --eval "db.User.drop(); \
 		   db.TokenAction.drop(); \
 		   db.SecurityRole.drop(); \
 		   db.Follows.drop(); \
-		   db.Followed.drop();"
+		   db.Followed.drop(); \
+		   db.Photo.drop(); \
+		   db.Photo_Content.drop()"
 
 mongoimport --db test --collection SecurityRole --file ./preload/securityRoles.json
 mongoimport --db test --collection User --file ./preload/users.json

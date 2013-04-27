@@ -3,15 +3,12 @@ _.templateSettings.variable = 'rc'
 class window.PictureView extends Backbone.View
   readonly: true
   showInfo: false
-  onSave: null
   templatePath: "/assets/templates/picture.html"
   template: null
-  picWidth: '10em'
-  picHeight: '10em'
+  picWidth: '12em'
+  picHeight: '9em'
 
   events:
-    #"click img":  "browsePicture"
-    #"click #dropPicture":  "browsePicture"
     "dragover #dropPicture":  "dragOverPicture"
     "drop #dropPicture":  "dropPicture"
 
@@ -21,17 +18,26 @@ class window.PictureView extends Backbone.View
   initialize: ->
     @readonly = @options.readonly
     @showInfo = @options.showInfo
-    @onSave = @options.onSave
     @picWidth = @options.picWidth
     @picHeight = @options.picHeight
-    @listenTo @model, 'reset save update change', @render
+    @listenTo @model, 'reset change', @render
 
   render: ->
-    console.log @model
-    data = @model.attributes
-    if @template
-      $(@el).html @template { data: data, readonly: @readonly, showInfo: @showInfo }
+    if not @model.get('id') and not @readonly
+      @model.save
+        owner_id: Account.profile.get 'id'
+        { success: () => @render() }
+    else if @template
+      $(@el).html @template { data: @model.attributes, readonly: @readonly, showInfo: @showInfo }
       $(@el).find('img').css('width', @picWidth).css('height', @picHeight)
+      if not @readonly
+        filename = null
+        upclick
+          element: document.getElementById 'uploader'
+          action: "/photos/#{@model.get 'id'}/content"
+          onstart: (fname) => filename = fname
+          oncomplete: () =>
+            @model.save title: filename, date_created: new Date().getTime()
     else
       $.get @templatePath, (resp) =>
         @template = _.template resp
@@ -46,36 +52,12 @@ class window.PictureView extends Backbone.View
   dropPicture: (e) =>
     e.stopPropagation()
     e.preventDefault()
-    files = e.originalEvent.dataTransfer.files
-    output = ''
-
-    for f in files
-      do (f) =>
-        if not f.type.match 'image.*' then return
-        evt = e
-        reader = new FileReader()
-        reader2 = new FileReader()
-        reader.onload = (e) => reader2.readAsDataURL f
-        reader.readAsDataURL f
-
-        reader2.onload = (e) =>
-          result = e.target.result
-          jsonContent =
-            title: f.name
-            date_created: new Date().getTime()
-            owner_id: Account.profile.id
-            content: result
-          $.ajax(
-            type: "POST"
-            url: "/photos"
-            dataType: "json"
-            contentType: "application/json; charset=utf-8"
-            data: JSON.stringify jsonContent
-            success: (resp) =>
-              @model.set("id", resp.id);
-              @model.fetch success: () =>
-                @model.trigger 'change'
-                @onSave()
-          )
-
-        reader.read
+    file = e.originalEvent.dataTransfer.files[0]
+    if file.type.match 'image.*'
+      formData = new FormData()
+      formData.append file.name, file
+      xhr = new XMLHttpRequest()
+      xhr.open 'POST', "/photos/#{@model.get 'id'}/content", true
+      xhr.onload = (e) =>
+        @model.save title: file.name, date_created: new Date().getTime()
+      xhr.send formData

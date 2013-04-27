@@ -3,19 +3,18 @@
 
 
 <!------------------------------------- HTML -------------------------------------->
-<div id="<%= !rc.readonly ? "dropPicture" : "staticPicture"%>">
-  <% if (rc.data.get_content_location) { %>
-      <img class="image img-rounded" src="<%=rc.data.get_content_location%>" alt="placeholder image">
-      <% if (rc.showInfo) { %>
-          <div id='pictureInfo'>
-              <ul>
-                  <li><strong><%=rc.data.title%></strong></li>
-                  <li><%=rc.data.date_created ? new Date(rc.data.date_created).toLocaleString() : 'n/a'%></li>
-              </ul>
-          </div>
-      <% } %>
-  <% } else if (!rc.readonly) { %>
-      Drop or Click
+<div id="<%= rc.readonly ? 'dummy' : 'dropPicture' %>">
+
+  <img id="<%= rc.readonly ? 'dummy' : 'uploader' %>" class="image img-rounded" alt="placeholder image"
+       src="<%= rc.data.get_content_location ? rc.data.get_content_location+'?t='+new Date().getTime() : '/assets/img/140x140.gif' %>">
+
+
+  <% if (rc.showInfo) { %>
+      <div id='pictureInfo'>
+          <p><strong><%= rc.data.title %></strong></p>
+          <p><%= rc.data.date_created ? new Date(rc.data.date_created).toLocaleString() : 'n/a' %></p>
+      </div>
   <% } %>
+
 </div>
 

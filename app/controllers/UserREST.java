@@ -59,7 +59,7 @@ public class UserREST extends ItemREST {
             return notFound(Constants.JSON_EMPTY.toString());
         } else {
             ((ObjectNode)json).put("id", id);
-            User usr = User.fromJson(json, User.class);
+            User usr = User.userFromJson(json);
             usr.save();
             return ok(usr.userToJson());
         }

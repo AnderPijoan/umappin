@@ -1,10 +1,8 @@
-class window.Photo extends Backbone.Model
-
+class window.Picture extends Backbone.Model
   urlRoot: "/photos"
   defaults:
     id: null
     owner_id: null
-    photoContents: null
     title: null
     post_content_location: null
     get_content_location: null

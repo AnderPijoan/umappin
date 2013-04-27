@@ -27,7 +27,10 @@ Account._loadProfileData = () ->
   Account.profile.fetch()
 
 Account.loadProfileData = () ->
-  requirejs ['/assets/js/common/models/photo_model.js'], () ->
+  requirejs [
+    '/assets/js/common/models/picture_model.js'
+    '/assets/js/lib/upclick.js'
+  ], () ->
     requirejs ['/assets/js/account/models/user_model.js'], () ->
       requirejs ['/assets/js/common/views/picture_view.js'], () ->
         requirejs ['/assets/js/account/views/profile_view.js'], () ->

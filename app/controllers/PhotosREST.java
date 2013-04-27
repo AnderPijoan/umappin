@@ -110,6 +110,7 @@ public class PhotosREST extends Controller {
     }
 
     public static ObjectId stringToObjectId(String id) {
+        /*
         ObjectId objId;
         try {
             objId = new ObjectId(id);
@@ -120,6 +121,8 @@ public class PhotosREST extends Controller {
             throw new IllegalArgumentException("invalid identifier '" + id +"'");
         }
         return objId;
+        */
+        return id != null ? new ObjectId(id) : null;
     }
 
     public static Result deletePhoto(String id){
@@ -198,61 +201,33 @@ public class PhotosREST extends Controller {
     }
 
 
+    public static Photo updatePhotoFromJson(Photo photo, JsonNode json) {
+        if(json.has(LATITUDE)) photo.setLatitude(new Double(json.findPath(LATITUDE).getDoubleValue()));
+        if(json.has(LONGITUDE)) photo.setLongitude(new Double(json.findPath(LONGITUDE).getDoubleValue()));
+        if(json.has(DATE_CREATED)) photo.setCreated(new Date(json.findPath(DATE_CREATED).getLongValue()));
+        if(json.has(OWNER_ID)) photo.setOwnerId(stringToObjectId(json.findPath(OWNER_ID).getTextValue()));
+        if(json.has(TITLE)) photo.setTitle(json.findPath(TITLE).getTextValue());
+        if(json.has(DESCRIPTION)) photo.setDescription(json.findPath(DESCRIPTION).getTextValue());
+        if(json.has(ID)) photo.setId(stringToObjectId(json.findPath(ID).getTextValue()));
+        return photo;
+    }
+
 
     private static Photo jsonToPhoto(JsonNode json){
-
         Photo photo = new Photo();
-
-        //optional fields
-        if(json.has(LATITUDE)){
-            photo.setLatitude(new Double(json.findPath(LATITUDE).getDoubleValue()));
-        }
-        if(json.has(LONGITUDE)){
-            photo.setLongitude(new Double(json.findPath(LONGITUDE).getDoubleValue()));
-        }
-        if(json.has(DATE_CREATED)){
-            photo.setCreated(new Date(json.findPath(DATE_CREATED).getLongValue()));
-        }
-        if(json.has(TITLE)){
-            photo.setTitle(json.findPath(TITLE).getTextValue());
-        }
-        if(json.has(DESCRIPTION)){
-            photo.setDescription(json.findPath(DESCRIPTION).getTextValue());
-        }
-
-        //Date createDate = javax.xml.bind.DatatypeConverter.parseDateTime(json.findPath("date").getTextValue()).getTime();
-
-        if(json.has(ID)){
-
-            ObjectId obj = stringToObjectId(json.findPath(ID).getTextValue());
-
-            photo.setId(obj);
-        }
-        return photo;
-
+        return updatePhotoFromJson(photo, json);
     }
+
 
     private static JsonNode photoToJson(Photo photo){
         ObjectNode json = Json.newObject();
-        json.put(ID, photo.getId().toString());
-        json.put(DATE_CREATED, photo.getCreated().getTime());
-        json.put(OWNER_ID, photo.getOwnerId().toString());
-        if(photo.getLatitude() != null){
-            json.put(LATITUDE, photo.getLatitude());
-        }
-        if(photo.getLongitude() != null){
-            json.put(LONGITUDE, photo.getLongitude());
-        }
-        if(photo.getTitle() != null){
-            json.put(TITLE, photo.getTitle());
-        }
-        if(photo.getDescription() != null){
-            json.put(DESCRIPTION, photo.getDescription());
-        }
-
-
-
-
+        if(photo.getId() != null) json.put(ID, photo.getId().toString());
+        if(photo.getCreated() != null) json.put(DATE_CREATED, photo.getCreated().getTime());
+        if(photo.getOwnerId() != null) json.put(OWNER_ID, photo.getOwnerId().toString());
+        if(photo.getLatitude() != null) json.put(LATITUDE, photo.getLatitude());
+        if(photo.getLongitude() != null) json.put(LONGITUDE, photo.getLongitude());
+        if(photo.getTitle() != null) json.put(TITLE, photo.getTitle());
+        if(photo.getDescription() != null) json.put(DESCRIPTION, photo.getDescription());
         //if the photo is already persisted (as it normally would)
         //generate the location url that points to its content
         ObjectId objectId = photo.getId();
@@ -263,7 +238,6 @@ public class PhotosREST extends Controller {
                 json.put(GET_PHOTO_CONTENT_LOCATION, routes.PhotosREST.getPhotoContent(objectId.toString()).toString());
             }
         }
-
         return json;
     }
 
@@ -318,19 +292,6 @@ public class PhotosREST extends Controller {
 
     @BodyParser.Of(value = BodyParser.Json.class, maxLength = MAX_BASE64_UPLOAD_SIZE)
     public static Result updatePhoto(String id){
-
-        Photo photo;
-        JsonNode json;
-        try {
-            json = request().body().asJson();
-            photo =  jsonToPhoto(json);
-        } catch (IllegalArgumentException e) {
-            return badRequest(e.getMessage());
-        } catch (Exception e) {
-            Logger.error("error parsing jsonToPhoto, error message: " + e.getMessage());
-            return badRequest("error parsing json to Photo or request total size exceeding " + MAX_BASE64_UPLOAD_SIZE + " bytes");
-        }
-
         User user = Auth.getRequestingUser();
 
         if(user == null){
@@ -344,21 +305,26 @@ public class PhotosREST extends Controller {
             badRequest(e.getMessage());
         }
 
-        Photo existingPhoto = Photo.findById(objId);
+        Photo photo = Photo.findById(objId);
 
-        if(photo == null){
+        if(photo == null) {
             return notFound("error while uploading: photo with id '" + id + "' was not found");
         }
 
-        if(!existingPhoto.getOwnerId().equals(user.id)){
+        if(!photo.getOwnerId().equals(user.id)){
             return unauthorized("not allowed to update the photo");
         }
 
-        //here we are completely replacing the old with the new metadata.
-        // If the new photo lacks a field, it will miss in the saved instance
-        // Only the photo content and owner are preserved!
-        photo.setId(objId);
-        photo.setOwnerId(existingPhoto.getOwnerId());
+        JsonNode json;
+        try {
+            json = request().body().asJson();
+            photo = updatePhotoFromJson(photo, json);
+        } catch (IllegalArgumentException e) {
+            return badRequest(e.getMessage());
+        } catch (Exception e) {
+            Logger.error("error parsing jsonToPhoto, error message: " + e.getMessage());
+            return badRequest("error parsing json to Photo or request total size exceeding " + MAX_BASE64_UPLOAD_SIZE + " bytes");
+        }
 
         if(json.has(CONTENT)){
             try{

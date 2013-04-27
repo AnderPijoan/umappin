@@ -258,8 +258,15 @@ public class User extends Item implements Subject {
         for (SecurityRole sr : this.roles)
             aux.add(sr.toJson());
         ((ObjectNode)json).put("roles", aux);
-        ((ObjectNode)json).put("profilePicture", profilePicture != null ? profilePicture.toString() : "");
+        ((ObjectNode)json).put("profilePicture", profilePicture != null ? profilePicture.toString() : null);
         return json;
+    }
+
+    public static User userFromJson(JsonNode srcJson) {
+        JsonNode json = User.fromJson(srcJson);
+        String pic = json.findValue("profilePicture").asText();
+        ((ObjectNode)json).putPOJO("profilePicture", pic != null ? new ObjectId(pic) : null);
+        return Json.fromJson(json, User.class);
     }
 
 }
