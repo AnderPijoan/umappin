@@ -1,0 +1,37 @@
+<!------------------------------------- Styles -------------------------------------->
+<link rel="stylesheet" href="/assets/css/openlayers/style.min.css" />
+<!--[if lte IE 8]>
+<link rel="stylesheet" href="/assets/css/openlayers/ie6-style.min.css" />
+<![endif]-->
+
+
+<!------------------------------------- HTML -------------------------------------->
+<div id='map-container'></div>
+
+
+<!------------------------------------- Templates -------------------------------------->
+<script type='text/template' id='element-menu-template'>
+    <h4>geometry.name</h4>
+    <p>
+        geometry.latlng
+        <a href="javascript:void(0)">
+            <img class="image img-rounded" src="/assets/img/140x140.gif" alt="placeholder image"
+                 height="32" width="32">
+        </a>
+    </p>
+    <p>geometry.desc</p>
+
+    <div class="dropdown">
+        <button class='btn' onclick="$(this).parent('.dropdown').toggleClass('open')">
+            Options <b class="caret"></b>
+        </button>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="geometryOptions">
+            <li><a tabindex="-1" href="#">Edit</a></li>
+            <li><a tabindex="-1" href="#">Delete</a></li>
+            <li class="divider"></li>
+            <li><a tabindex="-1" href="#">Upload to OSM</a></li>
+            <li><a tabindex="-1" href="#">Submit to Game</a></li>
+            <li><a tabindex="-1" href="#">Bind a Picture</a></li>
+        </ul>
+    </div>
+</script>

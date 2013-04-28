@@ -77,7 +77,7 @@
             $.get(
                 '/sessionuser',
                 function(data) {
-                    updateSessionViews(data.name);
+                    setSessionUser(data);
                     $('#actionResult').css('display','block').empty().html(
                             "<div class='alert alert-success'>User Authenticated</div>"
                     );

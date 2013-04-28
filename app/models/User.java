@@ -41,6 +41,7 @@ public class User extends Item implements Subject {
     public String phone;
     public String address;
     public ObjectId profilePicture;
+    public ObjectId profileMap;
     public String identifier;
 	@Formats.DateTime(pattern = "yyyy-MM-dd HH:mm:ss")
 	public Date lastLogin;
@@ -259,13 +260,18 @@ public class User extends Item implements Subject {
             aux.add(sr.toJson());
         ((ObjectNode)json).put("roles", aux);
         ((ObjectNode)json).put("profilePicture", profilePicture != null ? profilePicture.toString() : null);
+        ((ObjectNode)json).put("profileMap", profileMap != null ? profileMap.toString() : null);
         return json;
     }
 
     public static User userFromJson(JsonNode srcJson) {
         JsonNode json = User.fromJson(srcJson);
-        String pic = json.findValue("profilePicture").asText();
-        ((ObjectNode)json).putPOJO("profilePicture", pic != null ? new ObjectId(pic) : null);
+        JsonNode jtemp = json.findValue("profilePicture");
+        if (!jtemp.isNull())
+            ((ObjectNode)json).putPOJO("profilePicture", new ObjectId(jtemp.asText()));
+        jtemp = json.findValue("profileMap");
+        if (!jtemp.isNull())
+            ((ObjectNode)json).putPOJO("profileMap", new ObjectId(jtemp.asText()));
         return Json.fromJson(json, User.class);
     }
 

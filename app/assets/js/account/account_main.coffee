@@ -15,12 +15,8 @@ Account._loadUsersData = () ->
     Account.followed.fetch complete: () ->
       Account.users.fetch()
 
-Account._loadSessionData = (callback) ->
-  Account.session = new Account.User sessionStorage.getItem 'user'
-  Account.session.fetch success: () -> callback.call @
-
 Account._loadProfileData = () ->
-  usrParams = umappin.router.params ? id: (JSON.parse sessionStorage.getItem "user").id
+  usrParams = umappin.router.params ? id: Account.session.get 'id'
   Account.profile = new Account.User usrParams
   Account.readonly = umappin.router.params?
   Account.profileview = new Account.ProfileView model: Account.profile, readonly: Account.readonly
@@ -34,8 +30,7 @@ Account.loadProfileData = () ->
     requirejs ['/assets/js/account/models/user_model.js'], () ->
       requirejs ['/assets/js/common/views/picture_view.js'], () ->
         requirejs ['/assets/js/account/views/profile_view.js'], () ->
-          Account._loadSessionData () ->
-            Account._loadProfileData()
+          Account._loadProfileData()
 
 Account.loadUsersData = () ->
   if !Account.usersFiltersView
