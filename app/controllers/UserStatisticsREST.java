@@ -12,6 +12,10 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.type.TypeReference;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ObjectNode;
+
+import be.objectify.deadbolt.java.actions.Group;
+import be.objectify.deadbolt.java.actions.Restrict;
 
 import play.libs.Json;
 import play.mvc.Controller;
@@ -20,24 +24,30 @@ import play.mvc.Result;
 public class UserStatisticsREST extends Controller {
 
 	// GET
+	@Restrict(@Group(Application.USER_ROLE))
 	public static Result findByUserId(String userId) {
+		ObjectNode node;
 		boolean isConnectedUser = false;
 		final User connectedUser = Application.getLocalUser(session());
 		if(connectedUser != null){
-			isConnectedUser = (userId == connectedUser.getIdentifier());
+			isConnectedUser = (userId.equals(connectedUser.getIdentifier()));
 		}
 		UserStatistics userStatistics = UserStatistics.findByUserId(userId);
 		if(userStatistics == null){
 			userStatistics = UserStatistics.init(userId).save();
+			node = UserStatistics.userStatisticsToObjectNode(userStatistics);
 		}else if(isConnectedUser) { // set to false the non-read data flags...
-			UserStatistics userStatisticsRead = userStatistics;
-			userStatisticsRead.setRead();
-			userStatisticsRead.save();
+			node = UserStatistics.userStatisticsToObjectNode(userStatistics);
+			userStatistics.setRead();
+			userStatistics.save();
+		}else {
+			node = UserStatistics.userStatisticsToObjectNode(userStatistics);
 		}
-		return ok(Json.toJson(UserStatistics.userStatisticsToObjectNode(userStatistics)));
+		return ok(Json.toJson(node));
 	}
 
 	// PUT
+	@Restrict(@Group(Application.USER_ROLE))
 	public static Result updateUserStatistics(String userId) {
 		boolean isConnectedUser = false;
 		final User connectedUser = Application.getLocalUser(session());

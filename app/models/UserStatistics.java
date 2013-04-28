@@ -1,19 +1,20 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.bson.types.ObjectId;
 import org.codehaus.jackson.node.ObjectNode;
 
+import play.data.format.Formats;
 import play.libs.Json;
 
 import com.google.code.morphia.annotations.Embedded;
 import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Id;
 import com.google.code.morphia.mapping.Mapper;
-import com.google.code.morphia.query.QueryResults;
 import com.google.code.morphia.query.UpdateOperations;
 
 import controllers.MorphiaObject;
@@ -30,20 +31,21 @@ public class UserStatistics {
 	
 	public int points = 0;
 	
+	public int levelPoints = LEVEL_FACTOR;
+	
 	public int level = 1;
 	
 	public boolean newLevel = false;
 
 	public Map<String, Integer> statistics = new HashMap<String, Integer>();
 	
-	@Embedded("UserAwards")
+	@Embedded("userAwards")
 	public List<UserAwards> userAwards = new ArrayList<UserAwards>();
 
+	
 	public static UserStatistics findByUserId(String userId) {
-		QueryResults<UserStatistics> aux =	MorphiaObject.datastore.find(UserStatistics.class).
-				field("userId").equal(userId);
-		System.out.println("Elmts: "+aux.get().userAwards.size());
-		return aux.get();
+		return	MorphiaObject.datastore.find(UserStatistics.class).
+				field("userId").equal(userId).get();
 	}
 	
 	public static UserStatistics updateByUserId(String userId, Map<String, Integer> newStatistics) {
@@ -67,7 +69,7 @@ public class UserStatistics {
 		List<Award> achievedAwards = Award.findByAwardTypeLimit(statistic, previousValue, newValue);
 		if(achievedAwards != null){
 			for(Award award : achievedAwards) {
-				this.userAwards.add(new UserAwards(statistic, award));
+				this.userAwards.add(new UserAwards(award.getIdentifier()));
 				this.points += award.points;
 			}
 			updateLevel();
@@ -96,7 +98,7 @@ public class UserStatistics {
 	public void setRead() {
 		this.newLevel = false;
 		for(UserAwards userAward : this.userAwards) {
-			//userAward.setRead();
+			userAward.setRead();
 		}
 	}
 	
@@ -131,5 +133,56 @@ public class UserStatistics {
 		statisticsNode.put("userAwards", Json.toJson(UserAwards.userAwardsToObjectNodes(userStatistics.userAwards)));
 		return statisticsNode;
 	}
+	
+	@Embedded
+	public static class UserAwards {
+		
+		public String award;
+		
+		@Formats.DateTime(pattern = "yyyy-MM-dd HH:mm:ss")
+		public Date timeStamp;
+		
+		public boolean isNew;
+		
+		public UserAwards() {}
+		
+		// Save the award.
+		public UserAwards(String awardId) {
+			this.award = awardId;
+			this.timeStamp = new Date();
+			this.isNew = true;
+		}
+		
+		public void setRead() {
+			this.isNew = false;
+		}
+
+		/** Parses an user award list and prepares it for exporting to JSON
+		 * @param userAwardList UserAward list
+		 * @return List of ObjectNodes ready for use in toJson
+		 */
+		public static List<ObjectNode> userAwardsToObjectNodes (List<UserAwards> userAwardList){
+			List<ObjectNode> userAwards = new ArrayList<ObjectNode>();
+			for(UserAwards userAward : userAwardList){
+				userAwards.add(userAwardToObjectNode(userAward));
+			}
+			return userAwards;
+		}
+		
+		/** Parses an UserAward and prepares it for exporting to JSON
+		 * @param UserAwards An User Award
+		 * @return ObjectNode ready for use in toJson
+		 */
+		public static ObjectNode userAwardToObjectNode (UserAwards userAward){
+			ObjectNode awardNode = Json.newObject();
+			if(userAward != null){
+				awardNode.put("award", Award.awardToObjectNode(Award.findById(userAward.award)));
+				awardNode.put("timeStamp", Json.toJson(userAward.timeStamp));
+				awardNode.put("isNew", userAward.isNew);
+			}
+			return awardNode;
+		}
+	}
+	
 }
 

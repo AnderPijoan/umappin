@@ -32,6 +32,9 @@ public class Award {
 	
 	public int limit;
 	
+	public String getIdentifier() {
+		return id.toString();
+	}
 	
 	// Search for the award Triggers of one specific type.
 	public static List<Award> findByType(String type) {
@@ -57,11 +60,6 @@ public class Award {
 		}
 	}
 
-	// Get one spedific award.
-	public static Award findById(ObjectId id) {
-		return MorphiaObject.datastore.get(Award.class, id);
-	}
-	
 	// Get one spedific award.
 	public static Award findById(String id) {
 		return MorphiaObject.datastore.get(Award.class, new ObjectId(id));

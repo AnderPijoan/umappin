@@ -25,7 +25,7 @@ public class AwardREST extends Controller{
 	// GET
 	@Restrict(@Group(Application.USER_ROLE))
 	public static Result findById(String id){
-		Award award = Award.findById(new ObjectId(id));
+		Award award = Award.findById(id);
 		return ok(toJson(award));
 	}
 
