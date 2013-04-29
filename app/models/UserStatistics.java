@@ -14,7 +14,6 @@ import play.libs.Json;
 import com.google.code.morphia.annotations.Embedded;
 import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Id;
-import com.google.code.morphia.mapping.Mapper;
 import com.google.code.morphia.query.UpdateOperations;
 
 import controllers.MorphiaObject;
@@ -29,16 +28,16 @@ public class UserStatistics {
 	
 	public String userId;
 	
-	public int points = 0;
+	public int coins = 0;
 	
-	public int levelPoints = LEVEL_FACTOR;
+	public int points = 0;
 	
 	public int level = 1;
 	
 	public boolean newLevel = false;
 
 	public Map<String, Integer> statistics = new HashMap<String, Integer>();
-	
+
 	@Embedded("userAwards")
 	public List<UserAwards> userAwards = new ArrayList<UserAwards>();
 
@@ -48,18 +47,11 @@ public class UserStatistics {
 				field("userId").equal(userId).get();
 	}
 	
-	public static UserStatistics updateByUserId(String userId, Map<String, Integer> newStatistics) {
-		UserStatistics userStatistics = findByUserId(userId);
-		if(userStatistics == null) {
-			userStatistics = UserStatistics.init(userId);
-		}
-		//TODO: update each item
-        userStatistics.update();
-        return userStatistics;
-    }
-	
 	public void updateStatistic(String statistic, Integer addingValue) {
 		Integer previousValue = this.statistics.get(statistic);
+		if(previousValue == null) {
+			previousValue = new Integer(0);
+		}
 		Integer newValue = previousValue+addingValue;
 		this.statistics.put(statistic, newValue);
 		updateAwards(statistic, previousValue, newValue);
@@ -70,6 +62,7 @@ public class UserStatistics {
 		if(achievedAwards != null){
 			for(Award award : achievedAwards) {
 				this.userAwards.add(new UserAwards(award.getIdentifier()));
+				this.coins	+= award.coins;
 				this.points += award.points;
 			}
 			updateLevel();
@@ -85,13 +78,15 @@ public class UserStatistics {
 	}
 	
 	private int calculateLevel() {
-		return this.points / LEVEL_FACTOR;
+		return (this.points / LEVEL_FACTOR)+1;
 	}
 	
 	public static UserStatistics init(String userId) {
 		UserStatistics userStatistics = new UserStatistics();
 		userStatistics.userId = userId;
-        //TODO: initialize the hashmap values to 0...
+		for (StatisticTypes std : StatisticTypes.values()) {
+			userStatistics.statistics.put(std.name(), 0);
+		}
         return userStatistics;
     }
 	
@@ -110,22 +105,23 @@ public class UserStatistics {
 	public UserStatistics update() {
 		UpdateOperations<UserStatistics> ops = 
 				MorphiaObject.datastore.createUpdateOperations(UserStatistics.class)
+					.set("coins", this.coins)
 					.set("points", this.points)
 					.set("level", this.level)
 					.set("newLevel", this.newLevel)
 					.set("statistics", this.statistics)
 					.set("userAwards", this.userAwards);
-
-		//update, if not found create it
 		MorphiaObject.datastore.updateFirst(MorphiaObject.datastore
-				.createQuery(UserStatistics.class).field(Mapper.ID_KEY)
-				.equal(new ObjectId(this.userId)), ops, true);
+				.createQuery(UserStatistics.class).field("userId")
+				.equal(this.userId), ops);
 		return this;
 	}
 	
 	public static ObjectNode userStatisticsToObjectNode (UserStatistics userStatistics){
 		ObjectNode statisticsNode = Json.newObject();
 		statisticsNode.put("id", userStatistics.userId);
+		statisticsNode.put("userId", userStatistics.userId);
+		statisticsNode.put("coins", userStatistics.coins);
 		statisticsNode.put("points", userStatistics.points);
 		statisticsNode.put("level", userStatistics.level);
 		statisticsNode.put("newLevel", userStatistics.newLevel);

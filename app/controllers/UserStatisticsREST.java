@@ -1,9 +1,11 @@
 package controllers;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 
+import models.StatisticTypes;
 import models.User;
 import models.UserStatistics;
 
@@ -22,10 +24,10 @@ import play.mvc.Controller;
 import play.mvc.Result;
 
 public class UserStatisticsREST extends Controller {
-
+	
 	// GET
 	@Restrict(@Group(Application.USER_ROLE))
-	public static Result findByUserId(String userId) {
+	public static Result getUserStatistics(String userId) {
 		ObjectNode node;
 		boolean isConnectedUser = false;
 		final User connectedUser = Application.getLocalUser(session());
@@ -49,6 +51,7 @@ public class UserStatisticsREST extends Controller {
 	// PUT
 	@Restrict(@Group(Application.USER_ROLE))
 	public static Result updateUserStatistics(String userId) {
+		ObjectNode node;
 		boolean isConnectedUser = false;
 		final User connectedUser = Application.getLocalUser(session());
 		if(connectedUser != null){
@@ -80,13 +83,15 @@ public class UserStatisticsREST extends Controller {
 		String key;
 		while (it.hasNext()) {
 			key = it.next();
-			userStatistics.updateStatistic(key, statistics.get(key));
+			if(Arrays.asList(StatisticTypes.values()).contains(key)) {	// Check if the Statistic is valid.
+				userStatistics.updateStatistic(key, statistics.get(key));
+			}
 		}
-		UserStatistics userStatisticsToUpdate = userStatistics;
+		node = UserStatistics.userStatisticsToObjectNode(userStatistics);
 		if(isConnectedUser){
-			userStatisticsToUpdate.setRead();
+			userStatistics.setRead();
 		}
-		userStatisticsToUpdate.update();
-		return ok(UserStatistics.userStatisticsToObjectNode(userStatistics));
+		userStatistics.update();
+		return ok(Json.toJson(node));
 	}
 }

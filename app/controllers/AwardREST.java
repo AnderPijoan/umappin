@@ -1,9 +1,11 @@
 package controllers;
 
 import models.Award;
+import models.StatisticTypes;
 import play.mvc.Controller;
 import play.mvc.Result;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.bson.types.ObjectId;
@@ -17,18 +19,24 @@ public class AwardREST extends Controller{
 
 	// GET
 	@Restrict(@Group(Application.USER_ROLE))
-	public static Result all(){
+	public static Result getAwards(){
 		List<Award> awards = Award.all();
 		return ok(toJson(awards));
 	}
 
 	// GET
 	@Restrict(@Group(Application.USER_ROLE))
-	public static Result findById(String id){
+	public static Result getAward(String id){
 		Award award = Award.findById(id);
 		return ok(toJson(award));
 	}
-
+	
+	// GET
+	@Restrict(@Group(Application.USER_ROLE))
+	public static Result getAwardTypes(){
+		return ok(toJson(Arrays.asList(StatisticTypes.values())));
+	}
+	
 	// GET
 	@Restrict(@Group(Application.USER_ROLE))
 	public static Result findByAwardType(String awardType) {
