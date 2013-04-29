@@ -89,11 +89,14 @@ POST	/discussions/:id            controllers.User2DiscussionREST.reply(id: Strin
 POST	/discussions/:id/:msgid     controllers.User2DiscussionREST.replyToMessage(id: String, msgid: String)
 
 # REST CRUD for awards
-GET     /rest/awards					controllers.AwardREST.all
-GET     /rest/awards/:type/:limit		controllers.AwardREST.findByAwardTypeLimit(type: String, limit: Integer)
-GET     /rest/user/:id/awards			controllers.AwardREST.findByUserId(id: String)
-POST	/rest/user/:id/awards			controllers.AwardREST.saveUserAward(id: String)
+GET     /awards						controllers.AwardREST.getAwards()
+GET     /awards/types				controllers.AwardREST.getAwardTypes()
+GET		/awards/:id					controllers.AwardREST.getAward(id: String)
+GET     /awards/type/:type			controllers.AwardREST.findByAwardType(type: String)
 
+# REST CRUD for statistics
+GET     /users/:id/statistics		controllers.UserStatisticsREST.getUserStatistics(id: String)
+PUT		/users/:id/statistics		controllers.UserStatisticsREST.updateUserStatistics(id: String)
 # --------------------------------------------------------------------------
 
 
