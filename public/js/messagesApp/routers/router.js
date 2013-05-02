@@ -33,12 +33,11 @@ messagesApp.Router = Backbone.SubRoute.extend({
 				discussion.fetch(
 					{
 						success: function(){
-							console.log("on success fetch");
 							view = new messagesApp.MessagesView({ model: discussion });
 							$('#messages_body').html(view.render().el);
 						},
 						error: function(){
-							alert("Error getting messages from server");
+							console.log("Error getting messages from server");
 						}
 					}
 				);
