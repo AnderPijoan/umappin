@@ -83,10 +83,12 @@ GET     /sessionuser                controllers.UserREST.getSessionUser
 GET     /discussions                controllers.User2DiscussionREST.getDiscussions()
 GET     /discussions/unread         controllers.User2DiscussionREST.getUnreadDiscussions()
 GET     /discussions/:id            controllers.User2DiscussionREST.getDiscussion(id: String)
-GET     /discussions/:id/:msgid     controllers.User2DiscussionREST.getMessage(id: String, msgid: String)
 POST    /discussions                controllers.User2DiscussionREST.addDiscussion()
-POST	/discussions/:id            controllers.User2DiscussionREST.reply(id: String)
-POST	/discussions/:id/:msgid     controllers.User2DiscussionREST.replyToMessage(id: String, msgid: String)
+DELETE  /discussions/:id            controllers.User2DiscussionREST.deleteDiscussion(id: String)
+GET     /messages/:id               controllers.User2DiscussionREST.getMessage(id: String)
+PUT     /messages/:id               controllers.User2DiscussionREST.updateMessage(id: String)
+POST	/messages                   controllers.User2DiscussionREST.reply()
+POST	/messages/:id               controllers.User2DiscussionREST.replyToMessage(id: String)
 
 # REST CRUD for awards
 GET     /awards						controllers.AwardREST.getAwards()

@@ -17,7 +17,7 @@ import java.util.List;
  * Date: 23/02/13
  * Time: 22.44
  */
-public class Message {
+public class Message extends Item{
 
 	@Id
 	public ObjectId id;
@@ -35,11 +35,6 @@ public class Message {
 		} else {
 			return new ArrayList<Message>();
 		}
-	}
-
-	public ObjectId save() {
-		MorphiaObject.datastore.save(this);
-		return id;
 	}
 
 	public static Message findById(ObjectId id) {
