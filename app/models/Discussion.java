@@ -12,7 +12,6 @@ import play.data.format.Formats;
 import play.libs.Json;
 
 import com.google.code.morphia.annotations.Entity;
-import com.google.code.morphia.annotations.Id;
 
 import controllers.MorphiaObject;
 
@@ -22,10 +21,7 @@ import controllers.MorphiaObject;
  * Time: 12:34
  */
 @Entity
-public class Discussion {
-
-	@Id
-	public ObjectId id;
+public class Discussion extends Item {
 
 	public String subject;
 
@@ -44,10 +40,10 @@ public class Discussion {
 		}
 	}
 	
-	public ObjectId save() {
+	@Override
+	public void save() {
 		lastWrote = new Date();
 		MorphiaObject.datastore.save(this);
-		return id;
 	}
 	
 	public static Discussion findById(String id) {
@@ -105,6 +101,13 @@ public class Discussion {
 	public void addUser(User user) {
 		if (userIds != null && !userIds.contains(user.id))
 			userIds.add(user.id);
+		lastWrote = new Date();
+		this.save();
+	}
+	
+	public void removeUser(User user) {
+		if (userIds != null)
+			userIds.remove(user.id);
 		lastWrote = new Date();
 		this.save();
 	}

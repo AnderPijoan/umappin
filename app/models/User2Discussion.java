@@ -99,6 +99,13 @@ public class User2Discussion extends Item {
 			this.save();
 		}
 	}
+	
+	public void removeDiscussion(Discussion discussion){
+		if (discussionIds != null){
+			discussionIds.remove(discussion.id);
+			this.save();
+		}
+	}
 
 	/** Sets the discussionId to read or unread
 	 * @param id
