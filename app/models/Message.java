@@ -1,6 +1,5 @@
 package models;
 
-import com.google.code.morphia.annotations.Id;
 import com.google.code.morphia.annotations.Reference;
 
 import controllers.MorphiaObject;
@@ -18,9 +17,6 @@ import java.util.List;
  * Time: 22.44
  */
 public class Message extends Item{
-
-	@Id
-	public ObjectId id;
 
 	public String message;
 

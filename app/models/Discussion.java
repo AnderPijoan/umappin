@@ -12,7 +12,6 @@ import play.data.format.Formats;
 import play.libs.Json;
 
 import com.google.code.morphia.annotations.Entity;
-import com.google.code.morphia.annotations.Id;
 
 import controllers.MorphiaObject;
 
@@ -23,9 +22,6 @@ import controllers.MorphiaObject;
  */
 @Entity
 public class Discussion extends Item {
-
-	@Id
-	public ObjectId id;
 
 	public String subject;
 

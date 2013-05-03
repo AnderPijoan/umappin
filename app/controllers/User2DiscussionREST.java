@@ -23,7 +23,7 @@ public class User2DiscussionREST extends ItemREST {
 		if (user == null){
 			return badRequest(Constants.USER_NOT_LOGGED_IN.toString());
 		}
-		User2Discussion user2disc = MorphiaObject.datastore.get(User2Discussion.class, user.id);
+		User2Discussion user2disc = User2Discussion.findById(user.id);
 		if (user2disc == null) {
 			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
 		}
@@ -42,7 +42,7 @@ public class User2DiscussionREST extends ItemREST {
 		if (user == null){
 			return badRequest(Constants.USER_NOT_LOGGED_IN.toString());
 		}
-		User2Discussion user2disc = MorphiaObject.datastore.get(User2Discussion.class, user.id);
+		User2Discussion user2disc = User2Discussion.findById(user.id);
 		if (user2disc == null) {
 			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
 		}
@@ -61,7 +61,7 @@ public class User2DiscussionREST extends ItemREST {
 		if (user == null){
 			return badRequest(Constants.USER_NOT_LOGGED_IN.toString());
 		}
-		User2Discussion user2disc = MorphiaObject.datastore.get(User2Discussion.class, user.id);
+		User2Discussion user2disc = User2Discussion.findById(user.id);
 		if (user2disc == null) {
 			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
 		}
@@ -82,7 +82,7 @@ public class User2DiscussionREST extends ItemREST {
 		if(json == null) {
 			return badRequest(Constants.JSON_EMPTY.toString());
 		}
-		User2Discussion user2disc = MorphiaObject.datastore.get(User2Discussion.class, user.id);
+		User2Discussion user2disc = User2Discussion.findById(user.id);
 		if (user2disc == null) {
 			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
 		}
@@ -109,7 +109,7 @@ public class User2DiscussionREST extends ItemREST {
 		if(json == null) {
 			return badRequest(Constants.JSON_EMPTY.toString());
 		}
-		User2Discussion user2disc = MorphiaObject.datastore.get(User2Discussion.class, user.id);
+		User2Discussion user2disc = User2Discussion.findById(user.id);
 		if (user2disc == null) {
 			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
 		}
@@ -170,15 +170,15 @@ public class User2DiscussionREST extends ItemREST {
 			// Add discussion to all readers
 			Iterator<JsonNode> userIds = json.findPath("users").getElements();
 
+			System.out.println("Receivers : " + json.findPath("users"));
+			
 			while(userIds.hasNext()){
 				String userId = userIds.next().toString().replace("\"", "");
 
-				User receiver = MorphiaObject.datastore.get(User.class, new ObjectId(userId));
-
-				System.out.println("paso + " + receiver);
+				User receiver = User.findById(userId, User.class);
 
 				if (receiver != null){
-					User2Discussion user2disc = MorphiaObject.datastore.get(User2Discussion.class, receiver.id);
+					User2Discussion user2disc = User2Discussion.findById(receiver.id);
 
 					// If is users first discussion, create new User2Discussion
 					if (user2disc == null){
@@ -200,7 +200,7 @@ public class User2DiscussionREST extends ItemREST {
 			}
 
 			// Add discussion to sender
-			User2Discussion user2disc = MorphiaObject.datastore.get(User2Discussion.class, user.id);
+			User2Discussion user2disc = User2Discussion.findById(user.id);
 
 			// If is users first discussion, create new User2Discussion
 			if (user2disc == null){
@@ -245,7 +245,7 @@ public class User2DiscussionREST extends ItemREST {
 		if (discussion == null || !discussion.userIds.contains(user.id)){
 			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
 		}
-		User2Discussion user2disc = MorphiaObject.datastore.get(User2Discussion.class, user.id);
+		User2Discussion user2disc = User2Discussion.findById(user.id);
 		if (user2disc == null || !user2disc.discussionIds.contains(discussion.id)){
 			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
 		}
@@ -275,7 +275,7 @@ public class User2DiscussionREST extends ItemREST {
 		if(json == null) {
 			return badRequest(Constants.JSON_EMPTY.toString());
 		}
-		User2Discussion user2disc = MorphiaObject.datastore.get(User2Discussion.class, user.id);
+		User2Discussion user2disc = User2Discussion.findById(user.id);
 		if (user2disc == null) {
 			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
 		}
@@ -312,7 +312,7 @@ public class User2DiscussionREST extends ItemREST {
 		if(json == null) {
 			return badRequest(Constants.JSON_EMPTY.toString());
 		}
-		User2Discussion user2disc = MorphiaObject.datastore.get(User2Discussion.class, user.id);
+		User2Discussion user2disc = User2Discussion.findById(user.id);
 		if (user2disc == null) {
 			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
 		}
@@ -353,7 +353,7 @@ public class User2DiscussionREST extends ItemREST {
 	public static void setUsersDiscussionUnread(Discussion discussion, List<ObjectId> userIds){
 
 		for (ObjectId oid : userIds){
-			User2Discussion user2disc = MorphiaObject.datastore.get(User2Discussion.class, oid);
+			User2Discussion user2disc = User2Discussion.findById(oid);
 
 			// If is users first discussion, create new User2Discussion
 			if (user2disc == null){
