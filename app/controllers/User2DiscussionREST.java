@@ -169,8 +169,6 @@ public class User2DiscussionREST extends ItemREST {
 
 			// Add discussion to all readers
 			Iterator<JsonNode> userIds = json.findPath("users").getElements();
-
-			System.out.println("Receivers : " + json.findPath("users"));
 			
 			while(userIds.hasNext()){
 				String userId = userIds.next().toString().replace("\"", "");
@@ -192,7 +190,6 @@ public class User2DiscussionREST extends ItemREST {
 					discussion.addUser(receiver);
 					user2disc.addDiscussion(discussion); // Add discussions id to this user
 					user2disc.setRead(discussion, false);
-					System.out.println("paso + " + user2disc);
 					user2discList.add(user2disc);
 
 
