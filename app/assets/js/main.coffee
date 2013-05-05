@@ -1,5 +1,6 @@
 window.setTemplate = (url, callback) ->
   $('div#actionResult').empty()
+  $('div#actionResult').css('display','none')
   $.get url, (template) ->
     $('div#content').empty().html template
     callback?.call(@)

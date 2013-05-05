@@ -1,22 +1,22 @@
 
 	<h2>Messages</h2>
 <p>Manage your messages)</p>
-<div class ="row">
-    <div class="span2 offset9">    
+<div class ="row-fluid">
+    <div class="span2 offset9">
         <a href="#messages/newDiscussion" role="button" class="btn">New Message</a>
     </div>
 </div>
-<div class="row">
+<div class="row-fluid">
 
     <div class="span3 bs-docs-sidebar">
         <ul class="nav nav-list bs-docs-sidenav " id="subsec_nav" >
             <li id="received_messages"class="active"><a tabindex="-1" href="#messages/received">Messages</a></li>
-            
+
             </ul>
         </div>
         <div class="span9" id="messages_body" >
 
-            
+
         </div>
 
 
@@ -24,7 +24,7 @@
 </div>
 
 
- 
+
 <!-- Modal -->
 <div id="newDiscussion" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-header">
@@ -55,7 +55,7 @@
                 <div class="discussion_subject"><a href="#messages/message/<%- rc.id %>"><%- rc.subject %></a></div>
                 <div class="discussion_author">
                     <div class="author_name"><a href="/#account/userID">USERNAME</a></div>
-                </div>  
+                </div>
             </div>
         </div>
 </script>

@@ -1,10 +1,9 @@
 .user-entry {
   margin: 0.5em;
   padding: 0.5em;
-  background-color: #eeeeee
+  background-color: #eeeeee;
 }
-
 #userlist {
   list-style: none;
-  margin-top: 1em
+  margin-top: 1em;
 }
