@@ -55,7 +55,12 @@ GET     /authenticate/:provider/denied     controllers.Signup.oAuthDenied(provid
 # --------------------------------------------------------------------------
 
 
-# ------------------------------ REST Services -----------------------------
+# Picture manager
+GET     /photos/manager              controllers.Photos.manager
+
+
+# ------------------------------ REST Services -----------------------------------------------------------
+
 # REST CRUD for Follows
 GET     /follows                    controllers.FollowsREST.getAllFollows()
 GET     /follows/:id                controllers.FollowsREST.getFollows(id: String)
@@ -89,24 +94,10 @@ POST	/discussions/:id            controllers.User2DiscussionREST.reply(id: Strin
 POST	/discussions/:id/:msgid     controllers.User2DiscussionREST.replyToMessage(id: String, msgid: String)
 
 # REST CRUD for awards
-GET     /rest/awards					controllers.AwardREST.all
-GET     /rest/awards/:type/:limit		controllers.AwardREST.findByAwardTypeLimit(type: String, limit: Integer)
-GET     /rest/user/:id/awards			controllers.AwardREST.findByUserId(id: String)
-POST	/rest/user/:id/awards			controllers.AwardREST.saveUserAward(id: String)
-
-# --------------------------------------------------------------------------
-
-
-# TESTINGG!!!
-GET     /items                    controllers.SubItemREST.getAll()
-GET     /items/:id                controllers.SubItemREST.get(id: String)
-POST    /items                    controllers.SubItemREST.post()
-PUT     /items/:id                controllers.SubItemREST.put(id: String)
-DELETE  /items/:id                controllers.SubItemREST.delete(id: String)
-
-# ------------------------------ Photos ------------------------------------
-# Picture manager
-GET     /photos/manager              controllers.Photos.manager
+GET     /rest/awards				controllers.AwardREST.all
+GET     /rest/awards/:type/:limit	controllers.AwardREST.findByAwardTypeLimit(type: String, limit: Integer)
+GET     /rest/user/:id/awards	    controllers.AwardREST.findByUserId(id: String)
+POST	/rest/user/:id/awards		controllers.AwardREST.saveUserAward(id: String)
 
 # REST CRUD for pictures
 GET     /photos/:id             controllers.PhotosREST.getPhoto(id: String)
@@ -117,3 +108,26 @@ DELETE  /photos/:id             controllers.PhotosREST.deletePhoto(id: String)
 # REST CRUD for pictures content
 GET     /photos/:id/content      controllers.PhotosREST.getPhotoContent(id: String)
 POST    /photos/:id/content      controllers.PhotosREST.uploadMultipartContent(id: String)
+
+# REST CRUD for Maps
+GET     /maps                    controllers.MapREST.getAllMaps()
+GET     /maps/:id                controllers.MapREST.getMap(id: String)
+POST    /maps                    controllers.MapREST.addMap()
+PUT     /maps/:id                controllers.MapREST.updateMap(id: String)
+DELETE  /maps/:id                controllers.MapREST.deleteMap(id: String)
+
+# -------------------------------------------------------------------------------------------------------
+
+# TESTINGG!!!
+GET     /items                    controllers.SubItemREST.getAll()
+GET     /items/:id                controllers.SubItemREST.get(id: String)
+POST    /items                    controllers.SubItemREST.post()
+PUT     /items/:id                controllers.SubItemREST.put(id: String)
+DELETE  /items/:id                controllers.SubItemREST.delete(id: String)
+
+# REST CRUD for Map Features
+GET     /features                 controllers.MapFeatureREST.getAllFeatures()
+GET     /features/:id             controllers.MapFeatureREST.getFeature(id: String)
+POST    /features                 controllers.MapFeatureREST.addFeature()
+PUT     /features/:id             controllers.MapFeatureREST.updateFeature(id: String)
+DELETE  /features/:id             controllers.MapFeatureREST.updateFeature(id: String)

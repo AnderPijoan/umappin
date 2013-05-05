@@ -25,6 +25,7 @@ import java.util.*;
 import com.google.code.morphia.annotations.Entity;
 import controllers.MorphiaObject;
 import play.libs.Json;
+import scala.util.parsing.json.JSONArray;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
@@ -41,7 +42,7 @@ public class User extends Item implements Subject {
     public String phone;
     public String address;
     public ObjectId profilePicture;
-    public ObjectId profileMap;
+    public List<ObjectId> maps;
     public String identifier;
 	@Formats.DateTime(pattern = "yyyy-MM-dd HH:mm:ss")
 	public Date lastLogin;
@@ -247,10 +248,10 @@ public class User extends Item implements Subject {
 	
 
     /** ------------ User model needs special ObjectIds handling ------------- **/
-	
-	
-    public JsonNode userToJson() {
-        JsonNode json = this.toJson();
+
+    @Override
+    public JsonNode toJson() {
+        JsonNode json = super.toJson();
         ArrayNode aux = new ArrayNode(JsonNodeFactory.instance);
         for (LinkedAccount la : this.linkedAccounts)
             aux.add(la.toJson());
@@ -260,18 +261,27 @@ public class User extends Item implements Subject {
             aux.add(sr.toJson());
         ((ObjectNode)json).put("roles", aux);
         ((ObjectNode)json).put("profilePicture", profilePicture != null ? profilePicture.toString() : null);
-        ((ObjectNode)json).put("profileMap", profileMap != null ? profileMap.toString() : null);
+        aux = new ArrayNode(JsonNodeFactory.instance);
+        if (this.maps != null)
+            for (ObjectId oid : this.maps)
+                aux.add(oid.toString());
+        ((ObjectNode)json).put("maps", aux);
         return json;
     }
 
     public static User userFromJson(JsonNode srcJson) {
         JsonNode json = User.fromJson(srcJson);
         JsonNode jtemp = json.findValue("profilePicture");
-        if (!jtemp.isNull())
+        if (!jtemp.isNull() && !jtemp.asText().equalsIgnoreCase(""))
             ((ObjectNode)json).putPOJO("profilePicture", new ObjectId(jtemp.asText()));
-        jtemp = json.findValue("profileMap");
-        if (!jtemp.isNull())
-            ((ObjectNode)json).putPOJO("profileMap", new ObjectId(jtemp.asText()));
+        else
+            ((ObjectNode)json).putNull("profilePicture");
+        jtemp = json.findValue("maps");
+        ArrayNode aux = new ArrayNode(JsonNodeFactory.instance);
+        Iterator<JsonNode> it = jtemp.getElements();
+        while (it.hasNext())
+            aux.addPOJO(new ObjectId(it.next().asText()));
+        ((ObjectNode)json).put("maps", aux);
         return Json.fromJson(json, User.class);
     }
 

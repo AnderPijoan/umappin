@@ -23,7 +23,7 @@ public class UserREST extends ItemREST {
             List<JsonNode> nodes = new ArrayList();
             for (User usr : users)
                 if (usr.emailValidated)
-                nodes.add(usr.userToJson());
+                nodes.add(usr.toJson());
             return ok(Json.toJson(nodes));
         }
     }
@@ -31,7 +31,7 @@ public class UserREST extends ItemREST {
     public static Result get(String id) {
         User usr = User.findById(id, User.class);
         if (usr.emailValidated)
-            return ok(usr.userToJson());
+            return ok(usr.toJson());
         else
             return notFound(Constants.JSON_EMPTY.toString());
     }
@@ -61,7 +61,7 @@ public class UserREST extends ItemREST {
             ((ObjectNode)json).put("id", id);
             User usr = User.userFromJson(json);
             usr.save();
-            return ok(usr.userToJson());
+            return ok(usr.toJson());
         }
     }
 
@@ -72,14 +72,14 @@ public class UserREST extends ItemREST {
             return notFound(Constants.JSON_EMPTY.toString());
         } else {
             item.delete();
-            return ok(item.userToJson());
+            return ok(item.toJson());
         }
     }
 
     public static Result getSessionUser() {
         final User localUser = Application.getLocalUser(session());
         if (localUser != null)
-            return ok(localUser.userToJson());
+            return ok(localUser.toJson());
         else
             return notFound(Constants.USER_NOT_LOGGED_IN.toString());
     }

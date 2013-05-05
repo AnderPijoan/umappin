@@ -1,6 +1,5 @@
 package models;
 
-import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Id;
 import controllers.MorphiaObject;
 import org.bson.types.ObjectId;
@@ -12,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-@Entity
 public class Item {
 
 	@Id

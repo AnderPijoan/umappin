@@ -18420,7 +18420,7 @@ OpenLayers.Renderer = OpenLayers.Class({
     
     /**
      * Property: featureDx
-     * {Number} Feature offset in x direction. Will be calculated for and
+     * {Number} MapFeature offset in x direction. Will be calculated for and
      * applied to the current feature while rendering (see
      * <calculateFeatureDx>).
      */
@@ -18529,7 +18529,7 @@ OpenLayers.Renderer = OpenLayers.Class({
      * be called from layer.drawFeature().
      *
      * Parameters:
-     * feature - {<OpenLayers.Feature.Vector>} 
+     * feature - {<OpenLayers.MapFeature.Vector>}
      * style - {<Object>}
      * 
      * Returns:
@@ -18658,7 +18658,7 @@ OpenLayers.Renderer = OpenLayers.Class({
      * This is called by the layer to erase features
      * 
      * Parameters:
-     * features - {Array(<OpenLayers.Feature.Vector>)} 
+     * features - {Array(<OpenLayers.MapFeature.Vector>)}
      */
     eraseFeatures: function(features) {
         if(!(OpenLayers.Util.isArray(features))) {
@@ -21344,7 +21344,7 @@ OpenLayers.Geometry.MultiPolygon = OpenLayers.Class(
     CLASS_NAME: "OpenLayers.Geometry.MultiPolygon"
 });
 /* ======================================================================
-    OpenLayers/Feature.js
+    OpenLayers/MapFeature.js
    ====================================================================== */
 
 /* Copyright (c) 2006-2012 by OpenLayers Contributors (see authors.txt for 
@@ -21359,8 +21359,8 @@ OpenLayers.Geometry.MultiPolygon = OpenLayers.Class(
  */
 
 /**
- * Class: OpenLayers.Feature
- * Features are combinations of geography and attributes. The OpenLayers.Feature
+ * Class: OpenLayers.MapFeature
+ * Features are combinations of geography and attributes. The OpenLayers.MapFeature
  *     class specifically combines a marker and a lonlat.
  */
 OpenLayers.Feature = OpenLayers.Class({
@@ -21409,7 +21409,7 @@ OpenLayers.Feature = OpenLayers.Class({
     popup: null,
 
     /** 
-     * Constructor: OpenLayers.Feature
+     * Constructor: OpenLayers.MapFeature
      * Constructor for features.
      *
      * Parameters:
@@ -21418,7 +21418,7 @@ OpenLayers.Feature = OpenLayers.Class({
      * data - {Object} 
      * 
      * Returns:
-     * {<OpenLayers.Feature>}
+     * {<OpenLayers.MapFeature>}
      */
     initialize: function(layer, lonlat, data) {
         this.layer = layer;
@@ -21478,7 +21478,7 @@ OpenLayers.Feature = OpenLayers.Class({
 
     /**
      * Method: createMarker
-     * Based on the data associated with the Feature, create and return a marker object.
+     * Based on the data associated with the MapFeature, create and return a marker object.
      *
      * Returns: 
      * {<OpenLayers.Marker>} A Marker Object created from the 'lonlat' and 'icon' properties
@@ -21570,10 +21570,10 @@ OpenLayers.Feature = OpenLayers.Class({
         }    
     },
 
-    CLASS_NAME: "OpenLayers.Feature"
+    CLASS_NAME: "OpenLayers.MapFeature"
 });
 /* ======================================================================
-    OpenLayers/Feature/Vector.js
+    OpenLayers/MapFeature/Vector.js
    ====================================================================== */
 
 /* Copyright (c) 2006-2012 by OpenLayers Contributors (see authors.txt for 
@@ -21596,14 +21596,14 @@ OpenLayers.State = {
  */
 
 /**
- * Class: OpenLayers.Feature.Vector
+ * Class: OpenLayers.MapFeature.Vector
  * Vector features use the OpenLayers.Geometry classes as geometry description.
  * They have an 'attributes' property, which is the data object, and a 'style'
  * property, the default values of which are defined in the 
- * <OpenLayers.Feature.Vector.style> objects.
+ * <OpenLayers.MapFeature.Vector.style> objects.
  * 
  * Inherits from:
- *  - <OpenLayers.Feature>
+ *  - <OpenLayers.MapFeature>
  */
 OpenLayers.Feature.Vector = OpenLayers.Class(OpenLayers.Feature, {
 
@@ -21697,7 +21697,7 @@ OpenLayers.Feature.Vector = OpenLayers.Class(OpenLayers.Feature, {
     modified: null,
 
     /** 
-     * Constructor: OpenLayers.Feature.Vector
+     * Constructor: OpenLayers.MapFeature.Vector
      * Create a vector feature. 
      * 
      * Parameters:
@@ -21742,7 +21742,7 @@ OpenLayers.Feature.Vector = OpenLayers.Class(OpenLayers.Feature, {
      *     properties.
      *
      * Returns:
-     * {<OpenLayers.Feature.Vector>} An exact clone of this vector feature.
+     * {<OpenLayers.MapFeature.Vector>} An exact clone of this vector feature.
      */
     clone: function () {
         return new OpenLayers.Feature.Vector(
@@ -21944,12 +21944,12 @@ OpenLayers.Feature.Vector = OpenLayers.Class(OpenLayers.Feature, {
         }
     },
     
-    CLASS_NAME: "OpenLayers.Feature.Vector"
+    CLASS_NAME: "OpenLayers.MapFeature.Vector"
 });
 
 
 /**
- * Constant: OpenLayers.Feature.Vector.style
+ * Constant: OpenLayers.MapFeature.Vector.style
  * OpenLayers features can have a number of style attributes. The 'default' 
  *     style will typically be used if no other style is specified. These
  *     styles correspond for the most part, to the styling properties defined
@@ -22212,7 +22212,7 @@ OpenLayers.Style = OpenLayers.Class({
             this.addRules(options.rules);
         }
 
-        // use the default style from OpenLayers.Feature.Vector if no style
+        // use the default style from OpenLayers.MapFeature.Vector if no style
         // was given in the constructor
         this.setDefaultStyle(style ||
                              OpenLayers.Feature.Vector.style["default"]);
@@ -22239,7 +22239,7 @@ OpenLayers.Style = OpenLayers.Class({
      * style.
      * 
      * Parameters:
-     * feature - {<OpenLayers.Feature>} feature to evaluate rules for
+     * feature - {<OpenLayers.MapFeature>} feature to evaluate rules for
      * 
      * Returns:
      * {Object} symbolizer hash
@@ -22294,7 +22294,7 @@ OpenLayers.Style = OpenLayers.Class({
      * Parameters:
      * rule - {<OpenLayers.Rule>}
      * style - {Object}
-     * feature - {<OpenLayer.Feature.Vector>}
+     * feature - {<OpenLayer.MapFeature.Vector>}
      *
      * Returns:
      * {Object} A style with new symbolizer applied.
@@ -22510,7 +22510,7 @@ OpenLayers.Style = OpenLayers.Class({
  *         will be replaced by the value of the "bar" attribute of the passed
  *         feature.
  * context - {Object} context to take attribute values from
- * feature - {<OpenLayers.Feature.Vector>} optional feature to pass to
+ * feature - {<OpenLayers.MapFeature.Vector>} optional feature to pass to
  *           <OpenLayers.String.format> for evaluating functions in the
  *           context.
  * property - {String} optional, name of the property for which the literal is
@@ -22706,7 +22706,7 @@ OpenLayers.Filter.Spatial = OpenLayers.Class(OpenLayers.Filter, {
     * Evaluates this filter for a specific feature.
     * 
     * Parameters:
-    * feature - {<OpenLayers.Feature.Vector>} feature to apply the filter to.
+    * feature - {<OpenLayers.MapFeature.Vector>} feature to apply the filter to.
     * 
     * Returns:
     * {Boolean} The feature meets filter criteria.
@@ -23043,7 +23043,7 @@ OpenLayers.Strategy.BBOX = OpenLayers.Class(OpenLayers.Strategy, {
     CLASS_NAME: "OpenLayers.Strategy.BBOX" 
 });
 /* ======================================================================
-    OpenLayers/Handler/Feature.js
+    OpenLayers/Handler/MapFeature.js
    ====================================================================== */
 
 /* Copyright (c) 2006-2012 by OpenLayers Contributors (see authors.txt for 
@@ -23057,7 +23057,7 @@ OpenLayers.Strategy.BBOX = OpenLayers.Class(OpenLayers.Strategy, {
  */
 
 /**
- * Class: OpenLayers.Handler.Feature 
+ * Class: OpenLayers.Handler.MapFeature
  * Handler to respond to mouse events related to a drawn feature.  Callbacks
  *     with the following keys will be notified of the following events
  *     associated with features: click, clickout, over, out, and dblclick.
@@ -23086,13 +23086,13 @@ OpenLayers.Handler.Feature = OpenLayers.Class(OpenLayers.Handler, {
 
     /**
      * Property: feature
-     * {<OpenLayers.Feature.Vector>} The last feature that was hovered.
+     * {<OpenLayers.MapFeature.Vector>} The last feature that was hovered.
      */
     feature: null,
 
     /**
      * Property: lastFeature
-     * {<OpenLayers.Feature.Vector>} The last feature that was handled.
+     * {<OpenLayers.MapFeature.Vector>} The last feature that was handled.
      */
     lastFeature: null,
 
@@ -23161,7 +23161,7 @@ OpenLayers.Handler.Feature = OpenLayers.Class(OpenLayers.Handler, {
     stopUp: false,
     
     /**
-     * Constructor: OpenLayers.Handler.Feature
+     * Constructor: OpenLayers.Handler.MapFeature
      *
      * Parameters:
      * control - {<OpenLayers.Control>} 
@@ -23224,7 +23224,7 @@ OpenLayers.Handler.Feature = OpenLayers.Class(OpenLayers.Handler, {
      * evt - {Event} 
      */
     mousedown: function(evt) {
-        // Feature selection is only done with a left click. Other handlers may stop the
+        // MapFeature selection is only done with a left click. Other handlers may stop the
         // propagation of left-click mousedown events but not right-click mousedown events.
         // This mismatch causes problems when comparing the location of the down and up
         // events in the click function so it is important ignore right-clicks.
@@ -23301,7 +23301,7 @@ OpenLayers.Handler.Feature = OpenLayers.Class(OpenLayers.Handler, {
      *     one of the geometry types in the geometryTypes array.
      *
      * Parameters:
-     * feature - {<OpenLayers.Vector.Feature>}
+     * feature - {<OpenLayers.Vector.MapFeature>}
      *
      * Returns:
      * {Boolean}
@@ -23493,7 +23493,7 @@ OpenLayers.Handler.Feature = OpenLayers.Class(OpenLayers.Handler, {
         }
     },
 
-    CLASS_NAME: "OpenLayers.Handler.Feature"
+    CLASS_NAME: "OpenLayers.Handler.MapFeature"
 });
 /* ======================================================================
     OpenLayers/StyleMap.js
@@ -23598,7 +23598,7 @@ OpenLayers.StyleMap = OpenLayers.Class({
      * Creates the symbolizer for a feature for a render intent.
      * 
      * Parameters:
-     * feature - {<OpenLayers.Feature>} The feature to evaluate the rules
+     * feature - {<OpenLayers.MapFeature>} The feature to evaluate the rules
      *           of the intended style against.
      * intent  - {String} The intent determines the symbolizer that will be
      *           used to draw the feature. Well known intents are "default"
@@ -23795,7 +23795,7 @@ OpenLayers.Layer.Vector = OpenLayers.Class(OpenLayers.Layer, {
 
     /** 
      * APIProperty: features
-     * {Array(<OpenLayers.Feature.Vector>)} 
+     * {Array(<OpenLayers.MapFeature.Vector>)}
      */
     features: null,
     
@@ -23809,7 +23809,7 @@ OpenLayers.Layer.Vector = OpenLayers.Class(OpenLayers.Layer, {
     
     /** 
      * Property: selectedFeatures
-     * {Array(<OpenLayers.Feature.Vector>)} 
+     * {Array(<OpenLayers.MapFeature.Vector>)}
      */
     selectedFeatures: null,
     
@@ -24208,7 +24208,7 @@ OpenLayers.Layer.Vector = OpenLayers.Class(OpenLayers.Layer, {
      * Add Features to the layer.
      *
      * Parameters:
-     * features - {Array(<OpenLayers.Feature.Vector>)} 
+     * features - {Array(<OpenLayers.MapFeature.Vector>)}
      * options - {Object}
      */
     addFeatures: function(features, options) {
@@ -24285,7 +24285,7 @@ OpenLayers.Layer.Vector = OpenLayers.Class(OpenLayers.Layer, {
      *     been removed.  To supress event triggering, use the silent option.
      * 
      * Parameters:
-     * features - {Array(<OpenLayers.Feature.Vector>)} List of features to be
+     * features - {Array(<OpenLayers.MapFeature.Vector>)} List of features to be
      *     removed.
      * options - {Object} Optional properties for changing behavior of the
      *     removal.
@@ -24413,7 +24413,7 @@ OpenLayers.Layer.Vector = OpenLayers.Class(OpenLayers.Layer, {
      * Erase and destroy features on the layer.
      *
      * Parameters:
-     * features - {Array(<OpenLayers.Feature.Vector>)} An optional array of
+     * features - {Array(<OpenLayers.MapFeature.Vector>)} An optional array of
      *     features to destroy.  If not supplied, all features on the layer
      *     will be destroyed.
      * options - {Object}
@@ -24447,7 +24447,7 @@ OpenLayers.Layer.Vector = OpenLayers.Class(OpenLayers.Layer, {
      * happen.
      *
      * Parameters: 
-     * feature - {<OpenLayers.Feature.Vector>} 
+     * feature - {<OpenLayers.MapFeature.Vector>}
      * style - {String | Object} Named render intent or full symbolizer object.
      */
     drawFeature: function(feature, style) {
@@ -24481,7 +24481,7 @@ OpenLayers.Layer.Vector = OpenLayers.Class(OpenLayers.Layer, {
      * Erase features from the layer.
      *
      * Parameters:
-     * features - {Array(<OpenLayers.Feature.Vector>)} 
+     * features - {Array(<OpenLayers.MapFeature.Vector>)}
      */
     eraseFeatures: function(features) {
         this.renderer.eraseFeatures(features);
@@ -24496,7 +24496,7 @@ OpenLayers.Layer.Vector = OpenLayers.Class(OpenLayers.Layer, {
      * evt - {Event} 
      *
      * Returns:
-     * {<OpenLayers.Feature.Vector>} A feature if one was under the event.
+     * {<OpenLayers.MapFeature.Vector>} A feature if one was under the event.
      */
     getFeatureFromEvent: function(evt) {
         if (!this.renderer) {
@@ -24526,7 +24526,7 @@ OpenLayers.Layer.Vector = OpenLayers.Class(OpenLayers.Layer, {
      * value - {String}
      *
      * Returns:
-     * {<OpenLayers.Feature.Vector>} A feature corresponding to the given
+     * {<OpenLayers.MapFeature.Vector>} A feature corresponding to the given
      * property value or null if there is no such feature.
      */
     getFeatureBy: function(property, value) {
@@ -24549,7 +24549,7 @@ OpenLayers.Layer.Vector = OpenLayers.Class(OpenLayers.Layer, {
      * featureId - {String}
      *
      * Returns:
-     * {<OpenLayers.Feature.Vector>} A feature corresponding to the given
+     * {<OpenLayers.MapFeature.Vector>} A feature corresponding to the given
      * featureId or null if there is no such feature.
      */
     getFeatureById: function(featureId) {
@@ -24564,7 +24564,7 @@ OpenLayers.Layer.Vector = OpenLayers.Class(OpenLayers.Layer, {
      * featureFid - {String}
      *
      * Returns:
-     * {<OpenLayers.Feature.Vector>} A feature corresponding to the given
+     * {<OpenLayers.MapFeature.Vector>} A feature corresponding to the given
      * featureFid or null if there is no such feature.
      */
     getFeatureByFid: function(featureFid) {
@@ -24582,7 +24582,7 @@ OpenLayers.Layer.Vector = OpenLayers.Class(OpenLayers.Layer, {
      * attrValue - {Mixed}
      *
      * Returns:
-     * Array({<OpenLayers.Feature.Vector>}) An array of features that have the 
+     * Array({<OpenLayers.MapFeature.Vector>}) An array of features that have the
      * passed named attribute set to the given value.
      */
     getFeaturesByAttribute: function(attrName, attrValue) {
@@ -24624,7 +24624,7 @@ OpenLayers.Layer.Vector = OpenLayers.Class(OpenLayers.Layer, {
      * need to do something on feature updates.
      *
      * Parameters: 
-     * feature - {<OpenLayers.Feature.Vector>} 
+     * feature - {<OpenLayers.MapFeature.Vector>}
      */
     onFeatureInsert: function(feature) {
     },
@@ -24637,7 +24637,7 @@ OpenLayers.Layer.Vector = OpenLayers.Class(OpenLayers.Layer, {
      * layer, but before they are drawn, such as adjust the style.
      *
      * Parameters:
-     * feature - {<OpenLayers.Feature.Vector>} 
+     * feature - {<OpenLayers.MapFeature.Vector>}
      */
     preFeatureInsert: function(feature) {
     },
@@ -24740,7 +24740,7 @@ OpenLayers.Layer.Vector.RootContainer = OpenLayers.Class(OpenLayers.Layer.Vector
      * evt - {Object} event object with a feature property
      * 
      * Returns:
-     * {<OpenLayers.Feature.Vector>}
+     * {<OpenLayers.MapFeature.Vector>}
      */
     getFeatureFromEvent: function(evt) {
         var layers = this.layers;
@@ -25153,7 +25153,7 @@ OpenLayers.Control.SelectFeature = OpenLayers.Class(OpenLayers.Control, {
      * Only responds if this.hover is false.
      *
      * Parameters:
-     * feature - {<OpenLayers.Feature.Vector>} 
+     * feature - {<OpenLayers.MapFeature.Vector>}
      */
     clickFeature: function(feature) {
         if(!this.hover) {
@@ -25206,7 +25206,7 @@ OpenLayers.Control.SelectFeature = OpenLayers.Class(OpenLayers.Control, {
      * Only responds if this.hover is false.
      *
      * Parameters:
-     * feature - {<OpenLayers.Vector.Feature>} 
+     * feature - {<OpenLayers.Vector.MapFeature>}
      */
     clickoutFeature: function(feature) {
         if(!this.hover && this.clickout) {
@@ -25220,7 +25220,7 @@ OpenLayers.Control.SelectFeature = OpenLayers.Class(OpenLayers.Control, {
      * Only responds if this.hover is true.
      *
      * Parameters:
-     * feature - {<OpenLayers.Feature.Vector>} 
+     * feature - {<OpenLayers.MapFeature.Vector>}
      */
     overFeature: function(feature) {
         var layer = feature.layer;
@@ -25240,7 +25240,7 @@ OpenLayers.Control.SelectFeature = OpenLayers.Class(OpenLayers.Control, {
      * Only responds if this.hover is true.
      *
      * Parameters:
-     * feature - {<OpenLayers.Feature.Vector>} 
+     * feature - {<OpenLayers.MapFeature.Vector>}
      */
     outFeature: function(feature) {
         if(this.hover) {
@@ -25275,7 +25275,7 @@ OpenLayers.Control.SelectFeature = OpenLayers.Class(OpenLayers.Control, {
      * Redraw feature with the select style.
      *
      * Parameters:
-     * feature - {<OpenLayers.Feature.Vector>} 
+     * feature - {<OpenLayers.MapFeature.Vector>}
      */
     highlight: function(feature) {
         var layer = feature.layer;
@@ -25296,7 +25296,7 @@ OpenLayers.Control.SelectFeature = OpenLayers.Class(OpenLayers.Control, {
      * Redraw feature with the "default" style
      *
      * Parameters:
-     * feature - {<OpenLayers.Feature.Vector>} 
+     * feature - {<OpenLayers.MapFeature.Vector>}
      */
     unhighlight: function(feature) {
         var layer = feature.layer;
@@ -25328,7 +25328,7 @@ OpenLayers.Control.SelectFeature = OpenLayers.Class(OpenLayers.Control, {
      * selected, and call the onSelect function.
      * 
      * Parameters:
-     * feature - {<OpenLayers.Feature.Vector>} 
+     * feature - {<OpenLayers.MapFeature.Vector>}
      */
     select: function(feature) {
         var cont = this.onBeforeSelect.call(this.scope, feature);
@@ -25359,7 +25359,7 @@ OpenLayers.Control.SelectFeature = OpenLayers.Class(OpenLayers.Control, {
      * normal, and call the onUnselect function.
      *
      * Parameters:
-     * feature - {<OpenLayers.Feature.Vector>}
+     * feature - {<OpenLayers.MapFeature.Vector>}
      */
     unselect: function(feature) {
         var layer = feature.layer;
@@ -28432,7 +28432,7 @@ OpenLayers.Renderer.SVG = OpenLayers.Class(OpenLayers.Renderer.Elements, {
                 // copy the symbols instead of referencing them. 
                 // See e.g. ticket http://trac.osgeo.org/openlayers/ticket/2985 
                 // and this email thread
-                // http://osgeo-org.1803224.n2.nabble.com/Select-Control-Ctrl-click-on-Feature-with-a-graphicName-opens-new-browser-window-tc5846039.html
+                // http://osgeo-org.1803224.n2.nabble.com/Select-Control-Ctrl-click-on-MapFeature-with-a-graphicName-opens-new-browser-window-tc5846039.html
                 node.firstChild && node.removeChild(node.firstChild);
                 node.appendChild(src.firstChild.cloneNode(true));
                 node.setAttributeNS(null, "viewBox", src.getAttributeNS(null, "viewBox"));
@@ -29715,7 +29715,7 @@ OpenLayers.Format.GeoJSON = OpenLayers.Class(OpenLayers.Format.JSON, {
      * Parameters:
      * json - {String} A GeoJSON string
      * type - {String} Optional string that determines the structure of
-     *     the output.  Supported values are "Geometry", "Feature", and
+     *     the output.  Supported values are "Geometry", "MapFeature", and
      *     "FeatureCollection".  If absent or null, a default of
      *     "FeatureCollection" is assumed.
      * filter - {Function} A function which will be called for every key and
@@ -29727,11 +29727,11 @@ OpenLayers.Format.GeoJSON = OpenLayers.Class(OpenLayers.Format.JSON, {
      * Returns: 
      * {Object} The return depends on the value of the type argument. If type
      *     is "FeatureCollection" (the default), the return will be an array
-     *     of <OpenLayers.Feature.Vector>. If type is "Geometry", the input json
+     *     of <OpenLayers.MapFeature.Vector>. If type is "Geometry", the input json
      *     must represent a single geometry, and the return will be an
-     *     <OpenLayers.Geometry>.  If type is "Feature", the input json must
+     *     <OpenLayers.Geometry>.  If type is "MapFeature", the input json must
      *     represent a single feature, and the return will be an
-     *     <OpenLayers.Feature.Vector>.
+     *     <OpenLayers.MapFeature.Vector>.
      */
     read: function(json, type, filter) {
         type = (type) ? type : "FeatureCollection";
@@ -29756,10 +29756,10 @@ OpenLayers.Format.GeoJSON = OpenLayers.Class(OpenLayers.Format.JSON, {
                         OpenLayers.Console.error(err);
                     }
                     break;
-                case "Feature":
+                case "MapFeature":
                     try {
                         results = this.parseFeature(obj);
-                        results.type = "Feature";
+                        results.type = "MapFeature";
                     } catch(err) {
                         OpenLayers.Console.error(err);
                     }
@@ -29768,7 +29768,7 @@ OpenLayers.Format.GeoJSON = OpenLayers.Class(OpenLayers.Format.JSON, {
                     // for type FeatureCollection, we allow input to be any type
                     results = [];
                     switch(obj.type) {
-                        case "Feature":
+                        case "MapFeature":
                             try {
                                 results.push(this.parseFeature(obj));
                             } catch(err) {
@@ -29828,7 +29828,7 @@ OpenLayers.Format.GeoJSON = OpenLayers.Class(OpenLayers.Format.JSON, {
                 valid = true;
                 break;
             default:
-                // for Feature types must match
+                // for MapFeature types must match
                 if(obj.type == type) {
                     valid = true;
                 } else {
@@ -29842,13 +29842,13 @@ OpenLayers.Format.GeoJSON = OpenLayers.Class(OpenLayers.Format.JSON, {
     /**
      * Method: parseFeature
      * Convert a feature object from GeoJSON into an
-     *     <OpenLayers.Feature.Vector>.
+     *     <OpenLayers.MapFeature.Vector>.
      *
      * Parameters:
      * obj - {Object} An object created from a GeoJSON object
      *
      * Returns:
-     * {<OpenLayers.Feature.Vector>} A feature.
+     * {<OpenLayers.MapFeature.Vector>} A feature.
      */
     parseFeature: function(obj) {
         var feature, geometry, attributes, bbox;
@@ -30104,7 +30104,7 @@ OpenLayers.Format.GeoJSON = OpenLayers.Class(OpenLayers.Format.JSON, {
      * Serialize a feature, geometry, array of features into a GeoJSON string.
      *
      * Parameters:
-     * obj - {Object} An <OpenLayers.Feature.Vector>, <OpenLayers.Geometry>,
+     * obj - {Object} An <OpenLayers.MapFeature.Vector>, <OpenLayers.Geometry>,
      *     or an array of features.
      * pretty - {Boolean} Structure the output with newlines and indentation.
      *     Default is false.
@@ -30149,7 +30149,7 @@ OpenLayers.Format.GeoJSON = OpenLayers.Class(OpenLayers.Format.JSON, {
      * Create the CRS object for an object.
      *
      * Parameters:
-     * object - {<OpenLayers.Feature.Vector>} 
+     * object - {<OpenLayers.MapFeature.Vector>}
      *
      * Returns:
      * {Object} An object which can be assigned to the crs property
@@ -30190,7 +30190,7 @@ OpenLayers.Format.GeoJSON = OpenLayers.Class(OpenLayers.Format.JSON, {
          * Return a partial GeoJSON object representing a single feature.
          *
          * Parameters:
-         * feature - {<OpenLayers.Feature.Vector>}
+         * feature - {<OpenLayers.MapFeature.Vector>}
          *
          * Returns:
          * {Object} An object representing the point.
@@ -30198,7 +30198,7 @@ OpenLayers.Format.GeoJSON = OpenLayers.Class(OpenLayers.Format.JSON, {
         'feature': function(feature) {
             var geom = this.extract.geometry.apply(this, [feature.geometry]);
             var json = {
-                "type": "Feature",
+                "type": "MapFeature",
                 "properties": feature.attributes,
                 "geometry": geom
             };
@@ -33993,7 +33993,7 @@ OpenLayers.Rule = OpenLayers.Class({
      * evaluates this rule for a specific feature
      * 
      * Parameters:
-     * feature - {<OpenLayers.Feature>} feature to apply the rule to.
+     * feature - {<OpenLayers.MapFeature>} feature to apply the rule to.
      * 
      * Returns:
      * {Boolean} true if the rule applies, false if it does not.
@@ -34035,7 +34035,7 @@ OpenLayers.Rule = OpenLayers.Class({
      * Gets the context for evaluating this rule
      * 
      * Paramters:
-     * feature - {<OpenLayers.Feature>} feature to take the context from if
+     * feature - {<OpenLayers.MapFeature>} feature to take the context from if
      *           none is specified.
      */
     getContext: function(feature) {
@@ -35187,8 +35187,8 @@ OpenLayers.Protocol = OpenLayers.Class({
      * Construct a request for writing newly created features.
      *
      * Parameters:
-     * features - {Array({<OpenLayers.Feature.Vector>})} or
-     *            {<OpenLayers.Feature.Vector>}
+     * features - {Array({<OpenLayers.MapFeature.Vector>})} or
+     *            {<OpenLayers.MapFeature.Vector>}
      * options - {Object} Optional object for configuring the request.
      *
      * Returns:
@@ -35204,8 +35204,8 @@ OpenLayers.Protocol = OpenLayers.Class({
      * Construct a request updating modified features.
      *
      * Parameters:
-     * features - {Array({<OpenLayers.Feature.Vector>})} or
-     *            {<OpenLayers.Feature.Vector>}
+     * features - {Array({<OpenLayers.MapFeature.Vector>})} or
+     *            {<OpenLayers.MapFeature.Vector>}
      * options - {Object} Optional object for configuring the request.
      *
      * Returns:
@@ -35221,7 +35221,7 @@ OpenLayers.Protocol = OpenLayers.Class({
      * Construct a request deleting a removed feature.
      *
      * Parameters:
-     * feature - {<OpenLayers.Feature.Vector>}
+     * feature - {<OpenLayers.MapFeature.Vector>}
      * options - {Object} Optional object for configuring the request.
      *
      * Returns:
@@ -35239,7 +35239,7 @@ OpenLayers.Protocol = OpenLayers.Class({
      * update and delete.
      *
      * Parameters:
-     * features - {Array({<OpenLayers.Feature.Vector>})}
+     * features - {Array({<OpenLayers.MapFeature.Vector>})}
      * options - {Object} Object whose possible keys are "create", "update",
      *      "delete", "callback" and "scope", the values referenced by the
      *      first three are objects as passed to the "create", "update", and
@@ -35311,7 +35311,7 @@ OpenLayers.Protocol.Response = OpenLayers.Class({
 
     /**
      * Property: features
-     * {Array({<OpenLayers.Feature.Vector>})} or {<OpenLayers.Feature.Vector>}
+     * {Array({<OpenLayers.MapFeature.Vector>})} or {<OpenLayers.MapFeature.Vector>}
      * The features returned in the response by the server. Depending on the 
      * protocol's read payload, either features or data will be populated.
      */
@@ -35327,7 +35327,7 @@ OpenLayers.Protocol.Response = OpenLayers.Class({
 
     /**
      * Property: reqFeatures
-     * {Array({<OpenLayers.Feature.Vector>})} or {<OpenLayers.Feature.Vector>}
+     * {Array({<OpenLayers.MapFeature.Vector>})} or {<OpenLayers.MapFeature.Vector>}
      * The features provided by the user and placed in the request by the
      *      protocol.
      */
@@ -35612,8 +35612,8 @@ OpenLayers.Protocol.HTTP = OpenLayers.Class(OpenLayers.Protocol, {
      * Construct a request for writing newly created features.
      *
      * Parameters:
-     * features - {Array({<OpenLayers.Feature.Vector>})} or
-     *     {<OpenLayers.Feature.Vector>}
+     * features - {Array({<OpenLayers.MapFeature.Vector>})} or
+     *     {<OpenLayers.MapFeature.Vector>}
      * options - {Object} Optional object for configuring the request.
      *     This object is modified and should not be reused.
      *
@@ -35661,7 +35661,7 @@ OpenLayers.Protocol.HTTP = OpenLayers.Class(OpenLayers.Protocol, {
      * Construct a request updating modified feature.
      *
      * Parameters:
-     * feature - {<OpenLayers.Feature.Vector>}
+     * feature - {<OpenLayers.MapFeature.Vector>}
      * options - {Object} Optional object for configuring the request.
      *     This object is modified and should not be reused.
      *
@@ -35714,7 +35714,7 @@ OpenLayers.Protocol.HTTP = OpenLayers.Class(OpenLayers.Protocol, {
      * Construct a request deleting a removed feature.
      *
      * Parameters:
-     * feature - {<OpenLayers.Feature.Vector>}
+     * feature - {<OpenLayers.MapFeature.Vector>}
      * options - {Object} Optional object for configuring the request.
      *     This object is modified and should not be reused.
      *
@@ -35799,8 +35799,8 @@ OpenLayers.Protocol.HTTP = OpenLayers.Class(OpenLayers.Protocol, {
      * request - {XMLHttpRequest} The request object
      *
      * Returns:
-     * {Array({<OpenLayers.Feature.Vector>})} or
-     *     {<OpenLayers.Feature.Vector>} Array of features or a single feature.
+     * {Array({<OpenLayers.MapFeature.Vector>})} or
+     *     {<OpenLayers.MapFeature.Vector>} Array of features or a single feature.
      */
     parseFeatures: function(request) {
         var doc = request.responseXML;
@@ -35819,7 +35819,7 @@ OpenLayers.Protocol.HTTP = OpenLayers.Class(OpenLayers.Protocol, {
      *     Possible actions are create, update and delete.
      *
      * Parameters:
-     * features - {Array({<OpenLayers.Feature.Vector>})}
+     * features - {Array({<OpenLayers.MapFeature.Vector>})}
      * options - {Object} Optional object for setting up intermediate commit
      *     callbacks.
      *
