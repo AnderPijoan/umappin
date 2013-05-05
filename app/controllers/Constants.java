@@ -13,7 +13,9 @@ public enum Constants {
 	DISCUSSIONS_EMPTY("No discussion found"),
 
 	STATISTICS_EMPTY("No statistics found"),
-	STATISTICS_PARSE_ERROR("Error Parsing request");
+	STATISTICS_PARSE_ERROR("Error Parsing request"),
+
+	NO_API_USER_FOUND("Non existing user");
 
 	//... add more cases here ...
 
