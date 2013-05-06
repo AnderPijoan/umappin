@@ -104,5 +104,8 @@ public class Application extends Controller {
 		return new SimpleDateFormat("yyyy-dd-MM HH:mm:ss").format(new Date(t));
 	}
 
+    public static Result testTokenAuth(String token, String resturl) {
+        return ok(token + " --- " + resturl.toString());
+    }
 
 }
