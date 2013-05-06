@@ -3,6 +3,9 @@ package com.feth.play.module.pa;
 import java.util.Date;
 
 
+import com.feth.play.module.pa.providers.password.UsernamePasswordAuthUser;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.node.ObjectNode;
 import play.Configuration;
 import play.Logger;
 import play.Play;
@@ -341,7 +344,12 @@ public abstract class PlayAuthenticate {
 
 	public static Result loginAndRedirect(final Context context, final AuthUser loginUser) {
 		storeUser(context.session(), loginUser);
-        return Controller.ok(Json.toJson(loginUser));
+        /** Store the auth token in MongoDB **/
+
+        /** Pass the auth token to frontend **/
+        JsonNode json = Json.toJson(loginUser);
+        ((ObjectNode)json).put("authtoken", loginUser.getId());
+        return Controller.ok(json);
 	}
 
 	public static Result merge(final Context context, final boolean merge) {

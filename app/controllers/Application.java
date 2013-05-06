@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import models.User;
+import org.codehaus.jackson.JsonNode;
 import play.Routes;
 import play.api.templates.Html;
 import play.data.Form;
@@ -76,7 +77,7 @@ public class Application extends Controller {
 			return badRequest(getValidationErrorsHtml(filledForm.errors().values()));
 		} else {
 			// Everything was filled
-			return UsernamePasswordAuthProvider.handleLogin(ctx());
+            return UsernamePasswordAuthProvider.handleLogin(ctx());
 		}
 	}
 
