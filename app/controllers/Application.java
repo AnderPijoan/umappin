@@ -5,10 +5,10 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import models.MyLoginUsernamePasswordSessionToken;
+import models.SessionToken;
 import models.User;
-import org.codehaus.jackson.JsonNode;
 import play.Routes;
-import play.api.templates.Html;
 import play.data.Form;
 import play.data.validation.ValidationError;
 import play.mvc.*;
@@ -106,11 +106,11 @@ public class Application extends Controller {
 	}
 
     public static Result testTokenAuth(String token, String resturl) {
-        SessionToken st = SessionToken.findByToken(token));
+        MyLoginUsernamePasswordSessionToken st = SessionToken.findByToken(token, MyLoginUsernamePasswordSessionToken.class);
         if (st != null && !st.expired())
-          return redirect(resturl);
+            return redirect("/" + resturl);
         else
-          return forbidden("Need to login");
+            return forbidden("Need to login");
     }
 
 }
