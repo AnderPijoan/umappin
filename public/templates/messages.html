@@ -62,14 +62,24 @@
 
 <!-- This is the template to show a discussion-->
      <script type="text/template" id="messages-template">
+        <% maxPhotosSeen=5; %>
          <div class="span9 ">
+            <div class="span9">
+            <% for (i=0; i<maxPhotosSeen;i++) { %>
+                <% if (rc.users[i]) { %>    
+                <img id="photo<%- rc.users[i].name %>" class="usersPhoto" src="<%- rc.users[i].photo%>" />
+            <% } else {break;}} %>
+            <% if (rc.users.length > maxPhotosSeen) {plusUsers=rc.users.length-maxPhotosSeen;%> 
+                <span class="plusUsers">+<%- plusUsers %></span>
+                 <% } %>
+            </div>
              <h2><%- rc.subject %></h2>
              <br/>
              <div class="messages">
                  <% _.each(rc.messages, function(messageObject){ %>
-                    <p class="message"><%= messageObject.message %></p>
+                    <p class="message"><a href="/#account/<%- messageObject.user.id%>"><%- messageObject.user.name %></a>:<%= " " + messageObject.message %></p>
+                    <span class="timeAgo"><%- messageObject.timeAgo%></span>
                     <div class="message_divider" />
-                    <br/>
                  <% }); %>
              </div>
              <textarea id="sending_message" class="span4"></textarea>

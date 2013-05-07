@@ -11,8 +11,14 @@ _.templateSettings.variable = "rc";
             "click #reply": "reply"
         },
 
+        initialize: function(attrs, options) {
+            _.bindAll(this, "render");
+            this.model.bind('messageAgo', this.render);
+        },
+
         render: function() {
             //changed to html() because replace, replaced the selected whole tag
+            console.log(this.model);
             $(this.el).html(this.template(this.model.toJSON()));
             return this;
         },
@@ -24,15 +30,7 @@ _.templateSettings.variable = "rc";
                     {
                         success: function(){
                             console.log("successfully saved message");
-                            that.model.fetch({
-                                succes:function(){
-                                    that.render();
-                                    console.log("model with new message received");
-                                },
-                                error:function(){
-                                    console.log("error fetching discussion");
-                                }
-                            });
+                            that.model.fetch();
                         },
                         error: function(){
                             console.log("Error saving message");
