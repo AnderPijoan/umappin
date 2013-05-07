@@ -10,8 +10,12 @@
   font-size: 500%;
   line-height: normal;
 }
+#logo .a {
+  color: #433b2e;
+  text-shadow: 0 0 0.5em #f2d2c6, 0 0 0.5em #f2d2c6, 0 0 0.5em #f2d2c6, 0 0 0.5em #f2d2c6, 0 0 0.5em #f2d2c6, 0 0 0.5em #f2d2c6, 0 0 0.5em #f2d2c6, 0 0 0.5em #f2d2c6;
+}
 body {
-  background: url("../img/background1.jpg") no-repeat center center fixed;
+  background: url("../img/background4.jpg") no-repeat center center fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
@@ -34,4 +38,8 @@ body {
 }
 h1 {
   margin-bottom: 20px !important;
+}
+.loggedin,
+.loggedout {
+  display: none;
 }

@@ -2,6 +2,7 @@ class umappin.Router extends Backbone.Router
   subroutes: {}
   params: null
   routes:
+    '':                   'main'
     'account':            'account'
     'account/:id':        'account'
     'editmap':            'editmap'
@@ -14,6 +15,13 @@ class umappin.Router extends Backbone.Router
     'changePassword':     'changePassword'
     'test':               'test'
     'synctest':           'syncTest'
+
+  main: () ->
+    json = sessionStorage.getItem "user"
+    if !!json
+      setTemplate "/assets/templates/main_logged.html"
+    else
+      setTemplate "/assets/templates/main.html"
 
   account: (id) ->
     @params = if id? then id: id else null
@@ -33,7 +41,7 @@ class umappin.Router extends Backbone.Router
     requirejs ['/assets/js/messagesApp/collection/discussionCollection.js'], () ->
       requirejs ['/assets/js/messagesApp/routers/router.js'], () ->
         subroutes.messagesRouter or= new messagesApp.Router "messages/"
-  
+
   login: () ->
     setTemplate "/assets/templates/login.html"
     requirejs ['/assets/js/messagesApp/routers/router.js'], () ->
