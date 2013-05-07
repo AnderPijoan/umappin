@@ -106,7 +106,11 @@ public class Application extends Controller {
 	}
 
     public static Result testTokenAuth(String token, String resturl) {
-        return ok(token + " --- " + resturl.toString());
+        SessionToken st = SessionToken.findByToken(token));
+        if (st != null && !st.expired())
+          return redirect(resturl);
+        else
+          return forbidden("Need to login");
     }
 
 }

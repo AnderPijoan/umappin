@@ -345,7 +345,8 @@ public abstract class PlayAuthenticate {
 	public static Result loginAndRedirect(final Context context, final AuthUser loginUser) {
 		storeUser(context.session(), loginUser);
         /** Store the auth token in MongoDB **/
-
+        ObjectID usrId = (ObjectId)getUserService().getLocalIdentity();
+        SessionToken.create(usrId, loginUser.getId()).save();
         /** Pass the auth token to frontend **/
         JsonNode json = Json.toJson(loginUser);
         ((ObjectNode)json).put("authtoken", loginUser.getId());

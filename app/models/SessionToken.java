@@ -1,6 +1,5 @@
 package models;
 
-import com.feth.play.module.pa.user.AuthUser;
 import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Id;
 import controllers.MorphiaObject;
@@ -59,12 +58,11 @@ public class SessionToken {
         return MorphiaObject.datastore.find(SessionToken.class).field("token").equal(token).get();
     }
 
-    public static void create(final AuthUser loginUser) {
+    public static void create(ObjectId usrId, String token) {
         SessionToken st = new SessionToken();
-        final User usr = User.findByAuthUserIdentity(loginUser);
-        st.userId = usr.id;
+        st.userId = usrId;
         st.expires = new Date(new Date().getTime() + 86400);
-        st.token = loginUser.getId();
+        st.token = token;
         st.save();
     }
 }
