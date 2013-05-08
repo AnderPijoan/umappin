@@ -8,6 +8,10 @@ import models.Discussion;
 import models.Message;
 import models.User;
 import models.User2Discussion;
+import models.ApiAppUser;
+
+import controllers.ApiUserREST;
+
 
 import org.bson.types.ObjectId;
 import org.codehaus.jackson.JsonNode;
@@ -54,6 +58,8 @@ public class User2DiscussionREST extends ItemREST {
 			return ok(Json.toJson(Discussion.discussionsToObjectNodes(discussions)));
 		}
 	}
+
+
 
 
 	public static Result getDiscussion(String discussionId) {
@@ -360,6 +366,28 @@ public class User2DiscussionREST extends ItemREST {
 				user2disc.unread = new ArrayList<ObjectId>();
 			}
 			user2disc.setRead(discussion, false);
+		}
+	}
+
+	/*  REST API methods */
+
+	public static Result getApiDiscussions(String sessionToken) {
+		ApiAppUser user = ApiUserREST.findByToken(sessionToken);
+		if (user == null){
+			return badRequest(Constants.USER_NOT_LOGGED_IN.toString());
+		}
+
+
+		User2Discussion user2disc = User2Discussion.findById(user.id);
+		if (user2disc == null) {
+			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
+		}
+		List<Discussion> discussions = user2disc.all();
+		if (discussions.size() == 0) {
+			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
+		} else {
+			// Return the response
+			return ok(Json.toJson(Discussion.discussionsToObjectNodes(discussions)));
 		}
 	}
 }

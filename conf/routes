@@ -129,3 +129,8 @@ GET    /rest/photos/:id/content      controllers.PhotosREST.getPhotoContent(id: 
 #updates and get the metadata
 GET     /rest/photos/:id             controllers.PhotosREST.getPhoto(id: String)
 
+#------------------------------ REST API ---------------------------------
+
+GET 	/api/login/:email/:password	controllers.ApiUserREST.login(email: String, password: String)
+GET 	/api/:token/discussions			controllers.User2DiscussionREST.getApiDiscussions(token: String)
+
