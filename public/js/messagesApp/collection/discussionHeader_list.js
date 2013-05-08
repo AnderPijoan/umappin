@@ -14,7 +14,6 @@ var messagesApp = messagesApp || {};
 				});
 			});
 		}
-
 	});
 
 	// Create our global collection of **Discussions**.
