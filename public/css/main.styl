@@ -1,18 +1,53 @@
 @import "bootstrap.min.css"
+@import url(http://fonts.googleapis.com/css?family=Engagement);
 
-@font-face
-   font-family AndrewScript
-   font-style normal
-   src url(fonts/AndrewScript.ttf)
+color-dark-red = #661C00
+color-brown = #663900
+color-dark-green = #1C6600
+color-dark-blue = #000A66
+color-purple = #2D0066
+
+color-beige = #FED
+color-dark-brown = #463116
+
+.dark-red
+  color white
+  background-color color-dark-red
+
+.brown
+  color white
+  background-color color-brown
+
+.dark-green
+  color white
+  background-color color-dark-green
+
+.dark-blue
+  color white
+  background-color color-dark-blue
+
+.purple
+  color white
+  background-color color-purple
+
+.box
+  background-color: rgba(255, 238, 221, 0.6);
+  border: 1px solid rgb(80, 72, 61);
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(80, 72, 61, 0.065);
+  padding: 10px;
 
 #logo
-  font-family AndrewScript
-  font-style bold
+  font-family Engagement
   font-size 500%
   line-height normal
-  .a
-    color #433B2E
-    text-shadow 0 0 0.5em #F2D2C6, 0 0 0.5em #F2D2C6, 0 0 0.5em #F2D2C6, 0 0 0.5em #F2D2C6, 0 0 0.5em #F2D2C6, 0 0 0.5em #F2D2C6, 0 0 0.5em #F2D2C6, 0 0 0.5em #F2D2C6
+  color color-beige
+  margin 20px 0 20px
+  span
+    background-color color-dark-brown
+    border-radius: 50%;
+    text-align center
+    padding 10px
 
 body
   background: url('../img/background4.jpg') no-repeat center center fixed;
@@ -35,9 +70,6 @@ body
   margin: -10px 0 10px 0;
   font-size: 10px;
   color: #ccc !important;
-}
-h1 {
-  margin-bottom: 20px !important;
 }
 .loggedin, .loggedout
   display none

@@ -23,8 +23,8 @@
 
 <div class="row-fluid">
     <section class="span10 offset1">
-        <div id="logo" class="span12">
-            <a href="/">uMappin</a>
+        <div id="logo" class="span2">
+            <span>uMappin</span>
         </div>
         <div class="row-fluid">
             <div class="navbar span12">
@@ -72,20 +72,24 @@
     </section>
 </div>
 
-    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
-    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <script src="/assets/js/lib/jquery.min.js"></script>
-    <script src="/assets/js/lib/bootstrap.min.js"></script>
-    <script src="/assets/js/lib/underscore.min.js"></script>
-    <script src="/assets/js/lib/json2.js"></script>
-    <script src="/assets/js/lib/backbone.min.js"></script>
-    <script src="/assets/js/lib/backbone.subroute.js"></script>
-    <script src="/assets/js/lib/require.min.js"></script>
-    <!--script src="/assets/js/backbone.custom.js"></script-->
-    <script src="/assets/js/main.js"></script>
-
+<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+<!--[if lt IE 9]>
+<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+<script src="/assets/js/lib/jquery.min.js"></script>
+<script src="/assets/js/lib/bootstrap.min.js"></script>
+<script src="/assets/js/lib/underscore.min.js"></script>
+<script src="/assets/js/lib/json2.js"></script>
+<script src="/assets/js/lib/backbone.min.js"></script>
+<script src="/assets/js/lib/backbone.subroute.js"></script>
+<script src="/assets/js/lib/require.min.js"></script>
+<!--script src="/assets/js/backbone.custom.js"></script-->
+<script src="/assets/js/main.js"></script>
+<script>
+    $('#logo').click(function(){
+        location.href='./';
+    });
+</script>
 </body>
 
 </html>
