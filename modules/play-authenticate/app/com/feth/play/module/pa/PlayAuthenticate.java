@@ -102,11 +102,11 @@ public abstract class PlayAuthenticate {
 		return userService;
 	}
 
-	private static final String ORIGINAL_URL = "pa.url.orig";
+	public static final String ORIGINAL_URL = "pa.url.orig";
 	public static final String USER_KEY = "pa.u.id";
     public static final String PROVIDER_KEY = "pa.p.id";
     public static final String EXPIRES_KEY = "pa.u.exp";
-	private static final String SESSION_ID_KEY = "pa.s.id";
+	public static final String SESSION_ID_KEY = "pa.s.id";
 
 	public static Configuration getConfiguration() {
 		return Play.application().configuration().getConfig(SETTING_KEY_PLAY_AUTHENTICATE);

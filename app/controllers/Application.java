@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import models.MyLoginUsernamePasswordSessionToken;
 import models.SessionToken;
 import models.User;
 import play.Routes;
@@ -106,11 +105,17 @@ public class Application extends Controller {
 	}
 
     public static Result testTokenAuth(String token, String resturl) {
-        MyLoginUsernamePasswordSessionToken st = SessionToken.findByToken(token, MyLoginUsernamePasswordSessionToken.class);
-        if (st != null && !st.expired())
+        SessionToken st = SessionToken.findByToken(token);
+        if (st != null && !st.expired()) {
+            session.put(PlayAuthenticate.ORIGINAL_URL, request().url);
+            session.put(PlayAuthenticate.USER_KEY, st.getUserId());
+            session.put(PlayAuthenticate.PROVIDER_KEY, st.getProviderId());
+            session.put(PlayAuthenticate.EXPIRES_KEY, Long.toString(st.getExpires().getTime()));
+            session.put(PlayAuthenticate.SESSION_KEY, st.getToken());
             return redirect("/" + resturl);
-        else
+        } else {
             return forbidden("Need to login");
+        }
     }
 
 }

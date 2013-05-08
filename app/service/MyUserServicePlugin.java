@@ -1,6 +1,6 @@
 package service;
 
-import models.MyLoginUsernamePasswordSessionToken;
+import models.SessionToken;
 import models.User;
 import play.Application;
 
@@ -61,10 +61,7 @@ public class MyUserServicePlugin extends UserServicePlugin {
 
     @Override
     public String storeToken(final AuthUser knownUser) {
-        if (knownUser instanceof MyLoginUsernamePasswordAuthUser)
-            return MyLoginUsernamePasswordSessionToken.create((MyLoginUsernamePasswordAuthUser) knownUser);
-        else
-            return null;
+        return SessionToken.create(knownUser);
     }
 
 }
