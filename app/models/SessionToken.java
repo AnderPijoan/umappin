@@ -1,5 +1,6 @@
 package models;
 
+import com.feth.play.module.pa.PlayAuthenticate;
 import com.google.code.morphia.annotations.Id;
 import com.google.code.morphia.annotations.Entity;
 import controllers.MorphiaObject;
@@ -47,11 +48,11 @@ public class SessionToken {
         this.providerId = providerId;
     }
     
-    public ObjectId getUserID() {
+    public ObjectId getUserId() {
         return userId;
     }
 
-    public void setUserID(ObjectId userId) {
+    public void setUserId(ObjectId userId) {
         this.userId = userId;
     }
     
@@ -64,14 +65,14 @@ public class SessionToken {
     }
     
     public boolean expired() {
-        return new Date().after(new Date(authUsr.expires()));
+        return new Date().after(expires);
     }
 
     public static String create(AuthUser authUsr) {
         SessionToken st = new SessionToken();
-        st.userId = (ObjectId)PlayAuthenticate.getUserService().getLocalIdentity(authUser);
+        st.userId = (ObjectId) PlayAuthenticate.getUserService().getLocalIdentity(authUsr);
         st.expires = new Date(new Date().getTime() + 3600000);
-        st.providerId = authUser.getProvider();
+        st.providerId = authUsr.getProvider();
         st.token = st.createToken();
         st.save();
         return st.token;

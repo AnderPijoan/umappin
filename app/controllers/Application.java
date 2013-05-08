@@ -107,11 +107,11 @@ public class Application extends Controller {
     public static Result testTokenAuth(String token, String resturl) {
         SessionToken st = SessionToken.findByToken(token);
         if (st != null && !st.expired()) {
-            session.put(PlayAuthenticate.ORIGINAL_URL, request().url);
-            session.put(PlayAuthenticate.USER_KEY, st.getUserId());
-            session.put(PlayAuthenticate.PROVIDER_KEY, st.getProviderId());
-            session.put(PlayAuthenticate.EXPIRES_KEY, Long.toString(st.getExpires().getTime()));
-            session.put(PlayAuthenticate.SESSION_KEY, st.getToken());
+            session().put(PlayAuthenticate.ORIGINAL_URL, request().uri());
+            session().put(PlayAuthenticate.USER_KEY, st.getUserId().toString());
+            session().put(PlayAuthenticate.PROVIDER_KEY, st.getProviderId());
+            session().put(PlayAuthenticate.EXPIRES_KEY, Long.toString(st.getExpires().getTime()));
+            session().put(PlayAuthenticate.SESSION_ID_KEY, st.getToken());
             return redirect("/" + resturl);
         } else {
             return forbidden("Need to login");
