@@ -74,7 +74,10 @@
           "email=" + $('#email').val() + "&password=" + $('#password').val()
         );
         loginPost.done(function( data ) {
+            /*
             $.get(
+                // Test for token-based authentication
+                //'/tokenauth/' + data.token + '/sessionuser',
                 '/sessionuser',
                 function(data) {
                     setSessionUser(data);
@@ -85,6 +88,20 @@
                     $('#content').html('');
                 }
             );
+            */
+            sessionStorage.setItem('token', data.token);
+            $.ajax({
+                url: "/sessionuser",
+                data: { signature: 'authHeader' },
+                type: "GET",
+                beforeSend: function(xhr){xhr.setRequestHeader('token', data.token);},
+                success: function() {
+                    setSessionUser(data);
+                    $('#actionResult').css('display','block').empty()
+                                      .html("<div class='alert alert-success'>User Authenticated</div>");
+                    $('#content').html('');
+                }
+            });
         });
         loginPost.error(function( data ) {
             $('#actionResult').css('display','block').empty().html(

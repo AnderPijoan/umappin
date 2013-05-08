@@ -27,6 +27,16 @@ $ () ->
     Backbone.history.start()
 
   # Check the user session
+  token = window.sessionStorage.getItem 'token'
+  $.ajax
+    url: "/sessionuser"
+    data: { signature: 'authHeader' }
+    type: "GET"
+    beforeSend: (xhr) -> xhr.setRequestHeader('token', token ? '')
+    success: (data) -> setSessionUser data
+  ###
   sessionRequest = $.get "/sessionuser"
   sessionRequest.done (data) -> setSessionUser data
+  ###
   updateSessionViews ""
+

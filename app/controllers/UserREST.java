@@ -77,7 +77,7 @@ public class UserREST extends ItemREST {
     }
 
     public static Result getSessionUser() {
-        final User localUser = Application.getLocalUser(session());
+        final User localUser = Application.getLocalUser(ctx().session());
         if (localUser != null)
             return ok(localUser.toJson());
         else

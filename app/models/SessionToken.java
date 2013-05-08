@@ -19,7 +19,7 @@ public class SessionToken {
 
     @Id
     public ObjectId id;
-    public ObjectId userId;
+    public String userId;
     public Date expires;
     public String providerId;
     public String token;
@@ -48,11 +48,11 @@ public class SessionToken {
         this.providerId = providerId;
     }
     
-    public ObjectId getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(ObjectId userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
     
@@ -70,7 +70,7 @@ public class SessionToken {
 
     public static String create(AuthUser authUsr) {
         SessionToken st = new SessionToken();
-        st.userId = (ObjectId) PlayAuthenticate.getUserService().getLocalIdentity(authUsr);
+        st.userId = authUsr.getId();
         st.expires = new Date(new Date().getTime() + 3600000);
         st.providerId = authUsr.getProvider();
         st.token = st.createToken();
@@ -87,22 +87,10 @@ public class SessionToken {
     }
 
     public static SessionToken findByToken(String token) {
-        String tokn = null;
-        try {
-            tokn = URLEncoder.encode(token, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        return MorphiaObject.datastore.find(SessionToken.class).field("token").equal(tokn).get();
+        return MorphiaObject.datastore.find(SessionToken.class).field("token").equal(token).get();
     }
 
     public String createToken() {
-        String token = null;
-        try {
-            token = URLEncoder.encode(BCrypt.gensalt(), "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        return token;
+        return BCrypt.gensalt();
     }
 }

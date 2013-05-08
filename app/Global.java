@@ -1,3 +1,4 @@
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import models.SecurityRole;
 import com.feth.play.module.pa.PlayAuthenticate;
@@ -5,14 +6,19 @@ import com.feth.play.module.pa.PlayAuthenticate.Resolver;
 import com.feth.play.module.pa.exceptions.AccessDeniedException;
 import com.feth.play.module.pa.exceptions.AuthException;
 import controllers.routes;
+import models.SessionToken;
 import play.Application;
 import play.GlobalSettings;
+import play.mvc.Action;
 import play.mvc.Call;
 import java.net.UnknownHostException;
 import play.Logger;
 import com.google.code.morphia.Morphia;
 import com.mongodb.Mongo;
 import controllers.MorphiaObject;
+import play.mvc.Http;
+import play.mvc.Http.Request;
+import play.mvc.Result;
 
 public class Global extends GlobalSettings {
 
@@ -92,4 +98,34 @@ public class Global extends GlobalSettings {
             }
         }
 	}
+
+    @Override
+    public Action onRequest(Request request, Method actionMethod) {
+        if (request.cookie("PLAY_SESSION") == null && !actionMethod.getName().equals("doLogin")) {
+            if (request.getHeader("token") != null) {
+                return new Action.Simple() {
+                    @Override
+                    public Result call(play.mvc.Http.Context ctx) throws Throwable {
+                        SessionToken st = SessionToken.findByToken(ctx.request().getHeader("token"));
+                        if (st != null && !st.expired()) {
+                            ctx.session().put(PlayAuthenticate.ORIGINAL_URL, ctx.request().uri());
+                            ctx.session().put(PlayAuthenticate.USER_KEY, st.getUserId());
+                            ctx.session().put(PlayAuthenticate.PROVIDER_KEY, st.getProviderId());
+                            ctx.session().put(PlayAuthenticate.EXPIRES_KEY, Long.toString(st.getExpires().getTime()));
+                            ctx.session().put(PlayAuthenticate.SESSION_ID_KEY, st.getToken());
+                            return delegate.call(ctx);
+                        }
+                        return unauthorized("Unauthorized operation");
+                    }
+                };
+            }
+            return new Action.Simple() {
+                @Override
+                public Result call(play.mvc.Http.Context ctx) throws Throwable {
+                    return unauthorized("Unauthorized operation");
+                }
+            };
+        }
+        return super.onRequest(request, actionMethod);
+    }
 }
