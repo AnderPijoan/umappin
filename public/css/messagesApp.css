@@ -2,18 +2,19 @@ footer {
     text-align: center;
 }
 
-.message_divider {
+/*.message_divider {
     background-color: #888888;
     height: 1px;
-    width: 70%;
     opacity: 0.7;
     text-align: center;
-    padding-left: 10px;
-    padding-right: 10px;
-    margin-top: 1px;
-}
-.messages > p {
-    width: 70%;
+    display: block;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+}*/
+.messages > span {
+    width: 100%;
     text-align: justify;
 }
 
@@ -23,7 +24,14 @@ footer {
 
 .timeAgo {
     float: right;
-    position: relative;
-    top: -18px;
-    left: -240px;
+    font-size: 12px;
+
+}
+.replybox {
+    margin-top: 15px;
+}
+.messagePhoto {
+    width: 30px;
+    margin-bottom: 3px;
+    margin-top: 3px;
 }

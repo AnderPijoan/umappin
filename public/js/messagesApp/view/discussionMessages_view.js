@@ -8,14 +8,16 @@ _.templateSettings.variable = "rc";
         template: _.template($('#messages-template').html()),
 
         events: {
-            "click #reply": "reply"
+            "click #reply": "reply",
+            "click .plusUsers" : "showAllUsers"
         },
 
         initialize: function(attrs, options) {
             _.bind(this, "render");
-            this.model.on("sync",this.add, this);
+            //this.model.on("sync",this.add, this);
         },
-        add: function() {
+        add: function() { //Function to add to each message the text timeAgo. Finally it
+                          //calls render
             var messages = this.model.get("messages");
             for (var x in messages) {
                 var diff = new Date().getTime()-messages[x].timeStamp;
@@ -51,11 +53,10 @@ _.templateSettings.variable = "rc";
             var that = this;
             message = new messagesApp.Message({discussion_id: this.model.id,
                                                 message: this.$el.find('#sending_message').val()});
-            this.model.unset("messages");
+            this.model.unset("messages"); //unset messages because with attribute timeAgo it can't fetch
             message.save(null,
                     {
                         success: function(){
-                            console.log("successfully saved message");
                             that.model.fetch();
                         },
                         error: function(){
@@ -63,6 +64,9 @@ _.templateSettings.variable = "rc";
                         }
                     }
                 );
+        },
+        showAllUsers: function(ev) {
+            //$(this.el).html()
         }
 	});
 }());

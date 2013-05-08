@@ -41,8 +41,6 @@ messagesApp.Router = Backbone.SubRoute.extend({
 						}
 					}
 				);
-				//console.log("Backbone routing to message");
-				// setTemplate('messages');	
 		});
 	},
 	discussionHeaders: function(){

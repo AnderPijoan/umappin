@@ -75,15 +75,18 @@
             </div>
              <h2><%- rc.subject %></h2>
              <br/>
-             <div class="messages">
+             <div class="messages span9">
                  <% _.each(rc.messages, function(messageObject){ %>
-                    <p class="message"><a href="/#account/<%- messageObject.user.id%>"><%- messageObject.user.name %></a>:<%= " " + messageObject.message %></p>
+                    <div>
+                    <img class="messagePhoto" src=<%- messageObject.user.photo%> />
+                    <span class="message"><a href="/#account/<%- messageObject.user.id%>"><%- messageObject.user.name %></a>:<%= " " + messageObject.message %>
+                    </span>
                     <span class="timeAgo"><%- messageObject.timeAgo%></span>
-                    <div class="message_divider" />
+                    </div>
                  <% }); %>
              </div>
-             <textarea id="sending_message" class="span6"></textarea>
-             <button id="reply">Reply</button>
+             <textarea id="sending_message" class="span8 replybox"></textarea>
+             <button id="reply" class="replybox">Reply</button>
          </div>
      </script>
      <script src="/assets/js/messagesApp/model/discussion.js"></script>

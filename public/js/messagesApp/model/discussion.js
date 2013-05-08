@@ -20,15 +20,5 @@ var messagesApp = messagesApp || {};
             });
             this.set(attrs, {validate: true});
 		}
-		/*,
-		save: function(attributes, options) {
-			console.log("save");
-			if (attributes.privateMessage === true ) {
-				options = _.defaults((options || {}), {url: '/discussions/' + this.attributes.id});
-				return Backbone.Model.prototype.save.call(this, this.attributes.newMessage.message, options);
-			} else {
-				return Backbone.Model.prototype.save.call(this, attributes, options);
-			}
-		}*/
 	});
 })();
