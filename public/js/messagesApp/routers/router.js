@@ -34,7 +34,7 @@ messagesApp.Router = Backbone.SubRoute.extend({
 					{
 						success: function(){
 							view = new messagesApp.MessagesView({ model: discussion });
-							$('#messages_body').html(view.render().el);
+							$('#messages_body').html(view.add().el);
 						},
 						error: function(){
 							console.log("Error getting messages from server");
@@ -42,15 +42,14 @@ messagesApp.Router = Backbone.SubRoute.extend({
 					}
 				);
 				//console.log("Backbone routing to message");
-				// setTemplate('messages');
-				
+				// setTemplate('messages');	
 		});
 	},
 	discussionHeaders: function(){
 		this.loadTemplateIfNeed(function(){
-			console.log("routing received");			
-    		messagesApp.DiscussionCollection.fetch();
-	    });
+			console.log("routing received");
+			messagesApp.DiscussionCollection.fetch();
+		});
 	},
 	newDiscussion: function(id){
 		this.loadTemplateIfNeed(function(){
@@ -60,14 +59,13 @@ messagesApp.Router = Backbone.SubRoute.extend({
 	},
 	loadTemplateIfNeed:function(callback){
 		//it reloads the template only if not set
-		if($('#messages_body').length ==0){
+		if($('#messages_body').length ===0){
 			console.log("Load Messages template");
 			setTemplate ("/assets/templates/messages.html", callback);
-		}else{		
+		}else{
 			callback();
 		}
 	}
-
 });
 
 

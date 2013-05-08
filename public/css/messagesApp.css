@@ -20,3 +20,10 @@ footer {
 .usersPhoto {
 	width: 100px;
 }
+
+.timeAgo {
+    float: right;
+    position: relative;
+    top: -18px;
+    left: -240px;
+}
