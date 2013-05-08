@@ -50,9 +50,20 @@
 
 <!-- This is the discussions header template -->
 <script type="text/template" id="discussion-head-template">
+        <% maxPhotosSeen=5; %>
+
         <div class="span9 ">
             <div class="discussion_head">
                 <div class="discussion_subject"><a href="#messages/message/<%- rc.id %>"><%- rc.subject %></a></div>
+                <div class="discussion_participants_photo">
+                    <% for (i=0; i<maxPhotosSeen;i++) { %>
+                        <% if (rc.users[i]) { %>    
+                            <img id="photo<%- rc.users[i].name %>" class="messagePhoto" src="<%- rc.users[i].photo%>" title="<%- rc.users[i].name %>"/>
+                        <% } else {break;}} %>
+                    <% if (rc.users.length > maxPhotosSeen) {plusUsers=rc.users.length-maxPhotosSeen;%> 
+                        <span class="plusUsers">+<%- plusUsers %></span>
+                    <% } %>
+                </div>
                 <div class="discussion_author">
                     <div class="author_name"><a href="/#account/userID">USERNAME</a></div>
                 </div>  
@@ -63,15 +74,16 @@
 <!-- This is the template to show a discussion-->
      <script type="text/template" id="messages-template">
         <% maxPhotosSeen=5; %>
+
          <div class="span9 ">
             <div class="span9">
             <% for (i=0; i<maxPhotosSeen;i++) { %>
                 <% if (rc.users[i]) { %>    
-                <img id="photo<%- rc.users[i].name %>" class="usersPhoto" src="<%- rc.users[i].photo%>" />
-            <% } else {break;}} %>
+                    <img id="photo<%- rc.users[i].name %>" class="usersPhoto" src="<%- rc.users[i].photo%>" />
+                <% } else {break;}} %>
             <% if (rc.users.length > maxPhotosSeen) {plusUsers=rc.users.length-maxPhotosSeen;%> 
                 <span class="plusUsers">+<%- plusUsers %></span>
-                 <% } %>
+            <% } %>
             </div>
              <h2><%- rc.subject %></h2>
              <br/>
