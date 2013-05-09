@@ -4,7 +4,7 @@ class umappin.Router extends Backbone.Router
   routes:
     'account':            'account'
     'account/:id':        'account'
-    'editmap':            'editmap'
+    'maps':               'maps'
     'messages/*subroute': 'messages'
     'signup':             'signup'
     'login':              'login'
@@ -12,6 +12,7 @@ class umappin.Router extends Backbone.Router
     'linkProvider':       'linkProvider'
     'forgotPassword':     'forgotPassword'
     'changePassword':     'changePassword'
+    'leafletmap':         'leafletmap'
     'test':               'test'
     'synctest':           'syncTest'
 
@@ -21,12 +22,11 @@ class umappin.Router extends Backbone.Router
       requirejs ['/assets/js/account/account_main.js'], () ->
         Account.init()
 
-  editmap: () ->
-    setTemplate "/assets/templates/map.html", () ->
-      requirejs ['/assets/js/lib/leaflet.min.js'], () ->
-        requirejs ['/assets/js/lib/leaflet.draw.min.js'], () ->
-          requirejs ['/assets/js/map/map.js'], () ->
-            Map.init()
+  maps: () ->
+    setTemplate "/assets/templates/maps.html", () ->
+      requirejs ['/assets/js/lib/openlayers.min.js'], () ->
+        requirejs ['/assets/js/maps/maps.js'], () ->
+          Maps.init()
 
   messages: () ->
     subroutes = @subroutes
@@ -42,7 +42,6 @@ class umappin.Router extends Backbone.Router
   logout: () ->
     $.get "/logout", () ->
       setTemplate '/assets/templates/logout.html'
-      sessionStorage.removeItem "user"
       updateSessionViews ""
 
   signup: () ->  # Need to separate js source
@@ -59,6 +58,14 @@ class umappin.Router extends Backbone.Router
 
   changePassword: () ->  # Need to separate js source
     setTemplate "/assets/templates/changePassword.html"
+
+  # Old leaflet map, remove before release
+  leafletmap: () ->
+    setTemplate "/assets/templates/leaflet-map.html", () ->
+      requirejs ['/assets/js/lib/leaflet.min.js'], () ->
+        requirejs ['/assets/js/lib/leaflet.draw.js'], () ->
+          requirejs ['/assets/js/map/leaflet-map.js'], () ->
+            Map.init()
 
   # Testing routes, remove before release
   test: () ->

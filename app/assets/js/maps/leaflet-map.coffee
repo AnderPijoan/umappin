@@ -30,3 +30,17 @@ Map.init = () ->
 
   map.on 'draw:deleted', () ->
     # Update db to save latest changes.
+
+  # Get location at startup
+  map.locate setView: true, maxZoom: 16
+
+  # add events to location
+  onLocationFound = (e) ->
+    radius = e.accuracy / 2
+    L.marker(e.latlng).addTo(map).bindPopup("You are within #{radius} meters from this point").openPopup()
+    L.circle(e.latlng, radius).addTo map
+  map.on 'locationfound', onLocationFound
+
+  onLocationError = (e) ->
+    alert e.message
+  map.on 'locationerror', onLocationError
