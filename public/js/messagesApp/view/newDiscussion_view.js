@@ -44,22 +44,19 @@ var messagesApp = messagesApp || {};
 			}
 
 			var newDiscussion={
-				"subject": "'"+subject+"'",
+				"subject": subject,
 				"messages":{
-					"message":"'"+message+"'",
+					"message":message,
 				},
 				"to_friends": toFriends,
-				"receivers": receivers,
+				"users": receivers,
 			};
-
 
 			var a = new messagesApp.Discussion(newDiscussion);
 			messagesApp.DiscussionCollection.add(a);
-
-			a.save({}, {  // se genera POST /usuarios  - contenido: {nombre:'Alfonso'}
+			a.save({}, {  
 			    success:function(){
-			        // Suponiendo que el servidor ha devuelto el objeto {"id": 1}
-			        alert(a.id);  // imprime 1
+			        alert(a.id);
 			    }
 			});
 
@@ -80,5 +77,8 @@ var messagesApp = messagesApp || {};
 		}
 	});
 })();
+
+messagesApp.newDiscussionView = new messagesApp.NewDiscussionView();
+
 
 

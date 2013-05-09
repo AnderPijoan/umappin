@@ -19,7 +19,7 @@ GET     /assets/*file               controllers.Assets.at(path="/public", file)
 # ----------------------------- Authentication routes -------------------------
 POST    /login                      controllers.Application.doLogin
 
-GET     /logout                     controllers.Application.doLogout
+GET     /logout                     com.feth.play.module.pa.controllers.Authenticate.logout
 
 POST    /signup                     controllers.Application.doSignup
 
@@ -96,6 +96,7 @@ POST	/messages                   controllers.User2DiscussionREST.reply()
 POST	/messages/:id               controllers.User2DiscussionREST.replyToMessage(id: String)
 
 # REST CRUD for awards
+<<<<<<< HEAD
 GET     /awards						controllers.AwardREST.getAwards()
 GET     /awards/types				controllers.AwardREST.getAwardTypes()
 GET		/awards/:id					controllers.AwardREST.getAward(id: String)
@@ -128,12 +129,6 @@ POST    /maps                    controllers.MapREST.addMap()
 PUT     /maps/:id                controllers.MapREST.updateMap(id: String)
 DELETE  /maps/:id                controllers.MapREST.deleteMap(id: String)
 
-# REST CRUD for Map Features
-GET     /features                 controllers.MapFeatureREST.getAllFeatures()
-GET     /features/:id             controllers.MapFeatureREST.getFeature(id: String)
-POST    /features                 controllers.MapFeatureREST.addFeature()
-PUT     /features/:id             controllers.MapFeatureREST.updateFeature(id: String)
-DELETE  /features/:id             controllers.MapFeatureREST.updateFeature(id: String)
 # -------------------------------------------------------------------------------------------------------
 
 # TESTINGG!!!
@@ -143,6 +138,17 @@ POST    /items                    controllers.SubItemREST.post()
 PUT     /items/:id                controllers.SubItemREST.put(id: String)
 DELETE  /items/:id                controllers.SubItemREST.delete(id: String)
 
+# REST CRUD for Map Features
+GET     /features                 controllers.MapFeatureREST.getAllFeatures()
+GET     /features/:id             controllers.MapFeatureREST.getFeature(id: String)
+POST    /features                 controllers.MapFeatureREST.addFeature()
+PUT     /features/:id             controllers.MapFeatureREST.updateFeature(id: String)
+DELETE  /features/:id             controllers.MapFeatureREST.updateFeature(id: String)
 
 
 #------------------------------ REST API ---------------------------------
+
+#GET 	/api/login/:email/:password	controllers.ApiUserREST.login(email: String, password: String)
+#GET 	/api/:token/discussions			controllers.User2DiscussionREST.getApiDiscussions(token: String)
+
+#GET     /tokenauth/:token/$resturl<.*>  controllers.Application.testTokenAuth(token: String, resturl: String)

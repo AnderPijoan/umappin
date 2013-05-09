@@ -64,7 +64,7 @@ public class MapFeature {
         Connection conn = null;
         PreparedStatement st;
         ResultSet rs;
-        List<MapFeature> list = new ArrayList<>();
+        List<MapFeature> list = new ArrayList<MapFeature>();
         try {
             conn = ds.getConnection();
             String sql = "select id, ownerid, name, st_asgeojson(geometry) as geometry from mapfeature";

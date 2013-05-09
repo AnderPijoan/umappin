@@ -76,7 +76,9 @@ public class SessionToken {
     }
 
     public static void remove(String token) {
-        findByToken(token).delete();
+        SessionToken st = findByToken(token);
+        if (st != null)
+            st.delete();
     }
 
     public void save() {

@@ -26,6 +26,10 @@ public class Item {
 	public static <T extends Item> T findById(String id, Class<T> klass) {
 		return MorphiaObject.datastore.get(klass, new ObjectId(id));
 	}
+	
+	public static <T extends Item> T findById(ObjectId oid, Class<T> klass) {
+		return MorphiaObject.datastore.get(klass, oid);
+	}
 
     public void save() {
         MorphiaObject.datastore.save(this);

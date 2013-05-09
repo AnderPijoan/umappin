@@ -23,6 +23,8 @@ import com.feth.play.module.pa.providers.AuthProvider;
 import com.feth.play.module.pa.service.UserService;
 import com.feth.play.module.pa.user.AuthUser;
 
+import static play.mvc.Results.ok;
+
 
 public abstract class PlayAuthenticate {
 
@@ -172,7 +174,10 @@ public abstract class PlayAuthenticate {
 		session.remove(EXPIRES_KEY);
 		// shouldn't be in any more, but just in case lets kill it from the cookie
 		session.remove(ORIGINAL_URL);
-		return Controller.redirect(getUrl(getResolver().afterLogout(), SETTING_KEY_AFTER_LOGOUT_FALLBACK));
+        // User logged out, so just return ok
+		return ok();
+        // Strange 303 See Other response, didn't happen before token auth
+        //return Controller.redirect(getUrl(getResolver().afterLogout(), SETTING_KEY_AFTER_LOGOUT_FALLBACK));
 	}
 
 	public static String peekOriginalUrl(final Context context) {
@@ -348,7 +353,7 @@ public abstract class PlayAuthenticate {
         /** Pass the auth token to frontend **/
         ObjectNode json = Json.newObject();
         json.put("token", token);
-        return Controller.ok(json);
+        return ok(json);
 	}
 
 	public static Result merge(final Context context, final boolean merge) {

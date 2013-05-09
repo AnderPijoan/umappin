@@ -4,7 +4,7 @@ class umappin.Router extends Backbone.Router
   routes:
     'account':            'account'
     'account/:id':        'account'
-    'maps':               'maps'
+    'editmap':            'editmap'
     'messages/*subroute': 'messages'
     'signup':             'signup'
     'login':              'login'
@@ -12,7 +12,6 @@ class umappin.Router extends Backbone.Router
     'linkProvider':       'linkProvider'
     'forgotPassword':     'forgotPassword'
     'changePassword':     'changePassword'
-    'leafletmap':         'leafletmap'
     'test':               'test'
     'synctest':           'syncTest'
 
@@ -22,26 +21,30 @@ class umappin.Router extends Backbone.Router
       requirejs ['/assets/js/account/account_main.js'], () ->
         Account.init()
 
-  maps: () ->
-    setTemplate "/assets/templates/maps.html", () ->
-      requirejs ['/assets/js/lib/openlayers.min.js'], () ->
-        requirejs ['/assets/js/maps/maps.js'], () ->
-          Maps.init()
+  editmap: () ->
+    setTemplate "/assets/templates/map.html", () ->
+      requirejs ['/assets/js/lib/leaflet.min.js'], () ->
+        requirejs ['/assets/js/lib/leaflet.draw.min.js'], () ->
+          requirejs ['/assets/js/map/map.js'], () ->
+            Map.init()
 
   messages: () ->
     subroutes = @subroutes
-    requirejs ['/assets/js/messagesApp/collection/discussionCollection.js'], () ->
-      requirejs ['/assets/js/messagesApp/routers/router.js'], () ->
+<<<<<<< HEAD
+    requirejs ['/assets/js/messagesAPP/collection/discussionCollection.js'], () ->
+      requirejs ['/assets/js/messagesAPP/routers/router.js'], () ->
         subroutes.messagesRouter or= new messagesApp.Router "messages/"
-  
   login: () ->
     setTemplate "/assets/templates/login.html"
-    requirejs ['/assets/js/messagesApp/routers/router.js'], () ->
+=======
+    requirejs ['/assets/js/messagesAPP/routers/router.js'], () ->
       subroutes.messagesRouter or= new messagesApp.Router "messages/"
 
+>>>>>>> 178708b3cea52be997729b5b0131897c54fed046
   logout: () ->
     $.get "/logout", () ->
       setTemplate '/assets/templates/logout.html'
+      sessionStorage.removeItem "user"
       updateSessionViews ""
 
   signup: () ->  # Need to separate js source
@@ -58,14 +61,6 @@ class umappin.Router extends Backbone.Router
 
   changePassword: () ->  # Need to separate js source
     setTemplate "/assets/templates/changePassword.html"
-
-  # Old leaflet map, remove before release
-  leafletmap: () ->
-    setTemplate "/assets/templates/leaflet-map.html", () ->
-      requirejs ['/assets/js/lib/leaflet.min.js'], () ->
-        requirejs ['/assets/js/lib/leaflet.draw.js'], () ->
-          requirejs ['/assets/js/map/leaflet-map.js'], () ->
-            Map.init()
 
   # Testing routes, remove before release
   test: () ->
