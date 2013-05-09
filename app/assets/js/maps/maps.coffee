@@ -8,7 +8,7 @@ Maps.init = () ->
         Maps.map = null
         if usrMaps.length
           Maps.map = new Maps.Map id: usrMaps[0]
-          Maps.map.fetch()
+          Maps.map.fetch complete: () -> Maps.mapview.render()
         else
           Maps.map = new Maps.Map
           Maps.map.save

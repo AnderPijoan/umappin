@@ -101,7 +101,9 @@ public class Global extends GlobalSettings {
 
     @Override
     public Action onRequest(Request request, Method actionMethod) {
-        if (request.cookie("PLAY_SESSION") == null && !actionMethod.getName().equals("doLogin")) {
+        if (request.cookie("PLAY_SESSION") == null && 
+            !actionMethod.getName().equals("doLogin") && 
+            !actionMethod.getName().equals("doSignup")) {
             if (request.getHeader("token") != null) {
                 return new Action.Simple() {
                     @Override

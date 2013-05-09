@@ -74,7 +74,7 @@ class window.Maps.MapView extends Backbone.View
 
     $(@el).css('width', @width).css('height', @height)
 
-    @listenTo @model, 'reset change', @render
+    @listenTo @model, 'reset ', @render
 
     @map = new OpenLayers.Map(
       @el.id

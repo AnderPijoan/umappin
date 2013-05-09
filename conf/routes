@@ -133,4 +133,4 @@ PUT     /features/:id             controllers.MapFeatureREST.updateFeature(id: S
 DELETE  /features/:id             controllers.MapFeatureREST.updateFeature(id: String)
 
 
-GET     /tokenauth/:token/$resturl<.*>  controllers.Application.testTokenAuth(token: String, resturl: String)
+#GET     /tokenauth/:token/$resturl<.*>  controllers.Application.testTokenAuth(token: String, resturl: String)

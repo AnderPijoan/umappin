@@ -95,8 +95,8 @@
                 data: { signature: 'authHeader' },
                 type: "GET",
                 beforeSend: function(xhr){xhr.setRequestHeader('token', data.token);},
-                success: function() {
-                    setSessionUser(data);
+                success: function(resp) {
+                    setSessionUser(resp);
                     $('#actionResult').css('display','block').empty()
                                       .html("<div class='alert alert-success'>User Authenticated</div>");
                     $('#content').html('');

@@ -104,6 +104,7 @@ public class Application extends Controller {
 		return new SimpleDateFormat("yyyy-dd-MM HH:mm:ss").format(new Date(t));
 	}
 
+    /* Now useless, just thrash it later .....
     public static Result testTokenAuth(String token, String resturl) {
         SessionToken st = SessionToken.findByToken(token);
         if (st != null && !st.expired()) {
@@ -117,5 +118,6 @@ public class Application extends Controller {
             return forbidden("Need to login");
         }
     }
+    */
 
 }
