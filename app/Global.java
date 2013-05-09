@@ -1,27 +1,17 @@
-
 import java.util.Arrays;
-
 import models.SecurityRole;
-
 import com.feth.play.module.pa.PlayAuthenticate;
 import com.feth.play.module.pa.PlayAuthenticate.Resolver;
 import com.feth.play.module.pa.exceptions.AccessDeniedException;
 import com.feth.play.module.pa.exceptions.AuthException;
-
 import controllers.routes;
-
-import org.bson.types.ObjectId;
 import play.Application;
 import play.GlobalSettings;
 import play.mvc.Call;
-
 import java.net.UnknownHostException;
-
 import play.Logger;
-
 import com.google.code.morphia.Morphia;
 import com.mongodb.Mongo;
-
 import controllers.MorphiaObject;
 
 public class Global extends GlobalSettings {
@@ -29,9 +19,11 @@ public class Global extends GlobalSettings {
 	public void onStart(Application app) {
 
         super.beforeStart(app);
-        //Logger.debug("** onStart **");
+        Logger.debug("** Starting Application **");
         try {
-            MorphiaObject.mongo = new Mongo("127.0.0.1", 27017);
+            //MorphiaObject.mongo = new Mongo("10.172.104.17", 27017);
+        	MorphiaObject.mongo = new Mongo("127.0.0.1", 27017);
+
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
@@ -39,8 +31,6 @@ public class Global extends GlobalSettings {
         MorphiaObject.datastore = MorphiaObject.morphia.createDatastore(MorphiaObject.mongo, "test");
         MorphiaObject.datastore.ensureIndexes();
         MorphiaObject.datastore.ensureCaps();
-
-        //Logger.debug("** Morphia datastore: " + MorphiaObject.datastore.getDB());
 
 		PlayAuthenticate.setResolver(new Resolver() {
 
@@ -93,24 +83,12 @@ public class Global extends GlobalSettings {
 	}
 
 	private void initialData() {
-        if (SecurityRole.all().size() == 0) {
+        if (SecurityRole.all(SecurityRole.class).size() == 0) {
             for (final String roleName : Arrays.asList(controllers.Application.USER_ROLE)) {
                 final SecurityRole role = new SecurityRole();
                 role.roleName = roleName;
-                // Fix - Manually create an ObjectID and get its String UUID
-                role.id = new ObjectId().toString();
                 role.save();
             }
         }
-        /*
-		if (SecurityRole.find.findRowCount() == 0) {
-			for (final String roleName : Arrays
-					.asList(controllers.Application.USER_ROLE)) {
-				final SecurityRole role = new SecurityRole();
-				role.roleName = roleName;
-				role.save();
-			}
-		}
-		*/
 	}
 }

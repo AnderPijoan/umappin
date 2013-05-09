@@ -17,7 +17,7 @@ class window.Account.UserFollowsView extends Backbone.View
   initialize: ->
     @follows = @options.follows
     @followed = @options.followed
-    @listenTo @follows, 'change', @render
+    @listenTo @follows, 'change reset', @render
 
   render: ->
     text = if @follows.get("follow").indexOf(@model.get "id") != -1  then 'Unfollow' else 'Follow'
@@ -37,7 +37,5 @@ class window.Account.UserFollowsView extends Backbone.View
       if followedPos != -1
         @followed.get("follow").splice followedPos, 1
 
-    @follows.save() # Here  to decide whether to use local/session storage as cache
-    @followed.save() # Here  to decide whether to use local/session storage as cache
-    @follows.trigger 'change'
-    @followed.trigger 'change'
+    @follows.save success: (resp) -> @follows.trigger 'change'
+    @followed.save success: (resp) -> @followed.trigger 'change'
