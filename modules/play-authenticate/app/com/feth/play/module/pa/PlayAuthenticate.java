@@ -172,7 +172,6 @@ public abstract class PlayAuthenticate {
 		session.remove(EXPIRES_KEY);
 		// shouldn't be in any more, but just in case lets kill it from the cookie
 		session.remove(ORIGINAL_URL);
-
 		return Controller.redirect(getUrl(getResolver().afterLogout(), SETTING_KEY_AFTER_LOGOUT_FALLBACK));
 	}
 

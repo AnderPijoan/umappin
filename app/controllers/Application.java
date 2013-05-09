@@ -80,6 +80,11 @@ public class Application extends Controller {
 		}
 	}
 
+    public static Result doLogout() {
+        SessionToken.remove(ctx().request().getHeader("token"));
+        return com.feth.play.module.pa.controllers.Authenticate.logout();
+    }
+
 	public static Result jsRoutes() {
 		return ok(
             Routes.javascriptRouter("jsRoutes"//,
@@ -103,21 +108,5 @@ public class Application extends Controller {
 	public static String formatTimestamp(final long t) {
 		return new SimpleDateFormat("yyyy-dd-MM HH:mm:ss").format(new Date(t));
 	}
-
-    /* Now useless, just thrash it later .....
-    public static Result testTokenAuth(String token, String resturl) {
-        SessionToken st = SessionToken.findByToken(token);
-        if (st != null && !st.expired()) {
-            session().put(PlayAuthenticate.ORIGINAL_URL, request().uri());
-            session().put(PlayAuthenticate.USER_KEY, st.getUserId().toString());
-            session().put(PlayAuthenticate.PROVIDER_KEY, st.getProviderId());
-            session().put(PlayAuthenticate.EXPIRES_KEY, Long.toString(st.getExpires().getTime()));
-            session().put(PlayAuthenticate.SESSION_ID_KEY, st.getToken());
-            return redirect("/" + resturl);
-        } else {
-            return forbidden("Need to login");
-        }
-    }
-    */
 
 }

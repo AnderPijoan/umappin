@@ -1,14 +1,11 @@
 package models;
 
-import com.feth.play.module.pa.PlayAuthenticate;
 import com.google.code.morphia.annotations.Id;
 import com.google.code.morphia.annotations.Entity;
 import controllers.MorphiaObject;
 import org.bson.types.ObjectId;
 import org.mindrot.jbcrypt.BCrypt;
 import com.feth.play.module.pa.user.AuthUser;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Date;
 
 
@@ -77,7 +74,11 @@ public class SessionToken {
         st.save();
         return st.token;
     }
-    
+
+    public static void remove(String token) {
+        findByToken(token).delete();
+    }
+
     public void save() {
         MorphiaObject.datastore.save(this);
     }
