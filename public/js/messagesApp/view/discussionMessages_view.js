@@ -14,10 +14,15 @@ _.templateSettings.variable = "rc";
 
         initialize: function(attrs, options) {
             _.bind(this, "render");
+
             //this.model.on("sync",this.add, this);
         },
         add: function() { //Function to add to each message the text timeAgo. Finally it
                           //calls render
+            //TODO
+            //Get this out and make general function on /js/lib/utils.js
+            //to work with in in any app. For example in Posts. ;)
+
             var messages = this.model.get("messages");
             for (var x in messages) {
                 var diff = new Date().getTime()-messages[x].timeStamp;
@@ -58,6 +63,10 @@ _.templateSettings.variable = "rc";
                     {
                         success: function(){
                             that.model.fetch();
+                            //clean message
+                            $('#sending_message').val("");
+                            console.error(message);
+
                         },
                         error: function(){
                             console.log("Error saving message");

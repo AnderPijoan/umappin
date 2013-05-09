@@ -303,7 +303,7 @@ public class User2DiscussionREST extends ItemREST {
 		setUsersDiscussionUnread(discussion, otherUsers);
 
 		// Return a copy of the discussion
-		return ok(Json.toJson(Discussion.discussionToFullObjectNode(discussion)));
+		return ok(Json.toJson(Message.messageToObjectNode(message)));
 	}
 
 	public static Result replyToMessage(String id){
@@ -344,7 +344,7 @@ public class User2DiscussionREST extends ItemREST {
 			setUsersDiscussionUnread(discussion, otherUsers);
 
 			// Return a copy of the discussion
-			return ok(Discussion.discussionToFullObjectNode(discussion));
+			return ok(Json.toJson(Message.messageToObjectNode(message)));
 		}
 		return badRequest(Constants.MESSAGES_EMPTY.toString());
 	}
