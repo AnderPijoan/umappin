@@ -3,6 +3,9 @@ package com.feth.play.module.pa;
 import java.util.Date;
 
 
+import com.feth.play.module.pa.providers.password.UsernamePasswordAuthUser;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.node.ObjectNode;
 import play.Configuration;
 import play.Logger;
 import play.Play;
@@ -99,11 +102,11 @@ public abstract class PlayAuthenticate {
 		return userService;
 	}
 
-	private static final String ORIGINAL_URL = "pa.url.orig";
+	public static final String ORIGINAL_URL = "pa.url.orig";
 	public static final String USER_KEY = "pa.u.id";
     public static final String PROVIDER_KEY = "pa.p.id";
     public static final String EXPIRES_KEY = "pa.u.exp";
-	private static final String SESSION_ID_KEY = "pa.s.id";
+	public static final String SESSION_ID_KEY = "pa.s.id";
 
 	public static Configuration getConfiguration() {
 		return Play.application().configuration().getConfig(SETTING_KEY_PLAY_AUTHENTICATE);
@@ -341,7 +344,12 @@ public abstract class PlayAuthenticate {
 
 	public static Result loginAndRedirect(final Context context, final AuthUser loginUser) {
 		storeUser(context.session(), loginUser);
-        return Controller.ok(Json.toJson(loginUser));
+        /** Store the auth token in MongoDB **/
+        String token = getUserService().storeToken(loginUser);
+        /** Pass the auth token to frontend **/
+        ObjectNode json = Json.newObject();
+        json.put("token", token);
+        return Controller.ok(json);
 	}
 
 	public static Result merge(final Context context, final boolean merge) {

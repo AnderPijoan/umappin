@@ -5,9 +5,9 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import models.SessionToken;
 import models.User;
 import play.Routes;
-import play.api.templates.Html;
 import play.data.Form;
 import play.data.validation.ValidationError;
 import play.mvc.*;
@@ -76,7 +76,7 @@ public class Application extends Controller {
 			return badRequest(getValidationErrorsHtml(filledForm.errors().values()));
 		} else {
 			// Everything was filled
-			return UsernamePasswordAuthProvider.handleLogin(ctx());
+            return UsernamePasswordAuthProvider.handleLogin(ctx());
 		}
 	}
 
@@ -104,5 +104,20 @@ public class Application extends Controller {
 		return new SimpleDateFormat("yyyy-dd-MM HH:mm:ss").format(new Date(t));
 	}
 
+    /* Now useless, just thrash it later .....
+    public static Result testTokenAuth(String token, String resturl) {
+        SessionToken st = SessionToken.findByToken(token);
+        if (st != null && !st.expired()) {
+            session().put(PlayAuthenticate.ORIGINAL_URL, request().uri());
+            session().put(PlayAuthenticate.USER_KEY, st.getUserId().toString());
+            session().put(PlayAuthenticate.PROVIDER_KEY, st.getProviderId());
+            session().put(PlayAuthenticate.EXPIRES_KEY, Long.toString(st.getExpires().getTime()));
+            session().put(PlayAuthenticate.SESSION_ID_KEY, st.getToken());
+            return redirect("/" + resturl);
+        } else {
+            return forbidden("Need to login");
+        }
+    }
+    */
 
 }

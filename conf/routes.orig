@@ -97,6 +97,17 @@ POST	/messages/:id               controllers.User2DiscussionREST.replyToMessage(
 
 # REST CRUD for awards
 <<<<<<< HEAD
+GET     /awards						controllers.AwardREST.getAwards()
+GET     /awards/types				controllers.AwardREST.getAwardTypes()
+GET		/awards/:id					controllers.AwardREST.getAward(id: String)
+GET     /awards/type/:type			controllers.AwardREST.findByAwardType(type: String)
+
+# REST CRUD for statistics
+GET     /users/:id/statistics		controllers.UserStatisticsREST.getUserStatistics(id: String)
+PUT		/users/:id/statistics		controllers.UserStatisticsREST.updateUserStatistics(id: String)
+# --------------------------------------------------------------------------
+
+=======
 GET     /rest/awards				controllers.AwardREST.all
 GET     /rest/awards/:type/:limit	controllers.AwardREST.findByAwardTypeLimit(type: String, limit: Integer)
 GET     /rest/user/:id/awards	    controllers.AwardREST.findByUserId(id: String)
@@ -120,18 +131,7 @@ PUT     /maps/:id                controllers.MapREST.updateMap(id: String)
 DELETE  /maps/:id                controllers.MapREST.deleteMap(id: String)
 
 # -------------------------------------------------------------------------------------------------------
-=======
-GET     /awards						controllers.AwardREST.getAwards()
-GET     /awards/types				controllers.AwardREST.getAwardTypes()
-GET		/awards/:id					controllers.AwardREST.getAward(id: String)
-GET     /awards/type/:type			controllers.AwardREST.findByAwardType(type: String)
-
-# REST CRUD for statistics
-GET     /users/:id/statistics		controllers.UserStatisticsREST.getUserStatistics(id: String)
-PUT		/users/:id/statistics		controllers.UserStatisticsREST.updateUserStatistics(id: String)
-# --------------------------------------------------------------------------
-
->>>>>>> master
+>>>>>>> ugarcia_master
 
 # TESTINGG!!!
 GET     /items                    controllers.SubItemREST.getAll()
@@ -149,11 +149,11 @@ DELETE  /features/:id             controllers.MapFeatureREST.updateFeature(id: S
 
 
 <<<<<<< HEAD
-#GET     /tokenauth/:token/$resturl<.*>  controllers.Application.testTokenAuth(token: String, resturl: String)
-=======
 #------------------------------ REST API ---------------------------------
 
 GET 	/api/login/:email/:password	controllers.ApiUserREST.login(email: String, password: String)
 GET 	/api/:token/discussions			controllers.User2DiscussionREST.getApiDiscussions(token: String)
 
->>>>>>> master
+=======
+#GET     /tokenauth/:token/$resturl<.*>  controllers.Application.testTokenAuth(token: String, resturl: String)
+>>>>>>> ugarcia_master

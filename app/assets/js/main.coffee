@@ -1,17 +1,25 @@
+# Sets a template for the main content
 window.setTemplate = (url, callback) ->
   $('div#actionResult').empty()
   $.get url, (template) ->
     $('div#content').empty().html template
-    callback?.call(@)
+    callback?.call @
 
+# Updates views based on session authentication
 window.updateSessionViews = (username) ->
   $('.loggedout').css 'display', if username !="" then 'none' else 'block'
   $('.loggedin').css('display', if username !="" then 'block' else 'none').find('#username').text username
 
+# Sets the session User from server
+window.setSessionUser = (user) ->
+  requirejs ['/assets/js/account/models/user_model.js'], () ->
+    Account.session = new Account.User user
+    updateSessionViews Account.session.get 'name'
 
+# Main script
 $ () ->
   # Initialize main routing namespace
-  window.umappin = window.umappin || {};
+  window.umappin or= {}
 
   # Initialize the main router
   requirejs ['/assets/js/router.js'], () ->
@@ -19,13 +27,16 @@ $ () ->
     Backbone.history.start()
 
   # Check the user session
-  json = sessionStorage.getItem "user"
-  if json? and json != ""
-    usr = JSON.parse json
-    updateSessionViews usr.name
-  else
-    sessionRequest = $.get "/sessionuser"
-    sessionRequest.done (data) ->
-      updateSessionViews data.name
-      sessionStorage.setItem "user", JSON.stringify data
-    updateSessionViews ""
+  token = window.sessionStorage.getItem 'token'
+  $.ajax
+    url: "/sessionuser"
+    data: { signature: 'authHeader' }
+    type: "GET"
+    beforeSend: (xhr) -> xhr.setRequestHeader('token', token ? '')
+    success: (data) -> setSessionUser data
+  ###
+  sessionRequest = $.get "/sessionuser"
+  sessionRequest.done (data) -> setSessionUser data
+  ###
+  updateSessionViews ""
+

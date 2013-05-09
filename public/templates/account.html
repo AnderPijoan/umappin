@@ -92,11 +92,7 @@
 
 <script type='text/template' id='userprofile-template'>
     <div class="span3">
-        <a href="javascript:void(0)">
-            <img class="image img-rounded" src="/assets/img/140x140.gif" alt="placeholder image"
-                 height="140" width="140">
-        </a>
-        <br/><br/>
+        <div id='profilePictureHolder'></div>
         <label>Username</label>
         <input type="text" value="<%- rc.data.name %>" class="input-medium" required  id='profile-name'><br/>
         <% if (!rc.readonly) { %>

@@ -1,11 +1,13 @@
 package service;
 
+import models.SessionToken;
 import models.User;
 import play.Application;
 
 import com.feth.play.module.pa.user.AuthUser;
 import com.feth.play.module.pa.user.AuthUserIdentity;
 import com.feth.play.module.pa.service.UserServicePlugin;
+import providers.MyLoginUsernamePasswordAuthUser;
 
 public class MyUserServicePlugin extends UserServicePlugin {
 
@@ -56,5 +58,10 @@ public class MyUserServicePlugin extends UserServicePlugin {
 		User.setLastLoginDate(knownUser);
 		return knownUser;
 	}
+
+    @Override
+    public String storeToken(final AuthUser knownUser) {
+        return SessionToken.create(knownUser);
+    }
 
 }
