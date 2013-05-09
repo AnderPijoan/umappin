@@ -107,11 +107,10 @@ GET     /users/:id/statistics		controllers.UserStatisticsREST.getUserStatistics(
 PUT		/users/:id/statistics		controllers.UserStatisticsREST.updateUserStatistics(id: String)
 # --------------------------------------------------------------------------
 
-=======
-GET     /rest/awards				controllers.AwardREST.all
-GET     /rest/awards/:type/:limit	controllers.AwardREST.findByAwardTypeLimit(type: String, limit: Integer)
-GET     /rest/user/:id/awards	    controllers.AwardREST.findByUserId(id: String)
-POST	/rest/user/:id/awards		controllers.AwardREST.saveUserAward(id: String)
+#GET     /rest/awards				controllers.AwardREST.all
+#GET     /rest/awards/:type/:limit	controllers.AwardREST.findByAwardTypeLimit(type: String, limit: Integer)
+#GET     /rest/user/:id/awards	    controllers.AwardREST.findByUserId(id: String)
+#POST	/rest/user/:id/awards		controllers.AwardREST.saveUserAward(id: String)
 
 # REST CRUD for pictures
 GET     /photos/:id             controllers.PhotosREST.getPhoto(id: String)
@@ -131,7 +130,6 @@ PUT     /maps/:id                controllers.MapREST.updateMap(id: String)
 DELETE  /maps/:id                controllers.MapREST.deleteMap(id: String)
 
 # -------------------------------------------------------------------------------------------------------
->>>>>>> ugarcia_master
 
 # TESTINGG!!!
 GET     /items                    controllers.SubItemREST.getAll()
@@ -148,12 +146,9 @@ PUT     /features/:id             controllers.MapFeatureREST.updateFeature(id: S
 DELETE  /features/:id             controllers.MapFeatureREST.updateFeature(id: String)
 
 
-<<<<<<< HEAD
 #------------------------------ REST API ---------------------------------
 
-GET 	/api/login/:email/:password	controllers.ApiUserREST.login(email: String, password: String)
-GET 	/api/:token/discussions			controllers.User2DiscussionREST.getApiDiscussions(token: String)
+#GET 	/api/login/:email/:password	controllers.ApiUserREST.login(email: String, password: String)
+#GET 	/api/:token/discussions			controllers.User2DiscussionREST.getApiDiscussions(token: String)
 
-=======
 #GET     /tokenauth/:token/$resturl<.*>  controllers.Application.testTokenAuth(token: String, resturl: String)
->>>>>>> ugarcia_master

@@ -152,4 +152,3 @@ DELETE  /features/:id             controllers.MapFeatureREST.updateFeature(id: S
 
 
 #GET     /tokenauth/:token/$resturl<.*>  controllers.Application.testTokenAuth(token: String, resturl: String)
->>>>>>> ugarcia_master
