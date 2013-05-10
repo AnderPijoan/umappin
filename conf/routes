@@ -19,7 +19,7 @@ GET     /assets/*file               controllers.Assets.at(path="/public", file)
 # ----------------------------- Authentication routes -------------------------
 POST    /login                      controllers.Application.doLogin
 
-GET     /logout                     com.feth.play.module.pa.controllers.Authenticate.logout
+GET     /logout                     controllers.Application.doLogout
 
 POST    /signup                     controllers.Application.doSignup
 
@@ -55,20 +55,25 @@ GET     /authenticate/:provider/denied     controllers.Signup.oAuthDenied(provid
 # --------------------------------------------------------------------------
 
 
-# ------------------------------ REST Services -----------------------------
+# Picture manager
+GET     /photos/manager              controllers.Photos.manager
+
+
+# ------------------------------ REST Services -----------------------------------------------------------
+
 # REST CRUD for Follows
-GET     /follows                    controllers.FollowREST.getAllFollows()
-GET     /follows/:id                controllers.FollowREST.getFollows(id: String)
-POST    /follows                    controllers.FollowREST.addFollows()
-PUT     /follows/:id                controllers.FollowREST.updateFollows(id: String)
-DELETE  /follows/:id                controllers.FollowREST.deleteFollows(id: String)
+GET     /follows                    controllers.FollowsREST.getAllFollows()
+GET     /follows/:id                controllers.FollowsREST.getFollows(id: String)
+POST    /follows                    controllers.FollowsREST.addFollows()
+PUT     /follows/:id                controllers.FollowsREST.updateFollows(id: String)
+DELETE  /follows/:id                controllers.FollowsREST.deleteFollows(id: String)
 
 # REST CRUD for Followed
-GET     /followed                    controllers.FollowREST.getAllFollowed()
-GET     /followed/:id                controllers.FollowREST.getFollowed(id: String)
-POST    /followed                    controllers.FollowREST.addFollowed()
-PUT     /followed/:id                controllers.FollowREST.updateFollowed(id: String)
-DELETE  /followed/:id                controllers.FollowREST.deleteFollowed(id: String)
+GET     /followed                    controllers.FollowedREST.getAllFollowed()
+GET     /followed/:id                controllers.FollowedREST.getFollowed(id: String)
+POST    /followed                    controllers.FollowedREST.addFollowed()
+PUT     /followed/:id                controllers.FollowedREST.updateFollowed(id: String)
+DELETE  /followed/:id                controllers.FollowedREST.deleteFollowed(id: String)
 
 # REST CRUD for Users
 GET     /users                      controllers.UserREST.getAll()
@@ -101,6 +106,35 @@ GET     /users/:id/statistics		controllers.UserStatisticsREST.getUserStatistics(
 PUT		/users/:id/statistics		controllers.UserStatisticsREST.updateUserStatistics(id: String)
 # --------------------------------------------------------------------------
 
+#GET     /rest/awards				controllers.AwardREST.all
+#GET     /rest/awards/:type/:limit	controllers.AwardREST.findByAwardTypeLimit(type: String, limit: Integer)
+#GET     /rest/user/:id/awards	    controllers.AwardREST.findByUserId(id: String)
+#POST	/rest/user/:id/awards		controllers.AwardREST.saveUserAward(id: String)
+
+# REST CRUD for pictures
+GET     /photos/:id             controllers.PhotosREST.getPhoto(id: String)
+POST    /photos                 controllers.PhotosREST.newPhoto()
+PUT     /photos/:id             controllers.PhotosREST.updatePhoto(id: String)
+DELETE  /photos/:id             controllers.PhotosREST.deletePhoto(id: String)
+
+# REST CRUD for pictures content
+GET     /photos/:id/content      controllers.PhotosREST.getPhotoContent(id: String)
+POST    /photos/:id/content      controllers.PhotosREST.uploadMultipartContent(id: String)
+
+# REST CRUD for Maps
+GET     /maps                    controllers.MapREST.getAllMaps()
+GET     /maps/:id                controllers.MapREST.getMap(id: String)
+POST    /maps                    controllers.MapREST.addMap()
+PUT     /maps/:id                controllers.MapREST.updateMap(id: String)
+DELETE  /maps/:id                controllers.MapREST.deleteMap(id: String)
+
+# REST CRUD for Map Features
+GET     /features                 controllers.MapFeatureREST.getAllFeatures()
+GET     /features/:id             controllers.MapFeatureREST.getFeature(id: String)
+POST    /features                 controllers.MapFeatureREST.addFeature()
+PUT     /features/:id             controllers.MapFeatureREST.updateFeature(id: String)
+DELETE  /features/:id             controllers.MapFeatureREST.updateFeature(id: String)
+# -------------------------------------------------------------------------------------------------------
 
 # TESTINGG!!!
 GET     /items                    controllers.SubItemREST.getAll()
@@ -119,20 +153,4 @@ POST    /rest/photos                 controllers.PhotosREST.newPhoto()
 DELETE  /rest/photos/:id             controllers.PhotosREST.deletePhoto(id: String)
 POST    /rest/photos/:id             controllers.PhotosREST.updatePhoto(id: String)
 
-
-#POST for photoContent carried within multipart/form-data
-POST   /rest/photos/:id/content      controllers.PhotosREST.uploadMultipartContent(id: String)
-
-
-#'quality' is dummy, this parameter is never read
-GET    /rest/photos/:id/content      controllers.PhotosREST.getPhotoContent(id: String)
-
-
-#updates and get the metadata
-GET     /rest/photos/:id             controllers.PhotosREST.getPhoto(id: String)
-
 #------------------------------ REST API ---------------------------------
-
-GET 	/api/login/:email/:password	controllers.ApiUserREST.login(email: String, password: String)
-GET 	/api/:token/discussions			controllers.User2DiscussionREST.getApiDiscussions(token: String)
-

@@ -10,6 +10,8 @@ object ApplicationBuild extends Build {
     // Application General dependencies
     val appDependencies = Seq(
       javaCore,
+      javaJdbc,
+      "postgresql" % "postgresql" % "9.1-901.jdbc4",
       "com.google.code.morphia" % "morphia" % "0.99",
       "com.google.code.morphia" % "morphia-logging-slf4j" % "0.99",
       "be.objectify"  %%  "deadbolt-java"     % "2.1-SNAPSHOT"
@@ -35,6 +37,7 @@ object ApplicationBuild extends Build {
     val main = play.Project(
       appName, appVersion, appDependencies
     ).settings(
+      ebeanEnabled := false,
       /** --------------------- Remote repositories --------------------- **/
       // Objectify (Deadbolt) resolvers
       resolvers += Resolver.url("Objectify Play Repository (release)", url("http://schaloner.github.com/releases/"))(Resolver.ivyStylePatterns),

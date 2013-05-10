@@ -1,5 +1,6 @@
 package service;
 
+import models.SessionToken;
 import models.User;
 import play.Application;
 
@@ -56,5 +57,10 @@ public class MyUserServicePlugin extends UserServicePlugin {
 		User.setLastLoginDate(knownUser);
 		return knownUser;
 	}
+
+    @Override
+    public String storeToken(final AuthUser knownUser) {
+        return SessionToken.create(knownUser);
+    }
 
 }

@@ -5789,7 +5789,7 @@ L.GeoJSON = L.FeatureGroup.extend({
 
 L.extend(L.GeoJSON, {
 	geometryToLayer: function (geojson, pointToLayer) {
-		var geometry = geojson.type === 'Feature' ? geojson.geometry : geojson,
+		var geometry = geojson.type === 'MapFeature' ? geojson.geometry : geojson,
 		    coords = geometry.coordinates,
 		    layers = [],
 		    latlng, latlngs, i, len, layer;
@@ -5827,7 +5827,7 @@ L.extend(L.GeoJSON, {
 			for (i = 0, len = geometry.geometries.length; i < len; i++) {
 				layer = this.geometryToLayer({
 					geometry: geometry.geometries[i],
-					type: 'Feature',
+					type: 'MapFeature',
 					properties: geojson.properties
 				}, pointToLayer);
 				layers.push(layer);

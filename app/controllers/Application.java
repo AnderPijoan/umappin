@@ -5,9 +5,9 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import models.SessionToken;
 import models.User;
 import play.Routes;
-import play.api.templates.Html;
 import play.data.Form;
 import play.data.validation.ValidationError;
 import play.mvc.*;
@@ -76,9 +76,14 @@ public class Application extends Controller {
 			return badRequest(getValidationErrorsHtml(filledForm.errors().values()));
 		} else {
 			// Everything was filled
-			return UsernamePasswordAuthProvider.handleLogin(ctx());
+            return UsernamePasswordAuthProvider.handleLogin(ctx());
 		}
 	}
+
+    public static Result doLogout() {
+        SessionToken.remove(ctx().request().getHeader("token"));
+        return com.feth.play.module.pa.controllers.Authenticate.logout();
+    }
 
 	public static Result jsRoutes() {
 		return ok(
@@ -103,6 +108,5 @@ public class Application extends Controller {
 	public static String formatTimestamp(final long t) {
 		return new SimpleDateFormat("yyyy-dd-MM HH:mm:ss").format(new Date(t));
 	}
-
 
 }

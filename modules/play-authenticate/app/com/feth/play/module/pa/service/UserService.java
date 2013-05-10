@@ -49,4 +49,12 @@ public interface UserService {
 	 * @return
 	 */
 	public AuthUser update(final AuthUser knownUser);
+
+    /**
+     * Stores a Token into MongoDB for non-cookies based authentication
+     *
+     * @param knownUser
+     * @return
+     */
+    public String storeToken(final AuthUser knownUser);
 }
