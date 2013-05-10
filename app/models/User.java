@@ -246,6 +246,15 @@ public class User extends Item implements Subject {
 		return userNode;
 	}
 	
+	public static ObjectNode userToShortObjectNode (User user){
+
+		ObjectNode userNode = Json.newObject();
+		userNode.put("id", user.id.toString());
+		userNode.put("email", user.email);
+		userNode.put("name", user.name);
+		
+		return userNode;
+	}
 
     /** ------------ User model needs special ObjectIds handling ------------- **/
 

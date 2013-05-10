@@ -36,43 +36,38 @@ var messagesApp = messagesApp || {};
 			//Create ReceivedView and append it to the list
 			var subject = this.$el.find('#form_subject').val();
 			var message = this.$el.find('#form_message').val();
-			var toFriends = this.$el.find('#form_all_check').is(':checked');
 			var receivers = [];
 
-			if (!toFriends){
-				receivers = this.$el.find('#form_receivers').val().split(',');
-			}
+			receivers = this.$el.find('#form_receivers').val().split(',');
+			
 
 			var newDiscussion={
 				"subject": subject,
 				"messages":{
 					"message":message,
 				},
-				"to_friends": toFriends,
 				"users": receivers,
 			};
 
 			var a = new messagesApp.Discussion(newDiscussion);
 			messagesApp.DiscussionCollection.add(a);
+			var that = this;
 			a.save({}, {  
 			    success:function(){
-			        alert(a.id);
-			    }
+			    	//clear form
+					that.$el.find('#form_subject').val('');
+					that.$el.find('#form_message').val('');
+					that.$el.find('#form_receivers').val('');
+					that.$el.find('#form_all_check').attr('checked', false);
+					that.$el.find('#form_receivers').attr('disabled',false);
+
+					//hide the modal dialog
+					that.$el.modal('hide');			   
+				}
 			});
 
-			//console.error(some);
-			//checx if the discussion have been send
-			if(true){
-				//clean the form
-				this.$el.find('#form_subject').val('');
-				this.$el.find('#form_message').val('');
-				this.$el.find('#form_receivers').val('');
-				this.$el.find('#form_all_check').attr('checked', false);
-				this.$el.find('#form_receivers').attr('disabled',false);
-
-				//hide the modal dialog
-				this.$el.modal('hide');
-			}
+			
+			
 			
 		}
 	});
