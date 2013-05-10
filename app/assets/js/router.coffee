@@ -52,6 +52,7 @@ class umappin.Router extends Backbone.Router
       setTemplate '/assets/templates/logout.html'
       sessionStorage.removeItem "user"
       updateSessionViews ""
+      location.href='./';
 
   signup: () ->  # Need to separate js source
     setTemplate "/assets/templates/signup.html"

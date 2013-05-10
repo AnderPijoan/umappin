@@ -16,6 +16,7 @@ class window.Account.UsersListView extends Backbone.View
   render: ->
     follows = Account.FollowCollection.getFollow @follows, @refUser.get 'id'
     followed = Account.FollowCollection.getFollow @followed, @refUser.get 'id'
+
     @$el.html ''
     _this = @
     @collection.each (row) ->

@@ -66,6 +66,7 @@ DELETE  /follows/:id                controllers.FollowREST.deleteFollows(id: Str
 # REST CRUD for Followed
 GET     /followed                    controllers.FollowREST.getAllFollowed()
 GET     /followed/:id                controllers.FollowREST.getFollowed(id: String)
+GET     /followedbyuserid/:id        controllers.FollowREST.getFollowedByUserId(id: String)
 POST    /followed                    controllers.FollowREST.addFollowed()
 PUT     /followed/:id                controllers.FollowREST.updateFollowed(id: String)
 DELETE  /followed/:id                controllers.FollowREST.deleteFollowed(id: String)

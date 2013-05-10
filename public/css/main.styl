@@ -1,11 +1,18 @@
 @import "bootstrap.min.css"
-@import url(http://fonts.googleapis.com/css?family=Engagement);
+@import "bootstrap-responsive.min.css"
 
 @font-face {
-  font-family: 'Jim Nightshade';
+  font-family: 'Engagement';
   font-style: normal;
   font-weight: 400;
-  src: local('Jim Nightshade'), local('JimNightshade-Regular'), url(http://themes.googleusercontent.com/static/fonts/jimnightshade/v1/_n43lYHXVWNgXegdYRIK9GeI2efzuxEXXKel_Sw2G4E.woff) format('woff');
+  src: local('Engagement'), local('Engagement-Regular'), url(http://themes.googleusercontent.com/static/fonts/engagement/v2/IYnYh0uOiuydvYrbHKIjwRsxEYwM7FgeyaSgU71cLG0.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'Noto Serif';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Noto Serif'), local('NotoSerif'), url(http://themes.googleusercontent.com/static/fonts/notoserif/v1/eCpfeMZI7q4jLksXVRWPQxsxEYwM7FgeyaSgU71cLG0.woff) format('woff');
 }
 
 color-dark-red = #661C00
@@ -17,48 +24,82 @@ color-purple = #2D0066
 color-beige = #FED
 color-dark-brown = #463116
 
-.dark-red
-  color white
-  background-color color-dark-red
+color-box-border = rgb(80, 72, 61)
+color-box-shadow = rgba(80, 72, 61, 0.065)
+color-box-background = rgba(255, 238, 221, 0.6)
 
-.brown
-  color white
-  background-color color-brown
-
-.dark-green
-  color white
-  background-color color-dark-green
-
-.dark-blue
-  color white
+.color-1
   background-color color-dark-blue
-
-.purple
-  color white
+.color-2
+  background-color color-brown
+.color-3
+  background-color color-dark-green
+.color-4
+  background-color color-dark-blue
+.color-5
   background-color color-purple
+.color-6
+  background-color color-dark-brown
 
 .box
-  background-color: rgba(255, 238, 221, 0.6);
-  border: 1px solid rgb(80, 72, 61);
+  margin-top 5px
+  margin-bottom 10px
+  background-color: color-box-background;
+  border-top: 1px solid color-box-border;
+  border-bottom: 1px solid color-box-border;
   border-radius: 8px;
-  box-shadow: 0 1px 4px rgba(80, 72, 61, 0.065);
-  padding: 10px;
+  box-shadow: 0 1px 4px color-box-shadow;
+  text-align: center;
+  padding 10px 0 10px
+  form
+    margin auto
+  h4
+    text-align left
+    border-bottom: 1px solid color-box-border;
+    margin: 0 0 5px;
+    line-height: 25px;
+    text-rendering: optimizelegibility;
+    font-weight: normal;
+    padding-left: 5px;
+  .btn-primary
+    background-color: color-dark-red;
+    *background-color: darken(color-dark-red, 10%)
+    background-image: -moz-linear-gradient(top, lighten(color-dark-red, 10%), darken(color-dark-red, 10%));
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(lighten(color-dark-red, 10%)), to(darken(color-dark-red, 10%)));
+    background-image: -webkit-linear-gradient(top, lighten(color-dark-red, 10%), darken(color-dark-red, 10%));
+    background-image: -o-linear-gradient(top, lighten(color-dark-red, 10%), darken(color-dark-red, 10%));
+    background-image: linear-gradient(to bottom, lighten(color-dark-red, 10%), darken(color-dark-red, 10%));
+    border-color: darken(color-dark-red, 10%) darken(color-dark-red, 10%) darken(color-dark-red, 20%);
+  .btn-primary:hover,
+  .btn-primary:focus,
+  .btn-primary:active,
+  .btn-primary.active,
+  .btn-primary.disabled,
+  .btn-primary[disabled]
+    background-color: color-dark-red
+    *background-color: darken(color-dark-red, 10%);
 
-#logo
-  font-family Engagement
-  font-size 500%
-  line-height normal
-  color color-beige
-  margin 20px 0 20px
+/*
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0044cc', GradientType=0);
+*/
+.logo
+  margin-top 5px
+  margin-bottom 10px
+  text-align: center;
+  line-height: 95px;
   span
+    font-family Engagement
+    font-size 500%
+    color color-beige
     background-color color-dark-brown
     border-radius: 50%;
-    text-align center
-    padding 10px
+    height: 95px;
+    display: block;
+    width: 195px;
 
 body
-  font-family Jim Nightshade
-  background: url('../img/background4.jpg') no-repeat center center fixed;
+  font-family Noto Serif
+  background: url('../img/background.jpg') no-repeat center center fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
@@ -70,7 +111,6 @@ body
 .providers
   margin: 5px 0;
   list-style: none;
-
   li
     display: inline;
 
@@ -79,5 +119,6 @@ body
   font-size: 10px;
   color: #ccc !important;
 }
+
 .loggedin, .loggedout
   display none

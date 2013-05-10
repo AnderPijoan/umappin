@@ -1,61 +1,39 @@
 <div class="row-fluid">
-    <div class="span6">
-        <h1>Login</h1>
-    </div>
-</div>
-
-<div id="login" class="row-fluid">
-    <div class="span3">
-        <form action='/login' id='loginForm'>
-            <div class="clearfix  " id="email_field">
-                <label for="email">Your e-mail address</label>
-                <div class="input">
-                    <input type="text" id="email" name="email" value="" >
-                    <span class="help-inline"></span>
-                    <span class="help-block"></span>
-                </div>
-            </div>
-            <div class="clearfix  " id="password_field">
-                <label for="password">Password</label>
-                <div class="input">
-                    <input type="password" id="password" name="password" >
-                    <span class="help-inline"></span>
-                    <span class="help-block"></span>
-                </div>
-            </div>
-            <input type="submit" value="Login now" class="btn btn-primary"><br/>
-            <br/>
-            <a href="#forgotPassword">Forgot your password?</a>
+    <div class="box span6 offset3">
+        <form action="/signup" id='registerForm'>
+            <legend>New to uMappin? Sign up</legend>
+            <input type="text" id="name" name="name" placeholder="Username" class="row-fluid span3">
+            <input type="text" id="email" name="email"  placeholder="Email" class="row-fluid span3">
+            <input type="password" id="password" name="password" placeholder="Password"  class="row-fluid span3">
+            <input type="password" id="repeatPassword" name="repeatPassword" placeholder="Retype your password" class="row-fluid span3">
+            <input type="submit" value="Sign up now" class="btn btn-primary">
         </form>
     </div>
-    <div class="span3">
-        or log in using one of the following providers:
-        <ul class="providers">
-            <li>
-                <a href="/authenticate/twitter">
-                <img alt="twitter icon" title="twitter" src="/assets/icons/twitter-24x24.png"></a>
-            </li>
-            <li>
-                <a href="/authenticate/google">
-                <img alt="google icon" title="google" src="/assets/icons/google-24x24.png"></a>
-            </li>
-            <li>
-                <a href="/authenticate/linkedin">
-                <img alt="linkedin icon" title="linkedin" src="/assets/icons/linkedin-24x24.png"></a>
-            </li>
-            <li>
-                <a href="/authenticate/facebook">
-                <img alt="facebook icon" title="facebook" src="/assets/icons/facebook-24x24.png"></a>
-            </li>
-            <li>
-                <a href="javascript:void(0);" onclick="askOpenID('/authenticate/openid');">
-                    <img alt="openid icon" title="openid" src="/assets/icons/openid-24x24.png"></a>
-            </li>
-            <li>
-                <a href="/authenticate/foursquare">
-                <img alt="foursquare icon" title="foursquare" src="/assets/icons/foursquare-24x24.png"></a>
-            </li>
-        </ul>
+    <div class="box span6 offset3">
+        <h1>Login</h1>
+        <div id="login" class="row-fluid">
+            <div class="span12">
+                <form action='/login' id='loginForm'>
+                    <div class="clearfix  " id="email_field">
+                        <label for="email_login">Your e-mail address</label>
+                        <div class="input">
+                            <input type="text" id="email_login" name="email_login" value="" >
+                        </div>
+                    </div>
+                    <div class="clearfix  " id="password_field">
+                        <label for="password_login">Password</label>
+                        <div class="input">
+                            <input type="password" id="password_login" name="password_login" >
+                            <span class="help-inline"></span>
+                            <span class="help-block"></span>
+                        </div>
+                    </div>
+                    <input type="submit" value="Login now" class="btn btn-primary"><br/>
+                    <br/>
+                    <a href="#forgotPassword">Forgot your password?</a>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -71,16 +49,14 @@
         $('#actionResult').css('display','none');
         var loginPost = $.post(
           $('#loginForm').attr('action'),
-          "email=" + $('#email').val() + "&password=" + $('#password').val()
+          "email=" + $('#email_login').val() + "&password=" + $('#password_login').val()
         );
         loginPost.done(function( data ) {
             $.get(
                 '/sessionuser',
                 function(data) {
                     updateSessionViews(data.name);
-                    $('#actionResult').css('display','block').empty().html(
-                            "<div class='alert alert-success'>User Authenticated</div>"
-                    );
+                    location.href='./';
                     sessionStorage.setItem("user", JSON.stringify(data));
                     $('#content').html('');
                 }
@@ -95,5 +71,28 @@
     $('#loginForm').submit(function(event) {
         event.preventDefault();
         submitLogin();
+    });
+
+    function submitRegister() {
+        $('#actionResult').css('display','none');
+        var registerPost = $.post(
+                $('#registerForm').attr('action'),
+                "name=" + $('#name').val() + "&email=" + $('#email').val() +
+                    "&password=" + $('#password').val() + "&repeatPassword=" + $('#repeatPassword').val()
+        );
+        registerPost.done(function( data ) {
+            $('#actionResult').css('display','block').empty().html(
+                    "<div class='alert alert-success'>User Signed Up! Check your email to confirm.</div>");
+            $('#content').html('');
+        });
+        registerPost.error(function( data ) {
+            $('#actionResult').css('display','block').empty().html(
+                    "<div class='alert alert-info'>" + data.responseText + "</div>");
+        });
+    }
+
+    $('#registerForm').submit(function(event) {
+        event.preventDefault();
+        submitRegister();
     });
 </script>

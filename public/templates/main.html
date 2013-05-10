@@ -1,17 +1,84 @@
-<div class="box">
-    <h1>MAIN out</h1>
-    <div class="dark-red"> 661C00 </div>
-    <div class="brown"> 663900 </div>
-    <div class="dark-green"> 1C6600 </div>
-    <div class="dark-blue"> 000A66 </div>
-    <div class="purple"> 2D0066 </div>
-    <div> bla </div>
-    <div> bla </div>
-    <div> bla </div>
-    <div> bla </div>
-    <div> bla </div>
-    <div> bla </div>
-    <div> bla </div>
-    <div> bla </div>
-    <div> bla </div>
-</div>
+    <div class="row">
+        <div class="span3 logo">
+            <span>uMappin</span>
+        </div>
+        <div class="box span3 offset9">
+            <form action='/login' id='loginForm'>
+                <input type="text" id="email_login" name="email_login" value="" class="row span3" placeholder="Username">
+                <input type="password" id="password_login" name="password_login" class="row span3" placeholder="Password">
+                <input type="submit" value="Log in" class="btn btn-primary row span3"><br/>
+                <a href="#forgotPassword">Forgot your password?</a>
+            </form>
+        </div>
+        <div class="box span3 offset9">
+            <form action="/signup" id='registerForm'>
+                <h4>New to uMappin? Sign up</h4>
+                <input type="text" id="name" name="name" placeholder="Username" class="row span3">
+                <input type="text" id="email" name="email"  placeholder="Email" class="row span3">
+                <input type="password" id="password" name="password" placeholder="Password"  class="row span3">
+                <input type="password" id="repeatPassword" name="repeatPassword" placeholder="Retype password" class="row span3">
+                <input type="submit" value="Sign up" class="btn btn-primary row span3">
+            </form>
+        </div>
+    </div>
+
+<script>
+    $('.logo').click(function(){
+        location.href='./';
+    });
+    function askOpenID(url) {
+        var openid = prompt("Please enter your OpenID:", "yourname.myopenid.com");
+        if(openid) {
+            window.location.href = url + "?p=" + encodeURIComponent(openid);
+        }
+    }
+
+    function submitLogin() {
+        $('#actionResult').css('display','none');
+        var loginPost = $.post(
+          $('#loginForm').attr('action'),
+          "email=" + $('#email_login').val() + "&password=" + $('#password_login').val()
+        );
+        loginPost.done(function( data ) {
+            $.get(
+                '/sessionuser',
+                function(data) {
+                    updateSessionViews(data.name);
+                    location.href='./';
+                    sessionStorage.setItem("user", JSON.stringify(data));
+                    $('#content').html('');
+                }
+            );
+        });
+        loginPost.error(function( data ) {
+            location.href='./#login';
+        });
+    }
+
+    $('#loginForm').submit(function(event) {
+        event.preventDefault();
+        submitLogin();
+    });
+
+    function submitRegister() {
+        $('#actionResult').css('display','none');
+        var registerPost = $.post(
+                $('#registerForm').attr('action'),
+                "name=" + $('#name').val() + "&email=" + $('#email').val() +
+                    "&password=" + $('#password').val() + "&repeatPassword=" + $('#repeatPassword').val()
+        );
+        registerPost.done(function( data ) {
+            $('#actionResult').css('display','block').empty().html(
+                    "<div class='alert alert-success'>User Signed Up! Check your email to confirm.</div>");
+            $('#content').html('');
+        });
+        registerPost.error(function( data ) {
+            location.href='./#signup';
+        });
+    }
+
+    $('#registerForm').submit(function(event) {
+        event.preventDefault();
+        submitRegister();
+    });
+</script>

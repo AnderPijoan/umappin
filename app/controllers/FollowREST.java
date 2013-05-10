@@ -37,6 +37,11 @@ public class FollowREST extends Controller {
         return getFollow(Followed.findById(id));
     }
 
+    public static Result getFollowedByUserId(String id) {
+        System.out.println(id);
+        return getFollow(Followed.findByUserId(id));
+    }
+
     @Restrict(@Group(Application.USER_ROLE))
     public static <T extends Follow> Result getFollow(T follow) {
         if (follow == null)
