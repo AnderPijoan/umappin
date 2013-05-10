@@ -109,6 +109,8 @@ POST    /items                    controllers.SubItemREST.post()
 PUT     /items/:id                controllers.SubItemREST.put(id: String)
 DELETE  /items/:id                controllers.SubItemREST.delete(id: String)
 
+GET     /populateDB               controllers.OsmFixmesREST.populateDatabase()
+
 # ------------------------------ Photos ------------------------------------
 GET     /photos/manager              controllers.Photos.manager
 
