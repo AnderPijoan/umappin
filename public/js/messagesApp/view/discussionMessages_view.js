@@ -15,9 +15,9 @@ _.templateSettings.variable = "rc";
         initialize: function(attrs, options) {
             _.bind(this, "render");
 
-            //this.model.on("sync",this.add, this);
+            this.model.on("sync",this.addTimeAgoAndRender, this);
         },
-        add: function() { //Function to add to each message the text timeAgo. Finally it
+        addTimeAgoAndRender: function() { //Function to add to each message the text timeAgo. Finally it
                           //calls render
             //TODO
             //Get this out and make general function on /js/lib/utils.js
@@ -65,7 +65,7 @@ _.templateSettings.variable = "rc";
                             that.model.fetch();
                             //clean message
                             $('#sending_message').val("");
-                            console.error(message);
+                            console.log(message);
 
                         },
                         error: function(){
