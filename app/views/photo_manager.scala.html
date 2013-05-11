@@ -1,5 +1,5 @@
 
-@main(Messages("umappin.title"), "Photo Manager") {
+@account.main(Messages("umappin.title"), "Photo Manager") {
 
 <pre id="returned_content">Results</pre>
 
@@ -86,8 +86,17 @@
 
 
 </fieldset>
+    <fieldset>
+        <h2>
+            Photo Like
+        </h2>
+        <input type="text" id="photoLike" placeholder="id of the photo you like here"/>
+        <input type="text" id="userPhotoLikeId" placeholder="id of the user (you)"/>
+        <label for="checkLike" style="display:inline;">I like it</label><input type="checkbox" id="checkLike" style="display:inline;"/>
+        <label for="checkLike" style="display:inline;">I find it useful</label><input type="checkbox" id="checkUseful" style="display:inline;"/>
+        <a href="#" onclick="testPhotoLike()">POST the photo like</a>
 
-
+    </fieldset>
 
 
 
@@ -263,7 +272,32 @@ function attachPseudoAjaxListener(){
 }
 
 
+function testPhotoLike(){
+    var uri = '@routes.PhotosREST.setPhotoUserLike("%s")'.replace("%s",$('#photoLike').val());
 
+
+    var data = {
+        "is_beautiful" : $('#checkLike').is(':checked') ? 1 : 0,
+        "is_useful" : $('#checkUseful').is(':checked') ? 1 : 0
+    }
+    if($('#userPhotoLikeId').val()){
+        data.user_id = $('#userPhotoLikeId').val();
+    }
+
+    $.ajax({
+        type: "POST",
+        url: uri + addOptionalUserQueryString(),
+        cache: false,
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify(data)
+    }).done(function( msg ) {
+        document.getElementById("returned_content").innerHTML = JSON.stringify(msg);
+    }).fail(function( msg ) {
+        document.getElementById("returned_content").innerHTML = "Request was unsuccessful:\n" + JSON.stringify(msg);
+    });
+
+    }
 
 </script>
 
