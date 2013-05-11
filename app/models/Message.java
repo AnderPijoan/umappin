@@ -1,6 +1,5 @@
 package models;
 
-import com.google.code.morphia.annotations.Id;
 import com.google.code.morphia.annotations.Reference;
 
 import controllers.MorphiaObject;
@@ -17,17 +16,14 @@ import java.util.List;
  * Date: 23/02/13
  * Time: 22.44
  */
-public class Message {
-
-	@Id
-	public ObjectId id;
+public class Message extends Item{
 
 	public String message;
 
-	public String writerId;
+	public ObjectId writerId;
 	
 	@Reference
-	public String replyToMsg;
+	public ObjectId replyToMsg; // ID of the message this message is replying to
 
 	public static List<Message> all() {
 		if (MorphiaObject.datastore != null) {
@@ -35,11 +31,6 @@ public class Message {
 		} else {
 			return new ArrayList<Message>();
 		}
-	}
-
-	public ObjectId save() {
-		MorphiaObject.datastore.save(this);
-		return this.id;
 	}
 
 	public static Message findById(ObjectId id) {

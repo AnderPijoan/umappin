@@ -1,6 +1,5 @@
 package models;
 
-import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Id;
 import controllers.MorphiaObject;
 import org.bson.types.ObjectId;
@@ -12,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-@Entity
 public class Item {
 
 	@Id
@@ -27,6 +25,10 @@ public class Item {
 
 	public static <T extends Item> T findById(String id, Class<T> klass) {
 		return MorphiaObject.datastore.get(klass, new ObjectId(id));
+	}
+	
+	public static <T extends Item> T findById(ObjectId oid, Class<T> klass) {
+		return MorphiaObject.datastore.get(klass, oid);
 	}
 
     public void save() {

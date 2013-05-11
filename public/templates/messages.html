@@ -1,6 +1,6 @@
 
 	<h2>Messages</h2>
-<p>Manage your messages)</p>
+<p>Manage your messages</p>
 <div class ="row">
     <div class="span2 offset9">    
         <a href="#messages/newDiscussion" role="button" class="btn">New Message</a>
@@ -50,53 +50,56 @@
 
 <!-- This is the discussions header template -->
 <script type="text/template" id="discussion-head-template">
+        <% maxPhotosSeen=5; %>
+
         <div class="span9 ">
             <div class="discussion_head">
                 <div class="discussion_subject"><a href="#messages/message/<%- rc.id %>"><%- rc.subject %></a></div>
-                <div class="discussion_author">
-                    <div class="author_name"><a href="/#account/userID">USERNAME</a></div>
-                </div>  
+                <div class="discussion_participants_photo">
+                    <% for (i=0; i<maxPhotosSeen;i++) { %>
+                        <% if (rc.users[i]) { %>    
+                            <img id="photo<%- rc.users[i].name %>" class="messagePhoto" src="<%- rc.users[i].photo%>" title="<%- rc.users[i].name %>"/>
+                        <% } else {break;}} %>
+                    <% if (rc.users.length > maxPhotosSeen) {plusUsers=rc.users.length-maxPhotosSeen;%> 
+                        <span class="plusUsers">+<%- plusUsers %></span>
+                    <% } %>
+                </div>
+                <!-- <div class="discussion_author"> -->
+                   <!-- <div class="author_name"><a href="/#account/userID">USERNAME</a></div>-->
+                <!--</div>  -->
             </div>
         </div>
 </script>
 
 <!-- This is the template to show a discussion-->
      <script type="text/template" id="messages-template">
+        <% maxPhotosSeen=5; %>
+
          <div class="span9 ">
-             <h2><%- rc.subject %></h2>
+            <h2><%- rc.subject %></h2>
              <br/>
-             <div class="messages">
-                 <% _.each(rc.messages, function(message){ %>
-                    <p class="message"><%= message %></p>
-                    <div class="message_divider" />
-                    <br/>
+             <div class="messages span9">
+                 <% _.each(rc.messages, function(messageObject){ %>
+                    <div>
+                    <img class="messagePhoto" src=<%- messageObject.user.photo%> />
+                    <span class="message"><a href="/#account/<%- messageObject.user.id%>"><%- messageObject.user.name %></a>:<%= " " + messageObject.message %>
+                    </span>
+                    <span class="timeAgo"><%- messageObject.timeAgo%></span>
+                    </div>
                  <% }); %>
              </div>
-             <textarea id="sending_message" class="span4"></textarea>
-             <button id="reply">Reply</button>
+             <textarea id="sending_message" class="span8 replybox"></textarea>
+             <button id="reply" class="replybox">Reply</button>
          </div>
      </script>
+     <script src="/assets/js/messagesApp/model/discussion.js"></script>
+     <script src="/assets/js/messagesApp/model/message.js"></script>
 
-    <script src="/assets/js/messagesAPP/messagesApp.js"></script>
-    <!--
-	<script src="/assets/js/messagesApp/model/discussion.js"></script>
-	<script src="/assets/js/messagesApp/view/receivedMessages_view.js"></script>
-	<script src="/assets/js/messagesApp/view/messagesApp_view.js"></script>
-    -->
-
-
-    <script src="/assets/js/messagesAPP/model/discussionHeader.js"></script>
-    <!--<script src="/assets/js/messagesAPP/collection/discussionHeader_list.js"></script>-->
-    <script src="/assets/js/messagesAPP/collection/discussionCollection.js"></script>
-
-    <script src="/assets/js/messagesApp/model/discussion.js"></script>
     <script src="/assets/js/messagesApp/view/receivedMessages_view.js"></script>
-    <script src="/assets/js/messagesAPP/view/messagesApp_view.js"></script>
-    <script src="/assets/js/messagesAPP/view/newDiscussion_view.js"></script>
+    <script src="/assets/js/messagesApp/view/messagesApp_view.js"></script>
+    <script src="/assets/js/messagesApp/view/newDiscussion_view.js"></script>
 
 
+    <script src="/assets/js/messagesApp/view/discussionMessages_view.js"></script>
 
-    <script src="/assets/js/messagesAPP/view/discussionMessages_view.js"></script>
-
-    <script src="/assets/js/messagesApp/test_data.js"></script>
 

@@ -1,0 +1,20 @@
+<!------------------------------------- Styles -------------------------------------->
+<link href="/assets/css/picture.min.css" rel="stylesheet">
+
+
+<!------------------------------------- HTML -------------------------------------->
+<div id="<%= rc.readonly ? 'dummy' : 'dropPicture' %>">
+
+  <img id="<%= rc.readonly ? 'dummy' : 'uploader' %>" class="image img-rounded" alt="placeholder image"
+       src="<%= rc.data.get_content_location ? rc.data.get_content_location+'?t='+new Date().getTime() : '/assets/img/140x140.gif' %>">
+
+
+  <% if (rc.showInfo) { %>
+      <div id='pictureInfo'>
+          <p><strong><%= rc.data.title %></strong></p>
+          <p><%= rc.data.date_created ? new Date(rc.data.date_created).toLocaleString() : 'n/a' %></p>
+      </div>
+  <% } %>
+
+</div>
+

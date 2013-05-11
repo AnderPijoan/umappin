@@ -497,14 +497,14 @@ public class PhotosREST extends Controller {
             }
 
             if(incrBeautiful != 0 || incrUseful != 0)
-            photo.incrementCountersAndSave(incrUseful, incrBeautiful);
+                photo.incrementCountersAndSave(incrUseful, incrBeautiful);
         }
 
         response().setHeader(
                 CONTENT_LOCATION,
                 routes.PhotosREST.getPhotoUserLikes(
                         photo.getId().toString(),
-                        userLike.getUserId().toString(), 1, 1
+                        userLike.getUserId().toString(), 0, 1
                 ).toString()
         );
 

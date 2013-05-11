@@ -16,3 +16,7 @@ class window.Account.User extends Backbone.Model
     permissions: []
     providers: []
     identifier: ''
+    phone: ''
+    address: ''
+    profilePicture: ''
+    maps: []

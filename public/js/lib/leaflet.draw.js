@@ -103,8 +103,9 @@ L.Draw.Polyline = L.Draw.Feature.extend({
 			timeout: 2500
 		},
 		icon: new L.DivIcon({
-			iconSize: new L.Point(8, 8),
-			className: 'leaflet-div-icon leaflet-editing-icon'
+			//iconSize: new L.Point(8, 8),
+            iconSize: L.Browser.touch ? new L.Point(30, 30) : new L.Point(10, 10),
+            className: 'leaflet-div-icon leaflet-editing-icon'
 		}),
 		guidelineDistance: 20,
 		shapeOptions: {
@@ -115,7 +116,8 @@ L.Draw.Polyline = L.Draw.Feature.extend({
 			fill: false,
 			clickable: true
 		},
-		zIndexOffset: 2000 // This should be > than the highest z-index any map layers
+		zIndexOffset: 2000, // This should be > than the highest z-index any map layers
+		touchtarget: 1.5 // iconSize multiplied by touchtarget = final target size
 	},
 
 	initialize: function (map, options) {
@@ -159,13 +161,25 @@ L.Draw.Polyline = L.Draw.Feature.extend({
 				});
 			}
 
-			this._mouseMarker
-				.on('click', this._onClick, this)
-				.addTo(this._map);
+            if (L.Browser.touch) {
+                this._mouseMarker
+                    .on('touchend', this._onClick, this)
+                    .addTo(this._map);
+                this._map
+                    .on('touchstart', this._onMouseMove, this)
+                    .on('touchmove', this._onMouseMove, this)
+                    .on('touchend', this._onClick, this)
+                    .on('zoomend', this._onZoomEnd, this);
 
-			this._map
-				.on('mousemove', this._onMouseMove, this)
-				.on('zoomend', this._onZoomEnd, this);
+             } else {
+                this._mouseMarker
+                    .on('click', this._onClick, this)
+                    .addTo(this._map);
+                this._map
+                    .on('mousemove', this._onMouseMove, this)
+                    .on('zoomend', this._onZoomEnd, this);
+            }
+
 		}
 	},
 
@@ -184,16 +198,28 @@ L.Draw.Polyline = L.Draw.Feature.extend({
 		this._map.removeLayer(this._poly);
 		delete this._poly;
 
-		this._mouseMarker.off('click', this._onClick, this);
+        if (L.Browser.touch) {
+		    this._mouseMarker.off('touchend', this._onClick, this);
+        } else {
+            this._mouseMarker.off('click', this._onClick, this);
+        }
 		this._map.removeLayer(this._mouseMarker);
 		delete this._mouseMarker;
 
 		// clean up DOM
 		this._clearGuides();
 
-		this._map
-			.off('mousemove', this._onMouseMove, this)
-			.off('zoomend', this._onZoomEnd, this);
+        if (L.Browser.touch) {
+            this._map
+                .off('touchstart', this._onMouseMove, this)
+                .off('touchmove', this._onMouseMove, this)
+                .off('touchend', this._onClick, this)
+                .off('zoomend', this._onZoomEnd, this);
+        } else {
+            this._map
+                .off('mousemove', this._onMouseMove, this)
+                .off('zoomend', this._onZoomEnd, this);
+        }
 	},
 
 	_finishShape: function () {
@@ -219,8 +245,16 @@ L.Draw.Polyline = L.Draw.Feature.extend({
 	},
 
 	_onMouseMove: function (e) {
-		var newPos = e.layerPoint,
+        /*
+		var newPos = layerPoint,
 			latlng = e.latlng;
+        */
+
+        var newPos = e.touches ? this._map.mouseEventToLayerPoint(e.touches[0]) : e.layerPoint,
+            latlng = e.touches ? this._map.mouseEventToLatLng(e.touches[0]) : e.latlng;
+        if (e.touches) {
+            L.DomEvent.stopPropagation(e);
+        }
 
 		// Save latlng
 		// should this be moved to _updateGuide() ?
@@ -239,10 +273,21 @@ L.Draw.Polyline = L.Draw.Feature.extend({
 	},
 
 	_onClick: function (e) {
-		var latlng = e.target.getLatLng(),
-			markerCount = this._markers.length;
+		//var latlng = e.target.getLatLng(),
+        var latlng = e.changedTouches ? this._map.mouseEventToLatLng(e.changedTouches[0]) : e.target.getLatLng(),
+            markerCount = this._markers.length;
 
-		if (markerCount > 0 && !this.options.allowIntersection && this._poly.newLatLngIntersects(latlng)) {
+        if (e.touches) {
+            this._clearGuides();
+            // The touchend on the container seems to have preference over the touchend on the marker, so we manually check position of the last marker.
+           // This also gives us the opportunity to use a touch target a little bigger than the visual shape, which makes it easier to hit the marker with clumsy fingers
+            if (this._clickedFinishMarker(latlng)) {
+                this._finishShape();
+                return true;
+             }
+        }
+
+        if (markerCount > 0 && !this.options.allowIntersection && this._poly.newLatLngIntersects(latlng)) {
 			this._showErrorTooltip();
 			return;
 		}
@@ -265,15 +310,36 @@ L.Draw.Polyline = L.Draw.Feature.extend({
 		this._clearGuides();
 	},
 
+    _clickedFinishMarker : function (latlng) {
+        if (this._markers.length > 1) {
+            var m = this._markers[this._markers.length - 1];
+            // This could be improved by considering width and height of the icon separately, instead of just using the bigger one
+            var pointA = this._map.latLngToContainerPoint(latlng);
+            var pointB = this._map.latLngToContainerPoint(m.getLatLng());
+            var length = Math.floor(Math.sqrt(Math.pow((pointB.x - pointA.x), 2) + Math.pow((pointB.y - pointA.y), 2)));
+            var size = m.options.icon.options.iconSize;
+            if (length < Math.max(size.x, size.y) * this.options.touchtarget) {
+                 return true;
+            }
+        }
+        return false;
+      },
+
 	_updateMarkerHandler: function () {
 		// The last marker shold have a click handler to close the polyline
 		if (this._markers.length > 1) {
 			this._markers[this._markers.length - 1].on('click', this._finishShape, this);
+            if (L.Browser.touch) {
+                this._markers[this._markers.length - 1].on('touchend', this._finishShape, this);
+            }
 		}
 
 		// Remove the old marker click handler (as only the last point should close the polyline)
 		if (this._markers.length > 2) {
 			this._markers[this._markers.length - 2].off('click', this._finishShape, this);
+            if (L.Browser.touch) {
+                this._markers[this._markers.length - 2].off('touchend', this._finishShape);
+            }
 		}
 	},
 
@@ -364,7 +430,8 @@ L.Draw.Polyline = L.Draw.Feature.extend({
 
 		if (this._markers.length === 0) {
 			labelText = {
-				text: 'Click to start drawing line.'
+				//text: 'Click to start drawing line.'
+                text: (L.Browser.touch ? 'Tap' : 'Click') + ' to start drawing line.'
 			};
 		} else {
 			// calculate the distance from the last fixed point to the mouse position
@@ -374,12 +441,14 @@ L.Draw.Polyline = L.Draw.Feature.extend({
 
 			if (this._markers.length === 1) {
 				labelText = {
-					text: 'Click to continue drawing line.',
-					subtext: distanceStr
+					//text: 'Click to continue drawing line.',
+                    text: (L.Browser.touch ? 'Tap' : 'Click') + ' to continue drawing line.',
+                    subtext: distanceStr
 				};
 			} else {
 				labelText = {
-					text: 'Click last point to finish line.',
+					//text: 'Click last point to finish line.',
+                    text: (L.Browser.touch ? 'Tap' : 'Click') + ' last point to finish line.',
 					subtext: distanceStr
 				};
 			}
@@ -439,6 +508,9 @@ L.Draw.Polyline = L.Draw.Feature.extend({
 	_cleanUpShape: function () {
 		if (this._markers.length > 0) {
 			this._markers[this._markers.length - 1].off('click', this._finishShape, this);
+            if (L.Browser.touch) {
+                this._markers[this._markers.length - 1].off('touchend', this._finishShape);
+            }
 		}
 	},
 
@@ -526,7 +598,12 @@ L.Draw.SimpleShape = L.Draw.Feature.extend({
 			this._map
 				.on('mousedown', this._onMouseDown, this)
 				.on('mousemove', this._onMouseMove, this);
-		}
+            if (L.Browser.touch) {
+                this._map
+                    .on('touchstart', this._onMouseDown, this)
+                    .on('touchmove', this._onMouseMove, this);
+            }
+        }
 	},
 
 	removeHooks: function () {
@@ -539,8 +616,15 @@ L.Draw.SimpleShape = L.Draw.Feature.extend({
 			this._map
 				.off('mousedown', this._onMouseDown, this)
 				.off('mousemove', this._onMouseMove, this);
+            L.DomEvent.off(document, 'mouseup', this._onMouseUp);
+            if (L.Browser.touch) {
+                this._map
+                    .off('touchstart', this._onMouseDown, this)
+                    .off('touchmove', this._onMouseMove, this);
+                L.DomEvent.off(document, 'touchend', this._onMouseUp);
+            }
 
-			L.DomEvent.off(document, 'mouseup', this._onMouseUp);
+
 
 			// If the box element doesn't exist they must not have moved the mouse, so don't need to destroy/return
 			if (this._shape) {
@@ -553,15 +637,26 @@ L.Draw.SimpleShape = L.Draw.Feature.extend({
 
 	_onMouseDown: function (e) {
 		this._isDrawing = true;
-		this._startLatLng = e.latlng;
+		//this._startLatLng = e.latlng;
+        this._startLatLng = e.touches ? this._map.mouseEventToLatLng(e.touches[0]) : e.latlng;
+        if (e.touches) {
+             L.DomEvent.stopPropagation(e);
+        }
 
 		L.DomEvent
 			.on(document, 'mouseup', this._onMouseUp, this)
 			.preventDefault(e.originalEvent);
+        if (L.Browser.touch) {
+            L.DomEvent.on(document, 'touchend', this._onMouseUp);
+        }
 	},
 
 	_onMouseMove: function (e) {
-		var latlng = e.latlng;
+		//var latlng = e.latlng;
+        var latlng = e.touches ? this._map.mouseEventToLatLng(e.touches[0]) : e.latlng;
+        if (e.touches) {
+            L.DomEvent.stopPropagation(e);
+        }
 
 		this._tooltip.updatePosition(latlng);
 		if (this._isDrawing) {

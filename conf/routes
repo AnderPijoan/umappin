@@ -19,7 +19,7 @@ GET     /assets/*file               controllers.Assets.at(path="/public", file)
 # ----------------------------- Authentication routes -------------------------
 POST    /login                      controllers.Application.doLogin
 
-GET     /logout                     com.feth.play.module.pa.controllers.Authenticate.logout
+GET     /logout                     controllers.Application.doLogout
 
 POST    /signup                     controllers.Application.doSignup
 
@@ -55,20 +55,25 @@ GET     /authenticate/:provider/denied     controllers.Signup.oAuthDenied(provid
 # --------------------------------------------------------------------------
 
 
-# ------------------------------ REST Services -----------------------------
+# Picture manager
+GET     /photos/manager              controllers.Photos.manager
+
+
+# ------------------------------ REST Services -----------------------------------------------------------
+
 # REST CRUD for Follows
-GET     /follows                    controllers.FollowREST.getAllFollows()
-GET     /follows/:id                controllers.FollowREST.getFollows(id: String)
-POST    /follows                    controllers.FollowREST.addFollows()
-PUT     /follows/:id                controllers.FollowREST.updateFollows(id: String)
-DELETE  /follows/:id                controllers.FollowREST.deleteFollows(id: String)
+GET     /follows                    controllers.FollowsREST.getAllFollows()
+GET     /follows/:id                controllers.FollowsREST.getFollows(id: String)
+POST    /follows                    controllers.FollowsREST.addFollows()
+PUT     /follows/:id                controllers.FollowsREST.updateFollows(id: String)
+DELETE  /follows/:id                controllers.FollowsREST.deleteFollows(id: String)
 
 # REST CRUD for Followed
-GET     /followed                    controllers.FollowREST.getAllFollowed()
-GET     /followed/:id                controllers.FollowREST.getFollowed(id: String)
-POST    /followed                    controllers.FollowREST.addFollowed()
-PUT     /followed/:id                controllers.FollowREST.updateFollowed(id: String)
-DELETE  /followed/:id                controllers.FollowREST.deleteFollowed(id: String)
+GET     /followed                    controllers.FollowedREST.getAllFollowed()
+GET     /followed/:id                controllers.FollowedREST.getFollowed(id: String)
+POST    /followed                    controllers.FollowedREST.addFollowed()
+PUT     /followed/:id                controllers.FollowedREST.updateFollowed(id: String)
+DELETE  /followed/:id                controllers.FollowedREST.deleteFollowed(id: String)
 
 # REST CRUD for Users
 GET     /users                      controllers.UserREST.getAll()
@@ -83,19 +88,53 @@ GET     /sessionuser                controllers.UserREST.getSessionUser
 GET     /discussions                controllers.User2DiscussionREST.getDiscussions()
 GET     /discussions/unread         controllers.User2DiscussionREST.getUnreadDiscussions()
 GET     /discussions/:id            controllers.User2DiscussionREST.getDiscussion(id: String)
-GET     /discussions/:id/:msgid     controllers.User2DiscussionREST.getMessage(id: String, msgid: String)
 POST    /discussions                controllers.User2DiscussionREST.addDiscussion()
-POST	/discussions/:id            controllers.User2DiscussionREST.reply(id: String)
-POST	/discussions/:id/:msgid     controllers.User2DiscussionREST.replyToMessage(id: String, msgid: String)
+DELETE  /discussions/:id            controllers.User2DiscussionREST.deleteDiscussion(id: String)
+GET     /messages/:id               controllers.User2DiscussionREST.getMessage(id: String)
+PUT     /messages/:id               controllers.User2DiscussionREST.updateMessage(id: String)
+POST	/messages                   controllers.User2DiscussionREST.reply()
+POST	/messages/:id               controllers.User2DiscussionREST.replyToMessage(id: String)
 
 # REST CRUD for awards
-GET     /rest/awards					controllers.AwardREST.all
-GET     /rest/awards/:type/:limit		controllers.AwardREST.findByAwardTypeLimit(type: String, limit: Integer)
-GET     /rest/user/:id/awards			controllers.AwardREST.findByUserId(id: String)
-POST	/rest/user/:id/awards			controllers.AwardREST.saveUserAward(id: String)
+GET     /awards						controllers.AwardREST.getAwards()
+GET     /awards/types				controllers.AwardREST.getAwardTypes()
+GET		/awards/:id					controllers.AwardREST.getAward(id: String)
+GET     /awards/type/:type			controllers.AwardREST.findByAwardType(type: String)
 
+# REST CRUD for statistics
+GET     /users/:id/statistics		controllers.UserStatisticsREST.getUserStatistics(id: String)
+PUT		/users/:id/statistics		controllers.UserStatisticsREST.updateUserStatistics(id: String)
 # --------------------------------------------------------------------------
 
+#GET     /rest/awards				controllers.AwardREST.all
+#GET     /rest/awards/:type/:limit	controllers.AwardREST.findByAwardTypeLimit(type: String, limit: Integer)
+#GET     /rest/user/:id/awards	    controllers.AwardREST.findByUserId(id: String)
+#POST	/rest/user/:id/awards		controllers.AwardREST.saveUserAward(id: String)
+
+# REST CRUD for pictures
+GET     /photos/:id             controllers.PhotosREST.getPhoto(id: String)
+POST    /photos                 controllers.PhotosREST.newPhoto()
+PUT     /photos/:id             controllers.PhotosREST.updatePhoto(id: String)
+DELETE  /photos/:id             controllers.PhotosREST.deletePhoto(id: String)
+
+# REST CRUD for pictures content
+GET     /photos/:id/content      controllers.PhotosREST.getPhotoContent(id: String)
+POST    /photos/:id/content      controllers.PhotosREST.uploadMultipartContent(id: String)
+
+# REST CRUD for Maps
+GET     /maps                    controllers.MapREST.getAllMaps()
+GET     /maps/:id                controllers.MapREST.getMap(id: String)
+POST    /maps                    controllers.MapREST.addMap()
+PUT     /maps/:id                controllers.MapREST.updateMap(id: String)
+DELETE  /maps/:id                controllers.MapREST.deleteMap(id: String)
+
+# REST CRUD for Map Features
+GET     /features                 controllers.MapFeatureREST.getAllFeatures()
+GET     /features/:id             controllers.MapFeatureREST.getFeature(id: String)
+POST    /features                 controllers.MapFeatureREST.addFeature()
+PUT     /features/:id             controllers.MapFeatureREST.updateFeature(id: String)
+DELETE  /features/:id             controllers.MapFeatureREST.updateFeature(id: String)
+# -------------------------------------------------------------------------------------------------------
 
 # TESTINGG!!!
 GET     /items                    controllers.SubItemREST.getAll()
@@ -114,10 +153,10 @@ POST    /rest/photos/:id             controllers.PhotosREST.updatePhoto(id: Stri
 
 
 #POST for photoContent carried within multipart/form-data
-POST   /rest/photos/:id/content      controllers.PhotosREST.uploadMultipartContent(id: String)
+POST    /rest/photos/:id/content      controllers.PhotosREST.uploadMultipartContent(id: String)
 
 #'quality' is dummy, this parameter is never read
-GET    /rest/photos/:id/content      controllers.PhotosREST.getPhotoContent(id: String)
+GET     /rest/photos/:id/content      controllers.PhotosREST.getPhotoContent(id: String)
 
 #updates and get the metadata
 GET     /rest/photos/:id             controllers.PhotosREST.getPhoto(id: String)
@@ -125,10 +164,10 @@ GET     /rest/photos/:id             controllers.PhotosREST.getPhoto(id: String)
 #photo user 'likes' (to vote for a photo)
 
 #to send a Json entity specifying that the user finds the photo interesting and/or useful
-POST    /rest/photos/:id/userlikes   controllers.PhotosREST.setPhotoUserLike(id: String)
+POST    /rest/photos/:photoId/userlikes   controllers.PhotosREST.setPhotoUserLike(photoId: String)
 
 #did :userId like :photoId ?
-GET     /rest/photos/:photoId/userlikes/:userId   controllers.PhotosREST.getPhotoUserLikes(photoId: String, userId:String,offset : Integer = 0, limit : Integer = 1)
+GET     /rest/photos/:photoId/userlikes/:userId   controllers.PhotosREST.getPhotoUserLikes(photoId: String, userId:String, offset : Integer = 0, limit : Integer = 1)
 
 #who likes :photoId ?
 GET     /rest/photos/:photoId/userlikes          controllers.PhotosREST.getPhotoUserLikes(photoId : String, userId = null, offset : Integer ?= 0, limit : Integer ?= models.PhotoUserLike.MAX_RESULTS_RETURNED)
