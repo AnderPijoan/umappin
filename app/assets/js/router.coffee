@@ -31,8 +31,12 @@ class umappin.Router extends Backbone.Router
   messages: () ->
     subroutes = @subroutes
     requirejs ['/assets/js/messagesApp/collection/discussionCollection.js'], () ->
-      requirejs ['/assets/js/messagesApp/routers/router.js'], () ->
-        subroutes.messagesRouter or= new messagesApp.Router "messages/"
+     requirejs ['/assets/js/messagesApp/model/user.js'], () ->
+        requirejs ['/assets/js/messagesApp/collection/followedCollection.js',
+                  '/assets/js/messagesApp/view/user_view.js'], () ->
+          
+          requirejs ['/assets/js/messagesApp/routers/router.js'], () ->
+            subroutes.messagesRouter or= new messagesApp.Router "messages/"
   
   login: () ->
     setTemplate "/assets/templates/login.html"

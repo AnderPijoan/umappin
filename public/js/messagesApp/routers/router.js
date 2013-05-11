@@ -52,7 +52,10 @@ messagesApp.Router = Backbone.SubRoute.extend({
 	newDiscussion: function(id){
 		this.loadTemplateIfNeed(function(){
 			console.log('newDiscussion');
-			messagesApp.newDiscussionView.showDiscussionForm();
+			requirejs (['/assets/js/messagesApp/view/newDiscussion_view.js',
+				'/assets/js/messagesApp/view/userSearch_view.js'], function(){
+					messagesApp.newDiscussionView.showDiscussionForm();
+			});
         });
 	},
 	loadTemplateIfNeed:function(callback){
