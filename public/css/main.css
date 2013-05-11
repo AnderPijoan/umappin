@@ -1,5 +1,6 @@
 @import "bootstrap.min.css";
 @import "bootstrap-responsive.min.css";
+@import "icons/icons.css";
 @font-face {
   font-family: 'Engagement';
   font-style: normal;
@@ -12,28 +13,10 @@
   font-weight: 400;
   src: local('Noto Serif'), local('NotoSerif'), url("http://themes.googleusercontent.com/static/fonts/notoserif/v1/eCpfeMZI7q4jLksXVRWPQxsxEYwM7FgeyaSgU71cLG0.woff") format('woff');
 }
-.color-1 {
-  background-color: #000a66;
-}
-.color-2 {
-  background-color: #663900;
-}
-.color-3 {
-  background-color: #1c6600;
-}
-.color-4 {
-  background-color: #000a66;
-}
-.color-5 {
-  background-color: #2d0066;
-}
-.color-6 {
-  background-color: #463116;
-}
 .box {
   margin-top: 5px;
   margin-bottom: 10px;
-  background-color: rgba(255,238,221,0.6);
+  background-color: rgba(252,248,220,0.6);
   border-top: 1px solid #50483d;
   border-bottom: 1px solid #50483d;
   border-radius: 8px;
@@ -41,40 +24,10 @@
   text-align: center;
   padding: 10px 0 10px;
 }
-.box form {
-  margin: auto;
+.box h6 {
+  font-weight: none;
+  margin: 0;
 }
-.box h4 {
-  text-align: left;
-  border-bottom: 1px solid #50483d;
-  margin: 0 0 5px;
-  line-height: 25px;
-  text-rendering: optimizelegibility;
-  font-weight: normal;
-  padding-left: 5px;
-}
-.box .btn-primary {
-  background-color: #661c00;
-  *background-color: #5c1900;
-  background-image: -moz-linear-gradient(top, #8f2700, #5c1900);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#8f2700), to(#5c1900));
-  background-image: -webkit-linear-gradient(top, #8f2700, #5c1900);
-  background-image: -o-linear-gradient(top, #8f2700, #5c1900);
-  background-image: linear-gradient(to bottom, #8f2700, #5c1900);
-  border-color: #5c1900 #5c1900 #521600;
-}
-.box .btn-primary:hover,
-.box .btn-primary:focus,
-.box .btn-primary:active,
-.box .btn-primary.active,
-.box .btn-primary.disabled,
-.box .btn-primary[disabled] {
-  background-color: #661c00;
-  *background-color: #5c1900;
-}
-/*
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0044cc', GradientType=0);
-*/
 .logo {
   margin-top: 5px;
   margin-bottom: 10px;
@@ -84,12 +37,13 @@
 .logo span {
   font-family: Engagement;
   font-size: 500%;
-  color: #fed;
+  color: #fcf8dc;
   background-color: #463116;
   border-radius: 50%;
   height: 95px;
   display: block;
   width: 195px;
+  margin: auto;
 }
 body {
   font-family: Noto Serif;
@@ -98,6 +52,111 @@ body {
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
+}
+#content textarea:focus,
+#content input[type="text"]:focus,
+#content input[type="password"]:focus,
+#content input[type="datetime"]:focus,
+#content input[type="datetime-local"]:focus,
+#content input[type="date"]:focus,
+#content input[type="month"]:focus,
+#content input[type="time"]:focus,
+#content input[type="week"]:focus,
+#content input[type="number"]:focus,
+#content input[type="email"]:focus,
+#content input[type="url"]:focus,
+#content input[type="search"]:focus,
+#content input[type="tel"]:focus,
+#content input[type="color"]:focus,
+#content .uneditable-input:focus {
+  border-color: #661c00;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075), 0 0 8px rgba(102,28,0,0.6);
+  -moz-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075), 0 0 8px rgba(102,28,0,0.6);
+  box-shadow: inset 0 1px 1px rgba(0,0,0,0.075), 0 0 8px rgba(102,28,0,0.6);
+}
+#content .btn-primary {
+  background-color: #661c00;
+  *background-color: #5c1900;
+  background-image: -moz-linear-gradient(top, #8f2700, #5c1900);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#8f2700), to(#5c1900));
+  background-image: -webkit-linear-gradient(top, #8f2700, #5c1900);
+  background-image: -o-linear-gradient(top, #8f2700, #5c1900);
+  background-image: linear-gradient(to bottom, #8f2700, #5c1900);
+  border-color: #5c1900 #5c1900 #521600;
+}
+#content .btn-primary:hover,
+#content .btn-primary:focus,
+#content .btn-primary:active,
+#content .btn-primary.active,
+#content .btn-primary.disabled,
+#content .btn-primary[disabled] {
+  background-color: #661c00;
+  *background-color: #5c1900;
+}
+#content .btn-free {
+  background-color: #fcf8dc;
+  *background-color: #f8efb1;
+  background-image: -moz-linear-gradient(top, #fcf9e0, #f8efb1);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#fcf9e0), to(#f8efb1));
+  background-image: -webkit-linear-gradient(top, #fcf9e0, #f8efb1);
+  background-image: -o-linear-gradient(top, #fcf9e0, #f8efb1);
+  background-image: linear-gradient(to bottom, #fcf9e0, #f8efb1);
+  border-color: #f8efb1 #f8efb1 #f5e785;
+}
+#content .btn-free:hover,
+#content .btn-free:focus,
+#content .btn-free:active,
+#content .btn-free.active,
+#content .btn-free.disabled,
+#content .btn-free[disabled] {
+  background-color: #fcf8dc;
+  *background-color: #f8efb1;
+}
+#content form {
+  margin: auto;
+}
+#content form .input-prepend {
+  margin-left: 0;
+}
+#content form .input-prepend .add-on {
+  color: #463116;
+  background-color: inherit;
+  border: 1px solid #50483d;
+}
+#content form .input-prepend input.span3,
+#content form .input-prepend textarea.span3,
+#content form .input-prepend .uneditable-input.span3 {
+  width: 166px;
+  color: #463116;
+  border: 1px solid #50483d;
+}
+#content h4 {
+  text-align: left;
+  border-bottom: 1px solid #50483d;
+  margin: 0 0 5px;
+  line-height: 25px;
+  font-weight: normal;
+  padding-left: 5px;
+}
+#content .modal {
+  background-color: #fcf8dc;
+}
+#content .modal .modal-header {
+  border-bottom: 1px solid #50483d;
+}
+#content .modal .modal-body {
+  background-color: inherit;
+}
+#content .modal .modal-footer {
+  padding: 9px 15px 10px;
+  background-color: inherit;
+  border-top: none;
+  box-shadow: none;
+}
+#content .modal .input-prepend input.span3,
+#content .modal .input-prepend textarea.span3,
+#content .modal .input-prepend .uneditable-input.span3 {
+  width: 485px;
 }
 #actionResult {
   display: none;
@@ -117,4 +176,48 @@ body {
 .loggedin,
 .loggedout {
   display: none;
+}
+@media (min-width: 1200px) {
+  #content form .input-prepend input.span3,
+  #content form .input-prepend textarea.span3,
+  #content form .input-prepend .uneditable-input.span3 {
+    width: 216px;
+  }
+}
+@media (max-width: 979px) and (min-width: 768px) {
+  #content form .input-prepend input.span3,
+  #content form .input-prepend textarea.span3,
+  #content form .input-prepend .uneditable-input.span3 {
+    width: 112px;
+  }
+}
+@media (max-width: 767px) and (min-width: 480px) {
+  #content form .input-prepend input.span3,
+  #content form .input-prepend textarea.span3,
+  #content form .input-prepend .uneditable-input.span3 {
+    width: 94%;
+  }
+  #content form .modal .input-prepend {
+    width: 100%;
+  }
+  #content form .modal .input-prepend input.span3,
+  #content form .modal .input-prepend textarea.span3,
+  #content form .modal .input-prepend .uneditable-input.span3 {
+    width: 94%;
+  }
+}
+@media (max-width: 480px) {
+  #content form .input-prepend input.span3,
+  #content form .input-prepend textarea.span3,
+  #content form .input-prepend .uneditable-input.span3 {
+    width: 86%;
+  }
+  #content form .modal .input-prepend {
+    width: 100%;
+  }
+  #content form .modal .input-prepend input.span3,
+  #content form .modal .input-prepend textarea.span3,
+  #content form .modal .input-prepend .uneditable-input.span3 {
+    width: 86%;
+  }
 }

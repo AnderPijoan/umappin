@@ -1,5 +1,6 @@
 @import "bootstrap.min.css"
 @import "bootstrap-responsive.min.css"
+@import "icons/icons.css"
 
 @font-face {
   font-family: 'Engagement';
@@ -15,31 +16,14 @@
   src: local('Noto Serif'), local('NotoSerif'), url(http://themes.googleusercontent.com/static/fonts/notoserif/v1/eCpfeMZI7q4jLksXVRWPQxsxEYwM7FgeyaSgU71cLG0.woff) format('woff');
 }
 
+color-beige = #FCF8DC
 color-dark-red = #661C00
-color-brown = #663900
-color-dark-green = #1C6600
-color-dark-blue = #000A66
-color-purple = #2D0066
-
-color-beige = #FED
 color-dark-brown = #463116
-
 color-box-border = rgb(80, 72, 61)
-color-box-shadow = rgba(80, 72, 61, 0.065)
-color-box-background = rgba(255, 238, 221, 0.6)
 
-.color-1
-  background-color color-dark-blue
-.color-2
-  background-color color-brown
-.color-3
-  background-color color-dark-green
-.color-4
-  background-color color-dark-blue
-.color-5
-  background-color color-purple
-.color-6
-  background-color color-dark-brown
+color-box-shadow = rgba(color-box-border, 0.065)
+color-box-background = rgba(color-beige, 0.6)
+
 
 .box
   margin-top 5px
@@ -51,16 +35,56 @@ color-box-background = rgba(255, 238, 221, 0.6)
   box-shadow: 0 1px 4px color-box-shadow;
   text-align: center;
   padding 10px 0 10px
-  form
+  h6
+    font-weight none
+    margin 0
+
+.logo
+  margin-top 5px
+  margin-bottom 10px
+  text-align: center;
+  line-height: 95px;
+  span
+    font-family Engagement
+    font-size 500%
+    color color-beige
+    background-color color-dark-brown
+    border-radius: 50%;
+    height: 95px;
+    display: block;
+    width: 195px;
     margin auto
-  h4
-    text-align left
-    border-bottom: 1px solid color-box-border;
-    margin: 0 0 5px;
-    line-height: 25px;
-    text-rendering: optimizelegibility;
-    font-weight: normal;
-    padding-left: 5px;
+
+body
+  font-family Noto Serif
+  background: url('../img/background.jpg') no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+
+#content
+  textarea:focus,
+  input[type="text"]:focus,
+  input[type="password"]:focus,
+  input[type="datetime"]:focus,
+  input[type="datetime-local"]:focus,
+  input[type="date"]:focus,
+  input[type="month"]:focus,
+  input[type="time"]:focus,
+  input[type="week"]:focus,
+  input[type="number"]:focus,
+  input[type="email"]:focus,
+  input[type="url"]:focus,
+  input[type="search"]:focus,
+  input[type="tel"]:focus,
+  input[type="color"]:focus,
+  .uneditable-input:focus
+    border-color: color-dark-red
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(color-dark-red,0.6)
+    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(color-dark-red,0.6)
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(color-dark-red,0.6)
+
   .btn-primary
     background-color: color-dark-red;
     *background-color: darken(color-dark-red, 10%)
@@ -78,33 +102,56 @@ color-box-background = rgba(255, 238, 221, 0.6)
   .btn-primary[disabled]
     background-color: color-dark-red
     *background-color: darken(color-dark-red, 10%);
-
-/*
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0044cc', GradientType=0);
-*/
-.logo
-  margin-top 5px
-  margin-bottom 10px
-  text-align: center;
-  line-height: 95px;
-  span
-    font-family Engagement
-    font-size 500%
-    color color-beige
-    background-color color-dark-brown
-    border-radius: 50%;
-    height: 95px;
-    display: block;
-    width: 195px;
-
-body
-  font-family Noto Serif
-  background: url('../img/background.jpg') no-repeat center center fixed;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
-
+  .btn-free
+    background-color: color-beige;
+    *background-color: darken(color-beige, 10%)
+    background-image: -moz-linear-gradient(top, lighten(color-beige, 10%), darken(color-beige, 10%));
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(lighten(color-beige, 10%)), to(darken(color-beige, 10%)));
+    background-image: -webkit-linear-gradient(top, lighten(color-beige, 10%), darken(color-beige, 10%));
+    background-image: -o-linear-gradient(top, lighten(color-beige, 10%), darken(color-beige, 10%));
+    background-image: linear-gradient(to bottom, lighten(color-beige, 10%), darken(color-beige, 10%));
+    border-color: darken(color-beige, 10%) darken(color-beige, 10%) darken(color-beige, 20%);
+  .btn-free:hover,
+  .btn-free:focus,
+  .btn-free:active,
+  .btn-free.active,
+  .btn-free.disabled,
+  .btn-free[disabled]
+    background-color: color-beige
+    *background-color: darken(color-beige, 10%);
+  form
+    margin auto
+    .input-prepend
+      margin-left 0
+      .add-on
+        color color-dark-brown
+        background-color inherit
+        border 1px solid color-box-border
+      input.span3, textarea.span3, .uneditable-input.span3
+        width: 166px
+        color color-dark-brown
+        border 1px solid color-box-border
+  h4
+    text-align left
+    border-bottom: 1px solid color-box-border;
+    margin: 0 0 5px;
+    line-height: 25px;
+    font-weight: normal;
+    padding-left: 5px;
+  .modal
+    background-color: color-beige
+    .modal-header
+      border-bottom: 1px solid color-box-border
+    .modal-body
+      background-color inherit
+    .modal-footer
+      padding 9px 15px 10px
+      background-color inherit
+      border-top: none
+      box-shadow: none
+    .input-prepend
+      input.span3, textarea.span3, .uneditable-input.span3
+        width: 485px
 #actionResult
   display none
 
@@ -122,3 +169,41 @@ body
 
 .loggedin, .loggedout
   display none
+
+@media (min-width: 1200px)
+  #content
+    form
+      .input-prepend
+        input.span3, textarea.span3, .uneditable-input.span3
+          width: 216px
+
+@media (max-width: 979px) and (min-width: 768px)
+  #content
+    form
+      .input-prepend
+        input.span3, textarea.span3, .uneditable-input.span3
+          width: 112px
+
+@media (max-width: 767px) and (min-width: 480px)
+  #content
+    form
+      .input-prepend
+        input.span3, textarea.span3, .uneditable-input.span3
+          width: 94%
+      .modal
+        .input-prepend
+          width 100%
+          input.span3, textarea.span3, .uneditable-input.span3
+            width: 94%
+
+@media (max-width: 480px)
+  #content
+    form
+      .input-prepend
+        input.span3, textarea.span3, .uneditable-input.span3
+          width: 86%
+      .modal
+        .input-prepend
+          width 100%
+          input.span3, textarea.span3, .uneditable-input.span3
+            width: 86%
