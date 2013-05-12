@@ -3,6 +3,9 @@ package com.feth.play.module.pa;
 import java.util.Date;
 
 
+import com.feth.play.module.pa.providers.password.UsernamePasswordAuthUser;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.node.ObjectNode;
 import play.Configuration;
 import play.Logger;
 import play.Play;
@@ -19,6 +22,8 @@ import com.feth.play.module.pa.exceptions.AuthException;
 import com.feth.play.module.pa.providers.AuthProvider;
 import com.feth.play.module.pa.service.UserService;
 import com.feth.play.module.pa.user.AuthUser;
+
+import static play.mvc.Results.ok;
 
 
 public abstract class PlayAuthenticate {
@@ -99,11 +104,11 @@ public abstract class PlayAuthenticate {
 		return userService;
 	}
 
-	private static final String ORIGINAL_URL = "pa.url.orig";
+	public static final String ORIGINAL_URL = "pa.url.orig";
 	public static final String USER_KEY = "pa.u.id";
     public static final String PROVIDER_KEY = "pa.p.id";
     public static final String EXPIRES_KEY = "pa.u.exp";
-	private static final String SESSION_ID_KEY = "pa.s.id";
+	public static final String SESSION_ID_KEY = "pa.s.id";
 
 	public static Configuration getConfiguration() {
 		return Play.application().configuration().getConfig(SETTING_KEY_PLAY_AUTHENTICATE);
@@ -169,8 +174,10 @@ public abstract class PlayAuthenticate {
 		session.remove(EXPIRES_KEY);
 		// shouldn't be in any more, but just in case lets kill it from the cookie
 		session.remove(ORIGINAL_URL);
-
-		return Controller.redirect(getUrl(getResolver().afterLogout(), SETTING_KEY_AFTER_LOGOUT_FALLBACK));
+        // User logged out, so just return ok
+		return ok();
+        // Strange 303 See Other response, didn't happen before token auth
+        //return Controller.redirect(getUrl(getResolver().afterLogout(), SETTING_KEY_AFTER_LOGOUT_FALLBACK));
 	}
 
 	public static String peekOriginalUrl(final Context context) {
@@ -341,7 +348,12 @@ public abstract class PlayAuthenticate {
 
 	public static Result loginAndRedirect(final Context context, final AuthUser loginUser) {
 		storeUser(context.session(), loginUser);
-        return Controller.ok(Json.toJson(loginUser));
+        /** Store the auth token in MongoDB **/
+        String token = getUserService().storeToken(loginUser);
+        /** Pass the auth token to frontend **/
+        ObjectNode json = Json.newObject();
+        json.put("token", token);
+        return ok(json);
 	}
 
 	public static Result merge(final Context context, final boolean merge) {
