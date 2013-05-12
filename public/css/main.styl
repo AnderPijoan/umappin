@@ -19,25 +19,53 @@
 color-beige = #FCF8DC
 color-dark-red = #661C00
 color-dark-brown = #463116
-color-box-border = rgb(80, 72, 61)
+color-box-border = #50483D
 
 color-box-shadow = rgba(color-box-border, 0.065)
 color-box-background = rgba(color-beige, 0.6)
 
-
-.box
+box(opacy)
   margin-top 5px
   margin-bottom 10px
-  background-color: color-box-background;
+  background-color: rgba(color-beige, opacy)
   border-top: 1px solid color-box-border;
   border-bottom: 1px solid color-box-border;
   border-radius: 8px;
   box-shadow: 0 1px 4px color-box-shadow;
   text-align: center;
   padding 10px 0 10px
-  h6
-    font-weight none
-    margin 0
+  .box-header
+    padding: 10px
+    border: 1px solid color-box-border;
+    text-align: left;
+    margin: -11px 0 0 0;
+    border-radius: 8px 8px 0 0;
+    h3
+      line-height: 1;
+  .box-body
+    padding  10px
+    text-align: left;
+    border-left 1px solid color-box-border;
+    border-right 1px solid color-box-border;
+    .span3
+      width 208px
+
+  .box-footer
+    padding 10px
+    background-color darken(color-beige, 10%)
+    border: 1px solid color-box-border;
+    text-align: left;
+    margin: 0 0 -11px 0;
+    border-radius: 0 0 8px 8px;
+
+.box
+  box(1)
+  h4
+    border-bottom: none !important
+.box-transparent
+  box(0.6)
+  h4
+    border-bottom: 1px solid color-box-border;
 
 .logo
   margin-top 5px
@@ -86,6 +114,7 @@ body
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(color-dark-red,0.6)
 
   .btn-primary
+    margin auto
     background-color: color-dark-red;
     *background-color: darken(color-dark-red, 10%)
     background-image: -moz-linear-gradient(top, lighten(color-dark-red, 10%), darken(color-dark-red, 10%));
@@ -120,24 +149,29 @@ body
     background-color: color-beige
     *background-color: darken(color-beige, 10%);
   form
-    margin auto
+    margin-bottom 0
     .input-prepend
-      margin-left 0
       .add-on
         color color-dark-brown
         background-color inherit
         border 1px solid color-box-border
-      input.span3, textarea.span3, .uneditable-input.span3
-        width: 166px
+      input, textarea, .uneditable-input
         color color-dark-brown
         border 1px solid color-box-border
+      .span3
+        width: 166px
+      .span6
+        width 406px
   h4
     text-align left
-    border-bottom: 1px solid color-box-border;
     margin: 0 0 5px;
     line-height: 25px;
     font-weight: normal;
     padding-left: 5px;
+  h6
+    font-weight normal
+    margin 0
+
   .modal
     background-color: color-beige
     .modal-header
@@ -174,36 +208,67 @@ body
   #content
     form
       .input-prepend
-        input.span3, textarea.span3, .uneditable-input.span3
+        .span3
           width: 216px
+        .span6
+          width 516px
+  .box
+    .box-body
+      .span3
+        width 258px
+
 
 @media (max-width: 979px) and (min-width: 768px)
   #content
     form
       .input-prepend
-        input.span3, textarea.span3, .uneditable-input.span3
+        .span3
           width: 112px
+        .span6
+          width 298px
+  .box
+    .box-body
+      .span3
+        width 154px
 
 @media (max-width: 767px) and (min-width: 480px)
   #content
+    .btn-primary
+      width: 98%
     form
       .input-prepend
-        input.span3, textarea.span3, .uneditable-input.span3
+        display block
+        .span3,.span6
           width: 94%
       .modal
+        .btn-primary
+          width auto
         .input-prepend
           width 100%
-          input.span3, textarea.span3, .uneditable-input.span3
+          .span3,.span6
             width: 94%
+  .box
+    .box-body
+      .span3
+        width 98%
 
 @media (max-width: 480px)
   #content
+    .btn-primary
+      width: 93%
     form
       .input-prepend
-        input.span3, textarea.span3, .uneditable-input.span3
+        display block
+        .span3,.span6
           width: 86%
       .modal
+        .btn-primary
+          width auto
         .input-prepend
           width 100%
-          input.span3, textarea.span3, .uneditable-input.span3
+          .span3,.span6
             width: 86%
+  .box
+    .box-body
+      .span3
+        width 98%

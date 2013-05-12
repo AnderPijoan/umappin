@@ -1,44 +1,44 @@
+<div class="box-transparent span12">ble</div>
+<div class="box-transparent span3 offset9">
     <div class="row">
-        <div class="span3 logo">
-            <span>uMappin</span>
-        </div>
-        <div class="box span3 offset9">
-            <form action='/login' id='loginForm'>
-                <div class="input-prepend span3">
-                    <div class="add-on"><span class="icon-envelop"></span></div>
-                    <input type="text" id="email_login" name="email_login" class="span3" placeholder="User email">
-                </div>
-                <div class="input-prepend span3">
-                    <div class="add-on"><span class="icon-key"></span></div>
-                    <input type="password" id="password_login" name="password_login" class="span3" placeholder="Password">
-                </div>
-                <input type="submit" value="Log in" class="btn btn-primary span3"><br/>
-                <h6 href="#forgotPassword" data-toggle="modal">Forgot your password?</h6>
-            </form>
-        </div>
-        <div class="box span3 offset9">
-            <form action="/signup" id='registerForm'>
-                <h4>New to uMappin? Sign up</h4>
-                <div class="input-prepend span3">
-                    <div class="add-on"><span class="icon-users"></span></div>
-                    <input type="text" id="name" name="name" placeholder="Username" class="span3">
-                </div>
-                <div class="input-prepend span3">
-                    <div class="add-on"><span class="icon-envelop"></span></div>
-                    <input type="text" id="email" name="email"  placeholder="Email" class="span3">
-                </div>
-                <div class="input-prepend span3">
-                    <div class="add-on"><span class="icon-key"></span></div>
-                    <input type="password" id="password" name="password" placeholder="Password"  class="span3">
-                </div>
-                <div class="input-prepend span3">
-                    <div class="add-on"><span class="icon-key"></span></div>
-                    <input type="password" id="repeatPassword" name="repeatPassword" placeholder="Retype password" class="span3">
-                </div>
-                <input type="submit" value="Sign up" class="btn btn-primary span3">
-            </form>
-        </div>
+        <form action='/login' id='loginForm' class="span3">
+            <div class="input-prepend">
+                <div class="add-on"><span class="icon-envelop"></span></div>
+                <input type="text" id="email_login" name="email_login" class="span3" placeholder="User email">
+            </div>
+            <div class="input-prepend">
+                <div class="add-on"><span class="icon-key"></span></div>
+                <input type="password" id="password_login" name="password_login" class="span3" placeholder="Password">
+            </div>
+            <input type="submit" value="Log in" class="btn btn-primary span3">
+            <h6 href="#forgotPassword" data-toggle="modal">Forgot your password?</h6>
+        </form>
     </div>
+</div>
+<div class="box-transparent span3 offset9">
+    <div class="row">
+        <form action="/signup" id='registerForm' class="span3">
+            <h4>New to uMappin? Sign up</h4>
+            <div class="input-prepend">
+                <div class="add-on"><span class="icon-users"></span></div>
+                <input type="text" id="name" name="name" placeholder="Username" class="span3">
+            </div>
+            <div class="input-prepend">
+                <div class="add-on"><span class="icon-envelop"></span></div>
+                <input type="text" id="email" name="email"  placeholder="Email" class="span3">
+            </div>
+            <div class="input-prepend">
+                <div class="add-on"><span class="icon-key"></span></div>
+                <input type="password" id="password" name="password" placeholder="Password"  class="span3">
+            </div>
+            <div class="input-prepend">
+                <div class="add-on"><span class="icon-key"></span></div>
+                <input type="password" id="repeatPassword" name="repeatPassword" placeholder="Retype password" class="span3">
+            </div>
+            <input type="submit" value="Sign up" class="btn btn-primary span3">
+        </form>
+    </div>
+</div>
 <!-- Modal -->
 <form action="/login/password/forgot" id="forgotPasswordForm">
 <div id="forgotPassword" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="forgotPasswordLabel" aria-hidden="true">
@@ -59,16 +59,14 @@
 </div>
 </form>
 <script>
-    $('.logo').click(function(){
-        location.href='./';
-    });
+    /*
     function askOpenID(url) {
         var openid = prompt("Please enter your OpenID:", "yourname.myopenid.com");
         if(openid) {
             window.location.href = url + "?p=" + encodeURIComponent(openid);
         }
     }
-
+    */
     function submitLogin() {
         var loginPost = $.post(
           $('#loginForm').attr('action'),

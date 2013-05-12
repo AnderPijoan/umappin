@@ -16,6 +16,47 @@
 .box {
   margin-top: 5px;
   margin-bottom: 10px;
+  background-color: #fcf8dc;
+  border-top: 1px solid #50483d;
+  border-bottom: 1px solid #50483d;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(80,72,61,0.065);
+  text-align: center;
+  padding: 10px 0 10px;
+}
+.box .box-header {
+  padding: 10px;
+  border: 1px solid #50483d;
+  text-align: left;
+  margin: -11px 0 0 0;
+  border-radius: 8px 8px 0 0;
+}
+.box .box-header h3 {
+  line-height: 1;
+}
+.box .box-body {
+  padding: 10px;
+  text-align: left;
+  border-left: 1px solid #50483d;
+  border-right: 1px solid #50483d;
+}
+.box .box-body .span3 {
+  width: 208px;
+}
+.box .box-footer {
+  padding: 10px;
+  background-color: #f8efb1;
+  border: 1px solid #50483d;
+  text-align: left;
+  margin: 0 0 -11px 0;
+  border-radius: 0 0 8px 8px;
+}
+.box h4 {
+  border-bottom: none !important;
+}
+.box-transparent {
+  margin-top: 5px;
+  margin-bottom: 10px;
   background-color: rgba(252,248,220,0.6);
   border-top: 1px solid #50483d;
   border-bottom: 1px solid #50483d;
@@ -24,9 +65,35 @@
   text-align: center;
   padding: 10px 0 10px;
 }
-.box h6 {
-  font-weight: none;
-  margin: 0;
+.box-transparent .box-header {
+  padding: 10px;
+  border: 1px solid #50483d;
+  text-align: left;
+  margin: -11px 0 0 0;
+  border-radius: 8px 8px 0 0;
+}
+.box-transparent .box-header h3 {
+  line-height: 1;
+}
+.box-transparent .box-body {
+  padding: 10px;
+  text-align: left;
+  border-left: 1px solid #50483d;
+  border-right: 1px solid #50483d;
+}
+.box-transparent .box-body .span3 {
+  width: 208px;
+}
+.box-transparent .box-footer {
+  padding: 10px;
+  background-color: #f8efb1;
+  border: 1px solid #50483d;
+  text-align: left;
+  margin: 0 0 -11px 0;
+  border-radius: 0 0 8px 8px;
+}
+.box-transparent h4 {
+  border-bottom: 1px solid #50483d;
 }
 .logo {
   margin-top: 5px;
@@ -75,6 +142,7 @@ body {
   box-shadow: inset 0 1px 1px rgba(0,0,0,0.075), 0 0 8px rgba(102,28,0,0.6);
 }
 #content .btn-primary {
+  margin: auto;
   background-color: #661c00;
   *background-color: #5c1900;
   background-image: -moz-linear-gradient(top, #8f2700, #5c1900);
@@ -113,30 +181,35 @@ body {
   *background-color: #f8efb1;
 }
 #content form {
-  margin: auto;
-}
-#content form .input-prepend {
-  margin-left: 0;
+  margin-bottom: 0;
 }
 #content form .input-prepend .add-on {
   color: #463116;
   background-color: inherit;
   border: 1px solid #50483d;
 }
-#content form .input-prepend input.span3,
-#content form .input-prepend textarea.span3,
-#content form .input-prepend .uneditable-input.span3 {
-  width: 166px;
+#content form .input-prepend input,
+#content form .input-prepend textarea,
+#content form .input-prepend .uneditable-input {
   color: #463116;
   border: 1px solid #50483d;
 }
+#content form .input-prepend .span3 {
+  width: 166px;
+}
+#content form .input-prepend .span6 {
+  width: 406px;
+}
 #content h4 {
   text-align: left;
-  border-bottom: 1px solid #50483d;
   margin: 0 0 5px;
   line-height: 25px;
   font-weight: normal;
   padding-left: 5px;
+}
+#content h6 {
+  font-weight: normal;
+  margin: 0;
 }
 #content .modal {
   background-color: #fcf8dc;
@@ -178,46 +251,74 @@ body {
   display: none;
 }
 @media (min-width: 1200px) {
-  #content form .input-prepend input.span3,
-  #content form .input-prepend textarea.span3,
-  #content form .input-prepend .uneditable-input.span3 {
+  #content form .input-prepend .span3 {
     width: 216px;
+  }
+  #content form .input-prepend .span6 {
+    width: 516px;
+  }
+  .box .box-body .span3 {
+    width: 258px;
   }
 }
 @media (max-width: 979px) and (min-width: 768px) {
-  #content form .input-prepend input.span3,
-  #content form .input-prepend textarea.span3,
-  #content form .input-prepend .uneditable-input.span3 {
+  #content form .input-prepend .span3 {
     width: 112px;
+  }
+  #content form .input-prepend .span6 {
+    width: 298px;
+  }
+  .box .box-body .span3 {
+    width: 154px;
   }
 }
 @media (max-width: 767px) and (min-width: 480px) {
-  #content form .input-prepend input.span3,
-  #content form .input-prepend textarea.span3,
-  #content form .input-prepend .uneditable-input.span3 {
+  #content .btn-primary {
+    width: 98%;
+  }
+  #content form .input-prepend {
+    display: block;
+  }
+  #content form .input-prepend .span3,
+  #content form .input-prepend .span6 {
     width: 94%;
+  }
+  #content form .modal .btn-primary {
+    width: auto;
   }
   #content form .modal .input-prepend {
     width: 100%;
   }
-  #content form .modal .input-prepend input.span3,
-  #content form .modal .input-prepend textarea.span3,
-  #content form .modal .input-prepend .uneditable-input.span3 {
+  #content form .modal .input-prepend .span3,
+  #content form .modal .input-prepend .span6 {
     width: 94%;
+  }
+  .box .box-body .span3 {
+    width: 98%;
   }
 }
 @media (max-width: 480px) {
-  #content form .input-prepend input.span3,
-  #content form .input-prepend textarea.span3,
-  #content form .input-prepend .uneditable-input.span3 {
+  #content .btn-primary {
+    width: 93%;
+  }
+  #content form .input-prepend {
+    display: block;
+  }
+  #content form .input-prepend .span3,
+  #content form .input-prepend .span6 {
     width: 86%;
+  }
+  #content form .modal .btn-primary {
+    width: auto;
   }
   #content form .modal .input-prepend {
     width: 100%;
   }
-  #content form .modal .input-prepend input.span3,
-  #content form .modal .input-prepend textarea.span3,
-  #content form .modal .input-prepend .uneditable-input.span3 {
+  #content form .modal .input-prepend .span3,
+  #content form .modal .input-prepend .span6 {
     width: 86%;
+  }
+  .box .box-body .span3 {
+    width: 98%;
   }
 }
