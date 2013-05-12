@@ -1,13 +1,20 @@
 window.Maps or= {}
 OpenLayers.ImgPath = "/assets/img/openlayers/"
+_.templateSettings.variable = 'rc'
 
 class window.Maps.MapView extends Backbone.View
-  width: 'auto'
-  height: '50em'
+  width: '60em'
+  height: '30em'
   readonly: false
   map: null
   drawLayer: null
+  markersLayer: null
   controls: []
+  notesPopupTemplate: _.template $('#notes-popup-template').html()
+  notesCommentTemplate: _.template $('#notes-comment-template').html()
+  newNoteTemplate: _.template $('#notes-new-template').html()
+
+  # ----------------------------- Base Layers ------------------------------- #
   baseLayers: [
 
     new OpenLayers.Layer.OSM(
@@ -67,25 +74,8 @@ class window.Maps.MapView extends Backbone.View
 
   ]
 
-  initialize: ->
-    @width = @options.width ? @width
-    @height = @options.height ? @height
-    @readonly = @options.readonly? @readonly
 
-    $(@el).css('width', @width).css('height', @height)
-
-    @listenTo @model, 'reset ', @render
-
-    @map = new OpenLayers.Map(
-      @el.id
-      theme: null
-      projection: "EPSG:900913"
-      fractionalZoom: true
-    )
-    @map.addLayers @baseLayers
-    @initControls()
-    @map.zoomToMaxExtent()
-
+  # ---------------------------- Controls Layer ------------------------------ #
   initControls: ->
     OpenLayers.Feature.Vector.style['default']['strokeWidth'] = '2'
     # allow testing of specific renderers via "?renderer=Canvas", etc
@@ -146,19 +136,115 @@ class window.Maps.MapView extends Backbone.View
         trigger: () -> console.log "TODO: Trigger save all!"
       )
 
+      new OpenLayers.Control.Button(
+        'displayClass': "olControlAddMarker"
+        trigger: () ->
+          if addMarkerControl.active
+            elm = $('div.olControlAddMarkerItemActive')
+            $(elm).removeClass 'olControlAddMarkerItemActive'
+            $(elm).addClass 'olControlAddMarkerItemInactive'
+            addMarkerControl.deactivate()
+          else
+            elm = $('div.olControlAddMarkerItemInactive')
+            $(elm).removeClass 'olControlAddMarkerItemInactive'
+            $(elm).addClass 'olControlAddMarkerItemActive'
+            addMarkerControl.activate()
+
+      )
+
+      new OpenLayers.Control.Button(
+        'displayClass': "olControlSelect"
+        trigger: () -> console.log "TODO: Popup events to Features!"
+      )
+
     ]
     toolbar = new OpenLayers.Control.Panel(
       displayClass: 'olControlEditingToolbar'
       defaultControl: toolBarControls[0]
     )
     toolbar.addControls toolBarControls
+
+    addMarkerControl = new OpenLayers.Control
+    addMarkerControl.handler = new OpenLayers.Handler.Click(
+      addMarkerControl
+      'click': (e) => @createMarker @map.getLonLatFromViewPortPx e.xy
+    )
+
+
     @controls.push toolbar
+    @controls.push addMarkerControl
     @controls.push new OpenLayers.Control.LayerSwitcher()
+    @controls.push new OpenLayers.Control.MousePosition()
 
     # TODO: Add more controls here ....
 
     @map.addLayer @drawLayer
     @map.addControls @controls
+
+
+  # -------------------------------- OSM notes Layer ---------------------------- #
+  getOSMNotes: (bbox) ->
+    $.ajax
+      url: 'http://api.openstreetmap.org/api/0.6/notes.json?bbox=' + bbox
+      success: (data) =>
+        bounds = new OpenLayers.Bounds()
+        for feature in data.features
+          do (feature) =>
+            x = feature.geometry.coordinates[0]
+            y = feature.geometry.coordinates[1]
+            lonlat = new OpenLayers.LonLat(x, y).transform(
+              new OpenLayers.Projection("EPSG:4326")
+              @map.getProjectionObject()
+            )
+            bounds.extend lonlat
+            feat = new OpenLayers.Feature @markersLayer, lonlat
+            feat.popupClass = OpenLayers.Popup.FramedCloud
+            feat.data.popupContentHTML = @notesPopupTemplate feature.properties
+            feat.data.overflow = 'auto'
+            marker = feat.createMarker()
+            that = @
+            marker.events.register "mousedown", feat, (evt) ->
+              if @popup
+                @popup.toggle()
+              else
+                @popup = @createPopup(true)
+                that.map.addPopup(@popup)
+                @popup.show()
+                $('.newNoteCommentButton').bind('click', (e) -> that.postNoteComment(e))
+              OpenLayers.Event.stop(evt)
+            @markersLayer.addMarker(marker)
+        @map.zoomToExtent bounds
+
+
+  initialize: ->
+    @width = @options.width ? @width
+    @height = @options.height ? @height
+    @readonly = @options.readonly? @readonly
+
+    $(@el).css('width', @width).css('height', @height)
+
+    @listenTo @model, 'reset ', @render
+    # 0. Create the Map
+    @map = new OpenLayers.Map(
+      @el.id
+      theme: null
+      projection: "EPSG:900913"
+      fractionalZoom: true
+    )
+    # 1. Add base layers
+    @map.addLayers @baseLayers
+    @map.setLayerIndex(baseLayer, 40) for baseLayer in @baseLayers
+    # 2. Add controls layer
+    @initControls()
+    @map.setLayerIndex(@drawLayer, 30)
+    # 3. Add markers layer
+    @markersLayer = new OpenLayers.Layer.Markers "Markers"
+    @map.addLayer @markersLayer
+    @map.setLayerIndex(@markersLayer, 20)
+    # 4. Initial map zoom
+    @map.zoomToMaxExtent()
+    # ---- Testing Notes ---- #
+    @getOSMNotes('-0.65094,51.312159,0.374908,51.669148')
 
   render: ->
     features = @model.get 'features'
@@ -171,16 +257,17 @@ class window.Maps.MapView extends Backbone.View
     feature.fetch complete: (resp) =>
       geom = geojsonFormat.read(JSON.stringify(feature.get 'geometry'), 'Geometry')
       olGeom = new OpenLayers.Feature.Vector geom
-      olGeom.data = feature
+      olGeom.mapFeature = feature
       @drawLayer.addFeatures [olGeom]
 
   saveFeature: (feature) ->
+    console.log feature
     geojsonFormat = new OpenLayers.Format.GeoJSON()
     ft = new Maps.Feature
       ownerId: @model.get 'ownerId'
       geometry: JSON.parse geojsonFormat.write feature.geometry
     ft.once 'change', (evt) =>
-      feature.data = ft
+      feature.mapFeature = ft
       fts = @model.get('features') or []
       fts.push ft.get 'id'
       @model.save features: fts
@@ -188,4 +275,45 @@ class window.Maps.MapView extends Backbone.View
 
   updateFeature: (feature) ->
     geojsonFormat = new OpenLayers.Format.GeoJSON()
-    feature.data.save geometry: JSON.parse geojsonFormat.write feature.geometry
+    feature.mapFeature.save geometry: JSON.parse geojsonFormat.write feature.geometry
+
+
+  createMarker: (lnglat) ->
+    feat = new OpenLayers.Feature @markersLayer, lnglat
+    feat.popupClass = OpenLayers.Popup.FramedCloud
+    feat.data.popupContentHTML = @newNoteTemplate feat.id
+    feat.data.overflow = 'auto'
+    marker = feat.createMarker()
+    that = @
+    lonlat = new OpenLayers.LonLat(lnglat.lon, lnglat.lat).transform(
+      @map.getProjectionObject()
+      new OpenLayers.Projection("EPSG:4326")
+    )
+    marker.events.register "mousedown", feat, (evt) ->
+      if @popup
+        @popup.toggle()
+      else
+        @popup = @createPopup(true)
+        that.map.addPopup(@popup)
+        @popup.show()
+        $('.newNoteButton').bind('click', (evt) -> that.postNewNote(evt, lonlat))
+      OpenLayers.Event.stop(evt)
+    @markersLayer.addMarker marker
+
+
+  postNoteComment: (evt) ->
+    id = $(evt.target).attr('id').split('_')[1]
+    comment = 'text=' + $('#newNoteCommentText_'+id).val()
+    url = $('#newNoteCommentUrl_'+id).val()
+    $.post url + '?' + comment, (data) =>
+      container = $(evt.target).parent().parent().find('div.noteComments')
+      postedcomment = data.properties.comments[data.properties.comments.length-1]
+      container.append @notesCommentTemplate postedcomment
+
+  postNewNote: (evt, lonlat) ->
+    id = $(evt.target).attr('id').split('-')[1]
+    comment = $(evt.target).prev().val()
+    url = 'http://api.openstreetmap.org/api/0.6/notes?lat='+lonlat.lat+'&lon='+lonlat.lon+'&text='+comment
+    $.post url, (data) =>
+      console.log data
+      # TODO Reload the single marker
