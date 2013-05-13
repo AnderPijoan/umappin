@@ -188,7 +188,7 @@ class window.Maps.MapView extends Backbone.View
       url: 'http://api.openstreetmap.org/api/0.6/notes.json?bbox=' + bbox
       success: (data) =>
         bounds = new OpenLayers.Bounds()
-        for feature in data.features
+        for feature in JSON.parse(data).features
           do (feature) =>
             x = feature.geometry.coordinates[0]
             y = feature.geometry.coordinates[1]
@@ -307,6 +307,7 @@ class window.Maps.MapView extends Backbone.View
     url = $('#newNoteCommentUrl_'+id).val()
     $.post url + '?' + comment, (data) =>
       container = $(evt.target).parent().parent().find('div.noteComments')
+      data = JSON.parse data
       postedcomment = data.properties.comments[data.properties.comments.length-1]
       container.append @notesCommentTemplate postedcomment
 
