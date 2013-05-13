@@ -133,7 +133,7 @@ GET     /features                 controllers.MapFeatureREST.getAllFeatures()
 GET     /features/:id             controllers.MapFeatureREST.getFeature(id: String)
 POST    /features                 controllers.MapFeatureREST.addFeature()
 PUT     /features/:id             controllers.MapFeatureREST.updateFeature(id: String)
-DELETE  /features/:id             controllers.MapFeatureREST.updateFeature(id: String)
+DELETE  /features/:id             controllers.MapFeatureREST.deleteFeature(id: String)
 # -------------------------------------------------------------------------------------------------------
 
 # TESTINGG!!!

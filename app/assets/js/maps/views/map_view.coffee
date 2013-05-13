@@ -13,6 +13,7 @@ class window.Maps.MapView extends Backbone.View
   notesPopupTemplate: _.template $('#notes-popup-template').html()
   notesCommentTemplate: _.template $('#notes-comment-template').html()
   newNoteTemplate: _.template $('#notes-new-template').html()
+  selectedFeatures: []
 
   # ----------------------------- Base Layers ------------------------------- #
   baseLayers: [
@@ -122,7 +123,10 @@ class window.Maps.MapView extends Backbone.View
         'displayClass': 'olControlModifyFeature'
         createVertices: true
         mode: OpenLayers.Control.ModifyFeature.RESHAPE
-        onModificationEnd: (feature) => @updateFeature feature
+        onModificationStart: (feature) => @selectedFeatures.push feature
+        onModificationEnd: (feature) =>
+          @updateFeature feature
+          @selectedFeatures.splice(@selectedFeatures.indexOf(feature), 1)
       )
 
       new OpenLayers.Control.DragFeature(
@@ -170,8 +174,18 @@ class window.Maps.MapView extends Backbone.View
       'click': (e) => @createMarker @map.getLonLatFromViewPortPx e.xy
     )
 
+    keyboardControl = new OpenLayers.Control
+    keyboardControl.handler = new OpenLayers.Handler.Keyboard(
+      keyboardControl
+      'keyup': (e) =>
+        console.log "key #{e.keyCode}"
+        if e.keyCode == 46 then (@deleteFeature feature) for feature in @selectedFeatures
+    )
+    keyboardControl.activate()
+
 
     @controls.push toolbar
+    @controls.push keyboardControl
     @controls.push addMarkerControl
     @controls.push new OpenLayers.Control.LayerSwitcher()
     @controls.push new OpenLayers.Control.MousePosition()
@@ -188,7 +202,8 @@ class window.Maps.MapView extends Backbone.View
       url: 'http://api.openstreetmap.org/api/0.6/notes.json?bbox=' + bbox
       success: (data) =>
         bounds = new OpenLayers.Bounds()
-        for feature in JSON.parse(data).features
+        data = JSON.parse data unless $.isPlainObject(data)
+        for feature in data.features
           do (feature) =>
             x = feature.geometry.coordinates[0]
             y = feature.geometry.coordinates[1]
@@ -234,13 +249,13 @@ class window.Maps.MapView extends Backbone.View
     # 1. Add base layers
     @map.addLayers @baseLayers
     @map.setLayerIndex(baseLayer, 40) for baseLayer in @baseLayers
-    # 2. Add controls layer
-    @initControls()
-    @map.setLayerIndex(@drawLayer, 30)
-    # 3. Add markers layer
+    # 2. Add markers layer
     @markersLayer = new OpenLayers.Layer.Markers "Markers"
     @map.addLayer @markersLayer
     @map.setLayerIndex(@markersLayer, 20)
+    # 3. Add controls layer
+    @initControls()
+    @map.setLayerIndex(@drawLayer, 30)
     # 4. Initial map zoom
     @map.zoomToMaxExtent()
     # ---- Testing Notes ---- #
@@ -277,6 +292,13 @@ class window.Maps.MapView extends Backbone.View
     geojsonFormat = new OpenLayers.Format.GeoJSON()
     feature.mapFeature.save geometry: JSON.parse geojsonFormat.write feature.geometry
 
+  deleteFeature: (feature) ->
+    feature.mapFeature.destroy success: ()=>
+      features = @model.get 'features'
+      @model.save
+        features: features.splice(features.indexOf(feature.mapFeature.get 'id'), 1)
+        { success: () => @drawLayer.removeFeatures [feature] }
+
 
   createMarker: (lnglat) ->
     feat = new OpenLayers.Feature @markersLayer, lnglat
@@ -307,7 +329,7 @@ class window.Maps.MapView extends Backbone.View
     url = $('#newNoteCommentUrl_'+id).val()
     $.post url + '?' + comment, (data) =>
       container = $(evt.target).parent().parent().find('div.noteComments')
-      data = JSON.parse data
+      data = JSON.parse data unless $.isPlainObject(data)
       postedcomment = data.properties.comments[data.properties.comments.length-1]
       container.append @notesCommentTemplate postedcomment
 
