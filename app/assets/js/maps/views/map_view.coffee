@@ -121,8 +121,18 @@ class window.Maps.MapView extends Backbone.View
       new OpenLayers.Control.ModifyFeature(
         @drawLayer
         'displayClass': 'olControlModifyFeature'
-        createVertices: true
-        mode: OpenLayers.Control.ModifyFeature.RESHAPE
+
+        mode: OpenLayers.Control.ModifyFeature.RESHAPE | OpenLayers.Control.ModifyFeature.DRAG
+        onModificationStart: (feature) => @selectedFeatures.push feature
+        onModificationEnd: (feature) =>
+          @updateFeature feature
+          @selectedFeatures.splice(@selectedFeatures.indexOf(feature), 1)
+      )
+
+      new OpenLayers.Control.ModifyFeature(
+        @drawLayer
+        'displayClass': 'olControlRotateScaleFeature'
+        mode: OpenLayers.Control.ModifyFeature.RESIZE | OpenLayers.Control.ModifyFeature.ROTATE | OpenLayers.Control.ModifyFeature.DRAG
         onModificationStart: (feature) => @selectedFeatures.push feature
         onModificationEnd: (feature) =>
           @updateFeature feature
@@ -164,7 +174,7 @@ class window.Maps.MapView extends Backbone.View
     ]
     toolbar = new OpenLayers.Control.Panel(
       displayClass: 'olControlEditingToolbar'
-      defaultControl: toolBarControls[0]
+      defaultControl: toolBarControls[6]
     )
     toolbar.addControls toolBarControls
 
@@ -174,6 +184,7 @@ class window.Maps.MapView extends Backbone.View
       'click': (e) => @createMarker @map.getLonLatFromViewPortPx e.xy
     )
 
+    # Custom Keyboard handler
     keyboardControl = new OpenLayers.Control
     keyboardControl.handler = new OpenLayers.Handler.Keyboard(
       keyboardControl
@@ -181,7 +192,7 @@ class window.Maps.MapView extends Backbone.View
         console.log "key #{e.keyCode}"
         if e.keyCode == 46 then (@deleteFeature feature) for feature in @selectedFeatures
     )
-    keyboardControl.activate()
+    #keyboardControl.activate()
 
 
     @controls.push toolbar
@@ -252,9 +263,11 @@ class window.Maps.MapView extends Backbone.View
     # 2. Add markers layer
     @markersLayer = new OpenLayers.Layer.Markers "Markers"
     @map.addLayer @markersLayer
+    @markersLayer.setZIndex 20
     @map.setLayerIndex(@markersLayer, 20)
     # 3. Add controls layer
     @initControls()
+    @drawLayer.setZIndex 30
     @map.setLayerIndex(@drawLayer, 30)
     # 4. Initial map zoom
     @map.zoomToMaxExtent()
