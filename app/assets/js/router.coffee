@@ -46,7 +46,6 @@ class umappin.Router extends Backbone.Router
   logout: () ->
     $.get "/logout", () ->
       setTemplate '/assets/templates/logout.html'
-      sessionStorage.removeItem "user"
       updateSessionViews ""
 
   signup: () ->  # Need to separate js source

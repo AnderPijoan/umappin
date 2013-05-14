@@ -34,7 +34,7 @@ messagesApp.Router = Backbone.SubRoute.extend({
 					{
 						success: function(){
 							view = new messagesApp.MessagesView({ model: discussion });
-							$('#messages_body').html(view.add().el);
+							$('#messages_body').html(view.addTimeAgoAndRender().el);
 						},
 						error: function(){
 							console.log("Error getting messages from server");

@@ -27,6 +27,7 @@ $ () ->
     Backbone.history.start()
 
   # Check the user session
+  ###
   token = window.sessionStorage.getItem 'token'
   $.ajax
     url: "/sessionuser"
@@ -37,6 +38,4 @@ $ () ->
   ###
   sessionRequest = $.get "/sessionuser"
   sessionRequest.done (data) -> setSessionUser data
-  ###
   updateSessionViews ""
-

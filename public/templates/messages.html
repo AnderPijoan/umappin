@@ -81,9 +81,9 @@
                         <span class="plusUsers">+<%- plusUsers %></span>
                     <% } %>
                 </div>
-                <div class="discussion_author">
-                    <div class="author_name"><a href="/#account/userID">USERNAME</a></div>
-                </div>  
+                <!-- <div class="discussion_author"> -->
+                   <!-- <div class="author_name"><a href="/#account/userID">USERNAME</a></div>-->
+                <!--</div>  -->
             </div>
         </div>
 </script>
@@ -93,16 +93,7 @@
         <% maxPhotosSeen=5; %>
 
          <div class="span9 ">
-            <div class="span9">
-            <% for (i=0; i<maxPhotosSeen;i++) { %>
-                <% if (rc.users[i]) { %>    
-                    <img id="photo<%- rc.users[i].name %>" class="usersPhoto" src="<%- rc.users[i].photo%>" />
-                <% } else {break;}} %>
-            <% if (rc.users.length > maxPhotosSeen) {plusUsers=rc.users.length-maxPhotosSeen;%> 
-                <span class="plusUsers">+<%- plusUsers %></span>
-            <% } %>
-            </div>
-             <h2><%- rc.subject %></h2>
+            <h2><%- rc.subject %></h2>
              <br/>
              <div class="messages span9">
                  <% _.each(rc.messages, function(messageObject){ %>
