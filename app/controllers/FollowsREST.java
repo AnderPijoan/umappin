@@ -1,7 +1,9 @@
 package controllers;
 
-import models.Follows;
 import play.mvc.Result;
+
+import models.Follows;
+
 
 public class FollowsREST extends ItemREST {
 	
@@ -11,4 +13,5 @@ public class FollowsREST extends ItemREST {
     public static Result updateFollows(String id) { return updateItem(id, Follows.class); }
     public static Result deleteFollows(String id) { return deleteItem(id, Follows.class); }
 
+    
 }

@@ -34,8 +34,15 @@
   <div class="modal-body">
     <label for="form_subject">Subject</label><input type="text" name="subject" id="form_subject"/><br/>
         <label for="form_message">Message</label><textarea name="message" id="form_message" ></textarea><br />
-        <label for="form_all">All</label><input type="checkbox" name="all" id="form_all_check" />
-        <label for="form_receivers">Receivers</label><input type="text" name="receivers" id="form_receivers" /><br />
+        <div id="receivers_block">
+          <label for="form_receivers">Receivers</label>
+
+          <div id="receivers_list">
+          </div>
+          <input type="text" name="receivers" id="form_receivers" />
+          <div id="search_result_list"></div>
+        <br />
+        <br />
   </div>
   <div class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
@@ -45,6 +52,16 @@
 </div>
 
 
+<script type="text/template" id="receiver-search-item-template">
+<div class="receiver_item" data-id="<%- rc.id %>">
+  <%- rc.name %>
+</script>
+
+<script type="text/template" id="receiver-selected-item-template">
+<div class="receiver_selected_item" >
+  <%- rc.name %>
+  <button data-id="<%- rc.id %>" class="btn btn-danger remove_selected_item">X</button>
+</script>
 
 
 
@@ -64,9 +81,9 @@
                         <span class="plusUsers">+<%- plusUsers %></span>
                     <% } %>
                 </div>
-                <div class="discussion_author">
-                    <div class="author_name"><a href="/#account/userID">USERNAME</a></div>
-                </div>  
+                <!-- <div class="discussion_author"> -->
+                   <!-- <div class="author_name"><a href="/#account/userID">USERNAME</a></div>-->
+                <!--</div>  -->
             </div>
         </div>
 </script>
@@ -76,16 +93,7 @@
         <% maxPhotosSeen=5; %>
 
          <div class="span9 ">
-            <div class="span9">
-            <% for (i=0; i<maxPhotosSeen;i++) { %>
-                <% if (rc.users[i]) { %>    
-                    <img id="photo<%- rc.users[i].name %>" class="usersPhoto" src="<%- rc.users[i].photo%>" />
-                <% } else {break;}} %>
-            <% if (rc.users.length > maxPhotosSeen) {plusUsers=rc.users.length-maxPhotosSeen;%> 
-                <span class="plusUsers">+<%- plusUsers %></span>
-            <% } %>
-            </div>
-             <h2><%- rc.subject %></h2>
+            <h2><%- rc.subject %></h2>
              <br/>
              <div class="messages span9">
                  <% _.each(rc.messages, function(messageObject){ %>
@@ -106,7 +114,6 @@
 
     <script src="/assets/js/messagesApp/view/receivedMessages_view.js"></script>
     <script src="/assets/js/messagesApp/view/messagesApp_view.js"></script>
-    <script src="/assets/js/messagesApp/view/newDiscussion_view.js"></script>
 
 
     <script src="/assets/js/messagesApp/view/discussionMessages_view.js"></script>

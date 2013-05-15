@@ -70,6 +70,7 @@ DELETE  /follows/:id                controllers.FollowsREST.deleteFollows(id: St
 
 # REST CRUD for Followed
 GET     /followed                    controllers.FollowedREST.getAllFollowed()
+GET		/followedInfo			    controllers.FollowedREST.getAllFollowedInfo()
 GET     /followed/:id                controllers.FollowedREST.getFollowed(id: String)
 POST    /followed                    controllers.FollowedREST.addFollowed()
 PUT     /followed/:id                controllers.FollowedREST.updateFollowed(id: String)
@@ -153,4 +154,23 @@ POST    /rest/photos                 controllers.PhotosREST.newPhoto()
 DELETE  /rest/photos/:id             controllers.PhotosREST.deletePhoto(id: String)
 POST    /rest/photos/:id             controllers.PhotosREST.updatePhoto(id: String)
 
-#------------------------------ REST API ---------------------------------
+
+#POST for photoContent carried within multipart/form-data
+POST    /rest/photos/:id/content      controllers.PhotosREST.uploadMultipartContent(id: String)
+
+#'quality' is dummy, this parameter is never read
+GET     /rest/photos/:id/content      controllers.PhotosREST.getPhotoContent(id: String)
+
+#updates and get the metadata
+GET     /rest/photos/:id             controllers.PhotosREST.getPhoto(id: String)
+
+#photo user 'likes' (to vote for a photo)
+
+#to send a Json entity specifying that the user finds the photo interesting and/or useful
+POST    /rest/photos/:photoId/userlikes   controllers.PhotosREST.setPhotoUserLike(photoId: String)
+
+#did :userId like :photoId ?
+GET     /rest/photos/:photoId/userlikes/:userId   controllers.PhotosREST.getPhotoUserLikes(photoId: String, userId:String, offset : Integer = 0, limit : Integer = 1)
+
+#who likes :photoId ?
+GET     /rest/photos/:photoId/userlikes          controllers.PhotosREST.getPhotoUserLikes(photoId : String, userId = null, offset : Integer ?= 0, limit : Integer ?= models.PhotoUserLike.MAX_RESULTS_RETURNED)
