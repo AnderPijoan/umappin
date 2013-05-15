@@ -13,7 +13,7 @@ class window.Account.UserRowView extends Backbone.View
   className: 'user-entry'
   template: _.template $('#user-row-template').html()
 
-  initialize: -> 
+  initialize: ->
     @listenTo @model, 'change reset', @render
     @follows = @options.follows
     @followed = @options.followed
@@ -22,17 +22,9 @@ class window.Account.UserRowView extends Backbone.View
     @followsView = new Account.UserFollowsView model: @model, follows: @follows, followed: @usrFollowed
     @followedView = new Account.UserFollowedView model: @model ,followed: @followed
 
-  render: ->   
+  render: ->
     @$el.html @template @model.attributes
-    picture = new Picture id: @model.get "profilePicture"
-    @pictureView = new PictureView
-      model: picture
-      readonly: true
-      showInfo: false
-      picWidth: '4em'
-      picHeight: '3em'
-    if @model.get "profilePicture" then picture.fetch()
-    @$el.find('div.row .span1').first().html @pictureView.render().el
+
     @$el.find('div.row').append @followsView.render().el
     @$el.find('div.row').append @followedView.render().el
     @

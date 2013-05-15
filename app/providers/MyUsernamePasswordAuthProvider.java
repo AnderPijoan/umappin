@@ -224,7 +224,7 @@ public class MyUsernamePasswordAuthProvider
 			final MyLogin login, final Context ctx) {
 		return new MyLoginUsernamePasswordAuthUser(login.getPassword(), login.getEmail());
 	}
-	
+
 
 	@Override
 	protected MyLoginUsernamePasswordAuthUser transformAuthUser(

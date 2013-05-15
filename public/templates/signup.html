@@ -1,103 +1,66 @@
-<div class="row">
+<div class="row-fluid">
     <div class="span6">
         <h1>Signup</h1>
+        <div id="signup" class="row-fluid">
+
+            <div class="span3">
+                <form action="/signup" id='registerForm' >
+                    <div class="clearfix  " id="name_field">
+                        <label for="name">Your name</label>
+                        <div class="input">
+
+                            <input type="text" id="name" name="name" value="" >
+
+                            <span class="help-inline"></span>
+                            <span class="help-block">Required</span>
+                        </div>
+                    </div>
+                    <div class="clearfix  " id="email_field">
+                        <label for="email">Your e-mail address</label>
+                        <div class="input">
+
+                            <input type="text" id="email" name="email" value="" >
+
+                            <span class="help-inline"></span>
+                            <span class="help-block"></span>
+                        </div>
+                    </div>
+                    <div class="clearfix  " id="password_field">
+                        <label for="password">Password</label>
+                        <div class="input">
+
+                            <input type="password" id="password" name="password" >
+
+                            <span class="help-inline"></span>
+                                <span class="help-block">Minimum length: 5, Required</span>
+                        </div>
+                    </div>
+                    <div class="clearfix  " id="repeatPassword_field">
+                        <label for="repeatPassword">Repeat chosen password</label>
+                        <div class="input">
+
+                            <input type="password" id="repeatPassword" name="repeatPassword" >
+
+                            <span class="help-inline"></span>
+                            <span class="help-block"></span>
+                        </div>
+                    </div>
+                    <input type="submit" value="Sign up now" class="btn btn-primary">
+                </form>
+            </div>
+        </div>
     </div>
-</div>
-
-<div id="signup" class="row">
-
-    <div class="span3">
-        <form action="/signup" id='registerForm' >
-            <div class="clearfix  " id="name_field">
-                <label for="name">Your name</label>
-                <div class="input">
-
-                    <input type="text" id="name" name="name" value="" >
-
-                    <span class="help-inline"></span>
-                    <span class="help-block">Required</span>
-                </div>
-            </div>
-            <div class="clearfix  " id="email_field">
-                <label for="email">Your e-mail address</label>
-                <div class="input">
-
-                    <input type="text" id="email" name="email" value="" >
-
-                    <span class="help-inline"></span>
-                    <span class="help-block"></span>
-                </div>
-            </div>
-            <div class="clearfix  " id="password_field">
-                <label for="password">Password</label>
-                <div class="input">
-
-                    <input type="password" id="password" name="password" >
-
-                    <span class="help-inline"></span>
-                    <span class="help-block">Minimum length: 5, Required</span>
-                </div>
-            </div>
-            <div class="clearfix  " id="repeatPassword_field">
-                <label for="repeatPassword">Repeat chosen password</label>
-                <div class="input">
-
-                    <input type="password" id="repeatPassword" name="repeatPassword" >
-
-                    <span class="help-inline"></span>
-                    <span class="help-block"></span>
-                </div>
-            </div>
-            <input type="submit" value="Sign up now" class="btn btn-primary">
-        </form>
-    </div>
-
-    <div class="span3">
-        or sign up using one of the following providers:
-        <ul class="providers">
-            <li>
-                 <a href="/authenticate/twitter">
-                    <img alt="twitter icon" title="twitter" src="/assets/icons/twitter-24x24.png">
-                </a>
-            </li>
-            <li>
-                <a href="/authenticate/google">
-                    <img alt="google icon" title="google" src="/assets/icons/google-24x24.png">
-                </a>
-            </li>
-            <li>
-                <a href="/authenticate/linkedin">
-                    <img alt="linkedin icon" title="linkedin" src="/assets/icons/linkedin-24x24.png">
-                </a>
-            </li>
-            <li>
-                <a href="/authenticate/facebook">
-                    <img alt="facebook icon" title="facebook" src="/assets/icons/facebook-24x24.png">
-                </a>
-            </li>
-            <li>
-                <a href="javascript:void(0);" onclick="askOpenID('/authenticate/openid');">
-                    <img alt="openid icon" title="openid" src="/assets/icons/openid-24x24.png">
-                </a>
-            </li>
-            <li>
-                <a href="/authenticate/foursquare">
-                    <img alt="foursquare icon" title="foursquare" src="/assets/icons/foursquare-24x24.png">
-                </a>
-            </li>
-        </ul>
-    </div>
-
 </div>
 
 <script>
+    /*
     function askOpenID(url) {
         var openid = prompt("Please enter your OpenID:", "yourname.myopenid.com");
         if(openid) {
             window.location.href = url + "?p=" + encodeURIComponent(openid);
         }
     }
-
+    */
     function submitRegister() {
         $('#actionResult').css('display','none');
         var registerPost = $.post(
