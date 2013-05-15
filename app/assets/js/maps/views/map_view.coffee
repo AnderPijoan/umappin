@@ -194,12 +194,31 @@ class window.Maps.MapView extends Backbone.View
     )
     #keyboardControl.activate()
 
+    # Custom GetFeature handler
+    getFeatureControl = new OpenLayers.Control.GetFeature
+
+      protocol: new OpenLayers.Protocol.Script()
+    ###
+    multipleKey: 'shiftKey'
+    toggleKey: 'altKey'
+    multiple: true
+    box: true
+
+###
+    getFeatureControl.handler = new OpenLayers.Handler.Click(
+      getFeatureControl
+      'click': (e) => console.log e
+    )
+    getFeatureControl.events.register 'featureselected', @, (e) -> console.log e
 
     @controls.push toolbar
     @controls.push keyboardControl
+    @controls.push getFeatureControl
     @controls.push addMarkerControl
     @controls.push new OpenLayers.Control.LayerSwitcher()
     @controls.push new OpenLayers.Control.MousePosition()
+
+    getFeatureControl.activate()
 
     # TODO: Add more controls here ....
 
