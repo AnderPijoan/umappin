@@ -5,15 +5,19 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import javax.sql.DataSource;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.bson.types.ObjectId;
 import org.codehaus.jackson.JsonNode;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 public abstract class OsmFeature {
+	
+	protected DataSource ds;
 	
 	protected long id; 				// ID at OSM, negative if it is created by us
 	protected int version;          // Elements version
@@ -22,7 +26,7 @@ public abstract class OsmFeature {
 	protected Date timeStamp;       // Elements timestamp
 	protected LinkedHashMap<String,String> tags; // Elements tags
 	
-	protected boolean inUse;		// Know if this feature is being used by another user
+	protected ObjectId inUseByUser;		// Know if this feature is being used by a user
 	
 	
 	/**
@@ -30,6 +34,10 @@ public abstract class OsmFeature {
 	 */
 	public long getId() {
 		return id;
+	}
+	
+	public long getVesion() {
+		return version;
 	}
 
 	public Map<String,String> getTags() {
@@ -40,11 +48,11 @@ public abstract class OsmFeature {
 	 */
 
 	public boolean isInUse(){
-		return inUse;
+		return inUseByUser == null;
 	}
 	
-	public void serInUse(boolean inUse){
-		this.inUse = inUse;
+	public void serUserUsing(ObjectId oid){
+		this.inUseByUser = oid;
 	}
 	
 	public abstract OsmFeature save();
@@ -76,6 +84,7 @@ public abstract class OsmFeature {
 		StringBuilder result = new StringBuilder("hstore(array[");
 		boolean first = true;
 		
+		if (tags != null)
 		for(String key : tags.keySet()){
 			if (first){
 				result.append("'" + key + "'");
@@ -88,6 +97,7 @@ public abstract class OsmFeature {
 		first = true;
 		result.append("],array[");
 		
+		if (tags != null)
 		for (String value : tags.values()){
 			if (first){
 				result.append("'" + value + "'");
@@ -97,6 +107,7 @@ public abstract class OsmFeature {
 			}
 		}
 		
+		result.append("])");
 		return result.toString();
 	}
 }

@@ -30,7 +30,7 @@ import play.libs.Json;
 public class OsmNode extends OsmFeature {
 
 	private Point2D lonlat; //Latitude and Longitude in Lat/Lon format AND EPSG:4326. 
-	// It is traslated to an EPSG:90013 geometry in PostGIS
+	// It is translated to an EPSG:90013 geometry in PostGIS
 
 	/* EXPECTED DATA EXAMPLES :
 	 * 
@@ -49,6 +49,10 @@ public class OsmNode extends OsmFeature {
 	 *
 	 */
 
+	/** OSM JSON Node parser
+	 * @param osmXml
+	 * @throws ParseException
+	 */
 	public OsmNode(JsonNode json) throws ParseException{
 
 		id = json.findPath("id").getIntValue();
@@ -67,6 +71,10 @@ public class OsmNode extends OsmFeature {
 		}
 	}
 
+	/** OSM XML Node parser
+	 * @param osmXml
+	 * @throws ParseException
+	 */
 	public OsmNode(Node osmXml) throws ParseException{
 
 		Element nodeElement = (Element) osmXml;
@@ -78,18 +86,26 @@ public class OsmNode extends OsmFeature {
 		lonlat = new Point2D.Double(
 				Double.parseDouble(nodeElement.getAttribute("lon")),
 				Double.parseDouble(nodeElement.getAttribute("lat")));
-		timeStamp = new java.text.SimpleDateFormat("yyyy-mm-ddTHH:mm:ss:SSS").parse(nodeElement.getAttribute("timestamp"));
+		System.out.println("FIX TIMESTAMP : " + nodeElement.getAttribute("timestamp"));
+		timeStamp = new java.sql.Date(0);
+		//timeStamp = new java.text.SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssZ").parse("2010-01-02T10:04:33Z");
+		//timeStamp = new java.text.SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssZ").parse(nodeElement.getAttribute("timestamp"));
 
+		
 		NodeList tagList = nodeElement.getElementsByTagName("tag");
-		tags = new LinkedHashMap<String, String>();
+		if (tagList != null) {
 
-		for (int y = 0; y < tagList.getLength(); y++){
-			Node tag = tagList.item(y);
-
-			if (tag.getNodeType() == Node.ELEMENT_NODE)
-			{
-				Element tagElement = (Element) tag;
-				tags.put(tagElement.getAttribute("k"), tagElement.getAttribute("v"));
+			for (int y = 0; y < tagList.getLength(); y++){
+				
+				Node tag = tagList.item(y);
+				if (tag.getNodeType() == Node.ELEMENT_NODE)
+				{
+					Element tagElement = (Element) tag;
+					if (tags == null)
+						tags = new LinkedHashMap<String, String>();
+					
+					tags.put(tagElement.getAttribute("k"), tagElement.getAttribute("v"));
+				}
 			}
 		}
 	}
@@ -112,7 +128,7 @@ public class OsmNode extends OsmFeature {
 		OsmNode node = null;
 		try {
 			conn = ds.getConnection();
-			String sql = "select id, vers, usr, uid, timest, tags, inuse, st_asgeojson(geom) as geometry from osmnodes";
+			String sql = "select id, vers, usr, uid, timest, tags, inusebyuseroid, st_asgeojson(geom) as geometry from osmnodes";
 			st = conn.prepareStatement(sql);
 			rs = st.executeQuery();
 			while (rs.next()) {
@@ -143,7 +159,10 @@ public class OsmNode extends OsmFeature {
 		if(id == 0)
 			return null;
 
-		DataSource ds = DB.getDataSource();
+		if (this.ds == null){
+			this.ds = DB.getDataSource();
+		}
+		
 		Connection conn = null;
 		PreparedStatement st;
 		ResultSet rs;
@@ -152,30 +171,33 @@ public class OsmNode extends OsmFeature {
 			conn = ds.getConnection();
 
 			// Check if already exists
-			String sql = "select id from osmnodes where geom = st_geomfromgeojson(?)";
+			String sql = "select id from osmnodes where geom = ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913) OR id = ?";
 			st = conn.prepareStatement(sql);
 			st.setString(1, Json.stringify(this.getGeometry()));
+			st.setLong(2, this.id);
 			rs = st.executeQuery();
 
-			if (rs.getLong("id") != 0){
+			if (rs.next()){
 
-				this.id = rs.getLong("id");
+				System.out.println("COLLITION : " +rs.getLong("id"));
 				// TODO check tags
 
 			} else {
 				// Create new node in DB
-				sql = "insert into osmnodes (id, vers, usr, uid, timest, tags, inuse, geom) " +
-						"values (?, ?, ?, ?, to_date(?, 'YYYY-MM-DDTHH:mm:ss:SSS'), ?, st_geomfromgeojson(?))";
+				
+				sql = "insert into osmnodes (id, vers, usr, uid, timest, inusebyuseroid, geom " + 
+						(tags != null? ",tags" : "" ) + ") " +
+						"values (?, ?, ?, ?, ?, ?, ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913) " + 
+						(tags != null? ", " + tagsToHstoreFormat(tags) : "" ) + ") ";
 				st = conn.prepareStatement(sql);
 				st.setLong(1, this.id);
 				st.setInt(2, this.version);
 				st.setString(3, this.user);
 				st.setString(4, this.uid);
-				st.setDate(5, new java.sql.Date(timeStamp.getTime()));
-				st.setString(6, tagsToHstoreFormat(this.tags));
-				st.setBoolean(7, this.inUse);
-				st.setString(8, Json.stringify(this.getGeometry()));
-				rs = st.executeQuery();
+				st.setString(5, new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(timeStamp));
+				st.setString(6, this.inUseByUser == null? null : this.inUseByUser.toString());
+				st.setString(7, Json.stringify(this.getGeometry()));
+				st.executeUpdate();
 			}
 
 		} catch (SQLException e) {
@@ -196,7 +218,7 @@ public class OsmNode extends OsmFeature {
 	}
 
 	public void delete(){
-		
+
 		DataSource ds = DB.getDataSource();
 		Connection conn = null;
 		PreparedStatement st;
@@ -267,7 +289,7 @@ public class OsmNode extends OsmFeature {
 		osmNodeNode.put("version", version);
 		osmNodeNode.put("user", user);
 		osmNodeNode.put("uid", uid);
-		osmNodeNode.put("timestamp", new java.text.SimpleDateFormat("yyyy-mm-ddTHH:mm:ss:SSS").format(timeStamp));
+		osmNodeNode.put("timestamp", new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(timeStamp));
 		osmNodeNode.put("geometry", this.getGeometry());
 		osmNodeNode.put("properties", Json.toJson(tags));
 
