@@ -10,7 +10,7 @@ class window.Account.UsersFiltersView extends Backbone.View
   filters = []
   textFilter = ''
   el: 'div#users-filters'
-  events: 
+  events:
     'change #orderFilter':           'orderBy'
     'click #followsFilter':         'filterByFollows'
     'click #followedFilter':        'filterByFollowed'
