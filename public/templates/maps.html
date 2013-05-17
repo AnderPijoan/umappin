@@ -53,6 +53,8 @@
             <textarea id='newNoteCommentText_<%=rc.id%>' placeholder='type comment here'></textarea>
             <button class='button newNoteCommentButton' id='newNoteCommentButton_<%=rc.id%>'>Post Comment</button>
             <input type='hidden' id='newNoteCommentUrl_<%=rc.id%>' value='<%=rc.comment_url%>'>
+            <button class='button closeNoteButton' id='closeNoteButton_<%=rc.id%>'>Close note</button>
+            <input type='hidden' id='closeNoteUrl_<%=rc.id%>' value='<%=rc.close_url%>'>
         </div>
 </script>
 

@@ -4,7 +4,8 @@ class umappin.Router extends Backbone.Router
   routes:
     'account':            'account'
     'account/:id':        'account'
-    'maps':               'maps'
+    'featuresMap':        'featuresMap'
+    'markersMap':         'markersMap'
     'messages/*subroute': 'messages'
     'signup':             'signup'
     'login':              'login'
@@ -22,11 +23,17 @@ class umappin.Router extends Backbone.Router
       requirejs ['/assets/js/account/account_main.js'], () ->
         Account.init()
 
-  maps: () ->
+  featuresMap: () ->
     setTemplate "/assets/templates/maps.html", () ->
       requirejs ['/assets/js/lib/openlayers.min.js'], () ->
         requirejs ['/assets/js/maps/maps.js'], () ->
-          Maps.init()
+          Maps.initFeaturesMap()
+
+  markersMap: () ->
+    setTemplate "/assets/templates/maps.html", () ->
+      requirejs ['/assets/js/lib/openlayers.min.js'], () ->
+        requirejs ['/assets/js/maps/maps.js'], () ->
+          Maps.initMarkersMap()
 
   messages: () ->
     subroutes = @subroutes
