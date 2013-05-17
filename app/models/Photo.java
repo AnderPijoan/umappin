@@ -1,9 +1,13 @@
 package models;
 
 //import play.modules.morphia.Model;
+import com.google.code.morphia.Datastore;
 import com.google.code.morphia.annotations.*;
 
 
+import com.google.code.morphia.query.Query;
+import com.google.code.morphia.query.UpdateOperations;
+import com.google.code.morphia.query.UpdateResults;
 import controllers.MorphiaObject;
 import org.bson.types.ObjectId;
 import play.data.validation.Constraints.*;
@@ -16,6 +20,8 @@ import java.util.Set;
 @Entity
 public class Photo {
 
+    private static final String IS_BEAUTIFUL_COUNT = "is_beautiful_count";
+    private static final String IS_USEFUL_COUNT = "is_useful_count";
     @Id
     private ObjectId id;
 
@@ -40,6 +46,31 @@ public class Photo {
 
     @Embedded("date_created")
     private Date created;
+
+    @Embedded(IS_BEAUTIFUL_COUNT)
+    private int isBeautifulCount;
+
+    @Embedded(IS_USEFUL_COUNT)
+    private int isUsefulCount;
+
+    public int getBeautifulCount() {
+        return isBeautifulCount;
+    }
+
+    public void setBeautifulCount(int beautifulCount) {
+        isBeautifulCount = beautifulCount;
+    }
+
+
+    public int getUsefulCount() {
+        return isUsefulCount;
+    }
+
+    public void setUsefulCount(int usefulCount) {
+        isUsefulCount = usefulCount;
+    }
+
+
 
     public void setId(ObjectId id) {
         this.id = id;
@@ -76,6 +107,7 @@ public class Photo {
 
 
     public String getTitle() {
+
         return title;
     }
 
@@ -154,6 +186,39 @@ public class Photo {
     public void delete() {
         this.cleanUpExistingContents();
         MorphiaObject.datastore.delete(this);
+    }
+
+    public void incrementCountersAndSave(int useful, int beautiful) {
+        Datastore ds = MorphiaObject.datastore;
+
+        Query<Photo> updateQuery = ds.createQuery(Photo.class)
+                .field("_id").equal(this.getId());
+
+        UpdateOperations ops = ds.createUpdateOperations(Photo.class)
+                .inc(IS_USEFUL_COUNT, useful)
+                .inc(IS_BEAUTIFUL_COUNT, beautiful);
+        //note that 'update' gives a compile time error (overloaded
+        // 'update' methods are not correctly resolved by the compiler)
+        // so we use the 'updateFirst' version, that is fine, given that we
+        // expect one result only
+        ds.updateFirst(updateQuery, ops);
+
+
+        //here there is slight chance that the in-memory model (this.isUsefulCount)
+        // gets out of sync
+        // if the current value of isBeautifulCount is stale (updated concurrently
+        // by another user)
+        // The update however is atomic (so in the db it is always correct)
+        this.isUsefulCount += useful;
+        this.isBeautifulCount += beautiful;
+    }
+
+    public static void deleteUserLikesForPhoto(Photo photo) {
+        Query q = MorphiaObject.datastore.createQuery(PhotoUserLike.class)
+                .field(PhotoUserLike.PHOTO_ID)
+                .equal(photo.getId());
+        MorphiaObject.datastore.delete(q);
+
     }
 
 

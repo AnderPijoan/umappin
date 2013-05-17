@@ -7,7 +7,7 @@ class window.Account.UserFollowsView extends Backbone.View
   follows: null
   followed: null
   tagName: 'div'
-  className: 'span1'
+  className: 'span2'
 
   events:
     "click button":  "follow"

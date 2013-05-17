@@ -2,6 +2,7 @@ class umappin.Router extends Backbone.Router
   subroutes: {}
   params: null
   routes:
+    '':                   'main'
     'account':            'account'
     'account/:id':        'account'
     'featuresMap':        'featuresMap'
@@ -16,6 +17,14 @@ class umappin.Router extends Backbone.Router
     'leafletmap':         'leafletmap'
     'test':               'test'
     'synctest':           'syncTest'
+
+  main: () ->
+    json = sessionStorage.getItem "user"
+    console.log(json);
+    if !!json
+      setTemplate "/assets/templates/main_logged.html"
+    else
+      setTemplate "/assets/templates/main.html"
 
   account: (id) ->
     @params = if id? then id: id else null
@@ -38,9 +47,13 @@ class umappin.Router extends Backbone.Router
   messages: () ->
     subroutes = @subroutes
     requirejs ['/assets/js/messagesApp/collection/discussionCollection.js'], () ->
-      requirejs ['/assets/js/messagesApp/routers/router.js'], () ->
-        subroutes.messagesRouter or= new messagesApp.Router "messages/"
-  
+     requirejs ['/assets/js/messagesApp/model/user.js'], () ->
+        requirejs ['/assets/js/messagesApp/collection/followedCollection.js',
+                  '/assets/js/messagesApp/view/user_view.js'], () ->
+
+          requirejs ['/assets/js/messagesApp/routers/router.js'], () ->
+            subroutes.messagesRouter or= new messagesApp.Router "messages/"
+
   login: () ->
     setTemplate "/assets/templates/login.html"
     requirejs ['/assets/js/messagesApp/routers/router.js'], () ->
@@ -48,8 +61,9 @@ class umappin.Router extends Backbone.Router
 
   logout: () ->
     $.get "/logout", () ->
-      setTemplate '/assets/templates/logout.html'
+      sessionStorage.removeItem "user"
       updateSessionViews ""
+      location.href='./';
 
   signup: () ->  # Need to separate js source
     setTemplate "/assets/templates/signup.html"

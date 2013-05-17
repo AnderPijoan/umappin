@@ -50,6 +50,7 @@ class window.Maps.MarkersMapView extends Maps.MapView
                 that.map.addPopup(@popup)
                 @popup.show()
                 $('.newNoteCommentButton').bind('click', (e) -> that.postNoteComment(e))
+                $('.closeNoteButton').bind('click', (e) -> that.closeNote(e))
               OpenLayers.Event.stop(evt)
             @markersLayer.addMarker(marker)
         @map.zoomToExtent bounds

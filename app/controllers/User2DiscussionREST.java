@@ -59,9 +59,6 @@ public class User2DiscussionREST extends ItemREST {
 		}
 	}
 
-
-
-
 	public static Result getDiscussion(String discussionId) {
 		final User user = Application.getLocalUser(session());
 		if (user == null){
