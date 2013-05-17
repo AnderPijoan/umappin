@@ -5,70 +5,83 @@
 <!------------------------------------- HTML -------------------------------------->
 <div class="well">
 
-    <ul class="nav nav-tabs">
-        <li class="active"><a href="#profile" data-toggle="tab">Profile</a></li>
-        <li><a href="#users" data-toggle="tab" onclick='Account.loadUsersData()'>Users</a></li>
-        <li><a href="#statistics" data-toggle="tab">Statistics</a></li>
-    </ul>
+	<ul class="nav nav-tabs">
+		<li class="active"><a href="#profile" data-toggle="tab">Profile</a></li>
+		<li><a href="#users" data-toggle="tab"
+			onclick='Account.loadUsersData()'>Users</a></li>
+		<li><a href="#statistics" data-toggle="tab">Statistics</a></li>
+	</ul>
 
-    <div id="myTabContent" class="tab-content">
+	<div id="myTabContent" class="tab-content">
 
-        <div class="tab-pane active in" id="profile">
-            <form id="profile-form"></form>
-        </div>
+		<div class="tab-pane active in" id="profile">
+			<form id="profile-form"></form>
+		</div>
 
-        <div class="tab-pane fade" id="users">
-            <div id='users-filters'>
+		<div class="tab-pane fade" id="users">
+			<div id='users-filters'>
 
-                <div class="row">
+				<div class="row">
 
-                    <div class="span3">
-                        <form class="navbar-search pull-left">
-                            <input id="textFilter" type="search" placeholder="Search" class='input-medium'>
-                        </form>
-                    </div>
+					<div class="span3">
+						<form class="navbar-search pull-left">
+							<input id="textFilter" type="search" placeholder="Search"
+								class='input-medium'>
+						</form>
+					</div>
 
-                    <div class="btn-group span3" data-toggle="buttons-checkbox">
-                        <button type="button" id="followsFilter" class="btn btn-primary">Following</button>
-                        <button type="button" id="followedFilter" class="btn btn-primary">Followed By</button>
-                    </div>
+					<div class="btn-group span3" data-toggle="buttons-checkbox">
+						<button type="button" id="followsFilter" class="btn btn-primary">Following</button>
+						<button type="button" id="followedFilter" class="btn btn-primary">Followed
+							By</button>
+					</div>
 
-                </div>
+				</div>
 
-                <div class="row">
+				<div class="row">
 
-                    <div class="span1">
-                        <h4>Order By:</h4>
-                    </div>
+					<div class="span1">
+						<h4>Order By:</h4>
+					</div>
 
-                    <div class="span2">
-                        <select id='orderFilter'>
-                            <option value='name'>Name</option>
-                            <option value='lastLogin'>Last Login</option>
-                            <option value='discussions'>Discussions</option>
-                            <option value='awards'>Awards</option>
-                        </select>
-                    </div>
+					<div class="span2">
+						<select id='orderFilter'>
+							<option value='name'>Name</option>
+							<option value='lastLogin'>Last Login</option>
+							<option value='discussions'>Discussions</option>
+							<option value='awards'>Awards</option>
+						</select>
+					</div>
 
-                </div>
+				</div>
 
-                <div class="row">
+				<div class="row">
 
-                    <div class="span7">
-                        <ul id='userlist'></ul>
-                    </div>
+					<div class="span7">
+						<ul id='userlist'></ul>
+					</div>
 
-                </div>
+				</div>
 
-            </div>
+			</div>
 
-        </div>
-        <div class="tab-pane fade" id="statistics">
-            <section>
-            </section>
-        </div>
+		</div>
+		<div class="tab-pane fade" id="statistics">
+			<h4>My Statistics:</h4>
+			<div id="main-statistics">
+				<span>Level</span>
+			</div>
 
-    </div>
+			<div id="statistics-all">
+				<ul id="statistic-list"></ul>
+			</div>
+
+			<div id="awards">
+				<ul id="award-list"></ul>
+			</div>
+		</div>
+
+	</div>
 
 </div>
 

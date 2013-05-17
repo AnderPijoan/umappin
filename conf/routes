@@ -99,17 +99,12 @@ POST	/messages/:id               controllers.User2DiscussionREST.replyToMessage(
 GET     /awards						controllers.AwardREST.getAwards()
 GET     /awards/types				controllers.AwardREST.getAwardTypes()
 GET		/awards/:id					controllers.AwardREST.getAward(id: String)
-GET     /awards/type/:type			controllers.AwardREST.findByAwardType(type: String)
+GET     /awards/types/:type			controllers.AwardREST.findByAwardType(type: String)
 
 # REST CRUD for statistics
 GET     /users/:id/statistics		controllers.UserStatisticsREST.getUserStatistics(id: String)
 PUT		/users/:id/statistics		controllers.UserStatisticsREST.updateUserStatistics(id: String)
 # --------------------------------------------------------------------------
-
-#GET     /rest/awards				controllers.AwardREST.all
-#GET     /rest/awards/:type/:limit	controllers.AwardREST.findByAwardTypeLimit(type: String, limit: Integer)
-#GET     /rest/user/:id/awards	    controllers.AwardREST.findByUserId(id: String)
-#POST	/rest/user/:id/awards		controllers.AwardREST.saveUserAward(id: String)
 
 # REST CRUD for pictures
 GET     /photos/:id             controllers.PhotosREST.getPhoto(id: String)
