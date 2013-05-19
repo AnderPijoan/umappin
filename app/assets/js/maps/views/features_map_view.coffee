@@ -5,7 +5,7 @@ _.templateSettings.variable = 'rc'
 class window.Maps.FeaturesMapView extends Maps.MapView
   drawLayer: null
 
-  # ---------------------------- Controls Layer ------------------------------ #
+  # ---------------------------- Controls ------------------------------ #
   initControls: ->
     OpenLayers.Feature.Vector.style['default']['strokeWidth'] = '2'
     # allow testing of specific renderers via "?renderer=Canvas", etc
@@ -52,8 +52,7 @@ class window.Maps.FeaturesMapView extends Maps.MapView
         'displayClass': 'olControlModifyFeature'
         mode: OpenLayers.Control.ModifyFeature.RESHAPE | OpenLayers.Control.ModifyFeature.DRAG
         onModificationStart: (feature) => console.log feature
-        onModificationEnd: (feature) =>
-          @updateFeature feature
+        onModificationEnd: (feature) => @updateFeature feature
       )
 
       new OpenLayers.Control.ModifyFeature(
@@ -70,24 +69,9 @@ class window.Maps.FeaturesMapView extends Maps.MapView
     )
     toolbar.addControls toolBarControls
 
-    addMarkerControl = new OpenLayers.Control
-    addMarkerControl.handler = new OpenLayers.Handler.Click(
-      addMarkerControl
-      'click': (e) => @createMarker @map.getLonLatFromViewPortPx e.xy
-    )
-
-    # Custom Keyboard handler
-    keyboardControl = new OpenLayers.Control
-    keyboardControl.handler = new OpenLayers.Handler.Keyboard(
-      keyboardControl
-      'keyup': (e) =>
-        console.log "key #{e.keyCode}"
-        if e.keyCode == 46 then (@deleteFeature feature) for feature in @selectedFeatures
-    )
-
     # Custom GetFeature handler
     getFeatureControl = new OpenLayers.Control.GetFeature
-      protocol: new OpenLayers.Protocol.Script()
+      protocol: new OpenLayers.Protocol.HTTP()
       multipleKey: 'shiftKey'
       toggleKey: 'altKey'
       multiple: true
@@ -105,14 +89,24 @@ class window.Maps.FeaturesMapView extends Maps.MapView
 
     @map.addLayer @drawLayer
     super
-    #keyboardControl.activate()
-    #getFeatureControl.activate()
+    getFeatureControl.activate()
 
+
+  # ---------------------------- Initialization ------------------------------ #
+  initialize: ->
+    @controls = []
+    @baseLayers = []
+    super
+
+
+  # ---------------------------- Renderization ------------------------------ #
   render: ->
     features = @model.get 'features'
     @drawFeature f for f in features unless features == null
     super
 
+
+  # ---------------------------- REST/Feature handlers ------------------------------ #
   drawFeature: (featureId) ->
     geojsonFormat = new OpenLayers.Format.GeoJSON()
     feature = new Maps.Feature id: featureId

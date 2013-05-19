@@ -20,7 +20,6 @@ class umappin.Router extends Backbone.Router
 
   main: () ->
     json = sessionStorage.getItem "user"
-    console.log(json);
     if !!json
       setTemplate "/assets/templates/main_logged.html"
     else
@@ -48,9 +47,10 @@ class umappin.Router extends Backbone.Router
     subroutes = @subroutes
     requirejs ['/assets/js/messagesApp/collection/discussionCollection.js'], () ->
      requirejs ['/assets/js/messagesApp/model/user.js'], () ->
-        requirejs ['/assets/js/messagesApp/collection/followedCollection.js',
-                  '/assets/js/messagesApp/view/user_view.js'], () ->
-
+        requirejs [
+          '/assets/js/messagesApp/collection/followedCollection.js',
+          '/assets/js/messagesApp/view/user_view.js'
+        ], () ->
           requirejs ['/assets/js/messagesApp/routers/router.js'], () ->
             subroutes.messagesRouter or= new messagesApp.Router "messages/"
 

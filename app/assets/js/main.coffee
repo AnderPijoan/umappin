@@ -26,6 +26,6 @@ $ () ->
   requirejs ['/assets/js/router.js'], () ->
     umappin.router or= new umappin.Router
     Backbone.history.start()
-  sessionRequest = $.get "/sessionuser"
+  sessionRequest = $.get "/sessionuser?#{new Date().getTime()}"
   sessionRequest.done (data) -> setSessionUser data
   updateSessionViews ""

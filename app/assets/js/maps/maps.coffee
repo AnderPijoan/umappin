@@ -6,10 +6,9 @@ Maps.initFeaturesMap = () ->
       requirejs ['/assets/js/maps/views/map_view.js'], () ->
         requirejs ['/assets/js/maps/views/features_map_view.js'], () ->
           usrMaps  = Account.session.get 'maps'
-          Maps.map = null
           if usrMaps.length
             Maps.featuresMap = new Maps.Map id: usrMaps[0]
-            Maps.featuresMap.fetch complete: () -> Maps.featuresMapview.render()
+            Maps.featuresMap.fetch complete: () -> Maps.featuresMapView.render()
           else
             Maps.featuresMap = new Maps.Map
             Maps.featuresMap.save
@@ -18,7 +17,7 @@ Maps.initFeaturesMap = () ->
                   usrMaps.push resp.get 'id'
                   Account.session.save maps: usrMaps
               }
-          Maps.featuresMapview = new Maps.FeaturesMapView
+          Maps.featuresMapView = new Maps.FeaturesMapView
             el: $('#map-container')
             model: Maps.featuresMap
 
