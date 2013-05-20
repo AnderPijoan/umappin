@@ -28,3 +28,11 @@ Maps.initMarkersMap = () ->
         Maps.markersMapview = new Maps.MarkersMapView
           el: $('#map-container')
           model: new Maps.Map
+
+Maps.initSearchMap = () ->
+  requirejs ['/assets/js/maps/models/map_model.js'], () ->
+    requirejs ['/assets/js/maps/views/map_view.js'], () ->
+      requirejs ['/assets/js/maps/views/search_map_view.js'], () ->
+        Maps.searchMapview = new Maps.SearchMapView
+          el: $('#map-container')
+          model: new Maps.Map
