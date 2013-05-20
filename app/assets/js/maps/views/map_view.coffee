@@ -17,10 +17,10 @@ class window.Maps.MapView extends Backbone.View
     baseLayers = [
 
       new OpenLayers.Layer.OSM(
-        "OSM"
-        [ "http://a.tile.opencyclemap.org/cycle/${z}/${x}/${y}.png"
-          "http://b.tile.opencyclemap.org/cycle/${z}/${x}/${y}.png"
-          "http://c.tile.opencyclemap.org/cycle/${z}/${x}/${y}.png" ]
+        "OpenStreetMap"
+        [ "http://a.tile.openstreetmap.org/cycle/${z}/${x}/${y}.png"
+          "http://b.tile.openstreetmap.org/cycle/${z}/${x}/${y}.png"
+          "http://c.tile.openstreetmap.org/cycle/${z}/${x}/${y}.png" ]
         layers: "basic"
         isBaseLayer: true
         resolutions: [156543.03390625, 78271.516953125, 39135.7584765625,
@@ -43,7 +43,7 @@ class window.Maps.MapView extends Backbone.View
       )
 
       new OpenLayers.Layer.Bing(
-        name: "Bing-Road"
+        name: "Bing Road"
         key: "AqTGBsziZHIJYYxgivLBf0hVdrAk9mWO5cQcb8Yux8sW5M8c8opEC2lZqKR1ZZXf"
         type: "Road"
         metadataParams: { mapVersion: "v1" }
@@ -51,23 +51,16 @@ class window.Maps.MapView extends Backbone.View
       )
 
       new OpenLayers.Layer.Bing(
-        name: "Bing-Aerial"
+        name: "Bing Aerial"
         key: "AqTGBsziZHIJYYxgivLBf0hVdrAk9mWO5cQcb8Yux8sW5M8c8opEC2lZqKR1ZZXf"
         type: "Aerial"
         isBaseLayer: true
       )
 
       new OpenLayers.Layer.Bing(
-        name: "Bing-AerialWithLabels"
+        name: "Bing Aerial With Labels"
         key: "AqTGBsziZHIJYYxgivLBf0hVdrAk9mWO5cQcb8Yux8sW5M8c8opEC2lZqKR1ZZXf"
         type: "AerialWithLabels"
-        isBaseLayer: true
-      )
-
-      new OpenLayers.Layer.WMS(
-        "WMS"
-        "http://vmap0.tiles.osgeo.org/wms/vmap0"
-        layers: "basic"
         isBaseLayer: true
       )
 

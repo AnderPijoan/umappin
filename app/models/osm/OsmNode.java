@@ -166,6 +166,7 @@ public class OsmNode extends OsmFeature {
 		Connection conn = null;
 		PreparedStatement st;
 		ResultSet rs;
+		
 		try {
 
 			conn = ds.getConnection();
@@ -180,7 +181,7 @@ public class OsmNode extends OsmFeature {
 			if (rs.next()){
 
 				System.out.println("COLLITION : " +rs.getLong("id"));
-				// TODO check tags
+				// TODO
 
 			} else {
 				// Create new node in DB
@@ -214,12 +215,53 @@ public class OsmNode extends OsmFeature {
 	}
 
 	public OsmNode update(){
-		return (id == 0) ? null : this;
+		
+		if(id == 0)
+			return null;
+
+		if (this.ds == null){
+			this.ds = DB.getDataSource();
+		}
+		
+		Connection conn = null;
+		PreparedStatement st;
+		ResultSet rs;
+		
+		// Only the user with the OID = inuserbyuseroid can update this geometry
+		
+		try {
+			
+			conn = ds.getConnection();
+
+			// Check if already exists the geometry we are updating to
+			String sql = "select id from osmnodes where (geom = ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913) AND id <> ?) ";
+			st = conn.prepareStatement(sql);
+			st.setString(1, Json.stringify(this.getGeometry()));
+			st.setLong(2, this.id);
+			rs = st.executeQuery();
+			
+			if (rs.next()){
+
+				System.out.println("COLLITION : " +rs.getLong("id"));
+				// TODO
+			}
+			
+			// TODO
+		} catch (Exception e) {
+		}
+		
+		return this;
 	}
 
 	public void delete(){
 
-		DataSource ds = DB.getDataSource();
+		if(id == 0)
+			return;
+
+		if (this.ds == null){
+			this.ds = DB.getDataSource();
+		}
+		
 		Connection conn = null;
 		PreparedStatement st;
 		try {

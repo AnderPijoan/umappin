@@ -23,13 +23,13 @@ class window.Maps.MarkersMapView extends Maps.MapView
 
 
     # Geolocation layer & control
-    geoLocationLayer = new OpenLayers.Layer.Vector("geoLocationLayer")
+    geoLocationLayer = new OpenLayers.Layer.Vector("Your location")
     @map.addLayer(geoLocationLayer);
     geolocationControl = new OpenLayers.Control.Geolocate
       bind: true
       watch: true
       geolocationOptions:
-        enableHighAccuracy: false
+        enableHighAccuracy: true
         maximumAge: 0
         timeout: 7000
     geolocationControl.follow = true
@@ -42,11 +42,11 @@ class window.Maps.MarkersMapView extends Maps.MapView
           e.point
           {}
           {
-            graphicName: 'star'
-            strokeColor: '#448844'
+            graphicName: 'circle'
+            strokeColor: '#0000FF'
             strokeWidth: 1
             fillOpacity: 0.5
-            fillColor: '#aa4444'
+            fillColor: '#0000BB'
             pointRadius: 20
           }
         )
