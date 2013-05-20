@@ -37,23 +37,24 @@
 
 <!------------------------------------- Notes popup template -------------------------------------->
 <script type='text/template' id='notes-popup-template'>
-        <h4>Note created on: &nbsp;<%=rc.date_created%></h4>
+        <h4>Note created on: &nbsp;<%=rc.properties.date_created%></h4>
+        <label>Location: Lon - <%=rc.geometry.coordinates[0]%>, Lat - <%=rc.geometry.coordinates[1]%></label>
         <div class='noteComments'>
-            <% for (var c in rc.comments) { %>
+            <% for (var c in rc.properties.comments) { %>
                 <div class='noteComment'>
-                    Comment by:&nbsp;<a href='<%=rc.comments[c].user_url%>'><%=rc.comments[c].user || 'Unknown'%></a>
-                    <label><%=rc.comments[c].date%>:&nbsp;<%=rc.comments[c].action%></label>
-                    <%=rc.comments[c].html%>
+                    Comment by:&nbsp;<a href='<%=rc.properties.comments[c].user_url%>'><%=rc.properties.comments[c].user || 'Unknown'%></a>
+                    <label><%=rc.properties.comments[c].date%>:&nbsp;<%=rc.properties.comments[c].action%></label>
+                    <%=rc.properties.comments[c].html%>
                 </div>
             <% } %>
         </div>
         <div class='newNoteComment'>
             <label>Add a new Comment:</label>
-            <textarea id='newNoteCommentText_<%=rc.id%>' placeholder='type comment here'></textarea>
-            <button class='button newNoteCommentButton' id='newNoteCommentButton_<%=rc.id%>'>Post Comment</button>
-            <input type='hidden' id='newNoteCommentUrl_<%=rc.id%>' value='<%=rc.comment_url%>'>
-            <button class='button closeNoteButton' id='closeNoteButton_<%=rc.id%>'>Close note</button>
-            <input type='hidden' id='closeNoteUrl_<%=rc.id%>' value='<%=rc.close_url%>'>
+            <textarea id='newNoteCommentText_<%=rc.properties.id%>' placeholder='type comment here'></textarea>
+            <button class='button newNoteCommentButton' id='newNoteCommentButton_<%=rc.properties.id%>'>Post Comment</button>
+            <input type='hidden' id='newNoteCommentUrl_<%=rc.properties.id%>' value='<%=rc.properties.comment_url%>'>
+            <button class='button closeNoteButton' id='closeNoteButton_<%=rc.properties.id%>'>Close note</button>
+            <input type='hidden' id='closeNoteUrl_<%=rc.properties.id%>' value='<%=rc.properties.close_url%>'>
         </div>
 </script>
 
@@ -69,8 +70,10 @@
 <!------------------------------------- New note template -------------------------------------->
 <script type='text/template' id='notes-new-template'>
     <div class='newNote'>
+        <label>Location: Lon - <%=rc.lon%>, Lat - <%=rc.lat%></label>
         <label>Create a new Note:</label>
-        <textarea id='newNoteText-<%=rc%>' placeholder='type comment here'></textarea>
-        <button class='button newNoteButton' id='newNoteButton-<%=rc%>'>Post Note</button>
+        <textarea id='newNoteText-<%=rc.id%>' placeholder='type comment here'></textarea>
+        <button class='button newNoteButton' id='newNoteButton-<%=rc.id%>'>Post Note</button>
+        <button class='button removeMarkerButton' id='removeMarkerButton-<%=rc.id%>'>Remove Marker</button>
     </div>
 </script>
