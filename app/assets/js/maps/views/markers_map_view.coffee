@@ -78,7 +78,7 @@ class window.Maps.MarkersMapView extends Maps.MapView
     @minMarkers = @options.minMarkers ? @minMarkers
     super
     # Markers layer
-    @markersLayer = new OpenLayers.Layer.Markers "Markers"
+    @markersLayer = new OpenLayers.Layer.Markers "Notes"
     @map.addLayer @markersLayer
 
 
