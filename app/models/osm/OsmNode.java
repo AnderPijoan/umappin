@@ -139,7 +139,7 @@ public class OsmNode extends OsmFeature {
 						0,
 						0,
 						rs.getDate("timestamp"),
-						new LinkedHashMap<String,String>());
+						hstoreFormatToTags(rs.getString("tags")));
 				node.setGeometry(Json.parse(rs.getString("geometry")));
 			}
 		} catch (SQLException e) {
@@ -154,6 +154,9 @@ public class OsmNode extends OsmFeature {
 		return node;
 	}
 
+	/** Update NodeOSM
+	 * IMPORTANT: Check previously if the user is its owner (inUseByUserOID) before updating
+	 */
 	public OsmNode save(){
 
 		if(id == 0)
@@ -180,7 +183,7 @@ public class OsmNode extends OsmFeature {
 
 			if (rs.next()){
 
-				System.out.println("COLLITION : " +rs.getLong("id"));
+				// Collition
 				// TODO
 
 			} else {
@@ -214,6 +217,10 @@ public class OsmNode extends OsmFeature {
 		return this;
 	}
 
+	/** Update NodeOSM
+	 * IMPORTANT: Check previously if the user is its owner (inUseByUserOID) before updating
+	 * IMPORTANT: Version must be version++
+	 */
 	public OsmNode update(){
 		
 		if(id == 0)
@@ -225,34 +232,44 @@ public class OsmNode extends OsmFeature {
 		
 		Connection conn = null;
 		PreparedStatement st;
-		ResultSet rs;
 		
-		// Only the user with the OID = inuserbyuseroid can update this geometry
+		// Only the user with the OID = inuserbyuseroid should update this geometry
 		
 		try {
 			
 			conn = ds.getConnection();
 
 			// Check if already exists the geometry we are updating to
-			String sql = "select id from osmnodes where (geom = ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913) AND id <> ?) ";
+			String sql = "update osmnodes set vers = ?, usr = ?, uid = ?, timest = ?, inusebyuseroid = ?, " +
+						"geom = ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913)" + 
+						(tags != null? ", tags = " + tagsToHstoreFormat(tags) : "" ) +
+						" where id = ?) ";
 			st = conn.prepareStatement(sql);
-			st.setString(1, Json.stringify(this.getGeometry()));
-			st.setLong(2, this.id);
-			rs = st.executeQuery();
+			st.setInt(1, this.version);
+			st.setString(2, this.user);
+			st.setString(3, this.uid);
+			st.setString(4, new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(timeStamp));
+			st.setString(5, this.inUseByUser == null? null : this.inUseByUser.toString());
+			st.setString(6, Json.stringify(this.getGeometry()));
+			st.setLong(7, this.id);
+			st.executeUpdate();
 			
-			if (rs.next()){
-
-				System.out.println("COLLITION : " +rs.getLong("id"));
-				// TODO
-			}
-			
-			// TODO
-		} catch (Exception e) {
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null)
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 		}
-		
 		return this;
 	}
 
+	/** Delete NodeOSM
+	 * IMPORTANT: Check previously if the user is its owner (inUseByUserOID) before updating
+	 */
 	public void delete(){
 
 		if(id == 0)

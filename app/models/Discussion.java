@@ -165,7 +165,7 @@ public class Discussion extends Item {
 				ObjectNode userNode = Json.newObject();
 				userNode.put("id", user.id.toString());
 				userNode.put("name", user.name);
-				userNode.put("photo", "http://paginaspersonales.deusto.es/dipina/images/photo-txikia2.jpg");
+				userNode.put("profilePicture", user.profilePicture != null ? user.profilePicture.toString() : null);
 				users.add(userNode);
 			}
 		}
