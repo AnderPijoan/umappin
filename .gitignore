@@ -16,4 +16,4 @@ dist
 .idea_modules
 bin
 RUNNING_PID
-
+*.orig

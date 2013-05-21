@@ -16,73 +16,57 @@
                                 <div class="add-on"><span class="icon-key"></span></div>
                                 <input type="password" id="password_login" name="password_login" class="span3" placeholder="Password">
                             </div>
+                            <div class="input-prepend">
+                                <div class="add-on"><span class="icon-users"></span></div>
+                                <input type="text" id="human" name="human" class="span3" placeholder="2 + 1?">
+                            </div>
                             <input type="submit" value="Log in" class="btn btn-primary span3">
                         </div>
                         <div class="span3">
                             <h4>We gotta check... are you human?</h4>
+                            <div id="loginError"></div>
                         </div>
                     </div>
                 </form>
             </div>
             <div class="box-footer">
-                <h6 href="#forgotPassword" data-toggle="modal">Forgot your password? Find your accoung now</h6>
-                <h6 href="#forgotPassword" data-toggle="modal">New to uMappin? Sign up now</h6>
+                <h6><a href="#forgotPassword">Forgot your password? Find your accoung now</a></h6>
+                <h6><a href="#signup">New to uMappin? Sign up now</a></h6>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    /*
-    function askOpenID(url) {
-        var openid = prompt("Please enter your OpenID:", "yourname.myopenid.com");
-        if(openid) {
-            window.location.href = url + "?p=" + encodeURIComponent(openid);
-        }
-    }
-    */
     function submitLogin() {
-        $('#actionResult').css('display','none');
         var loginPost = $.post(
           $('#loginForm').attr('action'),
           "email=" + $('#email_login').val() + "&password=" + $('#password_login').val()
         );
         loginPost.done(function( data ) {
-            /*
             $.get(
-                // Test for token-based authentication
-                //'/tokenauth/' + data.token + '/sessionuser',
                 '/sessionuser',
                 function(data) {
-                    setSessionUser(data);
-                    location.href='./';
-                    sessionStorage.setItem("user", JSON.stringify(data));
-                    $('#content').html('');
+                    updateSessionViews(data.name);
+                    location.href='./'
                 }
             );
-            */
-            sessionStorage.setItem('token', data.token);
-            $.ajax({
-                url: "/sessionuser",
-                data: { signature: 'authHeader' },
-                type: "GET",
-                beforeSend: function(xhr){xhr.setRequestHeader('token', data.token);},
-                success: function(resp) {
-                    setSessionUser(resp);
-                    $('#actionResult').css('display','block').empty()
-                                      .html("<div class='alert alert-success'>User Authenticated</div>");
-                    $('#content').html('');
-                }
-            });
         });
         loginPost.error(function( data ) {
-            $('#actionResult').css('display','block').empty().html(
+            $('#loginError').css('display','block').empty().html(
                 "<div class='alert alert-error'>" + data.responseText + "</div>");
         });
     }
 
     $('#loginForm').submit(function(event) {
         event.preventDefault();
-        submitLogin();
+
+        if($('#human').val() == '3'){
+            submitLogin();
+        }else{
+            $('#loginError').css('display','block').empty().html(
+                "<div class='alert alert-error'>Why didn't you reply the question?</div>");
+        }
+
     });
 </script>

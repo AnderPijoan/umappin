@@ -120,6 +120,26 @@ body {
   -o-background-size: cover;
   background-size: cover;
 }
+#content .offset1-5 {
+  margin-left: 50px;
+}
+#content .alert-error {
+  border: 1px solid #b94a48;
+}
+#content .alert-error ul {
+  list-style-type: none;
+  margin: 0;
+}
+#content .alert-success {
+  border: 1px solid #468847;
+}
+#content a {
+  color: #450497;
+}
+#content a:hover,
+#content a:focus {
+  color: #30036a;
+}
 #content textarea:focus,
 #content input[type="text"]:focus,
 #content input[type="password"]:focus,
@@ -198,7 +218,10 @@ body {
   width: 166px;
 }
 #content form .input-prepend .span6 {
-  width: 406px;
+  width: 396px;
+}
+#content form .input.span6 {
+  width: 436px;
 }
 #content h4 {
   text-align: left;
@@ -251,30 +274,48 @@ body {
   display: none;
 }
 @media (min-width: 1200px) {
+  #content .offset1-5 {
+    margin-left: 65px;
+  }
+  #content form input.span6 {
+    width: 546px;
+  }
   #content form .input-prepend .span3 {
     width: 216px;
   }
   #content form .input-prepend .span6 {
-    width: 516px;
+    width: 506px;
   }
   .box .box-body .span3 {
     width: 258px;
   }
 }
 @media (max-width: 979px) and (min-width: 768px) {
+  #content .offset1-5 {
+    margin-left: 41px;
+  }
   #content form .input-prepend .span3 {
     width: 112px;
   }
   #content form .input-prepend .span6 {
-    width: 298px;
+    width: 288px;
+  }
+  #content form input.span6 {
+    width: 329px;
   }
   .box .box-body .span3 {
     width: 154px;
   }
 }
 @media (max-width: 767px) and (min-width: 480px) {
+  #content .offset1-5 {
+    margin-left: 0;
+  }
   #content .btn-primary {
     width: 98%;
+  }
+  #content form input.span6 {
+    margin: 0;
   }
   #content form .input-prepend {
     display: block;
@@ -298,8 +339,14 @@ body {
   }
 }
 @media (max-width: 480px) {
+  #content .offset1-5 {
+    margin-left: 0;
+  }
   #content .btn-primary {
     width: 93%;
+  }
+  #content form input.span6 {
+    margin: 0;
   }
   #content form .input-prepend {
     display: block;

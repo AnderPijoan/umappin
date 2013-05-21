@@ -2,7 +2,6 @@ class umappin.Router extends Backbone.Router
   subroutes: {}
   params: null
   routes:
-    '':                   'main'
     'account':            'account'
     'account/:id':        'account'
     'maps':               'maps'
@@ -16,14 +15,6 @@ class umappin.Router extends Backbone.Router
     'leafletmap':         'leafletmap'
     'test':               'test'
     'synctest':           'syncTest'
-
-  main: () ->
-    json = sessionStorage.getItem "user"
-    console.log(json);
-    if !!json
-      setTemplate "/assets/templates/main_logged.html"
-    else
-      setTemplate "/assets/templates/main.html"
 
   account: (id) ->
     @params = if id? then id: id else null
@@ -56,7 +47,7 @@ class umappin.Router extends Backbone.Router
     $.get "/logout", () ->
       sessionStorage.removeItem "user"
       updateSessionViews ""
-      location.href='./';
+      location.href='./'
 
   signup: () ->  # Need to separate js source
     setTemplate "/assets/templates/signup.html"

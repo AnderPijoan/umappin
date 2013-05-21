@@ -20,6 +20,9 @@ color-beige = #FCF8DC
 color-dark-red = #661C00
 color-dark-brown = #463116
 color-box-border = #50483D
+color-purple = #450497
+color-error = #B94A48
+color-success = #468847
 
 color-box-shadow = rgba(color-box-border, 0.065)
 color-box-background = rgba(color-beige, 0.6)
@@ -92,6 +95,19 @@ body
   background-size: cover;
 
 #content
+  .offset1-5
+    margin-left 50px
+  .alert-error
+    border: 1px solid color-error;
+    ul
+      list-style-type: none;
+      margin: 0;
+  .alert-success
+    border: 1px solid color-success;
+  a
+    color color-purple
+  a:hover,a:focus
+    color darken(color-purple, 30%);
   textarea:focus,
   input[type="text"]:focus,
   input[type="password"]:focus,
@@ -161,7 +177,9 @@ body
       .span3
         width: 166px
       .span6
-        width 406px
+        width 396px
+    .input.span6
+      width 436px
   h4
     text-align left
     margin: 0 0 5px;
@@ -204,28 +222,37 @@ body
 .loggedin, .loggedout
   display none
 
+
+
 @media (min-width: 1200px)
   #content
+    .offset1-5
+      margin-left 65px
     form
+      input.span6
+        width 546px
       .input-prepend
         .span3
           width: 216px
         .span6
-          width 516px
+          width 506px
   .box
     .box-body
       .span3
         width 258px
 
-
 @media (max-width: 979px) and (min-width: 768px)
   #content
+    .offset1-5
+      margin-left 41px
     form
       .input-prepend
         .span3
           width: 112px
         .span6
-          width 298px
+          width 288px
+      input.span6
+        width 329px
   .box
     .box-body
       .span3
@@ -233,9 +260,13 @@ body
 
 @media (max-width: 767px) and (min-width: 480px)
   #content
+    .offset1-5
+      margin-left 0
     .btn-primary
       width: 98%
     form
+      input.span6
+        margin 0
       .input-prepend
         display block
         .span3,.span6
@@ -254,9 +285,13 @@ body
 
 @media (max-width: 480px)
   #content
+    .offset1-5
+      margin-left 0
     .btn-primary
       width: 93%
     form
+      input.span6
+        margin 0
       .input-prepend
         display block
         .span3,.span6
