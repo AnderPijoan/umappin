@@ -4,7 +4,8 @@ class umappin.Router extends Backbone.Router
   routes:
     'account':            'account'
     'account/:id':        'account'
-    'maps':               'maps'
+    'featuresMap':        'featuresMap'
+    'markersMap':         'markersMap'
     'messages/*subroute': 'messages'
     'signup':             'signup'
     'login':              'login'
@@ -35,19 +36,26 @@ class umappin.Router extends Backbone.Router
       requirejs ['/assets/js/account/account_main.js'], () ->
         Account.init()
 
-  maps: () ->
+  featuresMap: () ->
     setTemplate "/assets/templates/maps.html", () ->
       requirejs ['/assets/js/lib/openlayers.min.js'], () ->
         requirejs ['/assets/js/maps/maps.js'], () ->
-          Maps.init()
+          Maps.initFeaturesMap()
+	
+  markersMap: () ->
+    setTemplate "/assets/templates/maps.html", () ->
+      requirejs ['/assets/js/lib/openlayers.min.js'], () ->
+        requirejs ['/assets/js/maps/maps.js'], () ->
+          Maps.initMarkersMap()
 
   messages: () ->
     subroutes = @subroutes
     requirejs ['/assets/js/messagesApp/collection/discussionCollection.js'], () ->
      requirejs ['/assets/js/messagesApp/model/user.js'], () ->
-        requirejs ['/assets/js/messagesApp/collection/followedCollection.js',
-                  '/assets/js/messagesApp/view/user_view.js'], () ->
-
+        requirejs [
+          '/assets/js/messagesApp/collection/followedCollection.js',
+          '/assets/js/messagesApp/view/user_view.js'
+        ], () ->
           requirejs ['/assets/js/messagesApp/routers/router.js'], () ->
             subroutes.messagesRouter or= new messagesApp.Router "messages/"
 

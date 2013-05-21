@@ -6,4 +6,5 @@ class window.Maps.Feature extends Backbone.Model
     id: null
     ownerId: null
     name: '<Unknown>'
+    type: null
     geometry: null

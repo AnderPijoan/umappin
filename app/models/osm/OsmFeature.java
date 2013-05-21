@@ -51,7 +51,7 @@ public abstract class OsmFeature {
 		return inUseByUser == null;
 	}
 	
-	public void serUserUsing(ObjectId oid){
+	public void setUserUsing(ObjectId oid){
 		this.inUseByUser = oid;
 	}
 	
@@ -109,5 +109,18 @@ public abstract class OsmFeature {
 		
 		result.append("])");
 		return result.toString();
+	}
+	
+	public static LinkedHashMap<String,String> hstoreFormatToTags(String hstore){
+		
+		LinkedHashMap<String,String> tags = new LinkedHashMap<String,String>();
+		String[] tagPairs = hstore.split(",");
+		
+		for (String tagKV : tagPairs){
+			String[] KV = tagKV.split("=>");
+			tags.put(KV[0].replace("\"", "").trim(), KV[1].replace("\"", "").trim());
+		}
+		
+		return tags;
 	}
 }

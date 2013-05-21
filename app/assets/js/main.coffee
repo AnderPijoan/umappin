@@ -10,10 +10,6 @@ window.setTemplate = (url, callback) ->
 window.updateSessionViews = (username) ->
   $('.loggedout').css 'display', if username !="" then 'none' else 'block'
   $('.loggedin').css('display', if username !="" then 'block' else 'none').find('#username').text username
-  if !username || username == ""
-    setTemplate "/assets/templates/main.html"
-  else
-    setTemplate "/assets/templates/main_logged.html"
 
 # Sets the session User from server
 window.setSessionUser = (user) ->
@@ -30,19 +26,11 @@ $ () ->
   requirejs ['/assets/js/router.js'], () ->
     umappin.router or= new umappin.Router
     Backbone.history.start()
-
-  # Check the user session
-  ###
-  token = window.sessionStorage.getItem 'token'
-  $.ajax
-    url: "/sessionuser"
-    data: { signature: 'authHeader' }
-    type: "GET"
-    beforeSend: (xhr) -> xhr.setRequestHeader('token', token ? '')
-    success: (data) -> setSessionUser data
-  ###
   sessionRequest = $.get "/sessionuser?#{new Date().getTime()}"
   sessionRequest.done (data) ->
     sessionStorage.setItem("user", JSON.stringify(data));
     setSessionUser data
-  sessionRequest.error -> updateSessionViews ""
+    setTemplate "/assets/templates/main_logged.html"
+  sessionRequest.error -> 
+    updateSessionViews ""
+    setTemplate "/assets/templates/main.html"
