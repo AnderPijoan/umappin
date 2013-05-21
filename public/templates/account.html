@@ -9,7 +9,8 @@
 		<li class="active"><a href="#profile" data-toggle="tab">Profile</a></li>
 		<li><a href="#users" data-toggle="tab"
 			onclick='Account.loadUsersData()'>Users</a></li>
-		<li><a href="#statistics" data-toggle="tab">Statistics</a></li>
+		<li><a href="#statistics" data-toggle="tab"
+			onclick='Account.loadUserStatistics()'>Statistics</a></li>
 	</ul>
 
 	<div id="myTabContent" class="tab-content">
@@ -67,24 +68,12 @@
 
 		</div>
 		<div class="tab-pane fade" id="statistics">
-			<h4>My Statistics:</h4>
-			<div id="main-statistics">
-				<span>Level</span>
-			</div>
-
-			<div id="statistics-all">
-				<ul id="statistic-list"></ul>
-			</div>
-
-			<div id="awards">
-				<ul id="award-list"></ul>
-			</div>
+			<div class="statistics_container"></div>
+			<div class="awards_container"></div>
 		</div>
-
 	</div>
 
 </div>
-
 
 <!------------------------------------- Templates -------------------------------------->
 <script type='text/template' id='user-row-template'>
@@ -140,4 +129,15 @@
         <label>Address</label>
         <textarea rows="3" class="input-xlarge" id='profile-address'><%- rc.address %></textarea>
     </div>
+</script>
+
+<script type="text/template" id="award-template">
+        <ul>
+            <li><%= name %></li>
+            <li><%= description %></li>
+            <li><%= coins %></li>
+            <li><%= points %></li>
+			<li><%= awardType %></li>
+			<li><%= limit %></li>
+        </ul>
 </script>

@@ -5,6 +5,7 @@ class umappin.Router extends Backbone.Router
     'account':            'account'
     'account/:id':        'account'
     'editmap':            'editmap'
+    'wall':               'wall'
     'messages/*subroute': 'messages'
     'signup':             'signup'
     'login':              'login'
@@ -27,6 +28,9 @@ class umappin.Router extends Backbone.Router
         requirejs ['/assets/js/lib/leaflet.draw.min.js'], () ->
           requirejs ['/assets/js/map/map.js'], () ->
             Map.init()
+
+  wall: () ->
+    setTemplate "/assets/templates/wall.html"
 
   messages: () ->
     subroutes = @subroutes

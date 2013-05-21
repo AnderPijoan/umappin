@@ -1,0 +1,5 @@
+awardsApp = awardsApp || {}
+
+$(function () {
+
+});

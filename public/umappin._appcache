@@ -15,6 +15,7 @@ templates/login.html
 templates/logout.html
 templates/messages.html
 templates/signup.html
+templates/wall.html
 
 # Main JS libraries
 js/lib/jquery.min.js
