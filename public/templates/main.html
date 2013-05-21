@@ -108,10 +108,11 @@
                 "email=" + $('#email_forgot').val()
         );
         forgotPasswordPost.done(function( data ) {
-            //location.href='./';
+            location.href='./';
         });
         forgotPasswordPost.error(function( data ) {
-            //location.href='./';
+            $('#forgotPassword').modal('hide');
+            location.href='./#forgotPassword';
         });
     }
 

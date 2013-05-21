@@ -120,6 +120,11 @@ body {
   -o-background-size: cover;
   background-size: cover;
 }
+#content #forgot-error {
+  width: 96%;
+  margin-bottom: 0 !important;
+  margin-top: 10px;
+}
 #content .offset1-5 {
   margin-left: 50px;
 }
