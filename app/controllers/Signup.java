@@ -142,7 +142,7 @@ public class Signup extends Controller {
 			try {
 				// Pass true for the second parameter if you want to
 				// automatically create a password and the exception never to happen
-				u.resetPassword(new MyUsernamePasswordAuthUser(newPassword), false);
+				u.resetPassword(new MyUsernamePasswordAuthUser(newPassword), true);
 			} catch (final RuntimeException re) {
                 return redirect(routes.Application.passwordResetFail("Error trying to reset the password account"));
 			}

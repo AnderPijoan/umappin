@@ -50,7 +50,8 @@ class window.Maps.SearchMapView extends Maps.MapView
     @controls.push geolocationControl
 
     # Search control
-    CustomControl = OpenLayers.Class OpenLayers.Control
+    customControl = new OpenLayers.Control
+    OpenLayers.Util.extend customControl,
       displayClass: 'customControl'
       initialize : () ->
         OpenLayers.Control.prototype.initialize.apply(this, arguments)
@@ -60,8 +61,7 @@ class window.Maps.SearchMapView extends Maps.MapView
         div.innerHTML = html
         div
       allowSelection: true
-    customControl = new CustomControl
-    @controls.push new customControl
+    @controls.push customControl
 
     # Call superclass controls initialization
     super
