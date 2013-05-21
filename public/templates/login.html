@@ -44,13 +44,19 @@
           "email=" + $('#email_login').val() + "&password=" + $('#password_login').val()
         );
         loginPost.done(function( data ) {
-            $.get(
-                '/sessionuser',
-                function(data) {
-                    updateSessionViews(data.name);
+            sessionStorage.setItem('token', data.token);
+            $.ajax({
+                url: "/sessionuser",
+                data: { signature: 'authHeader' },
+                type: "GET",
+                beforeSend: function(xhr){xhr.setRequestHeader('token', data.token);},
+                success: function(resp) {
+                    setSessionUser(resp);
+                    $('#actionResult').css('display','block').empty()
+                                      .html("<div class='alert alert-success'>User Authenticated</div>");
                     location.href='./'
                 }
-            );
+            });
         });
         loginPost.error(function( data ) {
             $('#loginError').css('display','block').empty().html(
