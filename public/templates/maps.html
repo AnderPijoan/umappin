@@ -9,30 +9,11 @@
 <div id='map-container'></div>
 
 <!------------------------------------- Feature popup template -------------------------------------->
-<script type='text/template' id='feature__-popup-template'>
-    <h4>geometry.name</h4>
-    <p>
-        geometry.latlng
-        <a href="javascript:void(0)">
-            <img class="image img-rounded" src="/assets/img/140x140.gif" alt="placeholder image"
-                 height="32" width="32">
-        </a>
-    </p>
-    <p>geometry.desc</p>
-
-    <div class="dropdown">
-        <button class='btn' onclick="$(this).parent('.dropdown').toggleClass('open')">
-            Options <b class="caret"></b>
-        </button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="geometryOptions">
-            <li><a tabindex="-1" href="#">Edit</a></li>
-            <li><a tabindex="-1" href="#">Delete</a></li>
-            <li class="divider"></li>
-            <li><a tabindex="-1" href="#">Upload to OSM</a></li>
-            <li><a tabindex="-1" href="#">Submit to Game</a></li>
-            <li><a tabindex="-1" href="#">Bind a Picture</a></li>
-        </ul>
-    </div>
+<script type='text/template' id='features-popup-template'>
+    <h4><%=rc.type%> - &nbsp; Lon: &nbsp; <%=rc.lon%>, &nbsp; Lat: &nbsp; <%=rc.lat%></h4>
+    <% for (var t in rc.tags) { %>
+        <label><%=t%>:&nbsp;<%=rc.tags[t]%></label>
+    <% } %>
 </script>
 
 <!------------------------------------- Notes popup template -------------------------------------->
