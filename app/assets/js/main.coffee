@@ -27,5 +27,10 @@ $ () ->
     umappin.router or= new umappin.Router
     Backbone.history.start()
   sessionRequest = $.get "/sessionuser?#{new Date().getTime()}"
-  sessionRequest.done (data) -> setSessionUser data
-  updateSessionViews ""
+  sessionRequest.done (data) ->
+    sessionStorage.setItem("user", JSON.stringify(data));
+    setSessionUser data
+    setTemplate "/assets/templates/main_logged.html"
+  sessionRequest.error -> 
+    updateSessionViews ""
+    setTemplate "/assets/templates/main.html"

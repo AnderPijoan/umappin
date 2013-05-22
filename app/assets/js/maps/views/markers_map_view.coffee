@@ -7,7 +7,7 @@ class window.Maps.MarkersMapView extends Maps.MapView
   notesPopupTemplate: _.template $('#notes-popup-template').html()
   notesCommentTemplate: _.template $('#notes-comment-template').html()
   newNoteTemplate: _.template $('#notes-new-template').html()
-  minMarkers: 1
+  minMarkers: 3
 
 
   # ---------------------------- Controls ------------------------------ #
@@ -103,7 +103,7 @@ class window.Maps.MarkersMapView extends Maps.MapView
                 @map.getProjectionObject()
               )
               feat.popupClass = OpenLayers.Popup.FramedCloud
-              feat.data.popupContentHTML = @notesPopupTemplate feature.properties
+              feat.data.popupContentHTML = @notesPopupTemplate feature
               feat.data.overflow = 'auto'
               marker = feat.createMarker()
               that = @
@@ -126,7 +126,8 @@ class window.Maps.MarkersMapView extends Maps.MapView
   createMarker: (lnglat) ->
     feat = new OpenLayers.Feature @markersLayer, lnglat
     feat.popupClass = OpenLayers.Popup.FramedCloud
-    feat.data.popupContentHTML = @newNoteTemplate feat.id
+    popupdata = id: feat.id, lon: lnglat.lon, lat: lnglat.lat
+    feat.data.popupContentHTML = @newNoteTemplate popupdata
     feat.data.overflow = 'auto'
     marker = feat.createMarker()
     that = @
@@ -142,6 +143,7 @@ class window.Maps.MarkersMapView extends Maps.MapView
         that.map.addPopup(@popup)
         @popup.show()
         $('.newNoteButton').bind('click', (evt) -> that.postNewNote(evt, lonlat))
+        $('.removeMarkerButton').bind 'click', (evt) => @destroy()
       OpenLayers.Event.stop(evt)
     @markersLayer.addMarker marker
 

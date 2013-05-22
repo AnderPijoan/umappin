@@ -3,6 +3,8 @@ package models;
 import com.google.code.morphia.annotations.Reference;
 
 import controllers.MorphiaObject;
+import controllers.routes;
+
 import org.bson.types.ObjectId;
 import org.codehaus.jackson.node.ObjectNode;
 
@@ -67,7 +69,7 @@ public class Message extends Item{
 		ObjectNode userNode = Json.newObject();
 		userNode.put("id", user.id.toString());
 		userNode.put("name", user.name);
-		userNode.put("profilePicture", user.profilePicture != null ? user.profilePicture.toString() : null);
+		userNode.put("profilePicture", user.profilePicture != null ? routes.PhotosREST.getPhoto(user.profilePicture.toString()).toString() +"/content" : null);
 		
 		ObjectNode messageNode = Json.newObject();
 		messageNode.put("id", message.id.toString());

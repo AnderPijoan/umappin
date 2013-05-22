@@ -1,4 +1,4 @@
-<div class="box-transparent span12">ble</div>
+<div class="box-transparent span12">Don't ask about me. I don't exist. I'm an illusion ;)</div>
 <div class="box-transparent span3 offset9">
     <div class="row">
         <form action='/login' id='loginForm' class="span3">
@@ -11,7 +11,7 @@
                 <input type="password" id="password_login" name="password_login" class="span3" placeholder="Password">
             </div>
             <input type="submit" value="Log in" class="btn btn-primary span3">
-            <h6 href="#forgotPassword" data-toggle="modal">Forgot your password?</h6>
+            <h6><a href="#forgotPassword" data-toggle="modal">Forgot your password?</a></h6>
         </form>
     </div>
 </div>
@@ -59,14 +59,7 @@
 </div>
 </form>
 <script>
-    /*
-    function askOpenID(url) {
-        var openid = prompt("Please enter your OpenID:", "yourname.myopenid.com");
-        if(openid) {
-            window.location.href = url + "?p=" + encodeURIComponent(openid);
-        }
-    }
-    */
+
     function submitLogin() {
         var loginPost = $.post(
           $('#loginForm').attr('action'),
@@ -77,9 +70,7 @@
                 '/sessionuser',
                 function(data) {
                     updateSessionViews(data.name);
-                    location.href='./';
-                    sessionStorage.setItem("user", JSON.stringify(data));
-                    $('#content').html('');
+                    location.href='./'
                 }
             );
         });
@@ -120,7 +111,8 @@
             location.href='./';
         });
         forgotPasswordPost.error(function( data ) {
-            location.href='./';
+            $('#forgotPassword').modal('hide');
+            location.href='./#forgotPassword';
         });
     }
 

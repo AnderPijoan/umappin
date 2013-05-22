@@ -14,6 +14,7 @@ import play.libs.Json;
 import com.google.code.morphia.annotations.Entity;
 
 import controllers.MorphiaObject;
+import controllers.routes;
 
 /**
  * User: a.pijoan
@@ -165,10 +166,12 @@ public class Discussion extends Item {
 				ObjectNode userNode = Json.newObject();
 				userNode.put("id", user.id.toString());
 				userNode.put("name", user.name);
-				userNode.put("profilePicture", user.profilePicture != null ? user.profilePicture.toString() : null);
+				userNode.put("profilePicture", user.profilePicture != null ? routes.PhotosREST.getPhoto(user.profilePicture.toString()).toString() +"/content" : null);
 				users.add(userNode);
+				
 			}
 		}
+		
 		return users;
 	}
 }

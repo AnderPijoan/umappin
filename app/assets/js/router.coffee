@@ -2,11 +2,11 @@ class umappin.Router extends Backbone.Router
   subroutes: {}
   params: null
   routes:
-    '':                   'main'
     'account':            'account'
     'account/:id':        'account'
     'featuresMap':        'featuresMap'
     'markersMap':         'markersMap'
+    'searchMap':          'searchMap'
     'messages/*subroute': 'messages'
     'signup':             'signup'
     'login':              'login'
@@ -17,17 +17,23 @@ class umappin.Router extends Backbone.Router
     'leafletmap':         'leafletmap'
     'test':               'test'
     'synctest':           'syncTest'
-
-  main: () ->
-    json = sessionStorage.getItem "user"
-    if !!json
-      setTemplate "/assets/templates/main_logged.html"
-    else
-      setTemplate "/assets/templates/main.html"
+    'userlist':           'userlist'
+    'profile':            'profile'
 
   account: (id) ->
     @params = if id? then id: id else null
     setTemplate "/assets/templates/account.html", () ->
+      requirejs ['/assets/js/account/account_main.js'], () ->
+        Account.init()
+
+  userlist: () ->
+    setTemplate "/assets/templates/userlist.html", () ->
+      requirejs ['/assets/js/account/account_main.js'], () ->
+        Account.init()
+        Account.loadUsersData();
+
+  profile: () ->
+    setTemplate "/assets/templates/profile.html", () ->
       requirejs ['/assets/js/account/account_main.js'], () ->
         Account.init()
 
@@ -36,12 +42,18 @@ class umappin.Router extends Backbone.Router
       requirejs ['/assets/js/lib/openlayers.min.js'], () ->
         requirejs ['/assets/js/maps/maps.js'], () ->
           Maps.initFeaturesMap()
-
+	
   markersMap: () ->
     setTemplate "/assets/templates/maps.html", () ->
       requirejs ['/assets/js/lib/openlayers.min.js'], () ->
         requirejs ['/assets/js/maps/maps.js'], () ->
           Maps.initMarkersMap()
+
+  searchMap: () ->
+    setTemplate "/assets/templates/maps.html", () ->
+      requirejs ['/assets/js/lib/openlayers.min.js'], () ->
+        requirejs ['/assets/js/maps/maps.js'], () ->
+          Maps.initSearchMap()
 
   messages: () ->
     subroutes = @subroutes
@@ -63,7 +75,7 @@ class umappin.Router extends Backbone.Router
     $.get "/logout", () ->
       sessionStorage.removeItem "user"
       updateSessionViews ""
-      location.href='./';
+      location.href='./'
 
   signup: () ->  # Need to separate js source
     setTemplate "/assets/templates/signup.html"

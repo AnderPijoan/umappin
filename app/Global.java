@@ -102,8 +102,18 @@ public class Global extends GlobalSettings {
     @Override
     public Action onRequest(Request request, Method actionMethod) {
         if (request.cookie("PLAY_SESSION") == null && 
-            !actionMethod.getName().equals("doLogin") && 
-            !actionMethod.getName().equals("doSignup")) {
+                !actionMethod.getName().equals("doLogin") &&
+                !actionMethod.getName().equals("doSignup") &&
+                !actionMethod.getName().equals("verify") &&
+                !actionMethod.getName().equals("doForgotPassword")  &&
+                !actionMethod.getName().equals("resetPassword") &&
+                !actionMethod.getName().equals("doResetPassword") &&
+                !actionMethod.getName().equals("exists") &&
+                !actionMethod.getName().equals("tokenSuccess") &&
+                !actionMethod.getName().equals("tokenFail") &&
+                !actionMethod.getName().equals("passwordResetSuccess")  &&
+                !actionMethod.getName().equals("passwordResetFail")) {
+
             if (request.getHeader("token") != null) {
                 return new Action.Simple() {
                     @Override
