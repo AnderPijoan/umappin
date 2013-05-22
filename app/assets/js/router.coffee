@@ -21,7 +21,8 @@ class umappin.Router extends Backbone.Router
     @params = if id? then id: id else null
     setTemplate "/assets/templates/account.html", () ->
       requirejs ['/assets/js/account/account_main.js'], () ->
-        Account.init()
+      	requirejs ['/assets/js/StatisticsApp.js'], () ->
+        	Account.init()
 
   maps: () ->
     setTemplate "/assets/templates/maps.html", () ->
