@@ -13,6 +13,9 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.bson.types.ObjectId;
 import org.codehaus.jackson.JsonNode;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public abstract class OsmFeature {
@@ -25,8 +28,6 @@ public abstract class OsmFeature {
 	protected String uid;           // Users id
 	protected Date timeStamp;       // Elements timestamp
 	protected LinkedHashMap<String,String> tags; // Elements tags
-	
-	protected ObjectId inUseByUser;		// Know if this feature is being used by a user
 	
 	
 	/**
@@ -46,18 +47,8 @@ public abstract class OsmFeature {
 	/**
 	 * !!!!!!!!! SETTERS ONLY THROUGH JSON CONSTRUCTOR AND UPDATER TO ENSURE INTEGRITY !!!!!!!!!!! *
 	 */
-
-	public boolean isInUse(){
-		return inUseByUser == null;
-	}
-	
-	public void setUserUsing(ObjectId oid){
-		this.inUseByUser = oid;
-	}
 	
 	public abstract OsmFeature save();
-	
-	public abstract OsmFeature update();
 	
 	public abstract void delete();
 	
@@ -123,4 +114,23 @@ public abstract class OsmFeature {
 		
 		return tags;
 	}
+	
+	protected void setTags(NodeList xmlTags){
+		if (xmlTags != null) {
+
+			for (int y = 0; y < xmlTags.getLength(); y++){
+				
+				Node tag = xmlTags.item(y);
+				if (tag.getNodeType() == Node.ELEMENT_NODE)
+				{
+					Element tagElement = (Element) tag;
+					if (tags == null)
+						tags = new LinkedHashMap<String, String>();
+					
+					tags.put(tagElement.getAttribute("k"), tagElement.getAttribute("v"));
+				}
+			}
+		}
+	}
+	
 }
