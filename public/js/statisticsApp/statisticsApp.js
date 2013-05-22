@@ -1,5 +1,0 @@
-awardsApp = awardsApp || {}
-
-$(function () {
-
-});
