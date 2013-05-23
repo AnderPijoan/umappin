@@ -91,6 +91,8 @@ GET     /discussions/unread         controllers.User2DiscussionREST.getUnreadDis
 GET     /discussions/:id            controllers.User2DiscussionREST.getDiscussion(id: String)
 POST    /discussions                controllers.User2DiscussionREST.addDiscussion()
 DELETE  /discussions/:id            controllers.User2DiscussionREST.deleteDiscussion(id: String)
+
+# REST CRUD for messages (!!!they need a "discussion_id" in the body!!!)
 GET     /messages/:id               controllers.User2DiscussionREST.getMessage(id: String)
 PUT     /messages/:id               controllers.User2DiscussionREST.updateMessage(id: String)
 POST	/messages                   controllers.User2DiscussionREST.reply()
@@ -103,6 +105,13 @@ GET     /publications/from/:f/to/:t controllers.WallREST.getRangePublications(f:
 GET     /publications/:id           controllers.WallREST.getPublication(id: String)
 POST    /publications               controllers.WallREST.addPublication()
 DELETE  /publications/:id           controllers.WallREST.deletePublication(id: String)
+
+# REST CRUD for comments (!!!they need a "publicaton_id" in the body!!!)
+GET     /comments/:id               controllers.WallREST.getMessage(id: String)
+PUT     /comments/:id               controllers.WallREST.updateMessage(id: String)
+POST	/comments                   controllers.WallREST.reply()
+POST	/comments/:id               controllers.WallREST.replyToMessage(id: String)
+DELETE  /comments/:id               controllers.WallREST.deleteMessage(id: String)
 
 # REST CRUD for routes
 GET     /routes                     controllers.User2RoutesREST.getRoutes()

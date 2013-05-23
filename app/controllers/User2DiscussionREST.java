@@ -6,9 +6,11 @@ import java.util.List;
 
 import models.Discussion;
 import models.Message;
+import models.Publication;
 import models.User;
 import models.User2Discussion;
 import models.ApiAppUser;
+import models.Wall;
 
 import controllers.ApiUserREST;
 
@@ -369,8 +371,31 @@ public class User2DiscussionREST extends ItemREST {
 	
 	
 	public static Result deleteMessage(String id){
-		Message message = Message.findById(id, Message.class);
+		final User user = Application.getLocalUser(session());
+		if (user == null){
+			return badRequest(Constants.USER_NOT_LOGGED_IN.toString());
+		}
+		JsonNode json = request().body().asJson();
+		if(json == null) {
+			return badRequest(Constants.JSON_EMPTY.toString());
+		}
+		User2Discussion user2disc = User2Discussion.findById(user.id);
+		if (user2disc == null) {
+			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
+		}
+		String discussionId = json.findPath("discussion_id").getTextValue(); 
+		Discussion discussion = user2disc.findDiscussionById(discussionId);
+		if (discussion == null) {
+			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
+		}
+		Message message = discussion.findMessageById(id);
+		if (message == null){
+			return badRequest(Constants.MESSAGES_EMPTY.toString());
+		}
+		discussion.deleteMessage(message);
+		discussion.save();
 		message.delete();
+		
 		return ok(Json.toJson(Message.messageToObjectNode(message)));
 	}
 

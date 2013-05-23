@@ -87,7 +87,6 @@ public abstract class Post extends Item {
 		}
 		if (!messageIds.contains(message.id))
 			messageIds.add(message.id);
-		lastWrote = new Date();
 		this.save();
 	}
 	
