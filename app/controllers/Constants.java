@@ -11,6 +11,8 @@ public enum Constants {
 	MESSAGES_EMPTY("No message found"),
 
 	DISCUSSIONS_EMPTY("No discussion found"),
+	
+	ROUTES_EMPTY("No route found"),
 
 	STATISTICS_EMPTY("No statistics found"),
 	STATISTICS_PARSE_ERROR("Error Parsing request"),

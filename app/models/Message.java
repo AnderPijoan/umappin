@@ -34,14 +34,6 @@ public class Message extends Item{
 			return new ArrayList<Message>();
 		}
 	}
-
-	public static Message findById(ObjectId id) {
-		return MorphiaObject.datastore.get(Message.class, id);
-	}
-	
-	public static Message findById(String id) {
-		return MorphiaObject.datastore.get(Message.class, new ObjectId(id));
-	}
 	
 	/** Parses a message list and prepares it for exporting to JSON
 	 * @param msgs Message list

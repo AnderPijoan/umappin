@@ -96,6 +96,15 @@ PUT     /messages/:id               controllers.User2DiscussionREST.updateMessag
 POST	/messages                   controllers.User2DiscussionREST.reply()
 POST	/messages/:id               controllers.User2DiscussionREST.replyToMessage(id: String)
 
+# REST CRUD for routes
+GET     /routes                     controllers.User2RoutesREST.getRoutes()
+GET     /routes/:id                 controllers.User2RoutesREST.getRoute(id: String)
+POST    /routes/near/:amount        controllers.User2RoutesREST.getNearRoutes(amount: Integer)
+POST    /routes/near/:amount/difficulty/:diff        controllers.User2RoutesREST.getNearDifficultyRoutes(amount: Integer, diff: Integer)
+POST    /routes                     controllers.User2RoutesREST.addRoute()
+DELETE  /routes/:id                 controllers.User2RoutesREST.deleteRoute(id: String)
+PUT     /routes/:id                 controllers.User2RoutesREST.updateRoute(id: String)
+
 # REST CRUD for awards
 GET     /awards						controllers.AwardREST.getAwards()
 GET     /awards/types				controllers.AwardREST.getAwardTypes()

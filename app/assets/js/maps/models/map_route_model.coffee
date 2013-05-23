@@ -1,6 +1,6 @@
 window.Maps or= {}
 
-class window.Maps.Feature extends Backbone.Model
+class window.Maps.Route extends Backbone.Model
   urlRoot: '/routes'
   defaults:
     id: null

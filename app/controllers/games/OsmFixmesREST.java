@@ -42,7 +42,7 @@ public class OsmFixmesREST {
 					// Create URL for downloading from OVERPASS API
 					URL url = new URL("http://overpass-api.de/api/interpreter?data=" +
 							"(node" + bbox + "[fixme];" +
-							//"way" + bbox + "[fixme];>;" +
+							"way" + bbox + "[fixme];>;" +
 							//"rel" + bbox + "[fixme];>>;" + 
 							");out%20meta;");
 

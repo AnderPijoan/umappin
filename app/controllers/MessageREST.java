@@ -26,7 +26,7 @@ public class MessageREST extends Controller {
 	}
 
 	public static Result findById(String id){
-		Message message = Message.findById(id);
+		Message message = Message.findById(id, Message.class);
 		if (message == null){
 			return badRequest(Constants.MESSAGES_EMPTY.toString());
 		} else {

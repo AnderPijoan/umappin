@@ -15,7 +15,16 @@ class window.Maps.RoutesMapView extends Maps.MapView
       "Routes"
       renderers: renderer
     )
-
+    ###
+    @drawLayer.events.register "featureselected", @, (feat) ->
+      if feat.popup
+        feat.popup.toggle()
+      else
+        feat.popup = feat.createPopup(true)
+        @map.addPopup(feat.popup)
+        feat.popup.show()
+        $('.doSomethingButton').bind('click', (e) -> alert('TODO!!'))
+    ###
     toolBarControls = [
 
       new OpenLayers.Control.DrawFeature(
@@ -39,6 +48,31 @@ class window.Maps.RoutesMapView extends Maps.MapView
         mode: OpenLayers.Control.ModifyFeature.RESIZE | OpenLayers.Control.ModifyFeature.ROTATE | OpenLayers.Control.ModifyFeature.DRAG
         onModificationStart: (feature) => console.log feature
         onModificationEnd: (feature) => @updateFeature feature
+      )
+
+      new OpenLayers.Control.SelectFeature(
+        @drawLayer
+        'displayClass': 'olControlDragFeature'
+        box: true
+        onSelect: (feat) =>
+          feat.popup = new OpenLayers.Popup.FramedCloud(
+            "chicken"
+            feat.geometry.getBounds().getCenterLonLat()
+            null
+            "<div style='font-size:.8em'>Route: #{feat.id} <br>Area: #{feat.geometry.getArea()}</div>"
+            null
+            true
+            (evt) =>
+              @map.removePopup feat.popup
+              #feat.popup.destroy()
+              #feat.popup = null
+          )
+          @map.addPopup(feat.popup)
+          $('.doSomethingButton').bind('click', (e) -> alert('TODO!!'))
+        onUnselect: (feat) =>
+          @map.removePopup feat.popup
+          feat.popup.destroy()
+          feat.popup = null
       )
     ]
     toolbar = new OpenLayers.Control.Panel(
@@ -83,17 +117,17 @@ class window.Maps.RoutesMapView extends Maps.MapView
         geopoint = new OpenLayers.Geometry.Point e.point.x, e.point.y
         geopoint.transform @map.getProjectionObject(), Maps.MapView.OSM_PROJECTION
         geojsonFormat = new OpenLayers.Format.GeoJSON()
-        geopoint = JSON.parse geojsonFormat.write geopoint
+        geopoint = "{\"geometry\": #{geojsonFormat.write geopoint} }"
 
         amount = 5 # TODO: we'll pick it up from a control
-        difficulty = 1 # TODO: we'll pick it up from a control
+        difficulty = -1 # TODO: we'll pick it up from a control
 
         $.ajax
           url: "/routes/near/#{amount}/difficulty/#{difficulty}"
+          type: 'POST'
           contentType: 'application/json'
           data: geopoint
-          success: (data) =>
-            console.log data
+          success: (data) => @drawRoute r for r in data unless data == null
     )
     geolocationControl.events.register(
       "locationfailed"
@@ -118,26 +152,45 @@ class window.Maps.RoutesMapView extends Maps.MapView
   # ---------------------------- Renderization ------------------------------ #
   render: ->
     features = @model.get 'features'
-    @drawFeature f for f in features unless features == null
+    #@drawFeature f for f in features unless features == null
     super
 
 
-  # ---------------------------- REST/Feature handlers ------------------------------ #
+  drawRoute: (data) ->
+    route = new Maps.Route data
+    geojsonFormat = new OpenLayers.Format.GeoJSON()
+    geom = geojsonFormat.read(JSON.stringify(route.get 'geometry'), 'Geometry')
+    geom.transform Maps.MapView.OSM_PROJECTION, @map.getProjectionObject()
+    olGeom = new OpenLayers.Feature.Vector geom
+    olGeom.mapFeature = route
+    ###
+    olGeom.popupClass = OpenLayers.Popup.FramedCloud
+    olGeom.data.popupContentHTML = "<p>wtf??</p>"
+    olGeom.data.overflow = 'auto'
+    ###
+
+    @drawLayer.addFeatures [olGeom]
+
+  # ---------------------------- REST/Route Feature handlers ------------------------------ #
+  # This one gets a feature given its id via typical REST -- maybe we can get rid of it
   drawFeature: (featureId) ->
     geojsonFormat = new OpenLayers.Format.GeoJSON()
-    feature = new Maps.Feature id: featureId
+    feature = new Maps.Route id: featureId
     feature.fetch complete: (resp) =>
       geom = geojsonFormat.read(JSON.stringify(feature.get 'geometry'), 'Geometry')
+      geom.transform Maps.MapView.OSM_PROJECTION, @map.getProjectionObject()
       olGeom = new OpenLayers.Feature.Vector geom
       olGeom.mapFeature = feature
       @drawLayer.addFeatures [olGeom]
 
   saveFeature: (feature) ->
     console.log feature
+    geom = feature.geometry.clone().transform @map.getProjectionObject(), Maps.MapView.OSM_PROJECTION
     geojsonFormat = new OpenLayers.Format.GeoJSON()
-    ft = new Maps.Feature
-      ownerId: @model.get 'ownerId'
-      geometry: JSON.parse geojsonFormat.write feature.geometry
+    ft = new Maps.Route
+      name: 'dummyRoute'
+      difficulty: 1 # TODO: pick this properties from elsewhere
+      geometry: JSON.parse geojsonFormat.write geom
     ft.once 'change', (evt) =>
       feature.mapFeature = ft
       fts = @model.get('features') or []
@@ -147,7 +200,8 @@ class window.Maps.RoutesMapView extends Maps.MapView
 
   updateFeature: (feature) ->
     geojsonFormat = new OpenLayers.Format.GeoJSON()
-    feature.mapFeature.save geometry: JSON.parse geojsonFormat.write feature.geometry
+    geom = feature.geometry.clone().transform @map.getProjectionObject(), Maps.MapView.OSM_PROJECTION
+    feature.mapFeature.save geometry: JSON.parse geojsonFormat.write geom
 
   deleteFeature: (feature) ->
     feature.mapFeature.destroy success: ()=>

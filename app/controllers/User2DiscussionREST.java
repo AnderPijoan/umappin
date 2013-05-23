@@ -155,13 +155,13 @@ public class User2DiscussionREST extends ItemREST {
 		// List to save them if everything went ok
 		List<User2Discussion> user2discList = new ArrayList<User2Discussion>(); 
 
+		discussion = new Discussion();		// Create discussion
+		discussion.messageIds = new ArrayList<ObjectId>();
+		discussion.userIds = new ArrayList<ObjectId>();
+		discussion.subject = json.findPath("subject").getTextValue();
+		discussion.save();
+		
 		try {
-
-			discussion = new Discussion();		// Create discussion
-			discussion.messageIds = new ArrayList<ObjectId>();
-			discussion.userIds = new ArrayList<ObjectId>();
-			discussion.subject = json.findPath("subject").getTextValue();
-			discussion.save();
 
 			message = new Message();		// Create message
 			message.message = json.findPath("message").getTextValue();
@@ -184,18 +184,24 @@ public class User2DiscussionREST extends ItemREST {
 					// If is users first discussion, create new User2Discussion
 					if (user2disc == null){
 						user2disc = new User2Discussion();
-						user2disc.id = receiver.id;
-						user2disc.discussionIds = new ArrayList<ObjectId>();
-						user2disc.unread = new ArrayList<ObjectId>();
+						/****************************************/
+						user2disc.id = new ObjectId(receiver.id.toString()); // IMPORTANT
+						/****************************************/
 						user2disc.save();
+					}
+					
+					if (user2disc.discussionIds == null){
+						user2disc.discussionIds = new ArrayList<ObjectId>();
+					}
+					
+					if (user2disc.unread == null){
+						user2disc.unread = new ArrayList<ObjectId>();
 					}
 
 					discussion.addUser(receiver);
 					user2disc.addDiscussion(discussion); // Add discussions id to this user
 					user2disc.setRead(discussion, false);
 					user2discList.add(user2disc);
-
-
 				}
 			}
 
@@ -205,10 +211,18 @@ public class User2DiscussionREST extends ItemREST {
 			// If is users first discussion, create new User2Discussion
 			if (user2disc == null){
 				user2disc = new User2Discussion();
-				user2disc.id = user.id;
-				user2disc.discussionIds = new ArrayList<ObjectId>();
-				user2disc.unread = new ArrayList<ObjectId>();
+				/****************************************/
+				user2disc.id = new ObjectId(user.id.toString()); // IMPORTANT
+				/****************************************/
 				user2disc.save();
+			}
+			
+			if (user2disc.discussionIds == null){
+				user2disc.discussionIds = new ArrayList<ObjectId>();
+			}
+			
+			if (user2disc.unread == null){
+				user2disc.unread = new ArrayList<ObjectId>();
 			}
 
 			discussion.addUser(user);
@@ -218,6 +232,8 @@ public class User2DiscussionREST extends ItemREST {
 
 		} catch (Exception e) {
 
+			discussion.delete();
+			
 			// TODO REMOVE DISCUSSION, MESSAGE AND USER2DISCUSSIONS
 
 			return badRequest(Constants.JSON_EMPTY.toString());
@@ -241,12 +257,12 @@ public class User2DiscussionREST extends ItemREST {
 		if(json == null) {
 			return badRequest(Constants.JSON_EMPTY.toString());
 		}
-		Discussion discussion = Discussion.findById(id);
-		if (discussion == null || !discussion.userIds.contains(user.id)){
+		User2Discussion user2disc = User2Discussion.findById(user.id);
+		if (user2disc == null || !user2disc.discussionIds.contains(new ObjectId(id))){
 			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
 		}
-		User2Discussion user2disc = User2Discussion.findById(user.id);
-		if (user2disc == null || !user2disc.discussionIds.contains(discussion.id)){
+		Discussion discussion = user2disc.findDiscussionById(id);
+		if (discussion == null || !discussion.userIds.contains(user.id)){
 			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
 		}
 
@@ -257,7 +273,7 @@ public class User2DiscussionREST extends ItemREST {
 		if (discussion.userIds.isEmpty()){
 
 			for(ObjectId oid : discussion.messageIds){
-				Message message = Message.findById(oid);
+				Message message = discussion.findMessageById(oid);
 				message.delete();
 			}
 
@@ -373,7 +389,6 @@ public class User2DiscussionREST extends ItemREST {
 		if (user == null){
 			return badRequest(Constants.USER_NOT_LOGGED_IN.toString());
 		}
-
 
 		User2Discussion user2disc = User2Discussion.findById(user.id);
 		if (user2disc == null) {
