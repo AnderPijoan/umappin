@@ -16,7 +16,6 @@ public class User2RoutesREST extends ItemREST {
 
 
 	public static Result getRoutes() {
-
 		final User user = Application.getLocalUser(session());
 		if (user == null){
 			return badRequest(Constants.USER_NOT_LOGGED_IN.toString());
@@ -148,7 +147,9 @@ public class User2RoutesREST extends ItemREST {
 		
 		if (user2route == null){
 			user2route = new User2Routes();
-			user2route.id = user.id;
+			/****************************************/
+			user2route.id = new ObjectId(user.id.toString()); // IMPORTANT
+			/****************************************/
 		}
 
 		user2route.addRoute(route);

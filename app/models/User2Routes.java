@@ -6,18 +6,17 @@ import java.util.List;
 import org.bson.types.ObjectId;
 
 import com.google.code.morphia.annotations.Entity;
-import com.google.code.morphia.annotations.Id;
 
 import controllers.MorphiaObject;
 
 @Entity
 public class User2Routes extends Item {
-
-	@Id
-	public ObjectId id; // Users ObjectId to fetch routes instantly
+	
+	///////////////////////////////////////////////////////////////////////////////
+	// THE OBJECTID OF USER2DISCUSSION IS THE SAME AS THE USERS, TO GET IT DIRECTLY
+	///////////////////////////////////////////////////////////////////////////////
 	
 	public List<ObjectId> routeIds;
-	
 	
 	public List<Route> all() {
 		if (MorphiaObject.datastore != null) {

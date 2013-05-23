@@ -14,6 +14,7 @@ import models.osm.OsmFeature;
 
 import org.bson.types.ObjectId;
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.node.ObjectNode;
 
 import play.db.DB;
 import play.libs.Json;
@@ -282,14 +283,26 @@ public class Route extends Item {
 	}
 
 
-	public static Object routesToObjectNodes(List<Route> routes) {
-		return null;
+	public static List<ObjectNode> routesToObjectNodes(List<Route> rts) {
+		
+		List<ObjectNode> routes = new ArrayList<ObjectNode>();
+		for(Route route : rts){
+			routes.add(Route.routeToFullObjectNode(route));
+		}
+		return routes;
 	}
 
 
-	public static Object routeToFullObjectNode(Route route) {
-		// TODO Auto-generated method stub
-		return null;
+	public static ObjectNode routeToFullObjectNode(Route route) {
+		
+		ObjectNode routeNode = Json.newObject();
+		routeNode.put("id", route.id.toString());
+		routeNode.put("name", route.name);
+		routeNode.put("user", User.userSmallInfo(route.userId));
+		routeNode.put("timeStamp", route.id.getTime());
+		routeNode.put("geometry", route.geometry);
+		routeNode.put("properties", Json.toJson(route.tags));
+		return routeNode;
 	}
 	
 }

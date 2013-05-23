@@ -7,14 +7,12 @@ import java.util.List;
 import org.bson.types.ObjectId;
 import org.codehaus.jackson.node.ObjectNode;
 
-
-import play.data.format.Formats;
 import play.libs.Json;
 
 import com.google.code.morphia.annotations.Entity;
 
 import controllers.MorphiaObject;
-import controllers.routes;
+import controllers.Post;
 
 /**
  * User: a.pijoan
@@ -22,117 +20,45 @@ import controllers.routes;
  * Time: 12:34
  */
 @Entity
-public class Discussion extends Item {
-
-	public String subject;
-
-	public List<ObjectId> messageIds;
+public class Discussion extends Post {
 
 	public List<ObjectId> userIds;
 
-	@Formats.DateTime(pattern = "yyyy-MM-dd HH:mm:ss")
-	public Date lastWrote = new Date();
-
-	public static List<Discussion> all() {
-		if (MorphiaObject.datastore != null) {
-			return MorphiaObject.datastore.find(Discussion.class).asList();
-		} else {
-			return new ArrayList<Discussion>();
-		}
-	}
-
-	@Override
-	public void save() {
-		lastWrote = new Date();
-		MorphiaObject.datastore.save(this);
-	}
-
 	@Override
 	public void delete() {
+
 		for (ObjectId oid : userIds){
 			User2Discussion user2disc = User2Discussion.findById(oid);
 			user2disc.removeDiscussion(this);
 		}
 
 		for(ObjectId oid : messageIds){
-			Message message = Message.findById(oid);
+			Message message = Message.findById(oid, Message.class);
 			message.delete();
 		}
 
 		MorphiaObject.datastore.delete(this);
 	}
 
-	public static Discussion findById(String id) {
-		Discussion discussion = MorphiaObject.datastore.get(Discussion.class, new ObjectId(id));
-		if (discussion == null){
-			return null;
-		} else {
-			return discussion;
-		}
-	}
-
-	public static Discussion findById(ObjectId oid) {
-		Discussion discussion = MorphiaObject.datastore.get(Discussion.class, oid);
-		if (discussion == null){
-			return null;
-		} else {
-			return discussion;
-		}
-	}
-
-	public Message findMessageById(String id) {
-		if (messageIds.contains(new ObjectId(id))){
-			Message message = MorphiaObject.datastore.get(Message.class, new ObjectId(id));
-			if (message != null){
-				return message;
-			}
-			messageIds.remove(new ObjectId(id));
-		}
-		return null;
-	}
-
-	public Message findMessageById(ObjectId oid) {
-		if (messageIds.contains(oid)){
-			Message message = MorphiaObject.datastore.get(Message.class, oid);
-			if (message != null){
-				return message;
-			}
-			messageIds.remove(oid);
-		}
-		return null;
-	}
-
-	public List<Message> getMessages() {
-		List<Message> messages = new ArrayList<Message>();
-		for(ObjectId oid : messageIds){
-			Message message = MorphiaObject.datastore.get(Message.class, oid);
-			if (message != null){
-				messages.add(message);
-			} else {
-			messageIds.remove(oid);
-			}
-		}
-		return messages;
-	}
-
-	public void addMessage(Message message) {
-		if (!messageIds.contains(message.id))
-			messageIds.add(message.id);
-		lastWrote = new Date();
-		this.save();
-	}
 
 	public void addUser(User user) {
-		if (userIds != null && !userIds.contains(user.id))
+		if (userIds == null){
+			userIds = new ArrayList<ObjectId>();
+		}
+		if (!userIds.contains(user.id)){
 			userIds.add(user.id);
+		}
 		lastWrote = new Date();
 		this.save();
 	}
 
 	public void removeUser(User user) {
-		if (userIds != null)
+		if (userIds != null){
 			userIds.remove(user.id);
-		lastWrote = new Date();
+			if (userIds.isEmpty()){
+				userIds = null;
+			}
+		}
 		this.save();
 	}
 
@@ -155,9 +81,9 @@ public class Discussion extends Item {
 	public static ObjectNode discussionToShortObjectNode (Discussion discussion){
 		ObjectNode discussionNode = Json.newObject();
 		discussionNode.put("id", discussion.id.toString());
-		discussionNode.put("unread", "");
+		discussionNode.put("unread", "fixme");
 		discussionNode.put("subject", discussion.subject);
-		discussionNode.put("users", Json.toJson(usersSmallInfo(discussion.userIds)));
+		discussionNode.put("users", Json.toJson(User.usersSmallInfo(discussion.userIds)));
 		discussionNode.put("timeStamp", discussion.id.getTime());
 		discussionNode.put("lastWrote", discussion.lastWrote.toString());
 		return discussionNode;
@@ -170,31 +96,12 @@ public class Discussion extends Item {
 	public static ObjectNode discussionToFullObjectNode (Discussion discussion){
 		ObjectNode discussionNode = Json.newObject();
 		discussionNode.put("id", discussion.id.toString());
-		discussionNode.put("unread", "");
+		discussionNode.put("unread", "fixme");
 		discussionNode.put("subject", discussion.subject);
-		discussionNode.put("users", Json.toJson(usersSmallInfo(discussion.userIds)));
+		discussionNode.put("users", Json.toJson(User.usersSmallInfo(discussion.userIds)));
 		discussionNode.put("timeStamp", discussion.id.getTime());
 		discussionNode.put("lastWrote", discussion.lastWrote.toString());
 		discussionNode.put("messages", Json.toJson(Message.messagesToObjectNodes(discussion.getMessages())));
 		return discussionNode;
-	}
-
-	private static List<ObjectNode> usersSmallInfo(List<ObjectId> userIds){
-
-		List<ObjectNode> users = new ArrayList<ObjectNode>();
-
-		for(ObjectId oid : userIds){
-			User user = MorphiaObject.datastore.get(User.class, oid);
-			if (user != null){
-				ObjectNode userNode = Json.newObject();
-				userNode.put("id", user.id.toString());
-				userNode.put("name", user.name);
-				userNode.put("profilePicture", user.profilePicture != null ? routes.PhotosREST.getPhoto(user.profilePicture.toString()).toString() +"/content" : null);
-				users.add(userNode);
-
-			}
-		}
-
-		return users;
 	}
 }
