@@ -1,4 +1,4 @@
-package controllers;
+package controllers.games;
 
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -24,10 +24,10 @@ public class OsmFixmesREST {
 	public static Result populateDatabase() {
 
 		// World max latitudes and longitudes
-		int left = -180;
-		int right = 180;
-		int up = 90;
-		int down = -90;
+		int left = -10; // -180
+		int right = 40; // 180
+		int up = 50; // 45
+		int down = -10; // -45
 
 		// Search for FIXME tags in each world cuadrant
 		for(int lon = left; lon < right; lon++){

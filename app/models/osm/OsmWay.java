@@ -1,17 +1,27 @@
 package models.osm;
 
-import java.awt.geom.Point2D;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import javax.sql.DataSource;
+
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.node.ObjectNode;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
-import scala.util.control.Exception;
+import play.db.DB;
+import play.libs.Json;
 
-public abstract class OsmWay extends OsmFeature{
+public abstract class OsmWay extends OsmFeature {
 
 	private List<OsmNode> nodes; //Nodes  
 	// It is traslated to an EPSG:90013 geometry in PostGIS
@@ -68,36 +78,138 @@ public abstract class OsmWay extends OsmFeature{
 	}
 
 	
+	/** OSM XML Way parser
+	 * @param osmXml
+	 * @throws ParseException
+	 */
+	public OsmWay(Node osmXml) throws ParseException{
+
+		Element nodeElement = (Element) osmXml;
+
+		id = Long.parseLong(nodeElement.getAttribute("id"));
+		version = Integer.parseInt(nodeElement.getAttribute("version"));
+		user = nodeElement.getAttribute("user");
+		uid = nodeElement.getAttribute("uid");
+		
+		System.out.println("FIX TIMESTAMP : " + nodeElement.getAttribute("timestamp"));
+		timeStamp = new java.sql.Date(0);
+		//timeStamp = new java.text.SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssZ").parse("2010-01-02T10:04:33Z");
+		//timeStamp = new java.text.SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssZ").parse(nodeElement.getAttribute("timestamp"));
+
+		setTags(nodeElement.getElementsByTagName("tag"));
+		
+		NodeList nodeList = nodeElement.getElementsByTagName("nd");
+		if (nodeList != null) {
+
+			for (int y = 0; y < nodeList.getLength(); y++){
+				
+				Node nd = nodeList.item(y);
+				if (nd.getNodeType() == Node.ELEMENT_NODE)
+				{
+					Element refElement = (Element) nd;
+					if (nodes == null)
+						nodes = new ArrayList<OsmNode>();
+					
+					long nodeId = Long.parseLong(refElement.getAttribute("ref"));
+					OsmNode node = OsmNode.findById(nodeId);
+					
+					if (node != null)
+						nodes.add(node);
+				}
+			}
+		}
+	}
+	
+	
+//	public static OsmWay findById(long id){
+//		DataSource ds = DB.getDataSource();
+//		Connection conn = null;
+//		PreparedStatement st;
+//		ResultSet rs;
+//		OsmWay way = null;
+//		try {
+//			conn = ds.getConnection();
+//			String sql = "select id, vers, usr, uid, timest, tags, inusebyuseroid, st_asgeojson(geom) as geometry from osmways";
+//			st = conn.prepareStatement(sql);
+//			rs = st.executeQuery();
+//			while (rs.next()) {
+//				node = new OsmNode(rs.getLong("id"),
+//						rs.getInt("version"),
+//						rs.getString("user"),
+//						rs.getString("uid"),
+//						0,
+//						0,
+//						rs.getDate("timestamp"),
+//						hstoreFormatToTags(rs.getString("tags")));
+//				way.setGeometry(Json.parse(rs.getString("geometry")));
+//			}
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		} finally {
+//			if (conn != null) try {
+//				conn.close();
+//			} catch (SQLException e) {
+//				e.printStackTrace();
+//			}
+//		}
+//		return way;
+//	}
+	
+	
 	public void setGeometry(JsonNode geometry) {
 
 		/* EXAMPLE :
-		 * {"type": "LineString", "coordinates": [[-104.05, 48.99],[-97.22,  48.98],[-104.05, 48.99]], "node_ids":[13,52,13]},
+		 * {"type": "LineString", "coordinates": [[-104.05, 48.99],[-97.22,  48.98]], "node_ids":[13,52]},
+		 *
+		 * {"type": "Polygon", "coordinates": [[[-104.05, 48.99],[-97.22,  48.98],[-104.05, 48.99]], ....(unused)], "node_ids":[13,52,13]},
 		 */
 
 		nodes = new ArrayList<OsmNode>();
 		JsonNode coordinatesNode = geometry.findPath("coordinates");
 		JsonNode idsNode = geometry.findPath("node_ids");
 
-		if (geometry.findPath("type").asText().toUpperCase().equals("LINESTRING") && coordinatesNode.size() == idsNode.size()){
+		if (geometry.findPath("type").asText().toUpperCase().equals("LINESTRING") && coordinatesNode.get(0).size() == idsNode.size()){
 
-			for(int x = 0; x < coordinatesNode.size(); x++){
+			for(int x = 0; x < coordinatesNode.get(0).size(); x++){	
+				
+				ObjectNode osmNodeNode = Json.newObject();
+				osmNodeNode.put("type", "Point");
+				osmNodeNode.put("coordinates", coordinatesNode.get(0).get(x));
 				
 				OsmNode node = OsmNode.findById(idsNode.get(x).getLongValue());
-				
-				// first position in array is lon and second lat
-				// If position doesnt match
-				if ( ( node.getLon() != coordinatesNode.get(x).get(0).asDouble() || 
-						node.getLat() != coordinatesNode.get(x).get(1).asDouble() )){
-						throw new ConcurrentModificationException("Malformed");
+				if (node == null){
+					node = new OsmNode(idsNode.get(x).getLongValue(), 1, this.user, this.uid, coordinatesNode.get(0).get(x).get(1).asDouble(), coordinatesNode.get(0).get(x).get(0).asDouble(), new Date(), null);
+				} else {
+				node.setGeometry(osmNodeNode);
 				}
-				
 				nodes.add(node);
 			}
-			
 		}
-		
-		if (geometry.findPath("type").asText().toUpperCase().equals("POLYGON") && coordinatesNode.size() == idsNode.size()){
+		// A POLYGON way can only have one LINEARRING
+		else if (geometry.findPath("type").asText().toUpperCase().equals("POLYGON") && coordinatesNode.get(0).size() == idsNode.size()){
 
+			for(int x = 0; x < coordinatesNode.get(0).get(0).size(); x++){	
+				
+				ObjectNode osmNodeNode = Json.newObject();
+				osmNodeNode.put("type", "Point");
+				osmNodeNode.put("coordinates", coordinatesNode.get(0).get(0).get(x));
+				
+				OsmNode node = OsmNode.findById(idsNode.get(x).getLongValue());
+				if (node == null){
+					node = new OsmNode(
+							idsNode.get(x).getLongValue(),
+							1,
+							this.user,
+							this.uid,
+							coordinatesNode.get(0).get(0).get(x).get(1).asDouble(),
+							coordinatesNode.get(0).get(0).get(x).get(0).asDouble(),
+							new Date(),
+							null);
+				} else {
+				node.setGeometry(osmNodeNode);
+				}
+				nodes.add(node);
+			}
 		}
 	}
 	
