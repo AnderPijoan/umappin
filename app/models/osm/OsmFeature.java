@@ -10,7 +10,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.bson.types.ObjectId;
 import org.codehaus.jackson.JsonNode;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -19,6 +18,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public abstract class OsmFeature {
+	
+	protected final static double TOLERANCE = 0.001; // Tolerance for symplyfing geometries when inserting to PostGIS
 	
 	protected DataSource ds;
 	

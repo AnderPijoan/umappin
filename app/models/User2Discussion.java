@@ -33,7 +33,12 @@ public class User2Discussion extends Item {
 		if (MorphiaObject.datastore != null) {
 			List<Discussion> result = new ArrayList<Discussion>();
 			for (ObjectId oid : discussionIds){
-				result.add(MorphiaObject.datastore.get(Discussion.class, oid));
+				Discussion discussion = MorphiaObject.datastore.get(Discussion.class, oid);
+				if (discussion != null){
+					result.add(discussion);
+				} else {
+					discussionIds.remove(oid);
+				}
 			}
 			return result;
 		} else {
@@ -45,17 +50,18 @@ public class User2Discussion extends Item {
 		if (unread != null) {
 			List<Discussion> result = new ArrayList<Discussion>();
 			for (ObjectId oid : unread){
-				Discussion discussion = MorphiaObject.datastore.get(Discussion.class, oid);
-				result.add(discussion);
+				Discussion discussion = Discussion.findById(oid);
+				if (discussion != null){
+					result.add(discussion);
+				} else {
+					unread.remove(oid);
+					discussionIds.remove(oid);
+				}
 			}
 			return result;
 		} else {
 			return new ArrayList<Discussion>();
 		}
-	}
-
-	public void save() {
-		MorphiaObject.datastore.save(this);
 	}
 
 	public static User2Discussion findById(String id) {
@@ -68,7 +74,7 @@ public class User2Discussion extends Item {
 
 	public Discussion findDiscussionById(String id) {
 		if (discussionIds != null && discussionIds.contains(new ObjectId(id))){
-			Discussion discussion = MorphiaObject.datastore.get(Discussion.class, new ObjectId(id));
+			Discussion discussion = Discussion.findById(new ObjectId(id));
 			if (discussion != null){
 				setRead(discussion, true); // We set the discussion to read
 				discussion.save();
@@ -80,7 +86,7 @@ public class User2Discussion extends Item {
 
 	public Discussion findDiscussionById(ObjectId oid) {
 		if (discussionIds != null && discussionIds.contains(oid)){
-			Discussion discussion = MorphiaObject.datastore.get(Discussion.class, oid);
+			Discussion discussion = Discussion.findById(oid);
 			if (discussion != null){
 				setRead(discussion, true); // We set the discussion to read
 				discussion.save();
@@ -90,7 +96,7 @@ public class User2Discussion extends Item {
 		return null;
 	}
 
-	/** Adds a new discussionId to the list and also to the unread list
+	/** Adds a new discussionId to the list
 	 * @param id
 	 */
 	public void addDiscussion(Discussion discussion){

@@ -111,7 +111,7 @@ public class OsmNode extends OsmFeature {
 		OsmNode node = null;
 		try {
 			conn = ds.getConnection();
-			String sql = "select id, vers, usr, uid, timest, tags, inusebyuseroid, st_asgeojson(geom) as geometry from osmnodes where id = ?";
+			String sql = "select id, vers, usr, uid, timest, tags, inusebyuseroid, st_asgeojson(ST_Transform(ST_SetSRID(geom, 900913),4326)) as geometry from osmnodes where id = ?";
 			st = conn.prepareStatement(sql);
 			st.setLong(1, id);
 			rs = st.executeQuery();
@@ -122,7 +122,7 @@ public class OsmNode extends OsmFeature {
 						rs.getString("uid"),
 						0,
 						0,
-						rs.getDate("timestamp"),
+						rs.getDate("timest"),
 						hstoreFormatToTags(rs.getString("tags")));
 				node.setGeometry(Json.parse(rs.getString("geometry")));
 			}
@@ -147,7 +147,8 @@ public class OsmNode extends OsmFeature {
 		OsmNode node = null;
 		try {
 			conn = ds.getConnection();
-			String sql = "select id, vers, usr, uid, timest, tags, inusebyuseroid, st_asgeojson(geom) as geometry from osmnodes where geom = ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913)";
+			String sql = "select id, vers, usr, uid, timest, tags, inusebyuseroid, st_asgeojson(ST_Transform(ST_SetSRID(geom, 900913),4326)) as geometry " +
+					"from osmnodes where geom = ST_SimplifyPreserveTopology(ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913), " + TOLERANCE + ")";
 			st = conn.prepareStatement(sql);
 			st.setString(1, Json.stringify(geometry));
 			rs = st.executeQuery();
@@ -158,7 +159,7 @@ public class OsmNode extends OsmFeature {
 						rs.getString("uid"),
 						0,
 						0,
-						rs.getDate("timestamp"),
+						rs.getDate("timest"),
 						hstoreFormatToTags(rs.getString("tags")));
 				node.setGeometry(Json.parse(rs.getString("geometry")));
 			}
@@ -197,7 +198,7 @@ public class OsmNode extends OsmFeature {
 			conn = ds.getConnection();
 
 			// Check if already exists
-			String sql = "select id, vers, inusebyuseroid, tags from osmnodes where id = ? OR geom = ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913)";
+			String sql = "select id, vers, inusebyuseroid, tags from osmnodes where id = ? OR geom = ST_SimplifyPreserveTopology(ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913), " + TOLERANCE + ")";
 			st = conn.prepareStatement(sql);
 			st.setLong(1, this.id);
 			st.setString(2, Json.stringify(this.getGeometry()));
@@ -228,7 +229,7 @@ public class OsmNode extends OsmFeature {
 				// Try updating, if the node doesnt exists, the query does nothing
 				
 				sql = "update osmnodes set vers = ?, usr = ?, uid = ?, timest = ?, " +
-						"geom = ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913)" + 
+						"geom = ST_SimplifyPreserveTopology(ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913), " + TOLERANCE + ")" + 
 						(tags != null? ", tags = " + tagsToHstoreFormat(tags) : "" ) +
 						" where id = ?";
 				st = conn.prepareStatement(sql);
@@ -244,7 +245,7 @@ public class OsmNode extends OsmFeature {
 				
 				sql = "insert into osmnodes (id, vers, usr, uid, timest, geom " + 
 						(tags != null? ",tags" : "" ) + ") " +
-						"select ?, ?, ?, ?, ?, ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913) " + 
+						"select ?, ?, ?, ?, ?, ST_SimplifyPreserveTopology(ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913), " + TOLERANCE + ") " + 
 						(tags != null? ", " + tagsToHstoreFormat(tags) : "" ) + " " +
 						"where not exists (select 1 from osmnodes where id = ?)";
 				st = conn.prepareStatement(sql);
@@ -315,6 +316,7 @@ public class OsmNode extends OsmFeature {
 		return lonlat.getX();
 	}
 
+	
 	public JsonNode getGeometry(){
 
 		/* EXAMPLE :
@@ -329,6 +331,7 @@ public class OsmNode extends OsmFeature {
 		return geomNode;
 	}
 
+	
 	public void setGeometry(JsonNode geometry) {
 
 		/* EXAMPLE :

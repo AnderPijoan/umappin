@@ -241,12 +241,12 @@ public class User2DiscussionREST extends ItemREST {
 		if(json == null) {
 			return badRequest(Constants.JSON_EMPTY.toString());
 		}
-		Discussion discussion = Discussion.findById(id);
-		if (discussion == null || !discussion.userIds.contains(user.id)){
+		User2Discussion user2disc = User2Discussion.findById(user.id);
+		if (user2disc == null || !user2disc.discussionIds.contains(new ObjectId(id))){
 			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
 		}
-		User2Discussion user2disc = User2Discussion.findById(user.id);
-		if (user2disc == null || !user2disc.discussionIds.contains(discussion.id)){
+		Discussion discussion = user2disc.findDiscussionById(id);
+		if (discussion == null || !discussion.userIds.contains(user.id)){
 			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
 		}
 
@@ -373,7 +373,6 @@ public class User2DiscussionREST extends ItemREST {
 		if (user == null){
 			return badRequest(Constants.USER_NOT_LOGGED_IN.toString());
 		}
-
 
 		User2Discussion user2disc = User2Discussion.findById(user.id);
 		if (user2disc == null) {
