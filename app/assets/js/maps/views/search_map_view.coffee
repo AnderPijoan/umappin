@@ -147,7 +147,8 @@ class window.Maps.SearchMapView extends Maps.MapView
       if data? and data.elements? and data.elements.length > 0
         bounds = new OpenLayers.Bounds
         @addItem item, bounds for item in data.elements
-        @map.zoomToExtent bounds
+        @map.zoomTo Math.round @map.getZoomForExtent bounds
+
 
   addItem: (item, bounds) ->
     lonlat = new OpenLayers.LonLat(item.lon, item.lat)

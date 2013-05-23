@@ -36,3 +36,25 @@ Maps.initSearchMap = () ->
         Maps.searchMapview = new Maps.SearchMapView
           el: $('#map-container')
           model: new Maps.Map
+
+Maps.initRoutesMap = () ->
+  requirejs ['/assets/js/maps/models/map_model.js'], () ->
+    requirejs ['/assets/js/maps/models/map_route_model.js'], () ->
+      requirejs ['/assets/js/maps/views/map_view.js'], () ->
+        requirejs ['/assets/js/maps/views/routes_map_view.js'], () ->
+          usrMaps  = Account.session.get 'maps'
+          # TODO: handle the different user map types (Routes, etc..), for now it defaults to maps[0]
+          if usrMaps.length
+            Maps.routesMap = new Maps.Map id: usrMaps[0]
+            Maps.routesMap.fetch complete: () -> Maps.routesMapView.render()
+          else
+            Maps.routesMap = new Maps.Map
+            Maps.routesMap.save
+              ownerId: Account.session.get 'id'
+            { success: (resp) ->
+              usrMaps.push resp.get 'id'
+              Account.session.save maps: usrMaps
+            }
+          Maps.routesMapView = new Maps.RoutesMapView
+            el: $('#map-container')
+            model: Maps.routesMap

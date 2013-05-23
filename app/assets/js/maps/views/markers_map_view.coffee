@@ -120,7 +120,7 @@ class window.Maps.MarkersMapView extends Maps.MapView
               @markersLayer.addMarker(marker)
           bbox.transform(Maps.MapView.OSM_PROJECTION, @map.getProjectionObject())
           bbox.extend new OpenLayers.LonLat(origin.x, origin.y)
-          @map.zoomToExtent bbox
+          @map.zoomTo Math.round @map.getZoomForExtent bbox
           @map.zoomOut()
 
   createMarker: (lnglat) ->
