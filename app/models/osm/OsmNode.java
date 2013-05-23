@@ -111,7 +111,7 @@ public class OsmNode extends OsmFeature {
 		OsmNode node = null;
 		try {
 			conn = ds.getConnection();
-			String sql = "select id, vers, usr, uid, timest, tags, inusebyuseroid, st_asgeojson(ST_Transform(ST_SetSRID(geom, 900913),4326)) as geometry from osmnodes where id = ?";
+			String sql = "select id, vers, usr, uid, timest, tags, st_asgeojson(ST_Transform(ST_SetSRID(geom, 900913),4326)) as geometry from osmnodes where id = ?";
 			st = conn.prepareStatement(sql);
 			st.setLong(1, id);
 			rs = st.executeQuery();
@@ -147,7 +147,7 @@ public class OsmNode extends OsmFeature {
 		OsmNode node = null;
 		try {
 			conn = ds.getConnection();
-			String sql = "select id, vers, usr, uid, timest, tags, inusebyuseroid, st_asgeojson(ST_Transform(ST_SetSRID(geom, 900913),4326)) as geometry " +
+			String sql = "select id, vers, usr, uid, timest, tags, st_asgeojson(ST_Transform(ST_SetSRID(geom, 900913),4326)) as geometry " +
 					"from osmnodes where geom = ST_SimplifyPreserveTopology(ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913), " + TOLERANCE + ")";
 			st = conn.prepareStatement(sql);
 			st.setString(1, Json.stringify(geometry));
@@ -176,7 +176,6 @@ public class OsmNode extends OsmFeature {
 	}
 
 	/** Update NodeOSM
-	 * IMPORTANT: Check previously if the user is its owner (inUseByUserOID) before updating
 	 */
 	public OsmNode save(){
 
@@ -198,7 +197,7 @@ public class OsmNode extends OsmFeature {
 			conn = ds.getConnection();
 
 			// Check if already exists
-			String sql = "select id, vers, inusebyuseroid, tags from osmnodes where id = ? OR geom = ST_SimplifyPreserveTopology(ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913), " + TOLERANCE + ")";
+			String sql = "select id, vers, tags from osmnodes where id = ? OR geom = ST_SimplifyPreserveTopology(ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913), " + TOLERANCE + ")";
 			st = conn.prepareStatement(sql);
 			st.setLong(1, this.id);
 			st.setString(2, Json.stringify(this.getGeometry()));
@@ -277,7 +276,6 @@ public class OsmNode extends OsmFeature {
 	}
 
 	/** Delete NodeOSM
-	 * IMPORTANT: Check previously if the user is its owner (inUseByUserOID) before updating
 	 */
 	public void delete(){
 

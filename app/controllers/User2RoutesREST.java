@@ -53,20 +53,12 @@ public class User2RoutesREST extends ItemREST {
 
 
 	public static Result getNearRoutes(int amount) {
-		final User user = Application.getLocalUser(session());
-		if (user == null){
-			return badRequest(Constants.USER_NOT_LOGGED_IN.toString());
-		}
-		JsonNode json = request().body().asJson();
-		if(json == null) {
-			return badRequest(Constants.JSON_EMPTY.toString());
-		}
-		List<Route> routes = Route.findByLocation(json.findPath("geometry"), amount, -1);
 		// Return the response
-		return ok(Json.toJson(Route.routesToObjectNodes(routes)));
+		return getNearDifficultyRoutes(amount, -1);
 	}
 	
-	public static Result getNearRoutes(int amount, int difficulty) {
+	
+	public static Result getNearDifficultyRoutes(int amount, int difficulty) {
 		final User user = Application.getLocalUser(session());
 		if (user == null){
 			return badRequest(Constants.USER_NOT_LOGGED_IN.toString());
