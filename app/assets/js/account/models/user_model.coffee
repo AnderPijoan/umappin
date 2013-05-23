@@ -19,4 +19,4 @@ class window.Account.User extends Backbone.Model
     phone: ''
     address: ''
     profilePicture: ''
-    maps: []
+    maps: {}
