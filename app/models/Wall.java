@@ -13,10 +13,30 @@ import controllers.MorphiaObject;
 
 public class Wall extends Item {
 
+	///////////////////////////////////////////////////////////////////////////////
+	// THE OBJECTID OF WALL IS THE SAME AS THE USERS, TO GET IT DIRECTLY
+	///////////////////////////////////////////////////////////////////////////////
+
 	public ObjectId userId;
-	
+
 	public List<ObjectId> postIds;
 
+
+	public List<Publication> getPublications() {
+		List<Publication> publications = new ArrayList<Publication>();
+
+		Iterator<ObjectId> postIte = postIds.iterator();
+
+		while(postIte.hasNext()){
+			Publication publication = Publication.findById(postIte.next(), Publication.class);
+			if (publication != null){
+				publications.add(publication);
+			} else {
+				postIte.remove();
+			}
+		}
+		return publications;
+	}
 
 	@Override
 	public void delete() {
@@ -42,6 +62,20 @@ public class Wall extends Item {
 	}
 
 
+	public Publication findPublicationById(String id) {
+		if (postIds != null && postIds.contains(new ObjectId(id))){
+			Publication publication = Publication.findById(new ObjectId(id), Publication.class);
+			if (publication != null){
+				return publication;
+			} else {
+				postIds.remove(new ObjectId(id));
+			}
+		} 
+		return null;
+	}
+
+	
+	
 	public void addPublication(Publication publication) {
 		if (postIds == null){
 			postIds = new ArrayList<ObjectId>();
@@ -64,25 +98,27 @@ public class Wall extends Item {
 	}
 
 
-	public List<Publication> getPublications(int amount) {
+	public List<Publication> getPublications(int from, int to) {
 
 		List<Publication> publications = new ArrayList<Publication>();
 
 		Iterator<ObjectId> postIte = postIds.iterator();
 		int pos = 0;
 
-		while(postIte.hasNext() && pos < amount){
-			Publication publication = Publication.findById(postIte.next(), Publication.class);
-			if (publication != null){
-				publications.add(publication);
-			} else {
-				postIte.remove();
+		while(postIte.hasNext() && pos < to){
+			if (from <= pos && pos < to){
+				Publication publication = Publication.findById(postIte.next(), Publication.class);
+				if (publication != null){
+					publications.add(publication);
+				} else {
+					postIte.remove();
+				}
 			}
 		}
 		return publications;
 	}
-	
-	
+
+
 	/** Parses a publication and prepares it for exporting to JSON
 	 * @param publication
 	 * @return ObjectNode ready for use in toJson

@@ -7,10 +7,14 @@ public enum Constants {
 
 	USERS_EMPTY("No user found"),
 	USER_NOT_LOGGED_IN("User not logged in"),
+	
+	WALL_EMPTY("No wall found"),
 
 	MESSAGES_EMPTY("No message found"),
 
 	DISCUSSIONS_EMPTY("No discussion found"),
+	
+	PUBLICATIONS_EMPTY("No publication found"),
 	
 	ROUTES_EMPTY("No route found"),
 

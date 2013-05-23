@@ -95,6 +95,14 @@ GET     /messages/:id               controllers.User2DiscussionREST.getMessage(i
 PUT     /messages/:id               controllers.User2DiscussionREST.updateMessage(id: String)
 POST	/messages                   controllers.User2DiscussionREST.reply()
 POST	/messages/:id               controllers.User2DiscussionREST.replyToMessage(id: String)
+DELETE  /messages/:id               controllers.User2DiscussionREST.deleteMessage(id: String)
+
+# REST CRUD for publications
+GET     /publications               controllers.WallREST.getPublications()
+GET     /publications/from/:f/to/:t controllers.WallREST.getRangePublications(f: Integer, t: Integer)
+GET     /publications/:id           controllers.WallREST.getPublication(id: String)
+POST    /publications               controllers.WallREST.addPublication()
+DELETE  /publications/:id           controllers.WallREST.deletePublication(id: String)
 
 # REST CRUD for routes
 GET     /routes                     controllers.User2RoutesREST.getRoutes()

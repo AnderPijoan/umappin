@@ -1,4 +1,4 @@
-package controllers;
+package models;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -11,8 +11,8 @@ import play.data.format.Formats;
 
 import com.google.code.morphia.annotations.Entity;
 
-import models.Item;
-import models.Message;
+import controllers.MorphiaObject;
+
 
 @Entity
 public abstract class Post extends Item {
@@ -82,9 +82,23 @@ public abstract class Post extends Item {
 	
 	
 	public void addMessage(Message message) {
+		if(messageIds == null){
+			messageIds = new ArrayList<ObjectId>();
+		}
 		if (!messageIds.contains(message.id))
 			messageIds.add(message.id);
 		lastWrote = new Date();
+		this.save();
+	}
+	
+	
+	public void deleteMessage(Message message) {
+		if(messageIds != null){
+			messageIds.remove(message.id);
+			if (messageIds.isEmpty()){
+				messageIds = null;
+			}
+		}
 		this.save();
 	}
 	

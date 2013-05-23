@@ -11,7 +11,6 @@ import org.codehaus.jackson.node.ObjectNode;
 import play.libs.Json;
 
 import controllers.MorphiaObject;
-import controllers.Post;
 import controllers.routes;
 
 public class Publication extends Post {

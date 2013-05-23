@@ -59,6 +59,7 @@ public class User2DiscussionREST extends ItemREST {
 		}
 	}
 
+	
 	public static Result getDiscussion(String discussionId) {
 		final User user = Application.getLocalUser(session());
 		if (user == null){
@@ -76,6 +77,7 @@ public class User2DiscussionREST extends ItemREST {
 		return ok(Json.toJson(Discussion.discussionToFullObjectNode(discussion)));
 	}
 
+	
 	public static Result getMessage(String messageId) {
 		final User user = Application.getLocalUser(session());
 		if (user == null){
@@ -242,12 +244,13 @@ public class User2DiscussionREST extends ItemREST {
 		discussion.save(); // Save discussion
 
 		for(final User2Discussion user2disc : user2discList)
-			user2disc.save(); // Save user2discussions
+			user2disc.save(); // Save all user2discussions
 
 		//Return a copy of the discussion
 		return ok(Json.toJson(Discussion.discussionToFullObjectNode(discussion)));
 	}
 
+	
 	public static Result deleteDiscussion(String id){
 		final User user = Application.getLocalUser(session());
 		if (user == null){
@@ -281,6 +284,7 @@ public class User2DiscussionREST extends ItemREST {
 		}
 		return ok(Json.toJson(Discussion.discussionToFullObjectNode(discussion)));
 	}
+	
 
 	public static Result reply() {
 		final User user = Application.getLocalUser(session());
@@ -319,6 +323,7 @@ public class User2DiscussionREST extends ItemREST {
 		return ok(Json.toJson(Message.messageToObjectNode(message)));
 	}
 
+	
 	public static Result replyToMessage(String id){
 		final User user = Application.getLocalUser(session());
 		if (user == null){
@@ -361,7 +366,15 @@ public class User2DiscussionREST extends ItemREST {
 		}
 		return badRequest(Constants.MESSAGES_EMPTY.toString());
 	}
+	
+	
+	public static Result deleteMessage(String id){
+		Message message = Message.findById(id, Message.class);
+		message.delete();
+		return ok(Json.toJson(Message.messageToObjectNode(message)));
+	}
 
+	
 	/** Change discussion to unread for this users
 	 * @param discussionId
 	 * @param userIds
