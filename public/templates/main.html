@@ -66,15 +66,20 @@
           "email=" + $('#email_login').val() + "&password=" + $('#password_login').val()
         );
         loginPost.done(function( data ) {
-            $.get(
-                '/sessionuser',
-                function(data) {
-                    updateSessionViews(data.name);
+            sessionStorage.setItem('token', data.token);
+            $.ajax({
+                url: "/sessionuser",
+                data: { signature: 'authHeader' },
+                type: "GET",
+                beforeSend: function(xhr){xhr.setRequestHeader('token', data.token);},
+                success: function(resp) {
+                    setSessionUser(resp);
                     location.href='./'
                 }
-            );
+            });
         });
         loginPost.error(function( data ) {
+            toastFail(data.responseText);
             location.href='./#login';
         });
     }
@@ -94,7 +99,12 @@
             location.href='./';
         });
         registerPost.error(function( data ) {
-            location.href='./#signup';
+            if(data.responseText == 'Unverified User, click the link in your email'){
+                toastNotify(data.responseText);
+            }else{
+                toastFail(data.responseText);
+                location.href='./#signup';
+            }
         });
     }
 
@@ -108,10 +118,17 @@
                 "email=" + $('#email_forgot').val()
         );
         forgotPasswordPost.done(function( data ) {
-            location.href='./';
+            if(data == 'Your account has not been verified, yet. An e-mail including instructions on how to verify it has been sent out. Retry resetting your password afterwards.'){
+                toastNotify(data);
+            }else{
+                toastSuccess(data);
+            }
+            $('#forgotPassword').modal('hide');
+            location.href='./#';
         });
         forgotPasswordPost.error(function( data ) {
             $('#forgotPassword').modal('hide');
+            toastFail(data.responseText);
             location.href='./#forgotPassword';
         });
     }

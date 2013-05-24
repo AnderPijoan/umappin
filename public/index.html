@@ -26,58 +26,52 @@
 </head>
 
 <body>
-
-    <div class="loggedin navbar navbar-fixed-top">
-        <div class="navbar-inner">
-            <div class="container">
-                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </a>
-                <a class="brand" href="/">uMappin</a>
-
-                <div class="btn-group pull-right loggedout">
-                    <a href="#login" class="btn btn-primary btn-mini ">Log in</a>
-                </div>
-
-                <div class="btn-group pull-right loggedin" accesskey="" id="loggedControl">
-                    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                        <i class="icon-user"></i>
-                        <span id="username"></span>
-                        <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#account">Profile</a></li>
-                        <li><a href="#linkProvider">Link more providers</a></li>
-                        <li class="divider"></li>
-                        <li><a href="#logout"><i class="icon-off"></i> Sign out</a></li>
-                    </ul>
-                </div>
-
-                <div class="nav-collapse">
-                    <ul class="nav">
-                        <li class="loggedin"><a href="#messages/">Messages</a></li>
-                        <li class="loggedin"><a href="#featuresMap">Features Map</a></li>
-                        <li class="loggedin"><a href="#markersMap">Notes Map</a></li>
-                        <li class="loggedin"><a href="#searchMap">Search Map</a></li>
-                        <li class="loggedin"><a href="#account">Account</a></li>
-                        <li class="loggedin"><a href="#profile">profile</a></li>
-                        <li class="loggedin"><a href="#userlist">userlist</a></li>
-                        <li class="loggedout"><a href="#signup">Sign up</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-
 <div class="container">
     <div class="row">
         <div class="span3 logo">
             <span>uMappin</span>
         </div>
+        <div class="loggedin span8 offset1">
+            <div class="titlebar row">
+                <form class="navbar-search pull-left">
+                    <div class="input-prepend">
+                        <div class="add-on"><span class="icon-magnifying-glass"></span></div>
+                        <input type="text" class="span5" placeholder="Search">
+                    </div>
+                </form>
+                <div class="span3">
+                    <a href="#profile"><span class="icon-cog"></span>Profile</a>
+                    <a href="#inviteFriends"><span class="icon-users"></span>Invite friends</a>
+                    <a href="#logout"><span class="icon-switch"></span></a>
+                </div>
+            </div>
+        </div>
     </div>
-    <div id="content" class="row"></div>
+    <div class="row">
+        <div class="loggedin box-transparent span3">
+            <div id="profile-picture">
+            </div>
+            <div class="menu">
+                <a href="#"><span class="icon-newspaper"></span><span class="only-icon">Activity</span></a>
+                <a href="#"><span class="icon-home"></span><span class="only-icon">Wall</span></a>
+                <a href="#messages/"><span class="icon-bubbles"></span><span class="only-icon">Messages</span></a>
+                <a href="#userlist"><span class="icon-heart-stroke"></span><span class="only-icon">User list</span></a>
+                <a href="#"><span class="icon-trophy"></span><span class="only-icon">Awards</span></a>
+                <ul>
+                    <li>provisional</li>
+                    <li class="loggedin"><a href="#featuresMap">Features Map</a></li>
+                    <li class="loggedin"><a href="#markersMap">Notes Map</a></li>
+                    <li class="loggedin"><a href="#searchMap">Search Map</a></li>
+                    <li class="loggedin"><a href="#account">Account</a></li>
+                    <li>provisional</li>
+                </ul>
+            </div>
+        </div>
+        <div class="span9">
+            <div id="content" class="row">
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -92,8 +86,10 @@
 <script src="/assets/js/lib/backbone.min.js"></script>
 <script src="/assets/js/lib/backbone.subroute.js"></script>
 <script src="/assets/js/lib/require.min.js"></script>
+<script src="/assets/js/lib/jNotify.jquery.min.js"></script>
 <!--script src="/assets/js/backbone.custom.js"></script-->
 <script src="/assets/js/main.js"></script>
+<script src="/assets/js/toast.js"></script>
 <script>
     $('.logo').click(function(){
         location.href='./';
