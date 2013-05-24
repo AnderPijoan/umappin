@@ -52,8 +52,8 @@ class window.Maps.SearchMapView extends Maps.MapView
     )
     @controls.push geolocationControl
 
-    that = @
     # Search control
+    that = @
     OpenLayers.Control.prototype.keepEvents = (div) ->
       @keepEventsDiv = new OpenLayers.Events(@, div, null, true)
 

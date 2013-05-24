@@ -21,6 +21,43 @@ div.noteComment {
   }
 }
 
+div.searchControl{
+  margin: 1em 0 0 4em;
+
+  input#searchInput {
+    margin: 0;
+    padding-left: 0;
+    padding-right: 0;
+    width: 15em;
+    text-indent: 0.5em;
+  }
+
+  img.clickableImage {
+    cursor: pointer;
+    float: right;
+  }
+
+  ul.searchList {
+    margin: 0;
+    background-color: #f0f0f0;
+    display: none;
+    list-style: none;
+    width: 15em;
+
+    li {
+      border-top: 1px solid #cccccc;
+      cursor: pointer;
+      padding: 0.2em 0.2em 0.2em 0.5em;
+      &:hover {
+        background-color: #447788;
+        color: #ffffff;
+      }
+    }
+
+  }
+
+}
+
 div.olControlDrawFeatureRegularPolygonItemActive  { background-image: url("openlayers/img/draw_regular_polygon_on.png"); }
 div.olControlDrawFeatureRegularPolygonItemInactive  { background-image: url("openlayers/img/draw_regular_polygon_off.png"); }
 div.olControlModifyFeatureItemActive  { background-image: url("openlayers/img/modify_feature_on.png"); }

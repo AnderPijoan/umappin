@@ -225,7 +225,7 @@ public class Route extends Item {
 		try {
 			conn = ds.getConnection();
 			
-			String sql = "delefe from routes where mongo_oid = ?";
+			String sql = "delete from routes where mongo_oid = ?";
 			st = conn.prepareStatement(sql);
 			st.setString(1, this.id.toString());
 			st.executeUpdate();

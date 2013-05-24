@@ -4,6 +4,8 @@ _.templateSettings.variable = 'rc'
 
 class window.Maps.RoutesMapView extends Maps.MapView
   drawLayer: null
+  routesPopupTemplate: _.template $('#routes-popup-template').html()
+  searchBarTemplate: _.template $('#search-bar-template').html()
 
   # ---------------------------- Controls ------------------------------ #
   initControls: ->
@@ -15,66 +17,38 @@ class window.Maps.RoutesMapView extends Maps.MapView
       "Routes"
       renderers: renderer
     )
-    ###
-    @drawLayer.events.register "featureselected", @, (feat) ->
-      if feat.popup
-        feat.popup.toggle()
-      else
-        feat.popup = feat.createPopup(true)
-        @map.addPopup(feat.popup)
-        feat.popup.show()
-        $('.doSomethingButton').bind('click', (e) -> alert('TODO!!'))
-    ###
+
     toolBarControls = [
+
+      new OpenLayers.Control.DragPan(
+        'displayClass': 'olControlDragPan'
+      )
 
       new OpenLayers.Control.DrawFeature(
         @drawLayer
         OpenLayers.Handler.Path
         'displayClass': 'olControlDrawFeaturePath'
-        featureAdded: (feature, pixel) => @saveFeature feature
+        featureAdded: (route, pixel) => @saveRoute route
       )
 
       new OpenLayers.Control.ModifyFeature(
         @drawLayer
         'displayClass': 'olControlModifyFeature'
         mode: OpenLayers.Control.ModifyFeature.RESHAPE | OpenLayers.Control.ModifyFeature.DRAG
-        onModificationStart: (feature) => console.log feature
-        onModificationEnd: (feature) => @updateFeature feature
-      )
-
-      new OpenLayers.Control.ModifyFeature(
-        @drawLayer
-        'displayClass': 'olControlDragFeature'
-        mode: OpenLayers.Control.ModifyFeature.RESIZE | OpenLayers.Control.ModifyFeature.ROTATE | OpenLayers.Control.ModifyFeature.DRAG
-        onModificationStart: (feature) => console.log feature
-        onModificationEnd: (feature) => @updateFeature feature
+        onModificationStart: (route) => console.log route
+        onModificationEnd: (route) => @updateRoute route
       )
 
       new OpenLayers.Control.SelectFeature(
         @drawLayer
         'displayClass': 'olControlDragFeature'
         box: true
-        onSelect: (feat) =>
-          feat.popup = new OpenLayers.Popup.FramedCloud(
-            "chicken"
-            feat.geometry.getBounds().getCenterLonLat()
-            null
-            "<div style='font-size:.8em'>Route: #{feat.id} <br>Area: #{feat.geometry.getArea()}</div>"
-            null
-            true
-            (evt) =>
-              @map.removePopup feat.popup
-              #feat.popup.destroy()
-              #feat.popup = null
-          )
-          @map.addPopup(feat.popup)
-          $('.doSomethingButton').bind('click', (e) -> alert('TODO!!'))
-        onUnselect: (feat) =>
-          @map.removePopup feat.popup
-          feat.popup.destroy()
-          feat.popup = null
+        onSelect: (feat) => @showFeaturePopup feat
+        onUnselect: (feat) => @removeFeaturePopup feat
       )
+
     ]
+
     toolbar = new OpenLayers.Control.Panel(
       displayClass: 'olControlEditingToolbar'
       defaultControl: toolBarControls[5]
@@ -101,33 +75,19 @@ class window.Maps.RoutesMapView extends Maps.MapView
         geoLocationLayer.removeAllFeatures()
         geoPlace = new OpenLayers.Feature.Vector(
           e.point
-        {}
-        {
-          graphicName: 'circle'
-          strokeColor: '#0000FF'
-          strokeWidth: 1
-          fillOpacity: 0.5
-          fillColor: '#0000BB'
-          pointRadius: 20
-        }
+          {}
+          {
+            graphicName: 'circle'
+            strokeColor: '#0000FF'
+            strokeWidth: 1
+            fillOpacity: 0.5
+            fillColor: '#0000BB'
+            pointRadius: 20
+          }
         )
         geoLocationLayer.addFeatures [geoPlace]
         @map.zoomToExtent e.point.getBounds()
-
-        geopoint = new OpenLayers.Geometry.Point e.point.x, e.point.y
-        geopoint.transform @map.getProjectionObject(), Maps.MapView.OSM_PROJECTION
-        geojsonFormat = new OpenLayers.Format.GeoJSON()
-        geopoint = "{\"geometry\": #{geojsonFormat.write geopoint} }"
-
-        amount = 5 # TODO: we'll pick it up from a control
-        difficulty = -1 # TODO: we'll pick it up from a control
-
-        $.ajax
-          url: "/routes/near/#{amount}/difficulty/#{difficulty}"
-          type: 'POST'
-          contentType: 'application/json'
-          data: geopoint
-          success: (data) => @drawRoute r for r in data unless data == null
+        @fetchRoutes e.point.x, e.point.y
     )
     geolocationControl.events.register(
       "locationfailed"
@@ -136,11 +96,77 @@ class window.Maps.RoutesMapView extends Maps.MapView
     )
     @controls.push geolocationControl
 
+
+    # Search control
+    that = @
+    OpenLayers.Control.prototype.keepEvents = (div) ->
+      @keepEventsDiv = new OpenLayers.Events(@, div, null, true)
+
+      triggerSearch = (evt) =>
+        element = OpenLayers.Event.element(evt)
+        if  evt.keyCode == 13 then that.performSearch $(element).val()
+
+      @keepEventsDiv.on
+        "mousedown": (evt) ->
+          @mousedown = true
+          OpenLayers.Event.stop(evt, true)
+        "mousemove": (evt) ->
+          OpenLayers.Event.stop(evt, true) unless !@mousedown
+        "mouseup": (evt) ->
+          if @mousedown
+            @mousedown = false
+            OpenLayers.Event.stop(evt, true)
+        "click": (evt) -> OpenLayers.Event.stop(evt, true)
+        "mouseout": (evt) -> @mousedown = false
+        "dblclick": (evt) -> OpenLayers.Event.stop(evt, true)
+        "touchstart": (evt) -> OpenLayers.Event.stop(evt, true)
+        "keydown": (evt) -> triggerSearch(evt)
+        scope: @
+
+    searchControl = new OpenLayers.Control
+    OpenLayers.Util.extend searchControl,
+      displayClass: 'searchControl'
+      initialize : () ->
+        OpenLayers.Control.prototype.initialize.apply(@, arguments)
+      draw: () ->
+        div = OpenLayers.Control.prototype.draw.apply(@, arguments)
+        div.innerHTML = that.searchBarTemplate {}
+        @keepEvents(div);
+        $(div).find('img.clickableImage').click () =>
+          that.performSearch $('#searchInput').val()
+        div
+      allowSelection: true
+    @controls.push searchControl
+
     # TODO: Add more controls here ....
 
     @map.addLayer @drawLayer
     super
     geolocationControl.activate()
+    searchControl.activate()
+
+  # ---------------------------- Popup Handlers  ------------------------------ #
+  showFeaturePopup: (feat) ->
+    feat.popup = new OpenLayers.Popup.FramedCloud(
+      "chicken"
+      feat.geometry.getBounds().getCenterLonLat()
+      null
+      @routesPopupTemplate feat
+      null
+      true
+      (evt) =>  @removeFeaturePopup feat
+    )
+    @map.addPopup(feat.popup)
+    $('.saveRouteDataButton').bind('click', (e) -> alert('TODO: SAVE ME!!'))
+    $('.removeRouteButton').bind 'click', (e) =>
+      @removeFeaturePopup feat
+      @deleteRoute feat
+
+  removeFeaturePopup: (feat) ->
+    @map.removePopup feat.popup
+    feat.popup.destroy()
+    feat.popup = null
+
 
   # ---------------------------- Initialization ------------------------------ #
   initialize: ->
@@ -150,62 +176,81 @@ class window.Maps.RoutesMapView extends Maps.MapView
 
 
   # ---------------------------- Renderization ------------------------------ #
-  render: ->
-    features = @model.get 'features'
-    #@drawFeature f for f in features unless features == null
-    super
+  render: -> super
 
-
-  drawRoute: (data) ->
+  drawRoute: (data, bounds) ->
     route = new Maps.Route data
     geojsonFormat = new OpenLayers.Format.GeoJSON()
     geom = geojsonFormat.read(JSON.stringify(route.get 'geometry'), 'Geometry')
+    bounds.extend geom.getBounds()
     geom.transform Maps.MapView.OSM_PROJECTION, @map.getProjectionObject()
     olGeom = new OpenLayers.Feature.Vector geom
     olGeom.mapFeature = route
-    ###
-    olGeom.popupClass = OpenLayers.Popup.FramedCloud
-    olGeom.data.popupContentHTML = "<p>wtf??</p>"
-    olGeom.data.overflow = 'auto'
-    ###
-
     @drawLayer.addFeatures [olGeom]
 
   # ---------------------------- REST/Route Feature handlers ------------------------------ #
-  # This one gets a feature given its id via typical REST -- maybe we can get rid of it
-  drawFeature: (featureId) ->
-    geojsonFormat = new OpenLayers.Format.GeoJSON()
-    feature = new Maps.Route id: featureId
-    feature.fetch complete: (resp) =>
-      geom = geojsonFormat.read(JSON.stringify(feature.get 'geometry'), 'Geometry')
-      geom.transform Maps.MapView.OSM_PROJECTION, @map.getProjectionObject()
-      olGeom = new OpenLayers.Feature.Vector geom
-      olGeom.mapFeature = feature
-      @drawLayer.addFeatures [olGeom]
-
-  saveFeature: (feature) ->
-    console.log feature
-    geom = feature.geometry.clone().transform @map.getProjectionObject(), Maps.MapView.OSM_PROJECTION
+  saveRoute: (route) ->
+    geom = route.geometry.clone().transform @map.getProjectionObject(), Maps.MapView.OSM_PROJECTION
     geojsonFormat = new OpenLayers.Format.GeoJSON()
     ft = new Maps.Route
       name: 'dummyRoute'
       difficulty: 1 # TODO: pick this properties from elsewhere
       geometry: JSON.parse geojsonFormat.write geom
     ft.once 'change', (evt) =>
-      feature.mapFeature = ft
-      fts = @model.get('features') or []
-      fts.push ft.get 'id'
-      @model.save features: fts
+      route.mapFeature = ft
+      @showFeaturePopup route
     ft.save()
 
-  updateFeature: (feature) ->
+  updateRoute: (route) ->
     geojsonFormat = new OpenLayers.Format.GeoJSON()
-    geom = feature.geometry.clone().transform @map.getProjectionObject(), Maps.MapView.OSM_PROJECTION
-    feature.mapFeature.save geometry: JSON.parse geojsonFormat.write geom
+    geom = route.geometry.clone().transform @map.getProjectionObject(), Maps.MapView.OSM_PROJECTION
+    route.mapFeature.save geometry: JSON.parse geojsonFormat.write geom
 
-  deleteFeature: (feature) ->
-    feature.mapFeature.destroy success: ()=>
-      features = @model.get 'features'
-      @model.save
-        features: features.splice(features.indexOf(feature.mapFeature.get 'id'), 1)
-        { success: () => @drawLayer.removeFeatures [feature] }
+  deleteRoute: (route) ->
+    route.mapFeature.destroy success: () => @drawLayer.removeFeatures [route]
+
+  fetchRoutes: (lon, lat) ->
+    p = new OpenLayers.Geometry.Point lon, lat
+    p.transform @map.getProjectionObject(), Maps.MapView.OSM_PROJECTION
+    geojsonFormat = new OpenLayers.Format.GeoJSON()
+    json = "{\"geometry\": #{geojsonFormat.write p} }"
+    amount = 5 # TODO: we'll pick it up from a control
+    difficulty = -1 # TODO: we'll pick it up from a control
+    bounds = new OpenLayers.Bounds
+    bounds.extend p
+    $.ajax
+      url: "/routes/near/#{amount}/difficulty/#{difficulty}"
+      type: 'POST'
+      contentType: 'application/json'
+      data: json
+      success: (data) =>
+        @drawRoute r, bounds for r in data unless data == null
+        bounds.transform Maps.MapView.OSM_PROJECTION, @map.getProjectionObject()
+        @map.zoomTo Math.floor @map.getZoomForExtent bounds
+
+  # ---------------------------- Search handler ------------------------------ #
+  performSearch: (text) ->
+    $.get "http://nominatim.openstreetmap.org/search?q=#{text}&format=json&limit=10", (data) =>
+      if data? and data.length > 0
+        $('div.searchControl ul.searchList').css('display', 'block').html('')
+        for item in data
+          do (item) =>
+            $('div.searchControl ul.searchList').append "<li>#{item.display_name.substring(0, 20)}</li>"
+            $('div.searchControl ul.searchList').find('li').last().click () =>
+              $('div.searchControl ul.searchList').css('display', 'none').html('')
+              @selectLocation item
+
+  selectLocation: (location) ->
+    console.log location
+    p = new OpenLayers.Geometry.Point location.lon, location.lat
+    p.transform Maps.MapView.OSM_PROJECTION, @map.getProjectionObject()
+    @fetchRoutes p.x, p.y
+    feature = new OpenLayers.Feature.Vector(
+      p
+      {}
+      externalGraphic: location.icon
+      pointRadius: 10
+    )
+    @drawLayer.removeAllFeatures()
+    @drawLayer.addFeatures [feature]
+    @map.zoomToExtent p.getBounds()

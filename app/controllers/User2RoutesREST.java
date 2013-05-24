@@ -158,10 +158,6 @@ public class User2RoutesREST extends ItemREST {
 		if (user == null){
 			return badRequest(Constants.USER_NOT_LOGGED_IN.toString());
 		}
-		JsonNode json = request().body().asJson();
-		if(json == null) {
-			return badRequest(Constants.JSON_EMPTY.toString());
-		}
 		User2Routes user2routes = User2Routes.findById(user.id);
 		if (user2routes == null || !user2routes.routeIds.contains(new ObjectId(id))){
 			return badRequest(Constants.ROUTES_EMPTY.toString());
