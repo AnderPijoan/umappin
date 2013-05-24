@@ -1,12 +1,13 @@
 package controllers;
 
 import models.Followed;
+import models.Follows;
 
 import models.User;
-import controllers.UserREST;
 
 import play.mvc.Result;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import play.libs.Json;
 import org.codehaus.jackson.node.ObjectNode;
@@ -25,24 +26,25 @@ public class FollowedREST extends ItemREST {
 		if (user == null){
 			return badRequest(Constants.USER_NOT_LOGGED_IN.toString());
 		}
-
     	Followed  userFollowed = Followed.findByUserId(user.id);
-    	if (userFollowed ==null){
-    		return ok("[]");
-    	}
+		if (userFollowed == null){
+			return ok("[]");
+		}
+    	
     	List<ObjectNode> followedNode = new ArrayList<ObjectNode>();
 
-    	for (String followId : userFollowed.follow){
-    		followedNode.add(User.userToShortObjectNode(User.findById(followId,User.class)));
+    	Iterator<String> followsIte = userFollowed.follow.iterator();
+    	
+    	while(followsIte.hasNext()){
+    		
+    		User usr = User.findById(followsIte.next() ,User.class);
+    		if (usr != null){
+    			followedNode.add(User.userToShortObjectNode(usr));
+    		} else {
+    			followsIte.remove();
+    			userFollowed.save();
+    		}
     	}
-
-    	/*
-        ((ObjectNode)json).put("id", this.id.toString())
-        ((ObjectNode)json).put("email", this.email.toString());
-        ((ObjectNode)json).put("name", this.name.toString());
-
-        return json;*/
-	
     	return ok(Json.toJson(followedNode));
 
     }

@@ -75,7 +75,7 @@
                 <div class="discussion_participants_photo">
                     <% for (i=0; i<maxPhotosSeen;i++) { %>
                         <% if (rc.users[i]) { %>    
-                            <img id="photo<%- rc.users[i].name %>" class="messagePhoto" src="<%- rc.users[i].photo%>" title="<%- rc.users[i].name %>"/>
+                            <img id="photo<%- rc.users[i].name %>" class="messagePhoto" src="<%- rc.users[i].profilePicture%>" title="<%- rc.users[i].name %>"/>
                         <% } else {break;}} %>
                     <% if (rc.users.length > maxPhotosSeen) {plusUsers=rc.users.length-maxPhotosSeen;%> 
                         <span class="plusUsers">+<%- plusUsers %></span>

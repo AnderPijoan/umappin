@@ -79,6 +79,7 @@ DELETE  /followed/:id                controllers.FollowedREST.deleteFollowed(id:
 # REST CRUD for Users
 GET     /users                      controllers.UserREST.getAll()
 GET     /users/:id                  controllers.UserREST.get(id: String)
+GET     /users/:id/timeline         controllers.TimelineREST.getTimeline(id: String)
 POST    /users                      controllers.UserREST.post()
 PUT     /users/:id                  controllers.UserREST.put(id: String)
 DELETE  /users/:id                  controllers.UserREST.delete(id: String)
@@ -87,14 +88,46 @@ GET     /sessionuser                controllers.UserREST.getSessionUser
 
 # REST CRUD for discussions
 GET     /discussions                controllers.User2DiscussionREST.getDiscussions()
+GET     /discussions/from/:f/to/:t  controllers.User2DiscussionREST.getRangeDiscussions(f: Integer, t: Integer)
 GET     /discussions/unread         controllers.User2DiscussionREST.getUnreadDiscussions()
 GET     /discussions/:id            controllers.User2DiscussionREST.getDiscussion(id: String)
 POST    /discussions                controllers.User2DiscussionREST.addDiscussion()
 DELETE  /discussions/:id            controllers.User2DiscussionREST.deleteDiscussion(id: String)
+
+# REST CRUD for messages (!!!they need a "discussion_id" in the body!!!)
 GET     /messages/:id               controllers.User2DiscussionREST.getMessage(id: String)
 PUT     /messages/:id               controllers.User2DiscussionREST.updateMessage(id: String)
 POST	/messages                   controllers.User2DiscussionREST.reply()
 POST	/messages/:id               controllers.User2DiscussionREST.replyToMessage(id: String)
+DELETE  /messages/:id               controllers.User2DiscussionREST.deleteMessage(id: String)
+
+# REST CRUD for news
+GET     /news                       controllers.newsREST.getNews()
+GET     /news/from/:f/to/:t         controllers.newsREST.getNewsRange(f: Integer, t: Integer)
+
+# REST CRUD for publications
+GET     /publications               controllers.TimelineREST.getPublications()
+GET     /publications/from/:f/to/:t controllers.TimelineREST.getRangePublications(f: Integer, t: Integer)
+GET     /publications/:id           controllers.TimelineREST.getPublication(id: String)
+GET     /publications/:id/likes     controllers.TimelineREST.getPublicationLikes(id: String)
+POST    /publications               controllers.TimelineREST.addPublication()
+DELETE  /publications/:id           controllers.TimelineREST.deletePublication(id: String)
+
+# REST CRUD for comments (!!!they need a "publicaton_id" in the body!!!)
+GET     /comments/:id               controllers.TimelineREST.getMessage(id: String)
+PUT     /comments/:id               controllers.TimelineREST.updateMessage(id: String)
+POST	/comments                   controllers.TimelineREST.reply()
+POST	/comments/:id               controllers.TimelineREST.replyToMessage(id: String)
+DELETE  /comments/:id               controllers.TimelineREST.deleteMessage(id: String)
+
+# REST CRUD for routes
+GET     /routes                     controllers.User2RoutesREST.getRoutes()
+GET     /routes/:id                 controllers.User2RoutesREST.getRoute(id: String)
+GET     /routes/near/:amount        controllers.User2RoutesREST.getNearRoutes(amount: Integer)
+GET     /routes/near/:amount/difficulty/:diff        controllers.User2RoutesREST.getNearDifficultyRoutes(amount: Integer, diff: Integer)
+POST    /routes                     controllers.User2RoutesREST.addRoute()
+DELETE  /routes/:id                 controllers.User2RoutesREST.deleteRoute(id: String)
+PUT     /routes/:id                 controllers.User2RoutesREST.updateRoute(id: String)
 
 # REST CRUD for awards
 GET     /awards						controllers.AwardREST.getAwards()
@@ -144,7 +177,7 @@ POST    /items                    controllers.SubItemREST.post()
 PUT     /items/:id                controllers.SubItemREST.put(id: String)
 DELETE  /items/:id                controllers.SubItemREST.delete(id: String)
 
-GET     /populateDB               controllers.OsmFixmesREST.populateDatabase()
+GET     /populateDB               controllers.games.OsmFixmesREST.populateDatabase()
 
 
 #photo user 'likes' (to vote for a photo)
