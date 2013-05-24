@@ -123,8 +123,8 @@ DELETE  /comments/:id               controllers.TimelineREST.deleteMessage(id: S
 # REST CRUD for routes
 GET     /routes                     controllers.User2RoutesREST.getRoutes()
 GET     /routes/:id                 controllers.User2RoutesREST.getRoute(id: String)
-GET     /routes/near/:amount        controllers.User2RoutesREST.getNearRoutes(amount: Integer)
-GET     /routes/near/:amount/difficulty/:diff        controllers.User2RoutesREST.getNearDifficultyRoutes(amount: Integer, diff: Integer)
+POST    /routes/near/:amount        controllers.User2RoutesREST.getNearRoutes(amount: Integer)
+POST    /routes/near/:amount/difficulty/:diff        controllers.User2RoutesREST.getNearDifficultyRoutes(amount: Integer, diff: Integer)
 POST    /routes                     controllers.User2RoutesREST.addRoute()
 DELETE  /routes/:id                 controllers.User2RoutesREST.deleteRoute(id: String)
 PUT     /routes/:id                 controllers.User2RoutesREST.updateRoute(id: String)

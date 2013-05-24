@@ -1,9 +1,6 @@
 package models;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -69,7 +66,9 @@ public class Route extends Item {
 				
 				if (route != null && !routes.contains(route)){
 					route.setGeometry(Json.parse(rs.getString("geometry")));
-					route.setTags(OsmFeature.hstoreFormatToTags(rs.getString("tags")));
+                    String tags = rs.getString("tags");
+                    if (tags != null && !tags.equals(""))
+                        route.setTags(OsmFeature.hstoreFormatToTags(tags));
 					routes.add(route);
 				}
 			}
@@ -106,7 +105,9 @@ public class Route extends Item {
 				
 				while (rs.next()) {
 					route.setGeometry(Json.parse(rs.getString("geometry")));
-					route.setTags(OsmFeature.hstoreFormatToTags(rs.getString("tags")));
+                    String tags = rs.getString("tags");
+                    if (tags != null && !tags.equals(""))
+                        route.setTags(OsmFeature.hstoreFormatToTags(tags));
 				}
 				
 			} catch (SQLException e) {
@@ -143,7 +144,9 @@ public class Route extends Item {
 				while (rs.next()) {
 					
 					route.setGeometry(Json.parse(rs.getString("geometry")));
-					route.setTags(OsmFeature.hstoreFormatToTags(rs.getString("tags")));
+                    String tags = rs.getString("tags");
+                    if (tags != null && !tags.equals(""))
+					    route.setTags(OsmFeature.hstoreFormatToTags(tags));
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -161,7 +164,8 @@ public class Route extends Item {
 	
 	@Override
 	public void save() {
-		
+		if (this.id == null)
+            MorphiaObject.datastore.save(this);
 		DataSource ds = DB.getDataSource();
 		Connection conn = null;
 		PreparedStatement st;
@@ -172,21 +176,23 @@ public class Route extends Item {
 			
 			String sql = "update routes set mongo_oid = ?, difficulty = ?, timest = ?, " +
 					"geom = ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913)" + 
-					(tags != null? ", tags = " + OsmFeature.tagsToHstoreFormat(tags) : "" ) +
-					" where id = ?";
+					((tags != null && tags.size() > 0) ? ", tags = " + OsmFeature.tagsToHstoreFormat(tags) : "" ) +
+					" where mongo_oid = ?";
 			st = conn.prepareStatement(sql);
-			st.setInt(1, this.difficulty);
-			st.setDate(2, new java.sql.Date(this.id.getTime()));
-			st.setString(3, Json.stringify(this.getGeometry()));
-			st.setString(4, this.id.toString());
+
+            st.setString(1, this.id.toString());
+			st.setInt(2, this.difficulty);
+            st.setDate(3, new java.sql.Date(this.id.getTime()));
+			st.setString(4, Json.stringify(this.getGeometry()));
+			st.setString(5, this.id.toString());
 			st.executeUpdate();
 			
 			// Try inserting, if the node exists, the query does nothing
 			
 			sql = "insert into routes (mongo_oid, difficulty, timest, geom " + 
-					(tags != null? ",tags" : "" ) + ") " +
-					"select ?, ?, ?, ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913) " + 
-					(tags != null? ", " + OsmFeature.tagsToHstoreFormat(tags) : "" ) + " " +
+					((tags != null && tags.size() > 0) ? ",tags" : "" ) + ") " +
+					"select ?, ?, ?, ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913) " +
+					((tags != null && tags.size() > 0) ? ", " + OsmFeature.tagsToHstoreFormat(tags) : "" ) + " " +
 					"where not exists (select 1 from routes where mongo_oid = ?)";
 			st = conn.prepareStatement(sql);
 			st.setString(1, this.id.toString());
@@ -219,7 +225,7 @@ public class Route extends Item {
 		try {
 			conn = ds.getConnection();
 			
-			String sql = "delefe from routes where mongo_oid = ?";
+			String sql = "delete from routes where mongo_oid = ?";
 			st = conn.prepareStatement(sql);
 			st.setString(1, this.id.toString());
 			st.executeUpdate();

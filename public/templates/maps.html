@@ -13,13 +13,37 @@
         </div>
     </div>
 </div>
+
+
+<!------------------------------------- Search bar template -------------------------------------->
+<script type='text/template' id='search-bar-template'>
+    <input type='text' id='searchInput' placeholder='Search place ...'>
+    <img src='/assets/img/ico-search.png' class='clickableImage'>
+    <ul class='searchList'></ul>
+</script>
+
+
+<!------------------------------------- Route popup template -------------------------------------->
+<script type='text/template' id='routes-popup-template'>
+    <h4>Lon: &nbsp; <%=rc.geometry.getBounds().getCenterLonLat().lon%>, &nbsp;
+        Lat: &nbsp; <%=rc.geometry.getBounds().getCenterLonLat().lat%></h4>
+    <h4>Name: &nbsp; <%=rc.mapFeature.name%>, &nbsp; Difficulty: &nbsp; <%=rc.mapFeature.difficulty%> </h4>
+    <% for (var p in rc.mapFeature.properties) { %>
+        <label><%=p%>:&nbsp;<%=rc.mapFeature.properties[p]%></label>
+    <% } %>
+    <button class='button saveRouteDataButton' id='saveRouteDataButton-<%=rc.mapFeature.id%>'>Save</button>
+    <button class='button removeRouteButton' id='removeRouteButton-<%=rc.mapFeature.id%>'>Delete</button>
+</script>
+
+
 <!------------------------------------- Feature popup template -------------------------------------->
 <script type='text/template' id='features-popup-template'>
     <h4><%=rc.type%> - &nbsp; Lon: &nbsp; <%=rc.lon%>, &nbsp; Lat: &nbsp; <%=rc.lat%></h4>
     <% for (var t in rc.tags) { %>
-        <label><%=t%>:&nbsp;<%=rc.tags[t]%></label>
+    <label><%=t%>:&nbsp;<%=rc.tags[t]%></label>
     <% } %>
 </script>
+
 
 <!------------------------------------- Notes popup template -------------------------------------->
 <script type='text/template' id='notes-popup-template'>

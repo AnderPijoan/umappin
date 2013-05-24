@@ -26,7 +26,6 @@ import com.google.code.morphia.annotations.Entity;
 import controllers.MorphiaObject;
 import controllers.routes;
 import play.libs.Json;
-import scala.util.parsing.json.JSONArray;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
@@ -40,11 +39,12 @@ public class User extends Item implements Subject {
 	public String name;
 	public String firstName;
 	public String lastName;
-	public String phone;
-	public String address;
-	public ObjectId profilePicture;
-	public List<ObjectId> maps;
-	public String identifier;
+    public String phone;
+    public String address;
+    public ObjectId profilePicture;
+    public java.util.Map<String, List<ObjectId>> maps;
+    public String identifier;
+
 	@Formats.DateTime(pattern = "yyyy-MM-dd HH:mm:ss")
 	public Date lastLogin;
 	public boolean active;
@@ -248,45 +248,60 @@ public class User extends Item implements Subject {
 	}
 
 
-	/** ------------ User model needs special ObjectIds handling ------------- **/
 
-	@Override
-	public JsonNode toJson() {
-		JsonNode json = super.toJson();
-		ArrayNode aux = new ArrayNode(JsonNodeFactory.instance);
-		for (LinkedAccount la : this.linkedAccounts)
-			aux.add(la.toJson());
-		((ObjectNode)json).put("linkedAccounts", aux);
-		aux = new ArrayNode(JsonNodeFactory.instance);
-		for (SecurityRole sr : this.roles)
-			aux.add(sr.toJson());
-		((ObjectNode)json).put("roles", aux);
-		((ObjectNode)json).put("profilePicture", profilePicture != null ? profilePicture.toString() : null);
-		aux = new ArrayNode(JsonNodeFactory.instance);
-		if (this.maps != null)
-			for (ObjectId oid : this.maps)
-				aux.add(oid.toString());
-		((ObjectNode)json).put("maps", aux);
-		return json;
-	}
 
-	public static User userFromJson(JsonNode srcJson) {
-		JsonNode json = User.fromJson(srcJson);
-		JsonNode jtemp = json.findValue("profilePicture");
-		if (!jtemp.isNull() && !jtemp.asText().equalsIgnoreCase(""))
-			((ObjectNode)json).putPOJO("profilePicture", new ObjectId(jtemp.asText()));
-		else
-			((ObjectNode)json).putNull("profilePicture");
-		jtemp = json.findValue("maps");
-		ArrayNode aux = new ArrayNode(JsonNodeFactory.instance);
-		Iterator<JsonNode> it = jtemp.getElements();
-		while (it.hasNext())
-			aux.addPOJO(new ObjectId(it.next().asText()));
-		((ObjectNode)json).put("maps", aux);
-		return Json.fromJson(json, User.class);
-	}
+    /** ------------ User model needs special ObjectIds handling ------------- **/
 
-	
+    @Override
+    public JsonNode toJson() {
+        JsonNode json = super.toJson();
+        ArrayNode aux = new ArrayNode(JsonNodeFactory.instance);
+        for (LinkedAccount la : this.linkedAccounts)
+            aux.add(la.toJson());
+        ((ObjectNode)json).put("linkedAccounts", aux);
+        aux = new ArrayNode(JsonNodeFactory.instance);
+        for (SecurityRole sr : this.roles)
+            aux.add(sr.toJson());
+        ((ObjectNode)json).put("roles", aux);
+        ((ObjectNode)json).put("profilePicture", profilePicture != null ? profilePicture.toString() : null);
+        ObjectNode mapsNode = Json.newObject();
+        if (this.maps != null) {
+            for (String key : this.maps.keySet()) {
+                ArrayNode mapsAux = new ArrayNode(JsonNodeFactory.instance);
+                for (ObjectId oid : this.maps.get(key))
+                    mapsAux.add(oid.toString());
+                mapsNode.put(key, mapsAux);
+            }
+        }
+        ((ObjectNode)json).put("maps", mapsNode);
+        return json;
+    }
+
+    public static User userFromJson(JsonNode srcJson) {
+        JsonNode json = User.fromJson(srcJson);
+        JsonNode jtemp = json.findValue("profilePicture");
+        if (!jtemp.isNull() && !jtemp.asText().equalsIgnoreCase(""))
+            ((ObjectNode)json).putPOJO("profilePicture", new ObjectId(jtemp.asText()));
+        else
+            ((ObjectNode)json).putNull("profilePicture");
+        jtemp = json.findValue("maps");
+        Iterator<String> it = jtemp.getFieldNames();
+        ObjectNode mapsNodes = Json.newObject();
+        while (it.hasNext()) {
+            String key = it.next();
+            JsonNode mapNode = jtemp.findPath(key);
+            Iterator<JsonNode> itnode = mapNode.getElements();
+            ArrayNode aux = new ArrayNode(JsonNodeFactory.instance);
+            while (itnode.hasNext())
+                aux.addPOJO(new ObjectId(itnode.next().asText()));
+
+            mapsNodes.put(key, aux);
+        }
+        ((ObjectNode)json).put("maps", mapsNodes);
+        return Json.fromJson(json, User.class);
+    }
+
+
 	public static ObjectNode userToShortObjectNode(ObjectId oid){
 		User user = User.findById(oid, User.class);
 		return userToShortObjectNode(user);

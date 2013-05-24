@@ -78,6 +78,7 @@ public class User2RoutesREST extends ItemREST {
 			return badRequest(Constants.USER_NOT_LOGGED_IN.toString());
 		}
 		JsonNode json = request().body().asJson();
+
 		if(json == null) {
 			return badRequest(Constants.JSON_EMPTY.toString());
 		}
@@ -118,7 +119,7 @@ public class User2RoutesREST extends ItemREST {
 
 		route.save();
 
-		// Return a copy of the message
+		// Return a copy of the route
 		return ok(Json.toJson(Route.routeToFullObjectNode(route)));
 	}
 
@@ -161,7 +162,7 @@ public class User2RoutesREST extends ItemREST {
 		user2route.addRoute(route);
 		user2route.save();
 
-		//Return a copy of the discussion
+		//Return a copy of the route
 		return ok(Json.toJson(Route.routeToFullObjectNode(route)));
 	}
 
@@ -171,11 +172,9 @@ public class User2RoutesREST extends ItemREST {
 		if (user == null){
 			return badRequest(Constants.USER_NOT_LOGGED_IN.toString());
 		}
-		JsonNode json = request().body().asJson();
-		if(json == null) {
-			return badRequest(Constants.JSON_EMPTY.toString());
-		}
+
 		User2Routes user2routes = User2Routes.findById(user.id, User2Routes.class);
+
 		if (user2routes == null || !user2routes.routeIds.contains(new ObjectId(id))){
 			return badRequest(Constants.ROUTES_EMPTY.toString());
 		}

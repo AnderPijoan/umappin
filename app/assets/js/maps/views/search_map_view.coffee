@@ -52,8 +52,8 @@ class window.Maps.SearchMapView extends Maps.MapView
     )
     @controls.push geolocationControl
 
-    that = @
     # Search control
+    that = @
     OpenLayers.Control.prototype.keepEvents = (div) ->
       @keepEventsDiv = new OpenLayers.Events(@, div, null, true)
 
@@ -147,7 +147,8 @@ class window.Maps.SearchMapView extends Maps.MapView
       if data? and data.elements? and data.elements.length > 0
         bounds = new OpenLayers.Bounds
         @addItem item, bounds for item in data.elements
-        @map.zoomToExtent bounds
+        @map.zoomTo Math.round @map.getZoomForExtent bounds
+
 
   addItem: (item, bounds) ->
     lonlat = new OpenLayers.LonLat(item.lon, item.lat)
