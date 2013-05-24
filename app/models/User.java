@@ -247,15 +247,7 @@ public class User extends Item implements Subject {
 		return userNode;
 	}
 
-	public static ObjectNode userToShortObjectNode (User user){
 
-		ObjectNode userNode = Json.newObject();
-		userNode.put("id", user.id.toString());
-		userNode.put("email", user.email);
-		userNode.put("name", user.name);
-
-		return userNode;
-	}
 
 
     /** ------------ User model needs special ObjectIds handling ------------- **/
@@ -309,12 +301,19 @@ public class User extends Item implements Subject {
         return Json.fromJson(json, User.class);
     }
 
-	public static ObjectNode userSmallInfo(ObjectId oid){
-		User user = MorphiaObject.datastore.get(User.class, oid);
+
+	public static ObjectNode userToShortObjectNode(ObjectId oid){
+		User user = User.findById(oid, User.class);
+		return userToShortObjectNode(user);
+	}
+
+	
+	public static ObjectNode userToShortObjectNode(User user){
 		if (user != null){
 			ObjectNode userNode = Json.newObject();
 			userNode.put("id", user.id.toString());
 			userNode.put("name", user.name);
+			userNode.put("email", user.email);
 			userNode.put("profilePicture", user.profilePicture != null ? routes.PhotosREST.getPhoto(user.profilePicture.toString()).toString() +"/content" : null);
 			return userNode;
 		}
@@ -322,15 +321,29 @@ public class User extends Item implements Subject {
 	}
 
 
-	public static List<ObjectNode> usersSmallInfo(List<ObjectId> userIds){
-
-		List<ObjectNode> users = new ArrayList<ObjectNode>();
-		for(ObjectId oid : userIds){
-			ObjectNode userNode = userSmallInfo(oid);
+	public static List<ObjectNode> usersToShortObjectNode(List<User> users){
+		List<ObjectNode> userNodes = new ArrayList<ObjectNode>();
+		for(User user : users){
+			ObjectNode userNode = userToShortObjectNode(user);
 			if (userNode != null)
-				users.add(userNode);
+				userNodes.add(userNode);
 		}
-		return users;
+		return userNodes;
+	}
+
+	
+	public static List<ObjectNode> userIdsToShortObjectNode(List<ObjectId> userIds) {
+		List<ObjectNode> userNodes = new ArrayList<ObjectNode>();
+		for(ObjectId oid : userIds){
+			User user = User.findById(oid, User.class);
+			if (user != null){
+				ObjectNode userNode = userToShortObjectNode(user);
+				if (userNode != null){
+					userNodes.add(userNode);
+				}
+			}
+		}
+		return userNodes;
 	}
 
 }

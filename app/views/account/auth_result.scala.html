@@ -33,13 +33,20 @@
         </div>
     </div>
     <div id="content" class="row">
-        <h1>@title</h1>
-
-        <div id="actionResult" class="alert @alert">
-            @text
-        </div>
-        <div id="content" >
-            <input type="button" value="Continue" class="btn btn-primary" id="continueButton">
+        <div class="box-transparent span12">
+            <div class="row">
+                <div class="box span6 offset3">
+                    <div class="box-header">
+                        <h3>@title</h3>
+                    </div>
+                    <div class="box-body" style="text-align: center;">
+                        <div id="actionResult" class="alert @alert">
+                            @text
+                        </div>
+                        <input type="button" value="Continue" class="btn btn-primary" id="continueButton">
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -54,10 +61,9 @@
 <script src="/assets/js/lib/require.min.js"></script>
 <!--script src="/assets/js/backbone.custom.js"></script-->
 <script>
-    $('.logo').click(function(){
+    $('#continueButton').click(function(){
         location.href='./';
     });
-    $('#continueButton').click(function(){location.href='./'});
 </script>
 </body>
 

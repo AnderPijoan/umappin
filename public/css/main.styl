@@ -1,6 +1,7 @@
 @import "bootstrap.min.css"
 @import "bootstrap-responsive.min.css"
 @import "icons/icons.css"
+@import "jNotify.jquery.css"
 
 @font-face {
   font-family: 'Engagement';
@@ -52,6 +53,8 @@ box(opacy)
     border-right 1px solid color-box-border;
     .span3
       width 208px
+    .span4
+      width 290px
 
   .box-footer
     padding 10px
@@ -86,6 +89,64 @@ box(opacy)
     width: 195px;
     margin auto
 
+.titlebar
+  padding: 30px 0;
+  text-align right
+  .input-prepend
+    input, textarea, .uneditable-input
+      color color-dark-brown
+      border 1px solid color-box-border
+      -webkit-border-radius: 0 15px 15px 0;
+      -moz-border-radius: 0 15px 15px 0;
+      border-radius: 0 15px 15px 0;
+      padding: 4px 0px 4px 4px;
+      margin-right: -2px;
+    input.span5
+      width 330px
+    .add-on
+      color color-dark-brown
+      background-color color-beige
+      border 1px solid color-box-border
+      padding: 6px 5px 2px 8px;
+      -webkit-border-radius: 15px 0 0 15px;
+      -moz-border-radius: 15px 0 0 15px;
+      border-radius: 15px 0 0 15px;
+  .span3
+    text-align left
+    width 270px
+    margin-left 5px
+    a
+      font-weight: bold;
+      color color-purple
+      padding: 5px 6px;
+      line-height: 3;
+      background-color: color-beige;
+      margin: 0
+      border-radius: 8px;
+      span
+        margin-right: 5px;
+    a:hover,a:focus
+      color darken(color-purple, 30%);
+      background-color darken(color-beige, 10%)
+.menu
+  text-align left
+  a
+    font-weight: bold;
+    color: color-purple;
+    padding: 5px 6px;
+    line-height: 1;
+    background-color: color-beige;
+    margin: 0 5px;
+    border-radius: 8px;
+    display: inline-block;
+    width: 84%;
+    padding-left: 20px;
+    span
+      margin-right: 5px;
+  a:hover,a:focus
+    color darken(color-purple, 30%);
+    background-color darken(color-beige, 10%)
+
 body
   font-family Noto Serif
   background: url('../img/background.jpg') no-repeat center center fixed;
@@ -93,6 +154,31 @@ body
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
+  input, select, button, textarea
+    font-weight: bold;
+    font-family: inherit;
+    letter-spacing: 1px;
+
+textarea:focus,
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="datetime"]:focus,
+input[type="datetime-local"]:focus,
+input[type="date"]:focus,
+input[type="month"]:focus,
+input[type="time"]:focus,
+input[type="week"]:focus,
+input[type="number"]:focus,
+input[type="email"]:focus,
+input[type="url"]:focus,
+input[type="search"]:focus,
+input[type="tel"]:focus,
+input[type="color"]:focus,
+.uneditable-input:focus
+  border-color: color-dark-red
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(color-dark-red,0.6)
+  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(color-dark-red,0.6)
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(color-dark-red,0.6)
 
 #content
   #forgot-error
@@ -100,38 +186,22 @@ body
     margin-bottom: 0 !important;
     margin-top: 10px;
   .offset1-5
-    margin-left 50px
+    margin-left 60px
   .alert-error
+    padding 8px 15px 8px 30px
+    background:#F2DEDE  url('../img/error.png') no-repeat 5px center;
     border: 1px solid color-error;
     ul
       list-style-type: none;
       margin: 0;
   .alert-success
+    padding 8px 15px 8px 30px
+    background:#dff0d8  url('../img/success.png') no-repeat 5px center;
     border: 1px solid color-success;
   a
     color color-purple
   a:hover,a:focus
     color darken(color-purple, 30%);
-  textarea:focus,
-  input[type="text"]:focus,
-  input[type="password"]:focus,
-  input[type="datetime"]:focus,
-  input[type="datetime-local"]:focus,
-  input[type="date"]:focus,
-  input[type="month"]:focus,
-  input[type="time"]:focus,
-  input[type="week"]:focus,
-  input[type="number"]:focus,
-  input[type="email"]:focus,
-  input[type="url"]:focus,
-  input[type="search"]:focus,
-  input[type="tel"]:focus,
-  input[type="color"]:focus,
-  .uneditable-input:focus
-    border-color: color-dark-red
-    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(color-dark-red,0.6)
-    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(color-dark-red,0.6)
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(color-dark-red,0.6)
 
   .btn-primary
     margin auto
@@ -182,8 +252,12 @@ body
         width: 166px
       .span6
         width 396px
-    .input.span6
+      .span7
+        width 476px
+    input.span6
       width 436px
+    input.span7
+      width 517px
   h4
     text-align left
     margin: 0 0 5px;
@@ -226,41 +300,83 @@ body
 .loggedin, .loggedout
   display none
 
-
+#jError, #jNotify, #jSuccess
+  width 80%
 
 @media (min-width: 1200px)
   #content
     .offset1-5
-      margin-left 65px
+      margin-left 80px
     form
-      input.span6
-        width 546px
       .input-prepend
         .span3
           width: 216px
         .span6
           width 506px
+        .span7
+          width 605px
+      input.span6
+        width 546px
+      input.span7
+        width 647px
   .box
     .box-body
       .span3
         width 258px
+      .span4
+        width 360px
+  .titlebar
+    .input-prepend
+      input
+        padding: 4px 10px;
+        margin-right: -10px;
+      input.span5
+        width 455px
+    .span3
+      text-align right
+      width 300px
+      margin-left 0
+      a
+        padding: 5px 10px;
+        margin 0
+  .menu
+    a
+      width: 87%;
 
 @media (max-width: 979px) and (min-width: 768px)
   #content
     .offset1-5
-      margin-left 41px
+      margin-left 50px
     form
       .input-prepend
         .span3
           width: 112px
         .span6
           width 288px
+        .span7
+          width 350px
+      input.span7
+        width 391px
       input.span6
         width 329px
   .box
     .box-body
       .span3
         width 154px
+      .span4
+        width 215px
+  .titlebar
+    .input-prepend
+      input
+        width 465px
+      input.span5
+        width 195px
+    .span3
+      width 259px
+      text-align right
+  .menu
+    a
+      width: 79%;
 
 @media (max-width: 767px) and (min-width: 480px)
   #content
@@ -273,8 +389,10 @@ body
         margin 0
       .input-prepend
         display block
-        .span3,.span6
+        .span3, .span6, .span7
           width: 94%
+      input.span7
+        width 100%
       .modal
         .btn-primary
           width auto
@@ -286,6 +404,42 @@ body
     .box-body
       .span3
         width 98%
+      .span4
+        width 100%
+  .titlebar
+    text-align left
+    padding 0
+    .navbar-search
+      width: 94%;
+      margin-left -20px
+    .input-prepend
+      width 100%
+      margin-left: 20px;
+      input
+        width 100%
+      input.span5
+        width 102%
+    .span3
+      text-align: right;
+      width: 100%
+      float left
+      a
+        margin 0
+  .menu
+    margin-top: 10px;
+    text-align center
+    .only-icon
+      display none
+    a
+      padding: 19px 4px;
+      width: 14%;
+      border 1px solid color-box-border
+      span
+        margin-right: 0px;
+    ul
+      display none
+  #profile-picture
+    display none
 
 @media (max-width: 480px)
   #content
@@ -298,8 +452,12 @@ body
         margin 0
       .input-prepend
         display block
-        .span3,.span6
-          width: 86%
+        .span3, .span6
+          width 86%
+        .span7
+          width: 90%
+      input.span7
+        width 100%
       .modal
         .btn-primary
           width auto
@@ -311,3 +469,37 @@ body
     .box-body
       .span3
         width 98%
+      .span4
+        width 100%
+  .titlebar
+    padding 0
+    width 100%
+    text-align left
+    .navbar-search
+      width 100%
+    .input-prepend
+      width 100%
+      input
+        width 92%
+      input.span5
+        width 94%
+    .span3
+      text-align: right;
+      width: 100%;
+      a
+        margin 0
+  .menu
+    margin-top: 10px;
+    text-align center
+    .only-icon
+      display none
+    a
+      padding: 19px 0px;
+      width: 14%;
+      border 1px solid color-box-border
+      span
+        margin-right: 0px;
+    ul
+      display none
+  #profile-picture
+    display none

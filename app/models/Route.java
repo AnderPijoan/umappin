@@ -304,7 +304,7 @@ public class Route extends Item {
 		ObjectNode routeNode = Json.newObject();
 		routeNode.put("id", route.id.toString());
 		routeNode.put("name", route.name);
-		routeNode.put("user", User.userSmallInfo(route.userId));
+		routeNode.put("user", User.userToShortObjectNode(route.userId));
 		routeNode.put("timeStamp", route.id.getTime());
 		routeNode.put("geometry", route.geometry);
 		routeNode.put("properties", Json.toJson(route.tags));

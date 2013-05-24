@@ -12,7 +12,6 @@ import play.libs.Json;
 import com.google.code.morphia.annotations.Entity;
 
 import controllers.MorphiaObject;
-import controllers.Post;
 
 /**
  * User: a.pijoan
@@ -26,14 +25,20 @@ public class Discussion extends Post {
 
 	@Override
 	public void delete() {
-
 		for (ObjectId oid : userIds){
-			User2Discussion user2disc = User2Discussion.findById(oid);
+			User2Discussion user2disc = User2Discussion.findById(oid, User2Discussion.class);
 			user2disc.removeDiscussion(this);
 		}
 
-		for(ObjectId oid : messageIds){
-			Message message = Message.findById(oid, Message.class);
+		if (repliesIds != null){
+			for(ObjectId oid : repliesIds){
+				Message message = Message.findById(oid, Message.class);
+				message.delete();
+			}
+		}
+
+		Message message = Message.findById(firstMessage, Message.class);
+		if (message != null){
 			message.delete();
 		}
 
@@ -57,6 +62,7 @@ public class Discussion extends Post {
 			userIds.remove(user.id);
 			if (userIds.isEmpty()){
 				userIds = null;
+				this.delete();
 			}
 		}
 		this.save();
@@ -81,11 +87,19 @@ public class Discussion extends Post {
 	public static ObjectNode discussionToShortObjectNode (Discussion discussion){
 		ObjectNode discussionNode = Json.newObject();
 		discussionNode.put("id", discussion.id.toString());
-		discussionNode.put("unread", "fixme");
+		discussionNode.put("unread", 0);
 		discussionNode.put("subject", discussion.subject);
-		discussionNode.put("users", Json.toJson(User.usersSmallInfo(discussion.userIds)));
+		discussionNode.put("users", Json.toJson(User.userIdsToShortObjectNode(discussion.userIds)));
 		discussionNode.put("timeStamp", discussion.id.getTime());
 		discussionNode.put("lastWrote", discussion.lastWrote.toString());
+
+		Message message = Message.findById(discussion.firstMessage, Message.class);
+		if (message != null){
+			discussionNode.put("content", message.message);
+		} else {
+			discussion.delete();
+		}
+
 		return discussionNode;
 	}
 
@@ -96,12 +110,20 @@ public class Discussion extends Post {
 	public static ObjectNode discussionToFullObjectNode (Discussion discussion){
 		ObjectNode discussionNode = Json.newObject();
 		discussionNode.put("id", discussion.id.toString());
-		discussionNode.put("unread", "fixme");
+		discussionNode.put("unread", 0);
 		discussionNode.put("subject", discussion.subject);
-		discussionNode.put("users", Json.toJson(User.usersSmallInfo(discussion.userIds)));
+		discussionNode.put("users", Json.toJson(User.userIdsToShortObjectNode(discussion.userIds)));
 		discussionNode.put("timeStamp", discussion.id.getTime());
 		discussionNode.put("lastWrote", discussion.lastWrote.toString());
 		discussionNode.put("messages", Json.toJson(Message.messagesToObjectNodes(discussion.getMessages())));
+
+		Message message = Message.findById(discussion.firstMessage, Message.class);
+		if (message != null){
+			discussionNode.put("content", message.message);
+		} else {
+			discussion.delete();
+		}
+
 		return discussionNode;
 	}
 }

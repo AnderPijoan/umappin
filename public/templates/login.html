@@ -52,8 +52,6 @@
                 beforeSend: function(xhr){xhr.setRequestHeader('token', data.token);},
                 success: function(resp) {
                     setSessionUser(resp);
-                    $('#actionResult').css('display','block').empty()
-                                      .html("<div class='alert alert-success'>User Authenticated</div>");
                     location.href='./'
                 }
             });

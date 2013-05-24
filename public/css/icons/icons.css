@@ -27,7 +27,7 @@ Instead of a list of all class selectors,
 you can use the generic selector below, but it's slower:
 [class*="icon-"] {
 */
-.icon-key, .icon-users, .icon-unlocked, .icon-envelop, .icon-magnifying-glass {
+.icon-home, .icon-newspaper, .icon-bubbles, .icon-cog, .icon-heart-stroke, .icon-trophy, .icon-magnifying-glass, .icon-key, .icon-users, .icon-unlocked, .icon-envelop, .icon-switch {
 	font-family: 'icomoon';
 	speak: none;
 	font-style: normal;
@@ -37,11 +37,32 @@ you can use the generic selector below, but it's slower:
 	line-height: 1;
 	-webkit-font-smoothing: antialiased;
 }
+.icon-home:before {
+	content: "\e000";
+}
+.icon-newspaper:before {
+	content: "\e006";
+}
+.icon-bubbles:before {
+	content: "\e007";
+}
+.icon-cog:before {
+	content: "\e008";
+}
+.icon-heart-stroke:before {
+	content: "\e009";
+}
+.icon-trophy:before {
+	content: "\e00a";
+}
+.icon-magnifying-glass:before {
+	content: "\e00b";
+}
 .icon-key:before {
-	content: "\e001";
+	content: "\e00c";
 }
 .icon-users:before {
-	content: "\e000";
+	content: "\e001";
 }
 .icon-unlocked:before {
 	content: "\e002";
@@ -49,6 +70,6 @@ you can use the generic selector below, but it's slower:
 .icon-envelop:before {
 	content: "\e003";
 }
-.icon-magnifying-glass:before {
+.icon-switch:before {
 	content: "\e004";
 }
