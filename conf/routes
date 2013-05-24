@@ -79,6 +79,7 @@ DELETE  /followed/:id                controllers.FollowedREST.deleteFollowed(id:
 # REST CRUD for Users
 GET     /users                      controllers.UserREST.getAll()
 GET     /users/:id                  controllers.UserREST.get(id: String)
+GET     /users/:id/timeline         controllers.TimelineREST.getTimeline(id: String)
 POST    /users                      controllers.UserREST.post()
 PUT     /users/:id                  controllers.UserREST.put(id: String)
 DELETE  /users/:id                  controllers.UserREST.delete(id: String)
@@ -87,6 +88,7 @@ GET     /sessionuser                controllers.UserREST.getSessionUser
 
 # REST CRUD for discussions
 GET     /discussions                controllers.User2DiscussionREST.getDiscussions()
+GET     /discussions/from/:f/to/:t  controllers.User2DiscussionREST.getRangeDiscussions(f: Integer, t: Integer)
 GET     /discussions/unread         controllers.User2DiscussionREST.getUnreadDiscussions()
 GET     /discussions/:id            controllers.User2DiscussionREST.getDiscussion(id: String)
 POST    /discussions                controllers.User2DiscussionREST.addDiscussion()
@@ -99,19 +101,24 @@ POST	/messages                   controllers.User2DiscussionREST.reply()
 POST	/messages/:id               controllers.User2DiscussionREST.replyToMessage(id: String)
 DELETE  /messages/:id               controllers.User2DiscussionREST.deleteMessage(id: String)
 
+# REST CRUD for news
+GET     /news                       controllers.newsREST.getNews()
+GET     /news/from/:f/to/:t         controllers.newsREST.getNewsRange(f: Integer, t: Integer)
+
 # REST CRUD for publications
-GET     /publications               controllers.WallREST.getPublications()
-GET     /publications/from/:f/to/:t controllers.WallREST.getRangePublications(f: Integer, t: Integer)
-GET     /publications/:id           controllers.WallREST.getPublication(id: String)
-POST    /publications               controllers.WallREST.addPublication()
-DELETE  /publications/:id           controllers.WallREST.deletePublication(id: String)
+GET     /publications               controllers.TimelineREST.getPublications()
+GET     /publications/from/:f/to/:t controllers.TimelineREST.getRangePublications(f: Integer, t: Integer)
+GET     /publications/:id           controllers.TimelineREST.getPublication(id: String)
+GET     /publications/:id/likes     controllers.TimelineREST.getPublicationLikes(id: String)
+POST    /publications               controllers.TimelineREST.addPublication()
+DELETE  /publications/:id           controllers.TimelineREST.deletePublication(id: String)
 
 # REST CRUD for comments (!!!they need a "publicaton_id" in the body!!!)
-GET     /comments/:id               controllers.WallREST.getMessage(id: String)
-PUT     /comments/:id               controllers.WallREST.updateMessage(id: String)
-POST	/comments                   controllers.WallREST.reply()
-POST	/comments/:id               controllers.WallREST.replyToMessage(id: String)
-DELETE  /comments/:id               controllers.WallREST.deleteMessage(id: String)
+GET     /comments/:id               controllers.TimelineREST.getMessage(id: String)
+PUT     /comments/:id               controllers.TimelineREST.updateMessage(id: String)
+POST	/comments                   controllers.TimelineREST.reply()
+POST	/comments/:id               controllers.TimelineREST.replyToMessage(id: String)
+DELETE  /comments/:id               controllers.TimelineREST.deleteMessage(id: String)
 
 # REST CRUD for routes
 GET     /routes                     controllers.User2RoutesREST.getRoutes()

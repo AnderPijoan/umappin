@@ -37,16 +37,6 @@ public class User2Routes extends Item {
 	}
 	
 	
-	public static User2Routes findById(String id) {
-		return MorphiaObject.datastore.get(User2Routes.class, new ObjectId(id));
-	}
-
-	
-	public static User2Routes findById(ObjectId oid) {
-		return MorphiaObject.datastore.get(User2Routes.class, oid);
-	}
-	
-	
 	public Route findRouteById(String id) {
 		if (routeIds != null && routeIds.contains(new ObjectId(id))){
 			Route route = Route.findById(new ObjectId(id));

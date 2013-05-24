@@ -14,13 +14,31 @@ import play.mvc.Result;
 
 public class User2RoutesREST extends ItemREST {
 
-
+	public static Result all() {
+		final User user = Application.getLocalUser(session());
+		if (user == null){
+			return badRequest(Constants.USER_NOT_LOGGED_IN.toString());
+		}
+		User2Routes user2routes = User2Routes.findById(user.id, User2Routes.class);
+		if (user2routes == null) {
+			return badRequest(Constants.ROUTES_EMPTY.toString());
+		}
+		List<Route> routes = user2routes.all();
+		if (routes.size() == 0) {
+			return badRequest(Constants.ROUTES_EMPTY.toString());
+		} else {
+			// Return the response
+			return ok(Json.toJson(Route.routesToObjectNodes(routes)));
+		}
+	}
+	
+	
 	public static Result getRoutes() {
 		final User user = Application.getLocalUser(session());
 		if (user == null){
 			return badRequest(Constants.USER_NOT_LOGGED_IN.toString());
 		}
-		User2Routes user2routes = User2Routes.findById(user.id);
+		User2Routes user2routes = User2Routes.findById(user.id, User2Routes.class);
 		if (user2routes == null) {
 			return badRequest(Constants.ROUTES_EMPTY.toString());
 		}
@@ -39,11 +57,7 @@ public class User2RoutesREST extends ItemREST {
 		if (user == null){
 			return badRequest(Constants.USER_NOT_LOGGED_IN.toString());
 		}
-		User2Routes user2route = User2Routes.findById(user.id);
-		if (user2route == null) {
-			return badRequest(Constants.ROUTES_EMPTY.toString());
-		}
-		Route route = user2route.findRouteById(routeId);
+		Route route = Route.findById(routeId);
 		if (route == null) {
 			return badRequest(Constants.ROUTES_EMPTY.toString());
 		}
@@ -82,7 +96,7 @@ public class User2RoutesREST extends ItemREST {
 		if(json == null) {
 			return badRequest(Constants.JSON_EMPTY.toString());
 		}
-		User2Routes user2route = User2Routes.findById(user.id);
+		User2Routes user2route = User2Routes.findById(user.id, User2Routes.class);
 		if (user2route == null) {
 			return badRequest(Constants.ROUTES_EMPTY.toString());
 		}
@@ -135,7 +149,7 @@ public class User2RoutesREST extends ItemREST {
 		
 		route.save();
 		
-		User2Routes user2route = User2Routes.findById(user.id);
+		User2Routes user2route = User2Routes.findById(user.id, User2Routes.class);
 		
 		if (user2route == null){
 			user2route = new User2Routes();
@@ -161,7 +175,7 @@ public class User2RoutesREST extends ItemREST {
 		if(json == null) {
 			return badRequest(Constants.JSON_EMPTY.toString());
 		}
-		User2Routes user2routes = User2Routes.findById(user.id);
+		User2Routes user2routes = User2Routes.findById(user.id, User2Routes.class);
 		if (user2routes == null || !user2routes.routeIds.contains(new ObjectId(id))){
 			return badRequest(Constants.ROUTES_EMPTY.toString());
 		}

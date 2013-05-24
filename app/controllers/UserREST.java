@@ -2,7 +2,13 @@ package controllers;
 
 import be.objectify.deadbolt.java.actions.Group;
 import be.objectify.deadbolt.java.actions.Restrict;
+import models.Discussion;
+import models.Message;
+import models.Publication;
+import models.Timeline;
 import models.User;
+import models.User2Discussion;
+
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
 import play.libs.Json;
@@ -20,7 +26,7 @@ public class UserREST extends ItemREST {
         if (users.size() == 0) {
             return notFound(Constants.JSON_EMPTY.toString());
         } else {
-            List<JsonNode> nodes = new ArrayList();
+            List<JsonNode> nodes = new ArrayList<JsonNode>();
             for (User usr : users)
                 if (usr.emailValidated)
                 nodes.add(usr.toJson());
@@ -67,13 +73,41 @@ public class UserREST extends ItemREST {
 
     @Restrict(@Group(Application.USER_ROLE))
     public static Result delete(String id) {
-        User item = User.findById(id, User.class);
-        if (item == null) {
-            return notFound(Constants.JSON_EMPTY.toString());
-        } else {
-            item.delete();
-            return ok(item.toJson());
+    	final User user = Application.getLocalUser(session());
+		if (user == null){
+			return badRequest(Constants.USER_NOT_LOGGED_IN.toString());
         }
+		// Remove from all discussions
+		User2Discussion user2disc = User2Discussion.findById(user.id, User2Discussion.class);
+		if (user2disc != null){
+
+			for(Discussion discussion : user2disc.all()){
+				if (discussion != null){
+					discussion.removeUser(user);
+				}
+			}
+			user2disc.delete();
+		}
+		// Remove all its messages
+		for(Message message : Message.findWhere("writerId", user.id, Message.class)){
+			message.delete();
+		}
+		// Remove all publications and timeline
+		Timeline timeline = Timeline.findById(user.id, Timeline.class);
+		if (timeline != null){
+
+			for(Publication publication : timeline.all()){
+				if (publication != null){
+					publication.delete();
+				}
+			}
+			timeline.delete();
+		}
+		
+		// TODO REMOVE PHOTOS, AND MORE
+		
+		user.delete();
+		return ok(user.toJson());
     }
 
     public static Result getSessionUser() {

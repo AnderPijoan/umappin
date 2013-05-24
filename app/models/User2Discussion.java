@@ -1,6 +1,7 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.bson.types.ObjectId;
@@ -22,7 +23,7 @@ public class User2Discussion extends Item {
 	///////////////////////////////////////////////////////////////////////////////
 	// THE OBJECTID OF USER2DISCUSSION IS THE SAME AS THE USERS, TO GET IT DIRECTLY
 	///////////////////////////////////////////////////////////////////////////////
-	
+
 	public List<ObjectId> discussionIds;
 
 	public List<ObjectId> unread; // Only unread discussions ids are stored
@@ -64,13 +65,6 @@ public class User2Discussion extends Item {
 		}
 	}
 
-	public static User2Discussion findById(String id) {
-		return MorphiaObject.datastore.get(User2Discussion.class, new ObjectId(id));
-	}
-
-	public static User2Discussion findById(ObjectId oid) {
-		return MorphiaObject.datastore.get(User2Discussion.class, oid);
-	}
 
 	public Discussion findDiscussionById(String id) {
 		if (discussionIds != null && discussionIds.contains(new ObjectId(id))){
@@ -107,21 +101,22 @@ public class User2Discussion extends Item {
 		if (discussionIds == null){
 			discussionIds = new ArrayList<ObjectId>();
 		}
-		
+
 		if (!discussionIds.contains(discussion.id)){
-			discussionIds.add(discussion.id);
+			discussionIds.add(0, discussion.id);
 			this.save();
 		}
 	}
-	
+
 	public void removeDiscussion(Discussion discussion){
 		if (discussionIds != null){
 			discussionIds.remove(discussion.id);
-			
-			if (discussionIds.isEmpty())
+			if (discussionIds.isEmpty()){
 				discussionIds = null;
-			
-			this.save();
+				this.delete();
+			} else {
+				this.save();
+			}
 		}
 	}
 
@@ -133,13 +128,34 @@ public class User2Discussion extends Item {
 		if (!read && unread == null){
 			unread = new ArrayList<ObjectId>();
 		}
-		
+
 		if (unread != null && read){
 			unread.remove(discussion.id);
 		} else if (unread != null && !unread.contains(discussion.id)) {
 			unread.add(discussion.id);
 		}
 		this.save();
+	}
+	
+	
+	public List<Discussion> getDiscussions(int from, int to) {
+
+		List<Discussion> discussions = new ArrayList<Discussion>();
+
+		Iterator<ObjectId> discussionIte = discussionIds.iterator();
+		int pos = 0;
+
+		while(discussionIte.hasNext() && pos < to){
+			if (from <= pos && pos < to){
+				Discussion discussion = Discussion.findById(discussionIte.next(), Discussion.class);
+				if (discussion != null){
+					discussions.add(discussion);
+				} else {
+					discussionIte.remove();
+				}
+			}
+		}
+		return discussions;
 	}
 
 }
