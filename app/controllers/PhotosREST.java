@@ -53,21 +53,118 @@ public class PhotosREST extends Controller {
     public static final String RESULTS_LIMIT = "limit";
 
 
-    //========================Photo ===============//
-    public static Result getPhoto(String id){
+    @BodyParser.Of(value = BodyParser.MultipartFormData.class,
+            maxLength = MAX_MULTIPART_UPLOAD_SIZE)
+    public static Result uploadMultipartContent(String id){
 
-        ObjectId obj;
-        try {
-            obj = stringToObjectId(id);
-        } catch (IllegalArgumentException e) {
-            return badRequest(e.getMessage());
+//        if (request.headers.get("type").value().equals("multipart/form-data")){
+//            return ok("file received from user: "+ request().username() + "; " + CONTENT_TYPE + "");
+//        }
+
+        MultipartFormData body = request().body().asMultipartFormData();
+
+
+        if(body == null) {
+            return badRequest("Expecting multipart/form-data request body");
         }
+
+        Logger.info("multipart file received");
+
+
+        ObjectId objId = null;
+        try {
+            objId = stringToObjectId(id);
+        } catch (IllegalArgumentException e) {
+            badRequest(e.getMessage());
+        }
+
+        Photo photo = Photo.findById(objId);
+
+        if(photo == null){
+            return notFound("error while uploading: photo with id '" + id + "' was not found");
+        }
+
+        //verify the user is the ower of the photo
+        User user = Auth.getRequestingUser();
+        if(user == null){
+            return badRequest("user not recognized");
+        }
+        if(!photo.getOwnerId().equals(user.id)){
+            return unauthorized("not allowed to update the photo");
+        }
+
+
+
+        FilePart picture;
+
+        //let's take just one file, the first, ignoring any other potentially there
+        picture = body.getFiles().get(0);
+
+        File f = picture.getFile();
+
+        if(f == null) {
+            return badRequest("no file found in request");
+        }
+
+        Logger.info("file uploading: " + f + picture.getContentType());
+        String mimeType = picture.getContentType();
+        if(mimeType == null || !mimeType.substring(0,6).toLowerCase().equals("image/")){
+            return badRequest("sorry, the file was not recognized as an image, it looks: " + mimeType);
+        }
+        Logger.info("filetype was declared and stored as : " + mimeType);
+        try {
+            photo.addUpdateContent(f, picture.getContentType());
+            photo.save();
+        } catch (IOException e) {
+            return badRequest("error in file content");
+        }
+
+
+        return created("file uploaded for picture '" + id + "' type: " + picture.getContentType());
+
+    }
+
+    public static ObjectId stringToObjectId(String id) {
+        ObjectId objId;
+        try {
+            objId = new ObjectId(id);
+        } catch (Exception e) {
+            if(id == null) {
+                id = "";
+            }
+            throw new IllegalArgumentException("invalid identifier '" + id +"'");
+        }
+        return objId;
+    }
+
+    public static Result deletePhoto(String id){
+
+        User user = Auth.getRequestingUser();
+
+        if(user == null){
+            return badRequest("user not recognized or not logged in");
+        }
+
+        ObjectId obj = stringToObjectId(id);
         Photo photo = Photo.findById(obj);
+
         if(photo == null){
             return notFound("photo with id '" + id + "' was not found");
         }
-        return ok(photoToJson(Photo.findById(obj)));
+
+        if(!photo.getOwnerId().equals(user.id)){
+            return unauthorized("not allowed to delete the photo");
+        }
+
+        //delete any associated photoUserLike
+        Photo.deleteUserLikesForPhoto(photo);
+
+        photo.delete();
+
+        return ok("photo '" + id + "' succesfully deleted");
+
     }
+
 
     @BodyParser.Of(value = BodyParser.Json.class, maxLength = MAX_BASE64_UPLOAD_SIZE)
     public static Result newPhoto(){
@@ -119,6 +216,119 @@ public class PhotosREST extends Controller {
                 routes.PhotosREST.getPhoto(id).toString());
         return created(photoToJson(photo));
 
+    }
+
+
+    private static Photo jsonToPhoto(JsonNode json){
+
+        Photo photo = new Photo();
+
+        //optional fields
+        if(json.has(LATITUDE)){
+            photo.setLatitude(new Double(json.findPath(LATITUDE).getDoubleValue()));
+        }
+        if(json.has(LONGITUDE)){
+            photo.setLongitude(new Double(json.findPath(LONGITUDE).getDoubleValue()));
+        }
+        if(json.has(DATE_CREATED)){
+            photo.setCreated(new Date(json.findPath(DATE_CREATED).getLongValue()));
+        }
+        if(json.has(TITLE)){
+            photo.setTitle(json.findPath(TITLE).getTextValue());
+        }
+        if(json.has(DESCRIPTION)){
+            photo.setDescription(json.findPath(DESCRIPTION).getTextValue());
+        }
+
+        //Date createDate = javax.xml.bind.DatatypeConverter.parseDateTime(json.findPath("date").getTextValue()).getTime();
+
+        if(json.has(ID)){
+            ObjectId obj = stringToObjectId(json.findPath(ID).getTextValue());
+            photo.setId(obj);
+        }
+        return photo;
+
+    }
+
+    private static JsonNode photoToJson(Photo photo){
+        ObjectNode json = Json.newObject();
+        json.put(ID, photo.getId().toString());
+        json.put(DATE_CREATED, photo.getCreated().getTime());
+        json.put(OWNER_ID, photo.getOwnerId().toString());
+        if(photo.getLatitude() != null){
+            json.put(LATITUDE, photo.getLatitude());
+        }
+        if(photo.getLongitude() != null){
+            json.put(LONGITUDE, photo.getLongitude());
+        }
+        if(photo.getTitle() != null){
+            json.put(TITLE, photo.getTitle());
+        }
+        if(photo.getDescription() != null){
+            json.put(DESCRIPTION, photo.getDescription());
+        }
+        json.put(IS_USEFUL_COUNT, photo.getUsefulCount());
+        json.put(IS_BEAUTIFUL_COUNT, photo.getBeautifulCount());
+
+        //if the photo is already persisted (as it normally would)
+        //generate the location url that points to its content
+        ObjectId objectId = photo.getId();
+        if(objectId != null){
+            json.put(POST_PHOTO_CONTENT_LOCATION, routes.PhotosREST.uploadMultipartContent(objectId.toString()).toString());
+            //TODO, photo location
+            if(photo.getPhotoContents().size() > 0){
+                json.put(GET_PHOTO_CONTENT_LOCATION, routes.PhotosREST.getPhotoContent(objectId.toString()).toString());
+            }
+        }
+
+        return json;
+    }
+
+    public static Result getPhotoContent(String id){
+
+        ObjectId obj;
+        try {
+            obj = stringToObjectId(id);;
+        } catch (IllegalArgumentException e) {
+            return badRequest(e.getMessage());
+        }
+        Photo photo = Photo.findById(obj);
+
+        if(photo == null){
+            return notFound("photo with id '" + id + "' was not found");
+        }
+
+        ByteArrayInputStream inStream = null;
+        //returns the first one
+        //TODO: it will return the proper Content when handling multiple photo sizes (quality)
+        for(Photo.Content c : photo.getPhotoContents()){
+            response().setContentType(c.getMimeType());
+            //response().setHeader("Content-Disposition", "attachment; filename=FILENAME");
+            //response().setHeader(ETAG, "xxx");
+            //ByteArrayInputStream bais = new ByteArrayInputStream(c.getFileBytes());
+            Logger.info("found photo " + c.getId().toString());
+            inStream = new ByteArrayInputStream(c.getFileBytes());
+
+        }
+        if(inStream == null){
+            return notFound("photo content is missing");
+        }
+        return ok(inStream);
+    }
+
+    public static Result getPhoto(String id){
+
+        ObjectId obj;
+        try {
+            obj = stringToObjectId(id);
+        } catch (IllegalArgumentException e) {
+            return badRequest(e.getMessage());
+        }
+        Photo photo = Photo.findById(obj);
+        if(photo == null){
+            return notFound("photo with id '" + id + "' was not found");
+        }
+        return ok(photoToJson(Photo.findById(obj)));
     }
 
     @BodyParser.Of(value = BodyParser.Json.class, maxLength = MAX_BASE64_UPLOAD_SIZE)
@@ -192,140 +402,56 @@ public class PhotosREST extends Controller {
         return ok(photoToJson(photo));
     }
 
-    public static Result deletePhoto(String id){
+    private static String extractMimeImageContentType(byte[] bytes) {
 
-        User user = Auth.getRequestingUser();
+        String type;
 
-        if(user == null){
-            return badRequest("user not recognized or not logged in");
-        }
-
-        ObjectId obj = stringToObjectId(id);
-        Photo photo = Photo.findById(obj);
-
-        if(photo == null){
-            return notFound("photo with id '" + id + "' was not found");
-        }
-
-        if(!photo.getOwnerId().equals(user.id)){
-            return unauthorized("not allowed to delete the photo");
-        }
-
-        //delete any associated photoUserLike
-        Photo.deleteUserLikesForPhoto(photo);
-
-        photo.delete();
-
-        return ok("photo '" + id + "' succesfully deleted");
-
-    }
-
-    //========================Photo Content===============//
-    @BodyParser.Of(value = BodyParser.MultipartFormData.class,
-        maxLength = MAX_MULTIPART_UPLOAD_SIZE)
-    public static Result uploadMultipartContent(String id){
-
-//        if (request.headers.get("type").value().equals("multipart/form-data")){
-//            return ok("file received from user: "+ request().username() + "; " + CONTENT_TYPE + "");
-//        }
-
-        MultipartFormData body = request().body().asMultipartFormData();
-
-
-        if(body == null) {
-            return badRequest("Expecting multipart/form-data request body");
-        }
-
-        Logger.info("multipart file received");
-
-
-        ObjectId objId = null;
         try {
-            objId = stringToObjectId(id);
-        } catch (IllegalArgumentException e) {
-            badRequest(e.getMessage());
-        }
-
-        Photo photo = Photo.findById(objId);
-
-        if(photo == null){
-            return notFound("error while uploading: photo with id '" + id + "' was not found");
-        }
-
-        //verify the user is the ower of the photo
-        User user = Auth.getRequestingUser();
-        if(user == null){
-            return badRequest("user not recognized");
-        }
-        if(!photo.getOwnerId().equals(user.id)){
-            return unauthorized("not allowed to update the photo");
-        }
-
-
-
-        FilePart picture;
-
-        //let's take just one file, the first, ignoring any other potentially there
-        picture = body.getFiles().get(0);
-
-        File f = picture.getFile();
-
-        if(f == null) {
-            return badRequest("no file found in request");
-        }
-
-        Logger.info("file uploading: " + f + picture.getContentType());
-        String mimeType = picture.getContentType();
-        if(mimeType == null || !mimeType.substring(0,6).toLowerCase().equals("image/")){
-            return badRequest("sorry, the file was not recognized as an image, it looks: " + mimeType);
-        }
-        Logger.info("filetype was declared and stored as : " + mimeType);
-        try {
-            photo.addUpdateContent(f, picture.getContentType());
-            photo.save();
+            ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
+            type = guessContentTypeFromStream(stream);
         } catch (IOException e) {
-            return badRequest("error in file content");
+            Logger.error("extractMimeImageContentType: unable to convert byte[] to stream");
+            return "";
+        }
+
+        Logger.info("recognized filetype: " + type);
+
+        if(type == null || !type.substring(0,6).toLowerCase().equals("image/")){
+            throw new IllegalArgumentException("sorry, the " + CONTENT + " was not recognized as an image, it looks: " + type);
+        }
+
+        return type;
+    }
+
+    private static byte[] extractBase64Content(String contentBase64String) {
+
+        if(contentBase64String == null || contentBase64String.equals("")){
+            throw new IllegalArgumentException(CONTENT + " is empty");
         }
 
 
-        return created("file uploaded for picture '" + id + "' type: " + picture.getContentType());
+        //the first characters will look like this; strip them off the content
+        //data:image/png;base64,
+        int contentIndex = contentBase64String.indexOf("base64") + 7;
+
+        if(contentIndex < 7){
+            throw new IllegalArgumentException("error parsing " + CONTENT + ", no 'base64' string found");
+        }
+
+        byte[] contentBytes = DatatypeConverter.parseBase64Binary(
+                contentBase64String.substring(contentIndex)
+        );
+        if(contentBytes == null || contentBytes.length==0){
+            throw new IllegalArgumentException(CONTENT + "payload seems empty");
+        }
+
+        return contentBytes;
 
     }
 
-    public static Result getPhotoContent(String id){
-
-        ObjectId obj;
-        try {
-            obj = stringToObjectId(id);;
-        } catch (IllegalArgumentException e) {
-            return badRequest(e.getMessage());
-        }
-        Photo photo = Photo.findById(obj);
-
-        if(photo == null){
-            return notFound("photo with id '" + id + "' was not found");
-        }
-
-        ByteArrayInputStream inStream = null;
-        //returns the first one
-        //TODO: it will return the proper Content when handling multiple photo sizes (quality)
-        for(Photo.Content c : photo.getPhotoContents()){
-            response().setContentType(c.getMimeType());
-            //response().setHeader("Content-Disposition", "attachment; filename=FILENAME");
-            //response().setHeader(ETAG, "xxx");
-            //ByteArrayInputStream bais = new ByteArrayInputStream(c.getFileBytes());
-            Logger.info("found photo " + c.getId().toString());
-            inStream = new ByteArrayInputStream(c.getFileBytes());
-
-        }
-        if(inStream == null){
-            return notFound("photo content is missing");
-        }
-        return ok(inStream);
-    }
 
 
-    //========================Photo Content===============//
+
 
     /**
      * Returns a list of 'likes' for the photo, voted by the specified user.
@@ -529,106 +655,6 @@ public class PhotosREST extends Controller {
         return ok(userLikeToJson(userLike));
     }
 
-    public static ObjectId stringToObjectId(String id) {
-        ObjectId objId;
-        try {
-            objId = new ObjectId(id);
-        } catch (Exception e) {
-            if(id == null) {
-                id = "";
-            }
-            throw new IllegalArgumentException("invalid identifier '" + id +"'");
-        }
-        return objId;
-    }
-
-
-    //========================static utils===============//
-
-
-    private static void updateUserStatisticsAndAwards(User user, int photoLikesIncrement) {
-        //increment counter on user statistics
-        UserStatistics userStatistics = UserStatistics.findByUserId(user.id.toString());
-        if(userStatistics == null){
-            userStatistics = UserStatistics.init(user.id.toString());
-            //needed for the following update
-            userStatistics.save();
-        }
-
-        //updates the saved value
-        userStatistics.updateStatistic(
-                StatisticTypes.PHOTOLIKES.toString(),
-                photoLikesIncrement);
-        userStatistics.update();
-        Logger.info("incremented statistic '" + StatisticTypes.PHOTOLIKES.toString()
-                + "' by " + photoLikesIncrement);
-    }
-
-    
-    private static Photo jsonToPhoto(JsonNode json){
-
-        Photo photo = new Photo();
-
-        //optional fields
-        if(json.has(LATITUDE)){
-            photo.setLatitude(new Double(json.findPath(LATITUDE).getDoubleValue()));
-        }
-        if(json.has(LONGITUDE)){
-            photo.setLongitude(new Double(json.findPath(LONGITUDE).getDoubleValue()));
-        }
-        if(json.has(DATE_CREATED)){
-            photo.setCreated(new Date(json.findPath(DATE_CREATED).getLongValue()));
-        }
-        if(json.has(TITLE)){
-            photo.setTitle(json.findPath(TITLE).getTextValue());
-        }
-        if(json.has(DESCRIPTION)){
-            photo.setDescription(json.findPath(DESCRIPTION).getTextValue());
-        }
-
-        //Date createDate = javax.xml.bind.DatatypeConverter.parseDateTime(json.findPath("date").getTextValue()).getTime();
-
-        if(json.has(ID)){
-            ObjectId obj = stringToObjectId(json.findPath(ID).getTextValue());
-            photo.setId(obj);
-        }
-        return photo;
-
-    }
-
-    private static JsonNode photoToJson(Photo photo){
-        ObjectNode json = Json.newObject();
-        json.put(ID, photo.getId().toString());
-        json.put(DATE_CREATED, photo.getCreated().getTime());
-        json.put(OWNER_ID, photo.getOwnerId().toString());
-        if(photo.getLatitude() != null){
-            json.put(LATITUDE, photo.getLatitude());
-        }
-        if(photo.getLongitude() != null){
-            json.put(LONGITUDE, photo.getLongitude());
-        }
-        if(photo.getTitle() != null){
-            json.put(TITLE, photo.getTitle());
-        }
-        if(photo.getDescription() != null){
-            json.put(DESCRIPTION, photo.getDescription());
-        }
-        json.put(IS_USEFUL_COUNT, photo.getUsefulCount());
-        json.put(IS_BEAUTIFUL_COUNT, photo.getBeautifulCount());
-
-        //if the photo is already persisted (as it normally would)
-        //generate the location url that points to its content
-        ObjectId objectId = photo.getId();
-        if(objectId != null){
-            json.put(POST_PHOTO_CONTENT_LOCATION, routes.PhotosREST.uploadMultipartContent(objectId.toString()).toString());
-            //TODO, photo location
-            if(photo.getPhotoContents().size() > 0){
-                json.put(GET_PHOTO_CONTENT_LOCATION, routes.PhotosREST.getPhotoContent(objectId.toString()).toString());
-            }
-        }
-
-        return json;
-    }
 
     private static JsonNode userLikeToJson(PhotoUserLike userLike) {
         ObjectNode json = Json.newObject();
@@ -668,53 +694,23 @@ public class PhotosREST extends Controller {
     }
 
 
-    private static String extractMimeImageContentType(byte[] bytes) {
-
-        String type;
-
-        try {
-            ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
-            type = guessContentTypeFromStream(stream);
-        } catch (IOException e) {
-            Logger.error("extractMimeImageContentType: unable to convert byte[] to stream");
-            return "";
+    private static void updateUserStatisticsAndAwards(User user, int photoLikesIncrement) {
+        //increment counter on user statistics
+        UserStatistics userStatistics = UserStatistics.findByUserId(user.id.toString());
+        if(userStatistics == null){
+            userStatistics = UserStatistics.init(user.id.toString());
+            //needed for the following update
+            userStatistics.save();
         }
 
-        Logger.info("recognized filetype: " + type);
-
-        if(type == null || !type.substring(0,6).toLowerCase().equals("image/")){
-            throw new IllegalArgumentException("sorry, the " + CONTENT + " was not recognized as an image, it looks: " + type);
-        }
-
-        return type;
+        //updates the saved value
+        userStatistics.updateStatistic(
+                StatisticTypes.PHOTOLIKES.toString(),
+                photoLikesIncrement);
+        userStatistics.update();
+        Logger.info("incremented statistic '" + StatisticTypes.PHOTOLIKES.toString()
+                + "' by " + photoLikesIncrement);
     }
-
-    private static byte[] extractBase64Content(String contentBase64String) {
-
-        if(contentBase64String == null || contentBase64String.equals("")){
-            throw new IllegalArgumentException(CONTENT + " is empty");
-        }
-
-
-        //the first characters will look like this; strip them off the content
-        //data:image/png;base64,
-        int contentIndex = contentBase64String.indexOf("base64") + 7;
-
-        if(contentIndex < 7){
-            throw new IllegalArgumentException("error parsing " + CONTENT + ", no 'base64' string found");
-        }
-
-        byte[] contentBytes = DatatypeConverter.parseBase64Binary(
-                contentBase64String.substring(contentIndex)
-        );
-        if(contentBytes == null || contentBytes.length==0){
-            throw new IllegalArgumentException(CONTENT + "payload seems empty");
-        }
-
-        return contentBytes;
-
-    }
-
 
     private static class Auth {
 
