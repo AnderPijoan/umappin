@@ -28,7 +28,7 @@ $ () ->
     Backbone.history.start()
   sessionRequest = $.get "/sessionuser?#{new Date().getTime()}"
   sessionRequest.done (data) ->
-    profileImg = '<img src="./photos/'+data.profilePicture+'/content" width="50%">'
+    profileImg = '<img id="my-avatar" src="./photos/'+data.profilePicture+'/content" onload="resize(this)">'
     sessionStorage.setItem("user", JSON.stringify(data));
     setSessionUser data
     setTemplate "/assets/templates/main_logged.html"

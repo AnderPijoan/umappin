@@ -53,11 +53,11 @@
         <div class="loggedin box-transparent span3">
             <div id="profile-picture"></div>
             <div class="menu">
-                <a href="#"><span class="icon-newspaper"></span><span class="only-icon">Activity</span></a>
-                <a href="#"><span class="icon-home"></span><span class="only-icon">Wall</span></a>
-                <a href="#messages/"><span class="icon-bubbles"></span><span class="only-icon">Messages</span></a>
-                <a href="#userlist"><span class="icon-heart-stroke"></span><span class="only-icon">User list</span></a>
-                <a href="#"><span class="icon-trophy"></span><span class="only-icon">Awards</span></a>
+                <a href="#" class="first"><span class="icon-newspaper"></span><span class="only-icon">Activity</span></a>
+                <a href="#" class="middle"><span class="icon-home"></span><span class="only-icon">Wall</span></a>
+                <a href="#messages/" class="middle"><span class="icon-bubbles"></span><span class="only-icon">Messages</span></a>
+                <a href="#userlist" class="middle"><span class="icon-heart-stroke"></span><span class="only-icon">User list</span></a>
+                <a href="#" class="last"><span class="icon-trophy"></span><span class="only-icon">Awards</span></a>
                 <ul>
                     <li>provisional</li>
                     <li class="loggedin"><a href="#featuresMap">Features Map</a></li>
@@ -96,6 +96,14 @@
     $('.logo').click(function(){
         location.href='./';
     });
+    function resize(img){
+        if(img.width > img.height){
+            $('#my-avatar').width('100%');
+            $('#my-avatar').css('margin-top',64-(((12800/(img.width*100))*img.height)/2));
+        }else{
+            $('#my-avatar').height('100%');
+        }
+    }
 </script>
 </body>
 
