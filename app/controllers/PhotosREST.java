@@ -126,17 +126,8 @@ public class PhotosREST extends Controller {
 
     }
 
-    public static ObjectId stringToObjectId(String id) {
-        ObjectId objId;
-        try {
-            objId = new ObjectId(id);
-        } catch (Exception e) {
-            if(id == null) {
-                id = "";
-            }
-            throw new IllegalArgumentException("invalid identifier '" + id +"'");
-        }
-        return objId;
+    private static ObjectId stringToObjectId(String id) {
+        return id != null ? new ObjectId(id) : null;
     }
 
     public static Result deletePhoto(String id){
@@ -348,6 +339,8 @@ public class PhotosREST extends Controller {
             Logger.error("error parsing jsonToPhoto, error message: " + e.getMessage());
             return badRequest("error parsing json to Photo or request total size exceeding " + MAX_BASE64_UPLOAD_SIZE + " bytes");
         }
+
+
 
         if(json.has(CONTENT)){
             try{
