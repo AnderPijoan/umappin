@@ -1,5 +1,6 @@
 package controllers;
 
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -106,15 +107,17 @@ public class User2RoutesREST extends ItemREST {
 			return badRequest(Constants.ROUTES_EMPTY.toString());
 		}
 
-		route.difficulty = json.findPath("message").getIntValue();
+		route.difficulty = json.findPath("difficulty").getIntValue();
 		route.name = json.findPath("name").getTextValue();
 		route.geometry = json.findPath("geometry");
 
 		JsonNode propertiesNode = json.findPath("properties");
 		route.tags = new LinkedHashMap<String, String>();
 
-		for (int x = 0; x < propertiesNode.size(); x++){
-			route.tags.put(propertiesNode.get(x).get(0).asText(), propertiesNode.get(x).get(1).asText());
+        Iterator it = propertiesNode.getFieldNames();
+		while (it.hasNext()) {
+            String key = (String)it.next();
+			route.tags.put(key, propertiesNode.get(key).getTextValue());
 		}
 
 		route.save();
@@ -136,10 +139,14 @@ public class User2RoutesREST extends ItemREST {
 		}
 
 		Route route = new Route();		// Create route
-		route.name = json.findPath("name").getTextValue();
-		route.difficulty = json.findPath("difficulty").getIntValue();
+
 		route.userId = user.id;
 		route.geometry = json.findPath("geometry");
+
+        // Ok, the route properties are always set after creation, so it's an update
+        /*
+        route.name = json.findPath("name").getTextValue();
+		route.difficulty = json.findPath("difficulty").getIntValue();
 
 		JsonNode propertiesNode = json.findPath("properties");
 		route.tags = new LinkedHashMap<String, String>();
@@ -147,7 +154,8 @@ public class User2RoutesREST extends ItemREST {
 		for (int x = 0; x < propertiesNode.size(); x++){
 			route.tags.put(propertiesNode.get(x).get(0).asText(), propertiesNode.get(x).get(1).asText());
 		}
-		
+		*/
+
 		route.save();
 		
 		User2Routes user2route = User2Routes.findById(user.id, User2Routes.class);
