@@ -6,6 +6,7 @@ class window.Maps.RoutesMapView extends Maps.MapView
   drawLayer: null
   routesPopupTemplate: _.template $('#routes-popup-template').html()
   searchBarTemplate: _.template $('#search-bar-template').html()
+  routeTagTemplate: _.template $('#route-tag-template').html()
 
   # ---------------------------- Controls ------------------------------ #
   initControls: ->
@@ -148,7 +149,7 @@ class window.Maps.RoutesMapView extends Maps.MapView
   # ---------------------------- Popup Handlers  ------------------------------ #
   showFeaturePopup: (feat) ->
     feat.popup = new OpenLayers.Popup.FramedCloud(
-      "chicken"
+      "route-popup"
       feat.geometry.getBounds().getCenterLonLat()
       null
       @routesPopupTemplate feat
@@ -157,8 +158,27 @@ class window.Maps.RoutesMapView extends Maps.MapView
       (evt) =>  @removeFeaturePopup feat
     )
     @map.addPopup(feat.popup)
-    $('.saveRouteDataButton').bind('click', (e) -> alert('TODO: SAVE ME!!'))
-    $('.removeRouteButton').bind 'click', (e) =>
+    @reloadTagEvents()
+
+    $('div.routes-popup').last().find('select').each () ->
+      data = $(@).attr('data')
+      $(@).find('option').each () -> $(@).attr('selected', true) unless $(@).val() != data
+      $(@).change()
+
+    that = @
+    $('.saveRouteDataButton').last().bind 'click', (e) ->
+      props = {}
+      $(@).parent('div').find('ul.tagsList li').each () ->
+        if  $(@).find('select.tagKeySelect').val() != ''
+          props[$(@).find('select.tagKeySelect').val()]= $(@).find('select.tagValueSelect').val()
+      console.log props
+      feat.mapFeature.set "properties", props
+      feat.mapFeature.set "name", $(@).parent('div').find('input.routeNameInput').val()
+      feat.mapFeature.set "difficulty", parseInt($(@).parent('div').find('select.routeDifficultySelect').val())
+      feat.mapFeature.save()
+      that.removeFeaturePopup feat
+
+    $('.removeRouteButton').last().bind 'click', (e) =>
       @removeFeaturePopup feat
       @deleteRoute feat
 
@@ -166,6 +186,24 @@ class window.Maps.RoutesMapView extends Maps.MapView
     @map.removePopup feat.popup
     feat.popup.destroy()
     feat.popup = null
+
+  reloadTagEvents: ->
+    that = @
+    $('img.addTagImage').unbind('click').click () ->
+      $(@).removeClass('addTagImage').addClass('removeTagImage').attr('src', '/assets/img/error.png')
+      $('ul.tagsList').append that.routeTagTemplate()
+      that.reloadTagEvents()
+    $('img.removeTagImage').unbind('click').click () ->
+      $(@).parent('li').remove()
+      that.reloadTagEvents()
+    # TODO: Get tagKeys from server
+    $('select.tagKeySelect').change () ->
+      # TODO: Get tagValues from server
+      values = if $(@).val() is '' then [''] else [$(@).val()+'_1', $(@).val()+'_2', $(@).val()+'_3', $(@).val()+'_4']
+      html = ""
+      html = (html + "<option val='" + value + "'>" + value + "</option>") for value in values
+      $(@).next('select').html html
+
 
 
   # ---------------------------- Initialization ------------------------------ #
@@ -214,7 +252,7 @@ class window.Maps.RoutesMapView extends Maps.MapView
     p.transform @map.getProjectionObject(), Maps.MapView.OSM_PROJECTION
     geojsonFormat = new OpenLayers.Format.GeoJSON()
     json = "{\"geometry\": #{geojsonFormat.write p} }"
-    amount = 5 # TODO: we'll pick it up from a control
+    amount = 6 # TODO: we'll pick it up from a control
     difficulty = -1 # TODO: we'll pick it up from a control
     bounds = new OpenLayers.Bounds
     bounds.extend p
