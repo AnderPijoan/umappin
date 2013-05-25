@@ -1,0 +1,2 @@
+{ "awardType": "PHOTOLIKES", "coins": "10", "points": "10", "limit": 5, "description" : "first photo level" }
+{ "awardType": "PHOTOLIKES", "coins": "20", "points": "20", "limit": 10, "description" : "second photo level" }

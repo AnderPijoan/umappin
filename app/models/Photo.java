@@ -159,13 +159,13 @@ public class Photo {
         return MorphiaObject.datastore.get(Photo.class, obj);
     }
 
-    public void addContent(File f, String mimeType) throws IOException {
+    public void addUpdateContent(File f, String mimeType) throws IOException {
         Content c = new Content(f);
         c.setMimeType(mimeType);
         cleanUpExistingContents();
         photoContents.add(c);
     }
-    public void addContent(byte[] bytes, String mimeType){
+    public void addUpdateContent(byte[] bytes, String mimeType){
         Content c = new Content(bytes);
         c.setMimeType(mimeType);
         cleanUpExistingContents();
@@ -312,7 +312,6 @@ public class Photo {
 
 
         private byte[] inputStreamToByteArray(InputStream inStream) throws IOException {
-            //TODO: might be good a check to limit the size to < 16MB
             ByteArrayOutputStream biteOutputStr = new ByteArrayOutputStream();
             try {
                 byte[] buffer = new byte[524288];

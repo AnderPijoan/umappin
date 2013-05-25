@@ -1,7 +1,6 @@
 package controllers;
 
-import models.PhotoUserLike;
-import models.User;
+import models.*;
 import org.bson.types.ObjectId;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
@@ -13,16 +12,13 @@ import play.mvc.Http.MultipartFormData.FilePart;
 import play.mvc.*;
 import play.mvc.Controller;
 import play.mvc.Result;
-import models.Photo;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.Date;
 import java.util.List;
 import javax.xml.bind.DatatypeConverter;
 
-import javax.imageio.*;
+import static java.net.URLConnection.guessContentTypeFromStream;
 
 public class PhotosREST extends Controller {
 
@@ -50,6 +46,8 @@ public class PhotosREST extends Controller {
 
     //max size of a photo uploaded in json = 1MB (base64 encoded, so it's like 6/8 x 1MB)
     public static final int MAX_BASE64_UPLOAD_SIZE = 1024 * 1024;
+    //max size of a photo uploaded via multipart form = 4MB
+    public static final int MAX_MULTIPART_UPLOAD_SIZE = 6 * 1024 * 1024;
     //json attribute that specify the pagination params
     public static final String RESULTS_OFFSET = "offset";
     public static final String RESULTS_LIMIT = "limit";
@@ -106,8 +104,8 @@ public class PhotosREST extends Controller {
             try{
                 String contentBase64String = json.findPath(CONTENT).getTextValue();
                 byte[] byteContent = extractBase64Content(contentBase64String);
-                String contentType = extractUriContentType(contentBase64String);
-                photo.addContent(byteContent, contentType);
+                String contentType = extractMimeImageContentType(byteContent);
+                photo.addUpdateContent(byteContent, contentType);
             } catch (Exception e){
                 return badRequest("error in " + CONTENT + ": " + e.getMessage());
             }
@@ -163,16 +161,26 @@ public class PhotosREST extends Controller {
 
         //here we are completely replacing the old with the new metadata.
         // If the new photo lacks a field, it will miss in the saved instance
-        // Only the photo content and owner are preserved!
+        // Only the photo content, owner aand createDate are preserved!
         photo.setId(objId);
         photo.setOwnerId(existingPhoto.getOwnerId());
+        photo.setPhotoContents(existingPhoto.getPhotoContents());
+        if(photo.getCreated() == null){
+            photo.setCreated(existingPhoto.getCreated());
+        }
+
+        //if there's no creation date set it to "now"
+        Date created = photo.getCreated();
+        if(created == null){
+            photo.setCreated(new Date());
+        }
 
         if(json.has(CONTENT)){
             try{
                 String contentBase64String = json.findPath(CONTENT).getTextValue();
                 byte[] byteContent = extractBase64Content(contentBase64String);
-                String contentType = extractUriContentType(contentBase64String);
-                photo.addContent(byteContent, contentType);
+                String contentType = extractMimeImageContentType(byteContent);
+                photo.addUpdateContent(byteContent, contentType);
             } catch (Exception e){
                 return badRequest("error in " + CONTENT + ": " + e.getMessage());
             }
@@ -213,7 +221,8 @@ public class PhotosREST extends Controller {
     }
 
     //========================Photo Content===============//
-    //@BodyParser.Of(BodyParser.MultipartFormData.class)
+    @BodyParser.Of(value = BodyParser.MultipartFormData.class,
+        maxLength = MAX_MULTIPART_UPLOAD_SIZE)
     public static Result uploadMultipartContent(String id){
 
 //        if (request.headers.get("type").value().equals("multipart/form-data")){
@@ -266,9 +275,13 @@ public class PhotosREST extends Controller {
         }
 
         Logger.info("file uploading: " + f + picture.getContentType());
-
+        String mimeType = picture.getContentType();
+        if(mimeType == null || !mimeType.substring(0,6).toLowerCase().equals("image/")){
+            return badRequest("sorry, the file was not recognized as an image, it looks: " + mimeType);
+        }
+        Logger.info("filetype was declared and stored as : " + mimeType);
         try {
-            photo.addContent(f, picture.getContentType());
+            photo.addUpdateContent(f, picture.getContentType());
             photo.save();
         } catch (IOException e) {
             return badRequest("error in file content");
@@ -496,8 +509,13 @@ public class PhotosREST extends Controller {
                 Logger.info("incremented 'beautiful' by: " + (photoBeautiful ? 1 : -1));
             }
 
-            if(incrBeautiful != 0 || incrUseful != 0)
+            if(incrBeautiful != 0 || incrUseful != 0){
+                //increment counter on user photo
                 photo.incrementCountersAndSave(incrUseful, incrBeautiful);
+                //increment statistics for the user
+                updateUserStatisticsAndAwards(user, incrUseful + incrBeautiful);
+
+            }
         }
 
         response().setHeader(
@@ -526,6 +544,27 @@ public class PhotosREST extends Controller {
 
 
     //========================static utils===============//
+
+
+    private static void updateUserStatisticsAndAwards(User user, int photoLikesIncrement) {
+        //increment counter on user statistics
+        UserStatistics userStatistics = UserStatistics.findByUserId(user.id.toString());
+        if(userStatistics == null){
+            userStatistics = UserStatistics.init(user.id.toString());
+            //needed for the following update
+            userStatistics.save();
+        }
+
+        //updates the saved value
+        userStatistics.updateStatistic(
+                StatisticTypes.PHOTOLIKES.toString(),
+                photoLikesIncrement);
+        userStatistics.update();
+        Logger.info("incremented statistic '" + StatisticTypes.PHOTOLIKES.toString()
+                + "' by " + photoLikesIncrement);
+    }
+
+    
     private static Photo jsonToPhoto(JsonNode json){
 
         Photo photo = new Photo();
@@ -629,27 +668,25 @@ public class PhotosREST extends Controller {
     }
 
 
-    private static String extractUriContentType(String contentBase64String) {
+    private static String extractMimeImageContentType(byte[] bytes) {
 
-        if(contentBase64String == null || contentBase64String.equals("")){
-            throw new IllegalArgumentException(CONTENT + " is empty");
+        String type;
+
+        try {
+            ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
+            type = guessContentTypeFromStream(stream);
+        } catch (IOException e) {
+            Logger.error("extractMimeImageContentType: unable to convert byte[] to stream");
+            return "";
         }
 
-        String contentType = "";
+        Logger.info("recognized filetype: " + type);
 
-        {
-            // content looks similar to this 'data:image/png;base64, ... '
-            int start = contentBase64String.indexOf("data:");
-            int stop = contentBase64String.indexOf(";");
-            if(start < 0 || stop < 0 || start == stop){
-                throw new IllegalArgumentException("error parsing " + CONTENT + ", no data type declaration found");
-            }
-            contentType = contentBase64String.substring(start + 5, stop);
+        if(type == null || !type.substring(0,6).toLowerCase().equals("image/")){
+            throw new IllegalArgumentException("sorry, the " + CONTENT + " was not recognized as an image, it looks: " + type);
         }
 
-        Logger.info("declared type is " + contentType);
-
-        return contentType;
+        return type;
     }
 
     private static byte[] extractBase64Content(String contentBase64String) {
