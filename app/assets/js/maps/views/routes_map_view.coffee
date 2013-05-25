@@ -5,10 +5,10 @@ _.templateSettings.variable = 'rc'
 class window.Maps.RoutesMapView extends Maps.MapView
   drawLayer: null
   routesPopupTemplate: _.template $('#routes-popup-template').html()
-  searchBarTemplate: _.template $('#search-bar-template').html()
   routeTagTemplate: _.template $('#route-tag-template').html()
 
   # ---------------------------- Controls ------------------------------ #
+  #Overriden
   initControls: ->
     OpenLayers.Feature.Vector.style['default']['strokeWidth'] = '2'
     # allow testing of specific renderers via "?renderer=Canvas", etc
@@ -57,96 +57,19 @@ class window.Maps.RoutesMapView extends Maps.MapView
     toolbar.addControls toolBarControls
     @controls.push toolbar
 
-
-    # Geolocation layer & control
-    geoLocationLayer = new OpenLayers.Layer.Vector("Your location")
-    @map.addLayer(geoLocationLayer);
-    geolocationControl = new OpenLayers.Control.Geolocate
-      bind: true
-      watch: true
-      geolocationOptions:
-        enableHighAccuracy: true
-        maximumAge: 0
-        timeout: 7000
-    geolocationControl.follow = true
-    geolocationControl.events.register(
-      "locationupdated"
-      @
-      (e) ->
-        geoLocationLayer.removeAllFeatures()
-        geoPlace = new OpenLayers.Feature.Vector(
-          e.point
-          {}
-          {
-            graphicName: 'circle'
-            strokeColor: '#0000FF'
-            strokeWidth: 1
-            fillOpacity: 0.5
-            fillColor: '#0000BB'
-            pointRadius: 20
-          }
-        )
-        geoLocationLayer.addFeatures [geoPlace]
-        @map.zoomToExtent e.point.getBounds()
-        @fetchRoutes e.point.x, e.point.y
-    )
-    geolocationControl.events.register(
-      "locationfailed"
-      @
-      () -> OpenLayers.Console.log 'Location detection failed'
-    )
-    @controls.push geolocationControl
-
-
-    # Search control
-    that = @
-    OpenLayers.Control.prototype.keepEvents = (div) ->
-      @keepEventsDiv = new OpenLayers.Events(@, div, null, true)
-
-      triggerSearch = (evt) =>
-        element = OpenLayers.Event.element(evt)
-        if  evt.keyCode == 13 then that.performSearch $(element).val()
-
-      @keepEventsDiv.on
-        "mousedown": (evt) ->
-          @mousedown = true
-          OpenLayers.Event.stop(evt, true)
-        "mousemove": (evt) ->
-          OpenLayers.Event.stop(evt, true) unless !@mousedown
-        "mouseup": (evt) ->
-          if @mousedown
-            @mousedown = false
-            OpenLayers.Event.stop(evt, true)
-        "click": (evt) -> OpenLayers.Event.stop(evt, true)
-        "mouseout": (evt) -> @mousedown = false
-        "dblclick": (evt) -> OpenLayers.Event.stop(evt, true)
-        "touchstart": (evt) -> OpenLayers.Event.stop(evt, true)
-        "keydown": (evt) -> triggerSearch(evt)
-        scope: @
-
-    searchControl = new OpenLayers.Control
-    OpenLayers.Util.extend searchControl,
-      displayClass: 'searchControl'
-      initialize : () ->
-        OpenLayers.Control.prototype.initialize.apply(@, arguments)
-      draw: () ->
-        div = OpenLayers.Control.prototype.draw.apply(@, arguments)
-        div.innerHTML = that.searchBarTemplate {}
-        @keepEvents(div);
-        $(div).find('img.clickableImage').click () =>
-          that.performSearch $('#searchInput').val()
-        div
-      allowSelection: true
-    @controls.push searchControl
-
     # TODO: Add more controls here ....
 
     @map.addLayer @drawLayer
     super
-    geolocationControl.activate()
-    searchControl.activate()
 
-  # ---------------------------- Popup Handlers  ------------------------------ #
+  # ---------------------------- Geolocation Handler ------------------------------ #
+  #Overriden
+  handleGeoLocated: (e) ->
+    super
+    @map.zoomToExtent e.point.getBounds()
+    @fetchRoutes e.point.x, e.point.y
+
+  # ---------------------------- Popup Handlers ------------------------------ #
   showFeaturePopup: (feat) ->
     feat.popup = new OpenLayers.Popup.FramedCloud(
       "route-popup"
@@ -207,6 +130,7 @@ class window.Maps.RoutesMapView extends Maps.MapView
 
 
   # ---------------------------- Initialization ------------------------------ #
+  #Overriden
   initialize: ->
     @controls = []
     @baseLayers = []
@@ -214,6 +138,7 @@ class window.Maps.RoutesMapView extends Maps.MapView
 
 
   # ---------------------------- Renderization ------------------------------ #
+  #Overriden
   render: -> super
 
   drawRoute: (data, bounds) ->
@@ -267,19 +192,9 @@ class window.Maps.RoutesMapView extends Maps.MapView
         @map.zoomTo Math.floor @map.getZoomForExtent bounds
 
   # ---------------------------- Search handler ------------------------------ #
-  performSearch: (text) ->
-    $.get "http://nominatim.openstreetmap.org/search?q=#{text}&format=json&limit=10", (data) =>
-      if data? and data.length > 0
-        $('div.searchControl ul.searchList').css('display', 'block').html('')
-        for item in data
-          do (item) =>
-            $('div.searchControl ul.searchList').append "<li>#{item.display_name.substring(0, 20)}</li>"
-            $('div.searchControl ul.searchList').find('li').last().click () =>
-              $('div.searchControl ul.searchList').css('display', 'none').html('')
-              @selectLocation item
-
+  # Overriden
   selectLocation: (location) ->
-    console.log location
+    super
     p = new OpenLayers.Geometry.Point location.lon, location.lat
     p.transform Maps.MapView.OSM_PROJECTION, @map.getProjectionObject()
     @fetchRoutes p.x, p.y

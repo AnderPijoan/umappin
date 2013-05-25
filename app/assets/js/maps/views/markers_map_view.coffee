@@ -21,55 +21,38 @@ class window.Maps.MarkersMapView extends Maps.MapView
     )
     @controls.push addMarkerControl
 
-
-    # Geolocation layer & control
-    geoLocationLayer = new OpenLayers.Layer.Vector("Your location")
-    @map.addLayer(geoLocationLayer);
-    geolocationControl = new OpenLayers.Control.Geolocate
-      bind: true
-      watch: true
-      geolocationOptions:
-        enableHighAccuracy: true
-        maximumAge: 0
-        timeout: 7000
-    geolocationControl.follow = true
-    geolocationControl.events.register(
-      "locationupdated"
-      @
-      (e) ->
-        geoLocationLayer.removeAllFeatures()
-        geoPlace = new OpenLayers.Feature.Vector(
-          e.point
-          {}
-          {
-            graphicName: 'circle'
-            strokeColor: '#0000FF'
-            strokeWidth: 1
-            fillOpacity: 0.5
-            fillColor: '#0000BB'
-            pointRadius: 20
-          }
-        )
-        geoLocationLayer.addFeatures [geoPlace]
-        origin = new OpenLayers.Geometry.Point e.point.x, e.point.y
-        bbox = origin.getBounds()
-        bbox.transform @map.getProjectionObject(), Maps.MapView.OSM_PROJECTION
-        @getOSMNotes bbox, e.point
-    )
-    geolocationControl.events.register(
-      "locationfailed"
-      @
-      () -> OpenLayers.Console.log 'Location detection failed'
-    )
-    @controls.push geolocationControl
-
     # Call superclass controls initialization
     super
     # Activate controls after loading stuff
     addMarkerControl.activate()
-    geolocationControl.activate()
 
 
+  # ---------------------------- Geolocation Handler ------------------------------ #
+  # Overriden
+  handleGeoLocated: (e) ->
+    super
+    @getNotesAroundLonLat e.point.x, e.point.y
+
+  # ---------------------------- Search handler ------------------------------ #
+  # Overriden
+  selectLocation: (location) ->
+    super
+    p = new OpenLayers.Geometry.Point location.lon, location.lat
+    p.transform Maps.MapView.OSM_PROJECTION, @map.getProjectionObject()
+    @getNotesAroundLonLat p.x, p.y
+
+    marker = new OpenLayers.Marker(
+      new OpenLayers.LonLat(p.x, p.y)
+      new OpenLayers.Icon location.icon
+    )
+    @markersLayer.addMarker marker
+    @map.zoomToExtent p.getBounds()
+
+
+  getNotesAroundLonLat: (lon, lat) ->
+    p = new OpenLayers.Geometry.Point lon, lat
+    p.transform @map.getProjectionObject(), Maps.MapView.OSM_PROJECTION
+    @getOSMNotes p.getBounds(), new OpenLayers.Geometry.Point(lon, lat)
 
   # ---------------------------- Initialization ------------------------------ #
   initialize: ->
@@ -178,40 +161,14 @@ class window.Maps.MarkersMapView extends Maps.MapView
       postedcomment = data.properties.comments[data.properties.comments.length-1]
       container.append @notesCommentTemplate postedcomment
 
-  # ----------------- Simple regex XML string parser to JSON (just in case we need) ----------------- #
-  xml2json: (xml) ->
-    regex = /(<\w+[^<]*?)\s+([\w-]+)="([^"]+)">/
-    xml = xml.replace(regex, '$1><$2>$3</$2>') while xml.match(regex)
-    xml = xml.replace(/\s/g, ' ').
-    replace(/< *\?[^>]*?\? *>/g, '').
-    replace(/< *!--[^>]*?-- *>/g, '').
-    replace(/< *(\/?) *(\w[\w-]+\b):(\w[\w-]+\b)/g, '<$1$2_$3').
-    replace(/< *(\w[\w-]+\b)([^>]*?)\/ *>/g, '< $1$2>').
-    replace(/(\w[\w-]+\b):(\w[\w-]+\b) *= *"([^>]*?)"/g, '$1_$2="$3"').
-    replace(/< *(\w[\w-]+\b)((?: *\w[\w-]+ *= *" *[^"]*?")+ *)>( *[^< ]*?\b.*?)< *\/ *\1 *>/g, '< $1$2 value="$3">').
-    replace(/< *(\w[\w-]+\b) *</g, '<$1>< ').
-    replace(/> *>/g, '>').
-    replace(/"/g, '\\"').
-    replace(/< *(\w[\w-]+\b) *>([^<>]*?)< *\/ *\1 *>/g, '"$1":"$2",').
-    replace(/< *(\w[\w-]+\b) *>([^<>]*?)< *\/ *\1 *>/g, '"$1":[{$2}],').
-    replace(/< *(\w[\w-]+\b) *>(?=("\w[\w-]+\b)":\{.*?\},\2)(.*?)< *\/ *\1 *>/, '"$1":{}$3},').
-    replace(/],\s*?".*?": *\[/g, ',').
-    replace(/< \/(\w[\w-]+\b)\},\{\1>/g, '},{').
-    replace(/< *(\w[\w-]+\b)[^>]*?>/g, '"$1":{').
-    replace(/< *\/ *\w[\w-]+ *>/g, '},').
-    replace(/\} *,(?= *(\}|\]))/g, '}').
-    replace(/] *,(?= *(\}|\]))/g, ']').
-    replace(/" *,(?= *(\}|\]))/g, '"').
-    replace(/\s*, *$/g, '')
-    xml = '{' + xml + '}'
-    JSON.parse xml
-
   # Aux function for easily extending bounds
   extendBounds: (bbox, ext) ->
     xbbox = bbox.toArray(false)
     xbbox = [xbbox[0]-ext, xbbox[1]-ext, xbbox[2]+ext, xbbox[3]+ext]
     new OpenLayers.Bounds(xbbox)
 
+
+  # -------------------------- custom xml to json parser -------------------------- #
   note2json: (data) ->
     json =
       id: $(data).find('id').text()

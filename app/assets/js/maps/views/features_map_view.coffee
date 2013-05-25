@@ -18,6 +18,10 @@ class window.Maps.FeaturesMapView extends Maps.MapView
 
     toolBarControls = [
 
+      new OpenLayers.Control.DragPan(
+        'displayClass': 'olControlDragPan'
+      )
+
       new OpenLayers.Control.DrawFeature(
         @drawLayer
         OpenLayers.Handler.Point
@@ -57,39 +61,56 @@ class window.Maps.FeaturesMapView extends Maps.MapView
 
       new OpenLayers.Control.ModifyFeature(
         @drawLayer
-        'displayClass': 'olControlDragFeature'
+        'displayClass': 'olControlModifyFeature'
         mode: OpenLayers.Control.ModifyFeature.RESIZE | OpenLayers.Control.ModifyFeature.ROTATE | OpenLayers.Control.ModifyFeature.DRAG
         onModificationStart: (feature) => console.log feature
         onModificationEnd: (feature) => @updateFeature feature
       )
+
+      new OpenLayers.Control.SelectFeature(
+        @drawLayer
+        'displayClass': 'olControlDragFeature'
+        box: true
+        onSelect: (feat) => console.log feat
+        onUnselect: (feat) => console.log feat
+      )
+
     ]
     toolbar = new OpenLayers.Control.Panel(
       displayClass: 'olControlEditingToolbar'
-      defaultControl: toolBarControls[5]
+      defaultControl: toolBarControls[0]
     )
     toolbar.addControls toolBarControls
 
-    # Custom GetFeature handler
-    getFeatureControl = new OpenLayers.Control.GetFeature
-      protocol: new OpenLayers.Protocol.HTTP()
-      multipleKey: 'shiftKey'
-      toggleKey: 'altKey'
-      multiple: true
-      box: true
-    getFeatureControl.handler = new OpenLayers.Handler.Click(
-      getFeatureControl
-      'click': (e) => console.log e
-    )
-    getFeatureControl.events.register 'featureselected', @, (e) -> console.log e
-
     @controls.push toolbar
-    @controls.push getFeatureControl
 
     # TODO: Add more controls here ....
 
     @map.addLayer @drawLayer
     super
-    getFeatureControl.activate()
+
+
+  # ---------------------------- Geolocation Handler ------------------------------ #
+  #Overriden
+  handleGeoLocated: (e) ->
+    super
+    @map.zoomToExtent e.point.getBounds()
+
+
+  # ---------------------------- Search handler ------------------------------ #
+  # Overriden
+  selectLocation: (location) ->
+    super
+    p = new OpenLayers.Geometry.Point location.lon, location.lat
+    p.transform Maps.MapView.OSM_PROJECTION, @map.getProjectionObject()
+    feature = new OpenLayers.Feature.Vector(
+      p
+      {}
+      externalGraphic: location.icon
+      pointRadius: 10
+    )
+    @drawLayer.addFeatures [feature]
+    @map.zoomToExtent p.getBounds()
 
 
   # ---------------------------- Initialization ------------------------------ #
