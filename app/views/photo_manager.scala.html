@@ -1,5 +1,5 @@
 
-@account.main(Messages("umappin.title"), "Photo Manager") {
+
 
 <pre id="returned_content">Results</pre>
 
@@ -102,16 +102,22 @@
 
 
 
-}
 
 
 <script type="text/javascript" src="http://upload-at-click.googlecode.com/files/upclick-min.js"></script>
+<script src="/assets/js/lib/jquery.min.js"></script>
 <!--script type="text/javascript" src="jquery.ajaxfileupload.js"></script-->
+<link rel="stylesheet" type="text/css" href="/assets/css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="/assets/css/bootstrap-responsive.css">
 
 
 
 
 <style>
+
+body {
+    padding-left: 2em;
+    }
 
 input, a {
     display:block;
@@ -147,7 +153,15 @@ small {
     font-size: 0.8em;
 }
 
+fieldset {
+    padding: 2em;
+    margin: 2em;
+    border: 2px dashed #BBB;
+    }
+
 </style>
+
+
 
 <script>
 
@@ -422,3 +436,4 @@ var dropZone = document.getElementById('drop_zone');
 dropZone.addEventListener('dragover', handleDragOver, false);
 dropZone.addEventListener('drop', handleFileSelect, false);
 </script>
+

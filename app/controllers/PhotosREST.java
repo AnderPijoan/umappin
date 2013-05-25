@@ -1,61 +1,62 @@
 package controllers;
 
-import models.PhotoUserLike;
-import org.codehaus.jackson.node.ArrayNode;
-import java.util.List;
-import javax.imageio.*;
-
-import models.User;
+import models.*;
 import org.bson.types.ObjectId;
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 import play.Logger;
 import play.libs.Json;
+import play.mvc.BodyParser;
+import play.mvc.Controller;
 import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
-import play.mvc.*;
-import play.mvc.Controller;
 import play.mvc.Result;
-import models.Photo;
 
-import static play.data.Form.form;
-
+import javax.xml.bind.DatatypeConverter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
-import javax.xml.bind.DatatypeConverter;
+import java.util.List;
+
+import static java.net.URLConnection.guessContentTypeFromStream;
 
 public class PhotosREST extends Controller {
 
-    //{"owner_id":"515b13eddd530c927811e78c", "last":123,"lons":123, "date_created":123, "description":"ciao", "title":"this title"}
+    //{"id":"5175a1253cdbf70ca1164d10","date_created":123,"owner_id":"5151c9c03609e0d8112d9a5a","title":"this title","description":"ciao","is_useful_count":0,"is_beautiful_count":0,"post_content_location":"/rest/photos/5175a1253cdbf70ca1164d10/content","get_content_location":"/rest/photos/5175a1253cdbf70ca1164d10/content"}
 
-    //json mapping
-    private static final String DATE_CREATED = "date_created";
-    private static final String OWNER_ID = "owner_id";
-    private static final String ID = "id";
-    private static final String LATITUDE = "latitude";
-    private static final String LONGITUDE = "longitude";
-    private static final String DESCRIPTION = "description";
-    private static final String TITLE = "title";
+    //json mapping for Photo
+    public static final String DATE_CREATED = "date_created";
+    public static final String OWNER_ID = "owner_id";
+    public static final String ID = "id";
+    public static final String LATITUDE = "latitude";
+    public static final String LONGITUDE = "longitude";
+    public static final String DESCRIPTION = "description";
+    public static final String TITLE = "title";
     public static final String CONTENT = "content";
-    //generated in output, are not inherent properties of the object
-    private static final String GET_PHOTO_CONTENT_LOCATION = "get_content_location";
-    public static final String POST_PHOTO_CONTENT_LOCATION = "post_content_location";
-    //max size of a photo uploaded in json = 1MB (base64 encoded, so it's like 6/8 x 1MB)
-    private static final int MAX_BASE64_UPLOAD_SIZE = 1024 * 1024; //max size of a photo uploaded in json
-
     public static final String IS_USEFUL_COUNT = "is_useful_count";
     public static final String IS_BEAUTIFUL_COUNT = "is_beautiful_count";
+    //generated in output, are not inherent properties of the object
+    public static final String GET_PHOTO_CONTENT_LOCATION = "get_content_location";
+    public static final String POST_PHOTO_CONTENT_LOCATION = "post_content_location";
+
     //json mapping for PhotoUserLike
     public static final String USER_ID = "user_id";
     public static final String PHOTO_IS_BEAUTIFUL = "is_beautiful";
     public static final String PHOTO_IS_USEFUL = "is_useful";
+
+    //max size of a photo uploaded in json = 1MB (base64 encoded, so it's like 6/8 x 1MB)
+    public static final int MAX_BASE64_UPLOAD_SIZE = 1024 * 1024;
+    //max size of a photo uploaded via multipart form = 4MB
+    public static final int MAX_MULTIPART_UPLOAD_SIZE = 6 * 1024 * 1024;
     //json attribute that specify the pagination params
     public static final String RESULTS_OFFSET = "offset";
     public static final String RESULTS_LIMIT = "limit";
 
-    //@BodyParser.Of(BodyParser.MultipartFormData.class)
+
+    @BodyParser.Of(value = BodyParser.MultipartFormData.class,
+            maxLength = MAX_MULTIPART_UPLOAD_SIZE)
     public static Result uploadMultipartContent(String id){
 
 //        if (request.headers.get("type").value().equals("multipart/form-data")){
@@ -108,9 +109,13 @@ public class PhotosREST extends Controller {
         }
 
         Logger.info("file uploading: " + f + picture.getContentType());
-
+        String mimeType = picture.getContentType();
+        if(mimeType == null || !mimeType.substring(0,6).toLowerCase().equals("image/")){
+            return badRequest("sorry, the file was not recognized as an image, it looks: " + mimeType);
+        }
+        Logger.info("filetype was declared and stored as : " + mimeType);
         try {
-            photo.addContent(f, picture.getContentType());
+            photo.addUpdateContent(f, picture.getContentType());
             photo.save();
         } catch (IOException e) {
             return badRequest("error in file content");
@@ -121,19 +126,7 @@ public class PhotosREST extends Controller {
 
     }
 
-    public static ObjectId stringToObjectId(String id) {
-        /*
-        ObjectId objId;
-        try {
-            objId = new ObjectId(id);
-        } catch (Exception e) {
-            if(id == null) {
-                id = "";
-            }
-            throw new IllegalArgumentException("invalid identifier '" + id +"'");
-        }
-        return objId;
-        */
+    private static ObjectId stringToObjectId(String id) {
         return id != null ? new ObjectId(id) : null;
     }
 
@@ -198,8 +191,8 @@ public class PhotosREST extends Controller {
             try{
                 String contentBase64String = json.findPath(CONTENT).getTextValue();
                 byte[] byteContent = extractBase64Content(contentBase64String);
-                String contentType = extractUriContentType(contentBase64String);
-                photo.addContent(byteContent, contentType);
+                String contentType = extractMimeImageContentType(byteContent);
+                photo.addUpdateContent(byteContent, contentType);
             } catch (Exception e){
                 return badRequest("error in " + CONTENT + ": " + e.getMessage());
             }
@@ -216,7 +209,7 @@ public class PhotosREST extends Controller {
     }
 
 
-    public static Photo updatePhotoFromJson(Photo photo, JsonNode json) {
+    private static Photo updatePhotoFromJson(Photo photo, JsonNode json) {
         if(json.has(LATITUDE)) photo.setLatitude(new Double(json.findPath(LATITUDE).getDoubleValue()));
         if(json.has(LONGITUDE)) photo.setLongitude(new Double(json.findPath(LONGITUDE).getDoubleValue()));
         if(json.has(DATE_CREATED)) photo.setCreated(new Date(json.findPath(DATE_CREATED).getLongValue()));
@@ -229,6 +222,7 @@ public class PhotosREST extends Controller {
 
 
     private static Photo jsonToPhoto(JsonNode json){
+
         Photo photo = new Photo();
         return updatePhotoFromJson(photo, json);
     }
@@ -346,12 +340,14 @@ public class PhotosREST extends Controller {
             return badRequest("error parsing json to Photo or request total size exceeding " + MAX_BASE64_UPLOAD_SIZE + " bytes");
         }
 
+
+
         if(json.has(CONTENT)){
             try{
                 String contentBase64String = json.findPath(CONTENT).getTextValue();
                 byte[] byteContent = extractBase64Content(contentBase64String);
-                String contentType = extractUriContentType(contentBase64String);
-                photo.addContent(byteContent, contentType);
+                String contentType = extractMimeImageContentType(byteContent);
+                photo.addUpdateContent(byteContent, contentType);
             } catch (Exception e){
                 return badRequest("error in " + CONTENT + ": " + e.getMessage());
             }
@@ -363,27 +359,25 @@ public class PhotosREST extends Controller {
         return ok(photoToJson(photo));
     }
 
-    private static String extractUriContentType(String contentBase64String) {
+    private static String extractMimeImageContentType(byte[] bytes) {
 
-        if(contentBase64String == null || contentBase64String.equals("")){
-            throw new IllegalArgumentException(CONTENT + " is empty");
+        String type;
+
+        try {
+            ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
+            type = guessContentTypeFromStream(stream);
+        } catch (IOException e) {
+            Logger.error("extractMimeImageContentType: unable to convert byte[] to stream");
+            return "";
         }
 
-        String contentType = "";
+        Logger.info("recognized filetype: " + type);
 
-        {
-            // content looks similar to this 'data:image/png;base64, ... '
-            int start = contentBase64String.indexOf("data:");
-            int stop = contentBase64String.indexOf(";");
-            if(start < 0 || stop < 0 || start == stop){
-                throw new IllegalArgumentException("error parsing " + CONTENT + ", no data type declaration found");
-            }
-            contentType = contentBase64String.substring(start + 5, stop);
+        if(type == null || !type.substring(0,6).toLowerCase().equals("image/")){
+            throw new IllegalArgumentException("sorry, the " + CONTENT + " was not recognized as an image, it looks: " + type);
         }
 
-        Logger.info("declared type is " + contentType);
-
-        return contentType;
+        return type;
     }
 
     private static byte[] extractBase64Content(String contentBase64String) {
@@ -413,36 +407,8 @@ public class PhotosREST extends Controller {
     }
 
 
-    private static class Auth {
 
-        private static final String QUERYSTRING_USERID = "user_email";
 
-        private static User getRequestingUser(){
-
-            User user = null;
-            String userEmail = request().getQueryString(QUERYSTRING_USERID);
-
-            Logger.info("user sent querystring with '" + QUERYSTRING_USERID + "' = " + userEmail);
-
-            if(userEmail != null && !"".equals(userEmail)){
-                try {
-                    return User.findByEmail(userEmail);
-                } catch (Exception e) {
-                    Logger.info("unable to find such user");
-                    return null;
-                }
-            }
-            Logger.info("play authenticate...");
-            user = Application.getLocalUser(session());
-            if(user == null){
-                Logger.info("user not found");
-            }
-            return user;
-
-        }
-    }
-
-    //========================Photo Content===============//
 
     /**
      * Returns a list of 'likes' for the photo, voted by the specified user.
@@ -514,10 +480,11 @@ public class PhotosREST extends Controller {
                 return ok(userLikeToJson(userLikesList.get(0)));
             }
 
+
         }
         return notFound("no 'photo like' found");
-    }
 
+    }
 
     @BodyParser.Of(value = BodyParser.Json.class)
     public static Result setPhotoUserLike(String photoId){
@@ -625,8 +592,13 @@ public class PhotosREST extends Controller {
                 Logger.info("incremented 'beautiful' by: " + (photoBeautiful ? 1 : -1));
             }
 
-            if(incrBeautiful != 0 || incrUseful != 0)
+            if(incrBeautiful != 0 || incrUseful != 0){
+                //increment counter on user photo
                 photo.incrementCountersAndSave(incrUseful, incrBeautiful);
+                //increment statistics for the user
+                updateUserStatisticsAndAwards(user, incrUseful + incrBeautiful);
+
+            }
         }
 
         response().setHeader(
@@ -639,6 +611,7 @@ public class PhotosREST extends Controller {
 
         return ok(userLikeToJson(userLike));
     }
+
 
     private static JsonNode userLikeToJson(PhotoUserLike userLike) {
         ObjectNode json = Json.newObject();
@@ -676,5 +649,55 @@ public class PhotosREST extends Controller {
 
         return pul;
     }
+
+
+    private static void updateUserStatisticsAndAwards(User user, int photoLikesIncrement) {
+        //increment counter on user statistics
+        UserStatistics userStatistics = UserStatistics.findByUserId(user.id.toString());
+        if(userStatistics == null){
+            userStatistics = UserStatistics.init(user.id.toString());
+            //needed for the following update
+            userStatistics.save();
+        }
+
+        //updates the saved value
+        userStatistics.updateStatistic(
+                StatisticTypes.PHOTOLIKES.toString(),
+                photoLikesIncrement);
+        userStatistics.update();
+        Logger.info("incremented statistic '" + StatisticTypes.PHOTOLIKES.toString()
+                + "' by " + photoLikesIncrement);
+    }
+
+    private static class Auth {
+
+        private static final String QUERYSTRING_USERID = "user_email";
+
+        private static User getRequestingUser(){
+
+            User user = null;
+            String userEmail = request().getQueryString(QUERYSTRING_USERID);
+
+            Logger.info("user sent querystring with '" + QUERYSTRING_USERID + "' = " + userEmail);
+
+            if(userEmail != null && !"".equals(userEmail)){
+                try {
+                    return User.findByEmail(userEmail);
+                } catch (Exception e) {
+                    Logger.info("unable to find such user");
+                    return null;
+                }
+            }
+            Logger.info("play authenticate...");
+            user = Application.getLocalUser(session());
+            if(user == null){
+                Logger.info("user not found");
+            }
+            return user;
+
+        }
+    }
+
+
 
 }
