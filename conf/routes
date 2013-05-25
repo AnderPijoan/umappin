@@ -64,6 +64,8 @@ GET     /photos/manager              controllers.Photos.manager
 # REST CRUD for Follows
 GET     /follows                    controllers.FollowsREST.getAllFollows()
 GET     /follows/:id                controllers.FollowsREST.getFollows(id: String)
+GET		/followsInfo			    controllers.FollowsREST.getAllFollowsInfo()
+
 POST    /follows                    controllers.FollowsREST.addFollows()
 PUT     /follows/:id                controllers.FollowsREST.updateFollows(id: String)
 DELETE  /follows/:id                controllers.FollowsREST.deleteFollows(id: String)
