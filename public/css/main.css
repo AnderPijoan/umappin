@@ -172,12 +172,11 @@
   text-align: left;
 }
 .menu a {
-  font-weight: bold;
-  color: #450497;
+  color: #661c00;
   padding: 5px 6px;
   line-height: 1;
   background-color: #fcf8dc;
-  margin: 0 5px;
+  margin: 1px 5px;
   border-radius: 8px;
   display: inline-block;
   width: 84%;
@@ -188,8 +187,8 @@
 }
 .menu a:hover,
 .menu a:focus {
-  color: #30036a;
-  background-color: #f8efb1;
+  color: #fff;
+  background-color: #869270;
 }
 body {
   font-family: Noto Serif;
