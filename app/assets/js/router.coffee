@@ -15,9 +15,6 @@ class umappin.Router extends Backbone.Router
     'linkProvider':       'linkProvider'
     'forgotPassword':     'forgotPassword'
     'changePassword':     'changePassword'
-    'leafletmap':         'leafletmap'
-    'test':               'test'
-    'synctest':           'syncTest'
     'userlist':           'userlist'
     'profile':            'profile'
 
@@ -99,20 +96,3 @@ class umappin.Router extends Backbone.Router
   changePassword: () ->  # Need to separate js source
     setTemplate "/assets/templates/changePassword.html"
 
-  # Old leaflet map, remove before release
-  leafletmap: () ->
-    setTemplate "/assets/templates/leaflet-map.html", () ->
-      requirejs ['/assets/js/lib/leaflet.min.js'], () ->
-        requirejs ['/assets/js/lib/leaflet.draw.js'], () ->
-          requirejs ['/assets/js/map/leaflet-map.js'], () ->
-            Map.init()
-
-  # Testing routes, remove before release
-  test: () ->
-    setTemplate "/assets/templates/test.html"
-
-  syncTest: () ->
-    setTemplate "/assets/templates/syncTest.html"
-    requirejs ['/assets/js/test/subitem_model.js'], () ->
-      requirejs ['/assets/js/test/subitem_collection.js'], () ->
-        requirejs ['/assets/js/test/syncTest.js']

@@ -165,19 +165,13 @@ PUT     /maps/:id                controllers.MapREST.updateMap(id: String)
 DELETE  /maps/:id                controllers.MapREST.deleteMap(id: String)
 
 # REST CRUD for Map Features
-GET     /features                 controllers.MapFeatureREST.getAllFeatures()
-GET     /features/:id             controllers.MapFeatureREST.getFeature(id: String)
-POST    /features                 controllers.MapFeatureREST.addFeature()
-PUT     /features/:id             controllers.MapFeatureREST.updateFeature(id: String)
-DELETE  /features/:id             controllers.MapFeatureREST.deleteFeature(id: String)
+GET     /mapfeatures                 controllers.MapFeatureREST.getAllFeatures()
+GET     /mapfeatures/:id             controllers.MapFeatureREST.getFeature(id: String)
+POST    /mapfeatures                 controllers.MapFeatureREST.addFeature()
+PUT     /mapfeatures/:id             controllers.MapFeatureREST.updateFeature(id: String)
+DELETE  /mapfeatures/:id             controllers.MapFeatureREST.deleteFeature(id: String)
 # -------------------------------------------------------------------------------------------------------
 
-# TESTINGG!!!
-GET     /items                    controllers.SubItemREST.getAll()
-GET     /items/:id                controllers.SubItemREST.get(id: String)
-POST    /items                    controllers.SubItemREST.post()
-PUT     /items/:id                controllers.SubItemREST.put(id: String)
-DELETE  /items/:id                controllers.SubItemREST.delete(id: String)
 
 GET     /populateDB               controllers.games.OsmFixmesREST.populateDatabase()
 
