@@ -56,6 +56,18 @@ class window.Maps.MapView extends Backbone.View
   # ---------------------------- Controls ------------------------------ #
   initControls: ->
 
+    # Cache controls
+    cacheRead = new OpenLayers.Control.CacheRead()
+    @controls.push cacheRead
+
+    cacheWrite = new OpenLayers.Control.CacheWrite
+      autoActivate: true
+      imageFormat: "image/jpeg"
+      eventListeners:
+        cachefull: () -> console.log "Caceh Full"
+    @controls.push cacheWrite
+
+
     # Custom Keyboard control & handler
     keyboardControl = new OpenLayers.Control
     keyboardControl.handler = new OpenLayers.Handler.Keyboard(
