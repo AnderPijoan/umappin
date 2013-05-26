@@ -17,7 +17,12 @@ window.onload = function() {
 			'icon-users' : '&#xe001;',
 			'icon-unlocked' : '&#xe002;',
 			'icon-envelop' : '&#xe003;',
-			'icon-switch' : '&#xe004;'
+			'icon-switch' : '&#xe004;',
+			'icon-office' : '&#xe005;',
+			'icon-map' : '&#xe00d;',
+			'icon-address-book' : '&#xe00f;',
+			'icon-phone' : '&#xe010;',
+			'icon-camera' : '&#xe011;'
 		},
 		els = document.getElementsByTagName('*'),
 		i, attr, html, c, el;

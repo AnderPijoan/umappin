@@ -27,13 +27,15 @@ class window.Account.ProfileView extends Backbone.View
         readonly: @readonly
         showInfo: true
         picWidth: '16em'
-        picHeight: '12em'
+        picBorder: '1px solid #000'
       picture.fetch()
       $(@el).find('#profilePictureHolder').append @pictureView.render().el
     else
       picture.save
         owner_id: @model.get 'id'
-        { success: () => @model.save profilePicture: picture.get 'id' }
+        { success: () =>
+          console.log("FOTIKAAA")
+          @model.save profilePicture: picture.get 'id' }
     @
 
   validate: ->
@@ -49,7 +51,10 @@ class window.Account.ProfileView extends Backbone.View
           email: @$el.find('#profile-email').val()
           firstName: @$el.find('#profile-firstname').val()
           lastName: @$el.find('#profile-lastname').val()
+          phone: @$el.find('#profile-phone').val()
+          address: @$el.find('#profile-address').val()
+          { success: () => location.href="./" }
       else
-        $('#actionResult').css('display','block').empty().html(
+        $('#profileError').css('display','block').empty().html(
           "<div class='alert alert-error'>" + data.responseText + "</div>")
 

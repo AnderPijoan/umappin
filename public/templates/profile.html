@@ -7,7 +7,7 @@
     <div class="row">
         <div class="box span7 offset1">
             <div class="box-header">
-                <h3>Log in to uMappin</h3>
+                <h3>User profile</h3>
             </div>
             <div class="box-body">
                 <form id='profile-form'>
@@ -16,38 +16,124 @@
         </div>
     </div>
 </div>
+<form action="/accounts/password/change" id="changePasswordForm">
+<div id="changePassword" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="changePasswordLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="changePasswordLabel">Change password</h3>
+    </div>
+    <div class="modal-body">
+        <div class="input-prepend">
+            <div class="add-on"><span class="icon-key"></span></div>
+            <input type="password" id="changePasswordField" name="changePasswordField" class="span3" placeholder="Password">
+        </div>
+        <div class="input-prepend">
+            <div class="add-on"><span class="icon-key"></span></div>
+            <input type="password" id="changePasswordField2" name="changePasswordField2" class="span3" placeholder="Repeat password">
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-free" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button type="submit" class="btn btn-primary">Change my password</button>
+    </div>
+</div>
+</form>
+<script>
+    function submitChangePassword() {
+        $('#actionResult').css('display','none');
+        var forgotPasswordPost = $.post(
+                $('#changePasswordForm').attr('action'),
+                "password=" + $('#password').val() +
+                "&repeatPassword=" + $('#repeatPassword').val()
+        );
+        forgotPasswordPost.done(function( data ) {
+            $('#actionResult').css('display','block').empty().html(
+                    "<div class='alert alert-info'>" + data + "</div>");
+            $('#password').val('');
+            $('#repeatPassword').val('');
+        });
+        forgotPasswordPost.error(function( data ) {
+            $('#actionResult').css('display','block').empty().html(
+                    "<div class='alert alert-error'>" + data.responseText + "</div>");
+        });
+    }
+
+    $('#changePasswordForm').submit(function(event) {
+        event.preventDefault();
+        submitChangePassword();
+    });
+
+    function submitChangePassword() {
+        var changePasswordPost = $.post(
+                $('#changePasswordForm').attr('action'),
+                "password=" + $('#changePasswordField').val() +
+                "&repeatPassword=" + $('#changePasswordField2').val()
+        );
+
+        changePasswordPost.done(function( data ) {
+            $('#profileError').css('display','block').empty().html(
+              "<div class='alert alert-success'>" + data + "</div>");
+            $('#changePasswordField').val('');
+            $('#changePasswordField2').val('');
+            $('#changePassword').modal('hide');
+            location.href='./#profile';
+        });
+        changePasswordPost.error(function( data ) {
+            $('#changePassword').modal('hide');
+            $('#profileError').css('display','block').empty().html(
+              "<div class='alert alert-error'>" + data.responseText + "</div>");
+            location.href='./#profile';
+        });
+    }
+
+    $('#changePasswordForm').submit(function(event) {
+        event.preventDefault();
+        submitChangePassword();
+    });
+</script>
+
 <!------------------------------------- Templates -------------------------------------->
 <script type='text/template' id='userprofile-template'>
-    <div class="span3">
-        <div id='profilePictureHolder'></div>
-        <label>Username</label>
-        <input type="text" value="<%- rc.data.name %>" class="input-medium" required  id='profile-name'><br/>
-        <% if (!rc.readonly) { %>
-            <a href="#changePassword">Change Account password</a>
-        <% } %>
-        <br/><br/>
-        <h4>Last login Date: </h4>
-        <label><%- new Date(rc.lastLogin).toLocaleString() %></label><br/>
-        Account providers:
-        <img alt="password icon" title="password" src="/assets/icons/password-24x24.png">
-        <br/><br/>
-        Logged in with:
-        <img alt="password icon" title="password" src="/assets/icons/password-24x24.png">
-        <% if (!rc.readonly) { %>
-            <br/><br/><button id="profile-modify-button" class="btn btn-primary">Update</button>
-        <% } %>
-    </div>
-    <div class="span3">
-        <label>First Name</label>
-        <input type="text" value="<%- rc.data.firstName %>" class="input-xlarge" id='profile-firstname'>
-        <label>Last Name</label>
-        <input type="text" value="<%- rc.data.lastName %>" class="input-xlarge" id='profile-lastname'>
-        <label>Email</label>
-        <input type="text" value="<%- rc.data.email %>" class="input-xlarge" required  id='profile-email'>
-        <label>Phone</label>
-        <input type="text" value="<%- rc.data.phone %>" class="input-xlarge" id='profile-phone'>
-        <label>Address</label>
-        <textarea rows="3" class="input-xlarge" id='profile-address'><%- rc.address %></textarea>
+    <div class="row">
+        <div class="span4">
+            <div class="input-prepend">
+                <div class="add-on"><span class="icon-users"></span></div>
+                <input type="text" value="<%- rc.data.name %>" id="profile-name" class="input-xlarge" placeholder="Username" required>
+            </div>
+            <div class="input-prepend">
+                <div class="add-on"><span class="icon-address-book"></span></div>
+                <input type="text" value="<%- rc.data.firstName %>" id="profile-firstname" class="input-xlarge" placeholder="First name">
+            </div>
+            <div class="input-prepend">
+                <div class="add-on"><span class="icon-address-book"></span></div>
+                <input type="text" value="<%- rc.data.lastName %>" id="profile-lastname" class="input-xlarge" placeholder="Last name">
+            </div>
+            <div class="input-prepend">
+                <div class="add-on"><span class="icon-envelop"></span></div>
+                <input type="text" value="<%- rc.data.email %>" id="profile-email" class="input-xlarge" placeholder="Email">
+            </div>
+            <div class="input-prepend">
+                <div class="add-on"><span class="icon-phone"></span></div>
+                <input type="text" value="<%- rc.data.phone %>" id="profile-phone" class="input-xlarge" placeholder="Phone">
+            </div>
+            <div class="input-prepend">
+                <div class="add-on"><span class="icon-office"></span></div>
+                <textarea rows="3" class="input-xlarge" id='profile-address' placeholder="Address"><%- rc.data.address %></textarea>
+            </div>
+            <% if (!rc.readonly) { %>
+            <div style="text-align: right">
+                <a href="#changePassword" data-toggle="modal"><span class="icon-key"></span>Change account password</a>
+            </div>
+            <% } %>
+            <div id="profileError" style="margin-top:10px">
+            </div>
+        </div>
+        <div class="span3">
+            <div id='profilePictureHolder'></div>
+            <% if (!rc.readonly) { %>
+                <br/><br/><button id="profile-modify-button" class="btn btn-primary">Update</button>
+            <% } %>
+        </div>
     </div>
     <div style="clear:both"></div>
 </script>
