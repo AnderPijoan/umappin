@@ -57,7 +57,14 @@ box(opacy)
       width 208px
     .span4
       width 290px
-
+    #profile-form
+      .span3
+        width 179px
+        margin 0 10px
+      .input-xlarge
+        width 249px
+      button
+        width 100%
   .box-footer
     padding 10px
     background-color darken(color-beige, 10%)
@@ -211,6 +218,13 @@ input[type="color"]:focus,
   -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(color-dark-red,0.6)
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(color-dark-red,0.6)
 
+#profilePictureHolder
+  word-wrap: break-word;
+  img
+    border: 1px solid #000;
+    padding: 10px;
+    border-radius: 40px;
+    margin-bottom: 10px;
 #profile-picture
   border: 1px solid #2B4429;
   width: 128px;
@@ -290,6 +304,7 @@ input[type="color"]:focus,
       input, textarea, .uneditable-input
         color color-dark-brown
         border 1px solid color-box-border
+        border-top-left-radius: 0px;
       .span3
         width: 166px
       .span6
@@ -324,6 +339,24 @@ input[type="color"]:focus,
     .input-prepend
       input.span3, textarea.span3, .uneditable-input.span3
         width: 485px
+  #profile-form
+    margin-top 10px
+    a
+      color: color-dark-green
+      font-size: 16px;
+      padding: 5px 6px;
+      background-color: color-beige
+      border-radius: 8px;
+      display: inline-block;
+      width: 89%;
+      border 1px solid color-dark-green
+      margin: -10px 0 10px;
+      text-align left
+      span
+        margin-right: 10px;
+    a:hover,a:focus
+      color white
+      background-color color-olive
 #actionResult
   display none
 
@@ -367,6 +400,12 @@ input[type="color"]:focus,
         width 258px
       .span4
         width 360px
+      #profile-form
+        .span3
+          width 248px
+          margin 0 20px
+        .input-xlarge
+          width 319px
   .titlebar
     .input-prepend
       input
@@ -407,6 +446,11 @@ input[type="color"]:focus,
         width 154px
       .span4
         width 215px
+      #profile-form
+        .span3
+          width 146px
+        .input-xlarge
+          width 174px
   .titlebar
     .input-prepend
       input
@@ -445,12 +489,21 @@ input[type="color"]:focus,
           width 100%
           .span3,.span6
             width: 94%
+    form#profile-form
+      .input-prepend
+        .add-on
+          float left
+        input, textarea
+          width 93%
   .box
     .box-body
       .span3
         width 98%
       .span4
         width 100%
+      #profile-form
+        .span3
+          width 98%
   .titlebar
     text-align left
     padding 0
@@ -510,12 +563,23 @@ input[type="color"]:focus,
           width 100%
           .span3,.span6
             width: 86%
+    form#profile-form
+      .input-prepend
+        .add-on
+          float left
+        input, textarea
+          width 88%
   .box
     .box-body
       .span3
         width 98%
       .span4
         width 100%
+      #profile-form
+        .span3
+          width 83%
+          button
+          width 95%
   .titlebar
     padding 0
     width 100%
