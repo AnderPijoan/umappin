@@ -1,46 +1,27 @@
-(function ($) {
+$(function(){
 
 	var Statistic = Backbone.Model.extend({
-
-	});
-	
-	var Statistics = Backbone.Collection.extend({
-	    model:Statistic,
-	    url:'/users/5159755b494bae44d2dfbc05/statistics'
+		urlRoot: '/users'
 	});
 
-	var StatisticView = Backbone.View.extend({	
-		tagName:"div",
-		className:"statisticContainer",
+	var StatisticView = Backbone.View.extend({
+		el: $('#statistics'),
+		
+		className: "#statisticContainer",
 
 		template:$("#statistic-Template").html(),
 
-		initialize:function () {
-	        this.collection = new Statistics();
-	        this.collection.fetch();
-	        this.render();
-
-	        this.collection.on("reset", this.render, this);
-	    },
-		
 		render:function () {
+			this.model.set({"level":3, "points":65});
+			alert(JSON.stringify(this.model));
 			var tmpl = _.template(this.template);
-
 			this.$el.html(tmpl(this.model.toJSON()));
-			alert("hola");
 			return this;
 		}
 	});
-
-	var statistic = new Statistic({
-		level:1,
-		points:50
-	});
 	
-    statisticView = new StatisticView({
-    	model:statistic
-    });
-
-    $("#statistics").html(statisticView.render().el);
-    
-})(jQuery);
+	statistic = new Statistic({});
+	
+    statisticView = new StatisticView({model: statistic});
+    statisticView.render();
+});
