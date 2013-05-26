@@ -37,25 +37,25 @@ class umappin.Router extends Backbone.Router
 
   featuresMap: () ->
     setTemplate "/assets/templates/maps.html", () ->
-      requirejs ['/assets/js/lib/openlayers.min.js'], () ->
+      requirejs ['/assets/js/lib/openlayers.extended.js'], () ->
         requirejs ['/assets/js/maps/maps.js'], () ->
           Maps.initFeaturesMap()
 	
   markersMap: () ->
     setTemplate "/assets/templates/maps.html", () ->
-      requirejs ['/assets/js/lib/openlayers.min.js'], () ->
+      requirejs ['/assets/js/lib/openlayers.extended.js'], () ->
         requirejs ['/assets/js/maps/maps.js'], () ->
           Maps.initMarkersMap()
 
   searchMap: () ->
     setTemplate "/assets/templates/maps.html", () ->
-      requirejs ['/assets/js/lib/openlayers.min.js'], () ->
+      requirejs ['/assets/js/lib/openlayers.extended.js'], () ->
         requirejs ['/assets/js/maps/maps.js'], () ->
           Maps.initSearchMap()
 
   routesMap: () ->
     setTemplate "/assets/templates/maps.html", () ->
-      requirejs ['/assets/js/lib/openlayers.min.js'], () ->
+      requirejs ['/assets/js/lib/openlayers.extended.js'], () ->
         requirejs ['/assets/js/maps/maps.js'], () ->
           Maps.initRoutesMap()
 

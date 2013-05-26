@@ -64,15 +64,16 @@ class window.Maps.SearchMapView extends Maps.MapView
     feat.data.overflow = 'auto'
     marker = feat.createMarker()
     that = @
-    marker.events.register "mousedown", feat, (evt) ->
-      if @popup
-        @popup.toggle()
-      else
-        @popup = @createPopup(true)
-        that.map.addPopup(@popup)
-        @popup.show()
-        $('.doSomethingButton').bind('click', (e) -> alert('TODO!!'))
-      OpenLayers.Event.stop(evt)
+    marker.events.register "mousedown", feat, (evt) -> that.selectMarkerHandler evt, feat, lonlat
     @markers.push marker
     @featuresLayer.addMarker(marker)
 
+  selectMarkerHandler: (evt, marker, lonlat) ->
+    if marker.popup
+      marker.popup.toggle()
+    else
+      marker.popup = marker.createPopup(true)
+      @map.addPopup(marker.popup)
+      marker.popup.show()
+      $('.doSomethingButton').bind('click', (e) -> alert('TODO!!'))
+    OpenLayers.Event.stop(evt)

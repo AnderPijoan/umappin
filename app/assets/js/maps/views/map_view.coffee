@@ -1,5 +1,6 @@
 window.Maps or= {}
 OpenLayers.ImgPath = "/assets/img/openlayers/"
+OpenLayers.ProxyHost = "proxy.cgi?url="
 _.templateSettings.variable = 'rc'
 
 class window.Maps.MapView extends Backbone.View
@@ -64,8 +65,10 @@ class window.Maps.MapView extends Backbone.View
       autoActivate: true
       imageFormat: "image/jpeg"
       eventListeners:
-        cachefull: () -> console.log "Caceh Full"
+        cachefull: () -> console.log "Cache Full"
     @controls.push cacheWrite
+    # Reset the cache on init
+    OpenLayers.Control.CacheWrite.clearCache()
 
 
     # Custom Keyboard control & handler

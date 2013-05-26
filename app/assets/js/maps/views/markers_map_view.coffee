@@ -90,16 +90,8 @@ class window.Maps.MarkersMapView extends Maps.MapView
               feat.data.overflow = 'auto'
               marker = feat.createMarker()
               that = @
-              marker.events.register "mousedown", feat, (evt) ->
-                if @popup
-                  @popup.toggle()
-                else
-                  @popup = @createPopup(true)
-                  that.map.addPopup(@popup)
-                  @popup.show()
-                  $('.newNoteCommentButton').bind('click', (e) -> that.postNoteComment(e))
-                  $('.closeNoteButton').bind('click', (e) -> that.closeNote(e))
-                OpenLayers.Event.stop(evt)
+              marker.events.register "mousedown", feat, (evt) -> that.selectMarkerHandler evt, feat, lonlat
+              marker.events.register "touchstart", feat, (evt) -> that.selectMarkerHandler evt, feat, lonlat
               @markersLayer.addMarker(marker)
           bbox.transform(Maps.MapView.OSM_PROJECTION, @map.getProjectionObject())
           bbox.extend new OpenLayers.LonLat(origin.x, origin.y)
@@ -118,18 +110,31 @@ class window.Maps.MarkersMapView extends Maps.MapView
       @map.getProjectionObject()
       Maps.MapView.OSM_PROJECTION
     )
-    marker.events.register "mousedown", feat, (evt) ->
-      if @popup
-        @popup.toggle()
-      else
-        @popup = @createPopup(true)
-        that.map.addPopup(@popup)
-        @popup.show()
-        $('.newNoteButton').bind('click', (evt) -> that.postNewNote(evt, lonlat))
-        $('.removeMarkerButton').bind 'click', (evt) => @destroy()
-      OpenLayers.Event.stop(evt)
+    marker.events.register "mousedown", feat, (evt) -> that.selectNewMarkerHandler evt, feat, lonlat
+    marker.events.register "touchstart", feat, (evt) -> that.selectNewMarkerHandler evt, feat, lonlat
     @markersLayer.addMarker marker
 
+  selectNewMarkerHandler: (evt, marker, lonlat) ->
+    if marker.popup
+      marker.popup.toggle()
+    else
+      marker.popup = marker.createPopup(true)
+      @map.addPopup(marker.popup)
+      marker.popup.show()
+      $('.newNoteButton').bind('click', (evt) => @postNewNote(evt, lonlat))
+      $('.removeMarkerButton').bind 'click', (evt) -> marker.destroy()
+    OpenLayers.Event.stop(evt)
+
+  selectMarkerHandler: (evt, marker, lonlat) ->
+    if marker.popup
+      marker.popup.toggle()
+    else
+      marker.popup = marker.createPopup(true)
+      @map.addPopup(marker.popup)
+      marker.popup.show()
+      $('.newNoteCommentButton').bind('click', (e) => @postNoteComment(e))
+      $('.closeNoteButton').bind('click', (e) => @closeNote(e))
+    OpenLayers.Event.stop(evt)
 
   postNoteComment: (evt) ->
     id = $(evt.target).attr('id').split('_')[1]
