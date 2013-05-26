@@ -27,15 +27,12 @@ class window.Account.ProfileView extends Backbone.View
         readonly: @readonly
         showInfo: true
         picWidth: '16em'
-        picBorder: '1px solid #000'
       picture.fetch()
       $(@el).find('#profilePictureHolder').append @pictureView.render().el
     else
       picture.save
         owner_id: @model.get 'id'
-        { success: () =>
-          console.log("FOTIKAAA")
-          @model.save profilePicture: picture.get 'id' }
+        { success: () => @model.save profilePicture: picture.get 'id' }
     @
 
   validate: ->

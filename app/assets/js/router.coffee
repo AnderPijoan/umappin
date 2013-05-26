@@ -14,7 +14,6 @@ class umappin.Router extends Backbone.Router
     'logout':             'logout'
     'linkProvider':       'linkProvider'
     'forgotPassword':     'forgotPassword'
-    'changePassword':     'changePassword'
     'userlist':           'userlist'
     'profile':            'profile'
 
@@ -40,7 +39,7 @@ class umappin.Router extends Backbone.Router
       requirejs ['/assets/js/lib/openlayers.extended.js'], () ->
         requirejs ['/assets/js/maps/maps.js'], () ->
           Maps.initFeaturesMap()
-	
+
   markersMap: () ->
     setTemplate "/assets/templates/maps.html", () ->
       requirejs ['/assets/js/lib/openlayers.extended.js'], () ->
@@ -92,7 +91,3 @@ class umappin.Router extends Backbone.Router
 
   forgotPassword: () -> # Need to separate js source
     setTemplate "/assets/templates/forgotPassword.html"
-
-  changePassword: () ->  # Need to separate js source
-    setTemplate "/assets/templates/changePassword.html"
-
