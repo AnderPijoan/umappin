@@ -54,10 +54,12 @@ public class TimelineREST extends ItemREST {
 		}
 		Timeline timeline = Timeline.findById(user.id, Timeline.class);
 		if (timeline == null) {
+			System.out.println("por aqui "+user.id);
 			return badRequest(Constants.PUBLICATIONS_EMPTY.toString());
 		}
 		List<Publication> publications = timeline.getPublications(0, 10);
 		if (publications.size() == 0) {
+			System.out.println("por alla");
 			return badRequest(Constants.PUBLICATIONS_EMPTY.toString());
 		} else {
 			// Return the response

@@ -9,6 +9,7 @@ class umappin.Router extends Backbone.Router
     'searchMap':          'searchMap'
     'routesMap':          'routesMap'
     'messages/*subroute': 'messages'
+    'wall/*subroute': 	  'wall'
     'signup':             'signup'
     'login':              'login'
     'logout':             'logout'
@@ -73,6 +74,17 @@ class umappin.Router extends Backbone.Router
         ], () ->
           requirejs ['/assets/js/messagesApp/routers/router.js'], () ->
             subroutes.messagesRouter or= new messagesApp.Router "messages/"
+
+  wall: () ->
+    subroutes = @subroutes
+    requirejs ['/assets/js/timelineApp/collection/publicationCollection.js'], () ->
+     requirejs ['/assets/js/timelineApp/model/user.js'], () ->
+        requirejs [
+          '/assets/js/timelineApp/collection/followedCollection.js',
+          '/assets/js/timelineApp/view/user_view.js'
+        ], () ->
+          requirejs ['/assets/js/timelineApp/routers/router.js'], () ->
+            subroutes.timelineRouter or= new timelineApp.Router "wall/"
 
   login: () ->
     setTemplate "/assets/templates/login.html"
