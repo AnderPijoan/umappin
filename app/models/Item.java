@@ -30,6 +30,26 @@ public class Item {
 	public static <T extends Item> T findById(ObjectId oid, Class<T> klass) {
 		return MorphiaObject.datastore.get(klass, oid);
 	}
+	
+	public static <T extends Item> List<T> findWhere(String field, Object equals, Class<T> klass) {
+		return MorphiaObject.datastore.find(klass).field(field).equal(equals).asList();
+	}
+	
+	public static <T extends Item> List<T> findWhere(String field, Object equals, int limit, Class<T> klass) {
+		return MorphiaObject.datastore.find(klass).field(field).equal(equals).limit(limit).asList();
+	}
+	
+	public static <T extends Item> List<T> findWhere(String field, Object equals, String order, Class<T> klass) {
+		return MorphiaObject.datastore.find(klass).field(field).equal(equals).order(order).asList();
+	}
+	
+	public static <T extends Item> List<T> findWhere(String field, Object equals, int from, int to, String order, Class<T> klass) {
+		return MorphiaObject.datastore.find(klass).field(field).equal(equals).order(order).offset(from).limit(to-from).asList();
+	}
+	
+	public static <T extends Item> List<T> findWhere(String field, Object equals, int limit, String order, Class<T> klass) {
+		return MorphiaObject.datastore.find(klass).field(field).equal(equals).order(order).limit(limit).asList();
+	}
 
     public void save() {
         MorphiaObject.datastore.save(this);

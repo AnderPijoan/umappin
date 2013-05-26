@@ -23,7 +23,16 @@ public class MapFeature {
     public Long id;
     public String ownerId ;
     public String name;
+    public String type;
     public JsonNode geometry;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public Long getId() {
         return id;
@@ -67,7 +76,7 @@ public class MapFeature {
         List<MapFeature> list = new ArrayList<MapFeature>();
         try {
             conn = ds.getConnection();
-            String sql = "select id, ownerid, name, st_asgeojson(geometry) as geometry from mapfeature";
+            String sql = "select id, ownerid, name, type, st_asgeojson(geometry) as geometry from mapfeature";
             st = conn.prepareStatement(sql);
             rs = st.executeQuery();
             while (rs.next()) {
@@ -75,6 +84,7 @@ public class MapFeature {
                 ft.id = rs.getLong("id");
                 ft.ownerId =  rs.getString("ownerid");
                 ft.name =  rs.getString("name");
+                ft.type =  rs.getString("type");
                 ft.geometry =  Json.parse(rs.getString("geometry"));
                 list.add(ft);
             }
@@ -99,7 +109,7 @@ public class MapFeature {
         MapFeature ft = null;
         try {
             conn = ds.getConnection();
-            String sql = "select id, ownerid, name, st_asgeojson(geometry) as geometry from mapfeature where id = ?";
+            String sql = "select id, ownerid, name, type, st_asgeojson(geometry) as geometry from mapfeature where id = ?";
             st = conn.prepareStatement(sql);
             st.setLong(1, Long.parseLong(id));
             rs = st.executeQuery();
@@ -108,6 +118,7 @@ public class MapFeature {
                 ft.id = rs.getLong("id");
                 ft.ownerId =  rs.getString("ownerid");
                 ft.name =  rs.getString("name");
+                ft.type =  rs.getString("type");
                 ft.geometry =  Json.parse(rs.getString("geometry"));
             }
         } catch (SQLException e) {
@@ -130,12 +141,13 @@ public class MapFeature {
         ResultSet rs;
         try {
             conn = ds.getConnection();
-            String sql = "insert into mapfeature (id, ownerid, name, geometry) " +
-                         "values (DEFAULT, ?, ?, st_geomfromgeojson(?)) returning id";
+            String sql = "insert into mapfeature (id, ownerid, name, type, geometry) " +
+                         "values (DEFAULT, ?, ?, ?, st_geomfromgeojson(?)) returning id";
             st = conn.prepareStatement(sql);
             st.setString(1, this.ownerId);
             st.setString(2, this.name);
-            st.setString(3, Json.stringify(this.geometry));
+            st.setString(3, this.type);
+            st.setString(4, Json.stringify(this.geometry));
             rs = st.executeQuery();
             if (rs.next())
                 this.id = rs.getLong("id");
@@ -160,13 +172,14 @@ public class MapFeature {
         ResultSet rs;
         try {
             conn = ds.getConnection();
-            String sql = "update mapfeature set ownerid = ?, name = ?, geometry = st_geomfromgeojson(?) " +
+            String sql = "update mapfeature set ownerid = ?, name = ?, type = ?, geometry = st_geomfromgeojson(?) " +
                          "where id = ? returning id";
             st = conn.prepareStatement(sql);
             st.setString(1, other.ownerId);
             st.setString(2, other.name);
-            st.setString(3, Json.stringify(other.geometry));
-            st.setLong(4, this.id);
+            st.setString(3, other.name);
+            st.setString(4, Json.stringify(other.geometry));
+            st.setLong(5, this.id);
             rs = st.executeQuery();
             if (rs.next())
                 other.id = this.id;

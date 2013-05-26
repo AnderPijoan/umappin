@@ -1,22 +1,22 @@
 
 	<h2>Messages</h2>
 <p>Manage your messages</p>
-<div class ="row">
-    <div class="span2 offset9">    
+<div class ="row-fluid">
+    <div class="span2 offset9">
         <a href="#messages/newDiscussion" role="button" class="btn">New Message</a>
     </div>
 </div>
-<div class="row">
+<div class="row-fluid">
 
     <div class="span3 bs-docs-sidebar">
         <ul class="nav nav-list bs-docs-sidenav " id="subsec_nav" >
             <li id="received_messages"class="active"><a tabindex="-1" href="#messages/received">Messages</a></li>
-            
+
             </ul>
         </div>
         <div class="span9" id="messages_body" >
 
-            
+
         </div>
 
 
@@ -24,7 +24,7 @@
 </div>
 
 
- 
+
 <!-- Modal -->
 <div id="newDiscussion" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-header">
@@ -34,8 +34,15 @@
   <div class="modal-body">
     <label for="form_subject">Subject</label><input type="text" name="subject" id="form_subject"/><br/>
         <label for="form_message">Message</label><textarea name="message" id="form_message" ></textarea><br />
-        <label for="form_all">All</label><input type="checkbox" name="all" id="form_all_check" />
-        <label for="form_receivers">Receivers</label><input type="text" name="receivers" id="form_receivers" /><br />
+        <div id="receivers_block">
+          <label for="form_receivers">Receivers</label>
+
+          <div id="receivers_list">
+          </div>
+          <input type="text" name="receivers" id="form_receivers" />
+          <div id="search_result_list"></div>
+        <br />
+        <br />
   </div>
   <div class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
@@ -45,6 +52,16 @@
 </div>
 
 
+<script type="text/template" id="receiver-search-item-template">
+<div class="receiver_item" data-id="<%- rc.id %>">
+  <%- rc.name %>
+</script>
+
+<script type="text/template" id="receiver-selected-item-template">
+<div class="receiver_selected_item" >
+  <%- rc.name %>
+  <button data-id="<%- rc.id %>" class="btn btn-danger remove_selected_item">X</button>
+</script>
 
 
 
@@ -58,7 +75,7 @@
                 <div class="discussion_participants_photo">
                     <% for (i=0; i<maxPhotosSeen;i++) { %>
                         <% if (rc.users[i]) { %>    
-                            <img id="photo<%- rc.users[i].name %>" class="messagePhoto" src="<%- rc.users[i].photo%>" title="<%- rc.users[i].name %>"/>
+                            <img id="photo<%- rc.users[i].name %>" class="messagePhoto" src="<%- rc.users[i].profilePicture%>" title="<%- rc.users[i].name %>"/>
                         <% } else {break;}} %>
                     <% if (rc.users.length > maxPhotosSeen) {plusUsers=rc.users.length-maxPhotosSeen;%> 
                         <span class="plusUsers">+<%- plusUsers %></span>
@@ -97,7 +114,6 @@
 
     <script src="/assets/js/messagesApp/view/receivedMessages_view.js"></script>
     <script src="/assets/js/messagesApp/view/messagesApp_view.js"></script>
-    <script src="/assets/js/messagesApp/view/newDiscussion_view.js"></script>
 
 
     <script src="/assets/js/messagesApp/view/discussionMessages_view.js"></script>

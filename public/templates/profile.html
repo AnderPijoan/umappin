@@ -1,0 +1,53 @@
+<!------------------------------------- Styles -------------------------------------->
+<link href="/assets/css/account.min.css" rel="stylesheet">
+
+
+<!------------------------------------- HTML -------------------------------------->
+<div class="box-transparent span9">
+    <div class="row">
+        <div class="box span7 offset1">
+            <div class="box-header">
+                <h3>Log in to uMappin</h3>
+            </div>
+            <div class="box-body">
+                <form id='profile-form'>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!------------------------------------- Templates -------------------------------------->
+<script type='text/template' id='userprofile-template'>
+    <div class="span3">
+        <div id='profilePictureHolder'></div>
+        <label>Username</label>
+        <input type="text" value="<%- rc.data.name %>" class="input-medium" required  id='profile-name'><br/>
+        <% if (!rc.readonly) { %>
+            <a href="#changePassword">Change Account password</a>
+        <% } %>
+        <br/><br/>
+        <h4>Last login Date: </h4>
+        <label><%- new Date(rc.lastLogin).toLocaleString() %></label><br/>
+        Account providers:
+        <img alt="password icon" title="password" src="/assets/icons/password-24x24.png">
+        <br/><br/>
+        Logged in with:
+        <img alt="password icon" title="password" src="/assets/icons/password-24x24.png">
+        <% if (!rc.readonly) { %>
+            <br/><br/><button id="profile-modify-button" class="btn btn-primary">Update</button>
+        <% } %>
+    </div>
+    <div class="span3">
+        <label>First Name</label>
+        <input type="text" value="<%- rc.data.firstName %>" class="input-xlarge" id='profile-firstname'>
+        <label>Last Name</label>
+        <input type="text" value="<%- rc.data.lastName %>" class="input-xlarge" id='profile-lastname'>
+        <label>Email</label>
+        <input type="text" value="<%- rc.data.email %>" class="input-xlarge" required  id='profile-email'>
+        <label>Phone</label>
+        <input type="text" value="<%- rc.data.phone %>" class="input-xlarge" id='profile-phone'>
+        <label>Address</label>
+        <textarea rows="3" class="input-xlarge" id='profile-address'><%- rc.address %></textarea>
+    </div>
+    <div style="clear:both"></div>
+</script>

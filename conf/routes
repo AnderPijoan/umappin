@@ -64,12 +64,15 @@ GET     /photos/manager              controllers.Photos.manager
 # REST CRUD for Follows
 GET     /follows                    controllers.FollowsREST.getAllFollows()
 GET     /follows/:id                controllers.FollowsREST.getFollows(id: String)
+GET		/followsInfo			    controllers.FollowsREST.getAllFollowsInfo()
+
 POST    /follows                    controllers.FollowsREST.addFollows()
 PUT     /follows/:id                controllers.FollowsREST.updateFollows(id: String)
 DELETE  /follows/:id                controllers.FollowsREST.deleteFollows(id: String)
 
 # REST CRUD for Followed
 GET     /followed                    controllers.FollowedREST.getAllFollowed()
+GET		/followedInfo			    controllers.FollowedREST.getAllFollowedInfo()
 GET     /followed/:id                controllers.FollowedREST.getFollowed(id: String)
 POST    /followed                    controllers.FollowedREST.addFollowed()
 PUT     /followed/:id                controllers.FollowedREST.updateFollowed(id: String)
@@ -78,6 +81,7 @@ DELETE  /followed/:id                controllers.FollowedREST.deleteFollowed(id:
 # REST CRUD for Users
 GET     /users                      controllers.UserREST.getAll()
 GET     /users/:id                  controllers.UserREST.get(id: String)
+GET     /users/:id/timeline         controllers.TimelineREST.getTimeline(id: String)
 POST    /users                      controllers.UserREST.post()
 PUT     /users/:id                  controllers.UserREST.put(id: String)
 DELETE  /users/:id                  controllers.UserREST.delete(id: String)
@@ -86,14 +90,46 @@ GET     /sessionuser                controllers.UserREST.getSessionUser
 
 # REST CRUD for discussions
 GET     /discussions                controllers.User2DiscussionREST.getDiscussions()
+GET     /discussions/from/:f/to/:t  controllers.User2DiscussionREST.getRangeDiscussions(f: Integer, t: Integer)
 GET     /discussions/unread         controllers.User2DiscussionREST.getUnreadDiscussions()
 GET     /discussions/:id            controllers.User2DiscussionREST.getDiscussion(id: String)
 POST    /discussions                controllers.User2DiscussionREST.addDiscussion()
 DELETE  /discussions/:id            controllers.User2DiscussionREST.deleteDiscussion(id: String)
+
+# REST CRUD for messages (!!!they need a "discussion_id" in the body!!!)
 GET     /messages/:id               controllers.User2DiscussionREST.getMessage(id: String)
 PUT     /messages/:id               controllers.User2DiscussionREST.updateMessage(id: String)
 POST	/messages                   controllers.User2DiscussionREST.reply()
 POST	/messages/:id               controllers.User2DiscussionREST.replyToMessage(id: String)
+DELETE  /messages/:id               controllers.User2DiscussionREST.deleteMessage(id: String)
+
+# REST CRUD for news
+GET     /news                       controllers.newsREST.getNews()
+GET     /news/from/:f/to/:t         controllers.newsREST.getNewsRange(f: Integer, t: Integer)
+
+# REST CRUD for publications
+GET     /publications               controllers.TimelineREST.getPublications()
+GET     /publications/from/:f/to/:t controllers.TimelineREST.getRangePublications(f: Integer, t: Integer)
+GET     /publications/:id           controllers.TimelineREST.getPublication(id: String)
+GET     /publications/:id/likes     controllers.TimelineREST.getPublicationLikes(id: String)
+POST    /publications               controllers.TimelineREST.addPublication()
+DELETE  /publications/:id           controllers.TimelineREST.deletePublication(id: String)
+
+# REST CRUD for comments (!!!they need a "publicaton_id" in the body!!!)
+GET     /comments/:id               controllers.TimelineREST.getMessage(id: String)
+PUT     /comments/:id               controllers.TimelineREST.updateMessage(id: String)
+POST	/comments                   controllers.TimelineREST.reply()
+POST	/comments/:id               controllers.TimelineREST.replyToMessage(id: String)
+DELETE  /comments/:id               controllers.TimelineREST.deleteMessage(id: String)
+
+# REST CRUD for routes
+GET     /routes                     controllers.User2RoutesREST.getRoutes()
+GET     /routes/:id                 controllers.User2RoutesREST.getRoute(id: String)
+POST    /routes/near/:amount        controllers.User2RoutesREST.getNearRoutes(amount: Integer)
+POST    /routes/near/:amount/difficulty/:diff        controllers.User2RoutesREST.getNearDifficultyRoutes(amount: Integer, diff: Integer)
+POST    /routes                     controllers.User2RoutesREST.addRoute()
+DELETE  /routes/:id                 controllers.User2RoutesREST.deleteRoute(id: String)
+PUT     /routes/:id                 controllers.User2RoutesREST.updateRoute(id: String)
 
 # REST CRUD for awards
 GET     /awards						controllers.AwardREST.getAwards()
@@ -128,7 +164,7 @@ GET     /features                 controllers.MapFeatureREST.getAllFeatures()
 GET     /features/:id             controllers.MapFeatureREST.getFeature(id: String)
 POST    /features                 controllers.MapFeatureREST.addFeature()
 PUT     /features/:id             controllers.MapFeatureREST.updateFeature(id: String)
-DELETE  /features/:id             controllers.MapFeatureREST.updateFeature(id: String)
+DELETE  /features/:id             controllers.MapFeatureREST.deleteFeature(id: String)
 # -------------------------------------------------------------------------------------------------------
 
 # TESTINGG!!!
@@ -138,23 +174,8 @@ POST    /items                    controllers.SubItemREST.post()
 PUT     /items/:id                controllers.SubItemREST.put(id: String)
 DELETE  /items/:id                controllers.SubItemREST.delete(id: String)
 
-# ------------------------------ Photos ------------------------------------
-GET     /photos/manager              controllers.Photos.manager
+GET     /populateDB               controllers.games.OsmFixmesREST.populateDatabase()
 
-#allocates a new photo by sending the metadata
-POST    /rest/photos                 controllers.PhotosREST.newPhoto()
-DELETE  /rest/photos/:id             controllers.PhotosREST.deletePhoto(id: String)
-POST    /rest/photos/:id             controllers.PhotosREST.updatePhoto(id: String)
-
-
-#POST for photoContent carried within multipart/form-data
-POST    /rest/photos/:id/content      controllers.PhotosREST.uploadMultipartContent(id: String)
-
-#'quality' is dummy, this parameter is never read
-GET     /rest/photos/:id/content      controllers.PhotosREST.getPhotoContent(id: String)
-
-#updates and get the metadata
-GET     /rest/photos/:id             controllers.PhotosREST.getPhoto(id: String)
 
 #photo user 'likes' (to vote for a photo)
 

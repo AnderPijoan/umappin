@@ -1,6 +1,7 @@
 # Sets a template for the main content
 window.setTemplate = (url, callback) ->
   $('div#actionResult').empty()
+  $('div#actionResult').css('display','none')
   $.get url, (template) ->
     $('div#content').empty().html template
     callback?.call @
@@ -25,17 +26,13 @@ $ () ->
   requirejs ['/assets/js/router.js'], () ->
     umappin.router or= new umappin.Router
     Backbone.history.start()
-
-  # Check the user session
-  ###
-  token = window.sessionStorage.getItem 'token'
-  $.ajax
-    url: "/sessionuser"
-    data: { signature: 'authHeader' }
-    type: "GET"
-    beforeSend: (xhr) -> xhr.setRequestHeader('token', token ? '')
-    success: (data) -> setSessionUser data
-  ###
-  sessionRequest = $.get "/sessionuser"
-  sessionRequest.done (data) -> setSessionUser data
-  updateSessionViews ""
+  sessionRequest = $.get "/sessionuser?#{new Date().getTime()}"
+  sessionRequest.done (data) ->
+    profileImg = '<img id="my-avatar" src="./photos/'+data.profilePicture+'/content" onload="resize(this)">'
+    sessionStorage.setItem("user", JSON.stringify(data));
+    setSessionUser data
+    setTemplate "/assets/templates/main_logged.html"
+    $('#profile-picture').html(profileImg)
+  sessionRequest.error ->
+    updateSessionViews ""
+    setTemplate "/assets/templates/main.html"

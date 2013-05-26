@@ -1,0 +1,550 @@
+@import "bootstrap.min.css"
+@import "bootstrap-responsive.min.css"
+@import "icons/icons.css"
+@import "jNotify.jquery.css"
+
+@font-face {
+  font-family: 'Engagement';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Engagement'), local('Engagement-Regular'), url(http://themes.googleusercontent.com/static/fonts/engagement/v2/IYnYh0uOiuydvYrbHKIjwRsxEYwM7FgeyaSgU71cLG0.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'Noto Serif';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Noto Serif'), local('NotoSerif'), url(http://themes.googleusercontent.com/static/fonts/notoserif/v1/eCpfeMZI7q4jLksXVRWPQxsxEYwM7FgeyaSgU71cLG0.woff) format('woff');
+}
+
+color-beige = #FCF8DC
+color-dark-red = #661C00
+color-dark-brown = #463116
+color-box-border = #50483D
+color-purple = #450497
+color-error = #B94A48
+color-success = #468847
+color-olive = #869270
+color-dark-green = #2B4429
+
+color-box-shadow = rgba(color-box-border, 0.065)
+color-box-background = rgba(color-beige, 0.6)
+
+box(opacy)
+  margin-top 5px
+  margin-bottom 10px
+  background-color: rgba(color-beige, opacy)
+  border-top: 1px solid color-box-border;
+  border-bottom: 1px solid color-box-border;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px color-box-shadow;
+  text-align: center;
+  padding 10px 0 10px
+  .box-header
+    padding: 10px
+    border: 1px solid color-box-border;
+    text-align: left;
+    margin: -11px 0 0 0;
+    border-radius: 8px 8px 0 0;
+    h3
+      line-height: 1;
+  .box-body
+    padding  10px
+    text-align: left;
+    border-left 1px solid color-box-border;
+    border-right 1px solid color-box-border;
+    .span3
+      width 208px
+    .span4
+      width 290px
+
+  .box-footer
+    padding 10px
+    background-color darken(color-beige, 10%)
+    border: 1px solid color-box-border;
+    text-align: left;
+    margin: 0 0 -11px 0;
+    border-radius: 0 0 8px 8px;
+
+.box
+  box(1)
+  h4
+    border-bottom: none !important
+.box-transparent
+  box(0.6)
+  h4
+    border-bottom: 1px solid color-box-border;
+
+.logo
+  margin-top 5px
+  margin-bottom 10px
+  text-align: center;
+  line-height: 95px;
+  span
+    font-family Engagement
+    font-size 500%
+    color color-beige
+    background-color color-dark-brown
+    border-radius: 50%;
+    height: 95px;
+    display: block;
+    width: 195px;
+    margin auto
+
+.titlebar
+  padding: 30px 0;
+  text-align right
+  .input-prepend
+    input, textarea, .uneditable-input
+      color color-dark-brown
+      border 1px solid color-box-border
+      -webkit-border-radius: 0 15px 15px 0;
+      -moz-border-radius: 0 15px 15px 0;
+      border-radius: 0 15px 15px 0;
+      padding: 4px 0px 4px 4px;
+      margin-right: -2px;
+    input.span5
+      width 330px
+    .add-on
+      color color-dark-brown
+      background-color color-beige
+      border 1px solid color-box-border
+      padding: 6px 5px 2px 8px;
+      -webkit-border-radius: 15px 0 0 15px;
+      -moz-border-radius: 15px 0 0 15px;
+      border-radius: 15px 0 0 15px;
+  .span3
+    text-align left
+    width 270px
+    margin-left 5px
+    a
+      font-size 16px
+      color color-dark-green
+      padding: 5px 6px;
+      line-height: 2.5;
+      background-color: color-beige;
+      margin: 0
+      border-radius: 8px;
+      border 1px solid color-dark-green
+      span
+        margin-right: 5px;
+    a:hover,a:focus
+      color white
+      background-color color-olive
+.menu
+  text-align left
+  a
+    color: color-dark-green
+    font-size: 16px;
+    padding: 5px 6px;
+    background-color: color-beige;
+    margin: 0 5px;
+    border-radius: 8px;
+    display: inline-block;
+    width: 83%;
+    padding-left: 20px;
+    span
+      margin-right: 10px;
+  a:hover,a:focus
+    color white
+    background-color color-olive
+  .first
+    border-top-color: color-dark-green
+    border-top-style: solid;
+    border-top-width: 1px;
+    border-right-color: color-dark-green
+    border-right-style: solid;
+    border-right-width: 1px;
+    border-left-color: color-dark-green
+    border-left-style: solid;
+    border-left-width: 1px;
+
+  .last
+    border-right-color: color-dark-green
+    border-right-style: solid;
+    border-right-width: 1px;
+    border-bottom-color: color-dark-green
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-left-color: color-dark-green
+    border-left-style: solid;
+    border-left-width: 1px;
+
+  .middle
+    border-right-color: color-dark-green
+    border-right-style: solid;
+    border-right-width: 1px;
+    border-left-color: color-dark-green
+    border-left-style: solid;
+    border-left-width: 1px;
+
+body
+  font-family Noto Serif
+  background: url('../img/background.jpg') no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  input, select, button, textarea
+    font-weight: bold;
+    font-family: inherit;
+    letter-spacing: 1px;
+
+textarea:focus,
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="datetime"]:focus,
+input[type="datetime-local"]:focus,
+input[type="date"]:focus,
+input[type="month"]:focus,
+input[type="time"]:focus,
+input[type="week"]:focus,
+input[type="number"]:focus,
+input[type="email"]:focus,
+input[type="url"]:focus,
+input[type="search"]:focus,
+input[type="tel"]:focus,
+input[type="color"]:focus,
+.uneditable-input:focus
+  border-color: color-dark-red
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(color-dark-red,0.6)
+  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(color-dark-red,0.6)
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(color-dark-red,0.6)
+
+#profile-picture
+  border: 1px solid #2B4429;
+  width: 128px;
+  height: 128px;
+  margin: 0 auto 10px;
+  border-radius: 20px;
+  padding: 5px;
+  background-color: color-beige
+  #my-avatar
+    border-radius 20px
+
+#content
+  #forgot-error
+    width: 96%;
+    margin-bottom: 0 !important;
+    margin-top: 10px;
+  .offset1-5
+    margin-left 60px
+  .alert-error
+    padding 8px 15px 8px 30px
+    background:#F2DEDE  url('../img/error.png') no-repeat 5px center;
+    border: 1px solid color-error;
+    ul
+      list-style-type: none;
+      margin: 0;
+  .alert-success
+    padding 8px 15px 8px 30px
+    background:#dff0d8  url('../img/success.png') no-repeat 5px center;
+    border: 1px solid color-success;
+  a
+    color color-purple
+  a:hover,a:focus
+    color darken(color-purple, 30%);
+
+  .btn-primary
+    margin auto
+    background-color: color-dark-red;
+    *background-color: darken(color-dark-red, 10%)
+    background-image: -moz-linear-gradient(top, lighten(color-dark-red, 10%), darken(color-dark-red, 10%));
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(lighten(color-dark-red, 10%)), to(darken(color-dark-red, 10%)));
+    background-image: -webkit-linear-gradient(top, lighten(color-dark-red, 10%), darken(color-dark-red, 10%));
+    background-image: -o-linear-gradient(top, lighten(color-dark-red, 10%), darken(color-dark-red, 10%));
+    background-image: linear-gradient(to bottom, lighten(color-dark-red, 10%), darken(color-dark-red, 10%));
+    border-color: darken(color-dark-red, 10%) darken(color-dark-red, 10%) darken(color-dark-red, 20%);
+  .btn-primary:hover,
+  .btn-primary:focus,
+  .btn-primary:active,
+  .btn-primary.active,
+  .btn-primary.disabled,
+  .btn-primary[disabled]
+    background-color: color-dark-red
+    *background-color: darken(color-dark-red, 10%);
+  .btn-free
+    background-color: color-beige;
+    *background-color: darken(color-beige, 10%)
+    background-image: -moz-linear-gradient(top, lighten(color-beige, 10%), darken(color-beige, 10%));
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(lighten(color-beige, 10%)), to(darken(color-beige, 10%)));
+    background-image: -webkit-linear-gradient(top, lighten(color-beige, 10%), darken(color-beige, 10%));
+    background-image: -o-linear-gradient(top, lighten(color-beige, 10%), darken(color-beige, 10%));
+    background-image: linear-gradient(to bottom, lighten(color-beige, 10%), darken(color-beige, 10%));
+    border-color: darken(color-beige, 10%) darken(color-beige, 10%) darken(color-beige, 20%);
+  .btn-free:hover,
+  .btn-free:focus,
+  .btn-free:active,
+  .btn-free.active,
+  .btn-free.disabled,
+  .btn-free[disabled]
+    background-color: color-beige
+    *background-color: darken(color-beige, 10%);
+  form
+    margin-bottom 0
+    .input-prepend
+      .add-on
+        color color-dark-brown
+        background-color inherit
+        border 1px solid color-box-border
+      input, textarea, .uneditable-input
+        color color-dark-brown
+        border 1px solid color-box-border
+      .span3
+        width: 166px
+      .span6
+        width 396px
+      .span7
+        width 476px
+    input.span6
+      width 436px
+    input.span7
+      width 517px
+  h4
+    text-align left
+    margin: 0 0 5px;
+    line-height: 25px;
+    font-weight: normal;
+    padding-left: 5px;
+  h6
+    font-weight normal
+    margin 0
+
+  .modal
+    background-color: color-beige
+    .modal-header
+      border-bottom: 1px solid color-box-border
+    .modal-body
+      background-color inherit
+    .modal-footer
+      padding 9px 15px 10px
+      background-color inherit
+      border-top: none
+      box-shadow: none
+    .input-prepend
+      input.span3, textarea.span3, .uneditable-input.span3
+        width: 485px
+#actionResult
+  display none
+
+.providers
+  margin: 5px 0;
+  list-style: none;
+  li
+    display: inline;
+
+.help-block {
+  margin: -10px 0 10px 0;
+  font-size: 10px;
+  color: #ccc !important;
+}
+
+.loggedin, .loggedout
+  display none
+
+#jError, #jNotify, #jSuccess
+  width 80%
+
+@media (min-width: 1200px)
+  #content
+    .offset1-5
+      margin-left 80px
+    form
+      .input-prepend
+        .span3
+          width: 216px
+        .span6
+          width 506px
+        .span7
+          width 605px
+      input.span6
+        width 546px
+      input.span7
+        width 647px
+  .box
+    .box-body
+      .span3
+        width 258px
+      .span4
+        width 360px
+  .titlebar
+    .input-prepend
+      input
+        padding: 4px 10px;
+        margin-right: -10px;
+      input.span5
+        width 455px
+    .span3
+      text-align right
+      width 300px
+      margin-left 0
+      a
+        padding: 5px 10px;
+        margin 0
+  .menu
+    a
+      width: 86%;
+
+@media (max-width: 979px) and (min-width: 768px)
+  #content
+    .offset1-5
+      margin-left 50px
+    form
+      .input-prepend
+        .span3
+          width: 112px
+        .span6
+          width 288px
+        .span7
+          width 350px
+      input.span7
+        width 391px
+      input.span6
+        width 329px
+  .box
+    .box-body
+      .span3
+        width 154px
+      .span4
+        width 215px
+  .titlebar
+    .input-prepend
+      input
+        width 465px
+      input.span5
+        width 195px
+    .span3
+      width 266px
+      text-align right
+      margin-left 0
+      a
+        padding: 5px 5px;
+  .menu
+    a
+      width: 78%;
+
+@media (max-width: 767px) and (min-width: 480px)
+  #content
+    .offset1-5
+      margin-left 0
+    .btn-primary
+      width: 98%
+    form
+      input.span6
+        margin 0
+      .input-prepend
+        display block
+        .span3, .span6, .span7
+          width: 94%
+      input.span7
+        width 100%
+      .modal
+        .btn-primary
+          width auto
+        .input-prepend
+          width 100%
+          .span3,.span6
+            width: 94%
+  .box
+    .box-body
+      .span3
+        width 98%
+      .span4
+        width 100%
+  .titlebar
+    text-align left
+    padding 0
+    .navbar-search
+      width: 94%;
+      margin-left -20px
+    .input-prepend
+      width 100%
+      margin-left: 20px;
+      input
+        width 100%
+      input.span5
+        width 102%
+    .span3
+      text-align: right;
+      width: 100%
+      float left
+      a
+        margin 0
+  .menu
+    margin-top: 10px;
+    text-align center
+    .only-icon
+      display none
+    a
+      padding: 19px 4px;
+      width: 14%;
+      border 1px solid color-box-border
+      span
+        margin-right: 0px;
+    ul
+      display none
+  #profile-picture
+    display none
+
+@media (max-width: 480px)
+  #content
+    .offset1-5
+      margin-left 0
+    .btn-primary
+      width: 93%
+    form
+      input.span6
+        margin 0
+      .input-prepend
+        display block
+        .span3, .span6
+          width 86%
+        .span7
+          width: 90%
+      input.span7
+        width 100%
+      .modal
+        .btn-primary
+          width auto
+        .input-prepend
+          width 100%
+          .span3,.span6
+            width: 86%
+  .box
+    .box-body
+      .span3
+        width 98%
+      .span4
+        width 100%
+  .titlebar
+    padding 0
+    width 100%
+    text-align left
+    .navbar-search
+      width 100%
+    .input-prepend
+      width 100%
+      input
+        width 92%
+      input.span5
+        width 94%
+    .span3
+      text-align: right;
+      width: 100%;
+      a
+        margin 0
+  .menu
+    margin-top: 10px;
+    text-align center
+    .only-icon
+      display none
+    a
+      padding: 19px 0px;
+      width: 14%;
+      border 1px solid color-box-border
+      span
+        margin-right: 0px;
+    ul
+      display none
+  #profile-picture
+    display none

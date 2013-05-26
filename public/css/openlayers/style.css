@@ -3,6 +3,8 @@ div.olMap {
     padding: 0 !important;
     margin: 0 !important;
     cursor: default;
+    height: 30em!important;
+    width: 100% !important;
 }
 
 div.olMapViewport {

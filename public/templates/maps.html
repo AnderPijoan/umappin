@@ -6,32 +6,130 @@
 <link rel="stylesheet" href="/assets/css/maps.min.css" />
 
 <!------------------------------------- HTML -------------------------------------->
-<div id='map-container'></div>
+<div class="box-transparent span9">
+    <div class="row">
+        <div class="span8 offset1-5">
+            <div id="map-container"></div>
+        </div>
+    </div>
+</div>
 
 
-<!------------------------------------- Templates -------------------------------------->
-<script type='text/template' id='element-menu-template'>
-    <h4>geometry.name</h4>
-    <p>
-        geometry.latlng
-        <a href="javascript:void(0)">
-            <img class="image img-rounded" src="/assets/img/140x140.gif" alt="placeholder image"
-                 height="32" width="32">
-        </a>
-    </p>
-    <p>geometry.desc</p>
+<!------------------------------------- Search bar template -------------------------------------->
+<script type='text/template' id='search-bar-template'>
+    <input type='text' id='searchInput' placeholder='Search place ...'>
+    <button class='geoLocateButton'>G</button>
+    <img src='/assets/img/ico-search.png' class='clickableImage'>
+    <ul class='searchList'></ul>
+</script>
 
-    <div class="dropdown">
-        <button class='btn' onclick="$(this).parent('.dropdown').toggleClass('open')">
-            Options <b class="caret"></b>
-        </button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="geometryOptions">
-            <li><a tabindex="-1" href="#">Edit</a></li>
-            <li><a tabindex="-1" href="#">Delete</a></li>
-            <li class="divider"></li>
-            <li><a tabindex="-1" href="#">Upload to OSM</a></li>
-            <li><a tabindex="-1" href="#">Submit to Game</a></li>
-            <li><a tabindex="-1" href="#">Bind a Picture</a></li>
+<!------------------------------------- New tag template -------------------------------------->
+<script type='text/template' id='route-tag-template'>
+    <li>
+        <select class='tagKeySelect' data="<%= rc ? rc.key : '' %>">
+            <option value=''>&nbsp;</option>
+            <option value='aeroway'>Aeroway</option>
+            <option value='rail'>Rail</option>
+            <option value='shop'>Shop</option>
+            <option value='historic'>Historic</option>
+        </select>
+        <select class='tagValueSelect' data="<%= rc ? rc.value : '' %>">
+            <option value=''>&nbsp;</option>
+        </select>
+        <img src="<%= rc != undefined ? '/assets/img/error.png' : '/assets/img/new-plus.png' %>"
+             class="<%= rc != undefined ? 'removeTagImage' : 'addTagImage' %>">
+    </li>
+</script>
+
+<!------------------------------------- Route popup template -------------------------------------->
+<script type='text/template' id='routes-popup-template'>
+    <div class='routes-popup'>
+        <h4>
+            <p>Lon: &nbsp; <%=rc.geometry.getBounds().getCenterLonLat().lon%></p>
+            <p>Lat: &nbsp; <%=rc.geometry.getBounds().getCenterLonLat().lat%></p>
+        </h4>
+        <p>
+            Name: &nbsp;
+            <input type='text' class='routeNameInput' value='<%=rc.mapFeature.get("name")%>' placeholder='Name'>
+        </p>
+        <p>
+            Level: &nbsp;
+            <select class='routeDifficultySelect' data='<%=rc.mapFeature.get("difficulty")%>'>
+                <option value='0'>0</option>
+                <option value='1'>1</option>
+                <option value='2'>2</option>
+                <option value='3'>3</option>
+                <option value='4'>4</option>
+                <option value='5'>5</option>
+                <option value='6'>6</option>
+                <option value='7'>7</option>
+                <option value='8'>8</option>
+                <option value='9'>9</option>
+            </select>
+        </p>
+        <h4>Tags</h4>
+        <ul class='tagsList'>
+            <% for (var p in rc.mapFeature.get("properties")) { %>
+                <%=(_.template($('#route-tag-template').html()))({key: p, value: rc.mapFeature.get("properties")[p]})%>
+            <% } %>
+            <%=(_.template($('#route-tag-template').html()))()%>
         </ul>
+        <button class='button saveRouteDataButton' id='saveRouteDataButton-<%=rc.mapFeature.id%>'>Save</button>
+        <button class='button removeRouteButton' id='removeRouteButton-<%=rc.mapFeature.id%>'>Delete</button>
+    </div>
+</script>
+
+
+
+
+<!------------------------------------- Feature popup template -------------------------------------->
+<script type='text/template' id='features-popup-template'>
+    <h4><%=rc.type%> - &nbsp; Lon: &nbsp; <%=rc.lon%>, &nbsp; Lat: &nbsp; <%=rc.lat%></h4>
+    <% for (var t in rc.tags) { %>
+    <label><%=t%>:&nbsp;<%=rc.tags[t]%></label>
+    <% } %>
+</script>
+
+
+<!------------------------------------- Notes popup template -------------------------------------->
+<script type='text/template' id='notes-popup-template'>
+        <h4>Note created on: &nbsp;<%=rc.properties.date_created%></h4>
+        <label>Location: Lon - <%=rc.geometry.coordinates[0]%>, Lat - <%=rc.geometry.coordinates[1]%></label>
+        <div class='noteComments'>
+            <% for (var c in rc.properties.comments) { %>
+                <div class='noteComment'>
+                    Comment by:&nbsp;<a href='<%=rc.properties.comments[c].user_url%>'><%=rc.properties.comments[c].user || 'Unknown'%></a>
+                    <label><%=rc.properties.comments[c].date%>:&nbsp;<%=rc.properties.comments[c].action%></label>
+                    <%=rc.properties.comments[c].html%>
+                </div>
+            <% } %>
+        </div>
+        <div class='newNoteComment'>
+            <label>Add a new Comment:</label>
+            <textarea id='newNoteCommentText_<%=rc.properties.id%>' placeholder='type comment here'></textarea>
+            <button class='button newNoteCommentButton' id='newNoteCommentButton_<%=rc.properties.id%>'>Post Comment</button>
+            <input type='hidden' id='newNoteCommentUrl_<%=rc.properties.id%>' value='<%=rc.properties.comment_url%>'>
+            <button class='button closeNoteButton' id='closeNoteButton_<%=rc.properties.id%>'>Close note</button>
+            <input type='hidden' id='closeNoteUrl_<%=rc.properties.id%>' value='<%=rc.properties.close_url%>'>
+        </div>
+</script>
+
+<!------------------------------------- Notes comment template -------------------------------------->
+<script type='text/template' id='notes-comment-template'>
+    <div class='noteComment'>
+        Comment by:&nbsp;<a href='<%=rc.user_url%>'><%=rc.user || 'Unknown'%></a>
+        <label><%=rc.date%>:&nbsp;<%=rc.action%></label>
+        <%=rc.html%>
+    </div>
+</script>
+
+<!------------------------------------- New note template -------------------------------------->
+<script type='text/template' id='notes-new-template'>
+    <div class='newNote'>
+        <label>Location: Lon - <%=rc.lon%>, Lat - <%=rc.lat%></label>
+        <label>Create a new Note:</label>
+        <textarea id='newNoteText-<%=rc.id%>' placeholder='type comment here'></textarea>
+        <button class='button newNoteButton' id='newNoteButton-<%=rc.id%>'>Post Note</button>
+        <button class='button removeMarkerButton' id='removeMarkerButton-<%=rc.id%>'>Remove Marker</button>
     </div>
 </script>

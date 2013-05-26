@@ -14,101 +14,97 @@
 
     <meta name="description" content="uMappin Play 2.1 Application">
     <meta name="author" content="uMappin Deusto Team">
-
+    <link rel="icon" href="favicon16.png" sizes="16x16">
+    <link rel="icon" href="favicon32.png" sizes="32x32">
+    <link rel="icon" href="favicon48.png" sizes="48x48">
+    <link rel="icon" href="favicon64.png" sizes="64x64">
+    <link rel="icon" href="favicon128.png" sizes="128x128">
     <link href="/assets/favicon.ico" rel="icon" type="image/x-icon" />
     <!-- styles -->
-    <link href="/assets/css/main.min.css" rel="stylesheet">
-    <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/css/main.css" rel="stylesheet">
     <link href="/assets/css/messagesApp.css" rel="stylesheet">
-
-    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
-    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-
 </head>
 
 <body>
 
-    <div class="navbar navbar-fixed-top">
-        <div class="navbar-inner">
-            <div class="container">
-                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </a>
-                <a class="brand" href="/">uMappin</a>
+<div class="container">
+    <div class="row">
+        <div class="span3 logo">
+            <span>uMappin</span>
+        </div>
+        <div class="loggedin span8 offset1">
+            <div class="titlebar row">
+                <form class="navbar-search pull-left">
+                    <div class="input-prepend">
+                        <div class="add-on"><span class="icon-magnifying-glass"></span></div>
+                        <input type="text" class="span5" placeholder="Search">
+                    </div>
+                </form>
+                <div class="span3">
+                    <a href="#profile"><span class="icon-cog"></span>Profile</a>
+                    <a href="#inviteFriends"><span class="icon-users"></span>Invite friends</a>
+                    <a href="#logout"><span class="icon-switch"></span></a>
 
-                <div class="btn-group pull-right loggedout">
-                    <a href="#login" class="btn btn-primary btn-mini ">Log in</a>
                 </div>
-
-                <div class="btn-group pull-right loggedin" accesskey="" id="loggedControl">
-                    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                        <i class="icon-user"></i>
-                        <span id="username"></span>
-                        <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#account">Profile</a></li>
-                        <li><a href="#linkProvider">Link more providers</a></li>
-                        <li class="divider"></li>
-                        <li><a href="#logout"><i class="icon-off"></i> Sign out</a></li>
-                    </ul>
-                </div>
-
-                <div class="nav-collapse">
-                    <ul class="nav">
-                    	<li class="loggedin"><a href="#wall">Wall</a></li>
-                        <li class="loggedin"><a href="#messages/">Messages</a></li>
-                        <li class="loggedin"><a href="#maps">Edit Maps</a></li>
-                        <li class="loggedin"><a href="#account">Account</a></li>
-                        <li class="loggedout"><a href="#signup">Sign up</a></li>
-                        <!--li class="loggedin"><a href="#leafletmap">Leaflet Map</a></li>
-                        <li class=""><a href="#test">RestTest</a></li>
-                        <li class="loggedout"><a href="#synctest">SyncTest</a></li-->
-                    </ul>
-                </div><!--/.nav-collapse -->
             </div>
         </div>
     </div>
+    <div class="row">
+        <div class="loggedin box-transparent span3">
+            <div id="profile-picture"></div>
+            <div class="menu">
+                <a href="#" class="first"><span class="icon-newspaper"></span><span class="only-icon">Activity</span></a>
+                <a href="#" class="middle"><span class="icon-home"></span><span class="only-icon">Wall</span></a>
+                <a href="#messages/" class="middle"><span class="icon-bubbles"></span><span class="only-icon">Messages</span></a>
+                <a href="#userlist" class="middle"><span class="icon-heart-stroke"></span><span class="only-icon">User list</span></a>
+                <a href="#" class="last"><span class="icon-trophy"></span><span class="only-icon">Awards</span></a>
+                <ul>
+                    <li>provisional</li>
+                    <li class="loggedin"><a href="#featuresMap">Features Map</a></li>
+                    <li class="loggedin"><a href="#markersMap">Notes Map</a></li>
+                    <li class="loggedin"><a href="#searchMap">Search Map</a></li>
+                    <li class="loggedin"><a href="#routesMap">Routes Map</a></li>
+                    <li class="loggedin"><a href="#account">Account</a></li>
+                    <li>provisional</li>
+                </ul>
+            </div>
+        </div>
+        <div class="span9">
+            <div id="content" class="row">
+            </div>
+        </div>
+    </div>
+</div>
 
-    <div class="container" id="appBody">
-
-        <div id="actionResult"></div>
-        <div id="content"><h1>HOME</h1></div>
-
-        <hr>
-        <footer>
-            <p>
-                &copy; 2013 uMappin. Licensed under Apache License, Version 2.0. View details
-                <a href="#">here</a>.
-            </p>
-            <p>
-                <small>
-                    Styles by
-                    <a href="http://twitter.github.com/bootstrap/index.html" target="_blank">
-                        Twitter Bootstrap
-                    </a>
-                    &middot; Provider icons by
-                    <a href="http://prlloyd.com/Pf4al8" target="_blank">Paul Robert Lloyd</a>
-                </small>
-            </p>
-        </footer>
-    </div> <!-- /container -->
-
-    <!-- scripts -->
-    <script src="/assets/js/lib/jquery.min.js"></script>
-    <script src="/assets/js/lib/bootstrap.min.js"></script>
-    <script src="/assets/js/lib/underscore.min.js"></script>
-    <script src="/assets/js/lib/json2.js"></script>
-    <script src="/assets/js/lib/backbone.min.js"></script>
-    <script src="/assets/js/lib/backbone.subroute.js"></script>
-    <script src="/assets/js/lib/require.min.js"></script>
-    <!--script src="/assets/js/backbone.custom.js"></script-->
-    <script src="/assets/js/main.js"></script>
-
+<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+<!--[if lt IE 9]>
+<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+<script src="/assets/js/lib/browser.js" async></script>
+<script src="/assets/js/lib/jquery.min.js"></script>
+<script src="/assets/js/lib/bootstrap.min.js"></script>
+<script src="/assets/js/lib/underscore.min.js"></script>
+<script src="/assets/js/lib/json2.js"></script>
+<script src="/assets/js/lib/backbone.min.js"></script>
+<script src="/assets/js/lib/backbone.subroute.js"></script>
+<script src="/assets/js/lib/require.min.js"></script>
+<script src="/assets/js/lib/jNotify.jquery.min.js"></script>
+<!--script src="/assets/js/backbone.custom.js"></script-->
+<script src="/assets/js/main.js"></script>
+<script src="/assets/js/toast.js"></script>
+<script>
+    $('.logo').click(function(){
+        location.href='./';
+    });
+    function resize(img){
+        if(img.width > img.height){
+            $('#my-avatar').width('100%');
+            $('#my-avatar').css('margin-top',64-(((12800/(img.width*100))*img.height)/2));
+        }else{
+            $('#my-avatar').height('100%');
+        }
+    }
+</script>
 </body>
 
 </html>

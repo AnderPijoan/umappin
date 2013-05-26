@@ -1,94 +1,49 @@
-<div class="row">
-    <div class="span6">
-        <h1>Login</h1>
-    </div>
-</div>
-
-<div id="login" class="row">
-    <div class="span3">
-        <form action='/login' id='loginForm'>
-            <div class="clearfix  " id="email_field">
-                <label for="email">Your e-mail address</label>
-                <div class="input">
-                    <input type="text" id="email" name="email" value="" >
-                    <span class="help-inline"></span>
-                    <span class="help-block"></span>
-                </div>
+<div class="box-transparent span12">
+    <div class="row">
+        <div class="box span6 offset3">
+            <div class="box-header">
+                <h3>Log in to uMappin</h3>
             </div>
-            <div class="clearfix  " id="password_field">
-                <label for="password">Password</label>
-                <div class="input">
-                    <input type="password" id="password" name="password" >
-                    <span class="help-inline"></span>
-                    <span class="help-block"></span>
-                </div>
+            <div class="box-body">
+                <form action='/login' id='loginForm'>
+                    <div class="row">
+                        <div class="span3">
+                            <div class="input-prepend">
+                                <div class="add-on"><span class="icon-envelop"></span></div>
+                                <input type="text" id="email_login" name="email_login" class="span3" placeholder="User email">
+                            </div>
+                            <div class="input-prepend">
+                                <div class="add-on"><span class="icon-key"></span></div>
+                                <input type="password" id="password_login" name="password_login" class="span3" placeholder="Password">
+                            </div>
+                            <div class="input-prepend">
+                                <div class="add-on"><span class="icon-users"></span></div>
+                                <input type="text" id="human" name="human" class="span3" placeholder="2 + 1?">
+                            </div>
+                            <input type="submit" value="Log in" class="btn btn-primary span3">
+                        </div>
+                        <div class="span3">
+                            <h4>We gotta check... are you human?</h4>
+                            <div id="loginError"></div>
+                        </div>
+                    </div>
+                </form>
             </div>
-            <input type="submit" value="Login now" class="btn btn-primary"><br/>
-            <br/>
-            <a href="#forgotPassword">Forgot your password?</a>
-        </form>
-    </div>
-    <div class="span3">
-        or log in using one of the following providers:
-        <ul class="providers">
-            <li>
-                <a href="/authenticate/twitter">
-                <img alt="twitter icon" title="twitter" src="/assets/icons/twitter-24x24.png"></a>
-            </li>
-            <li>
-                <a href="/authenticate/google">
-                <img alt="google icon" title="google" src="/assets/icons/google-24x24.png"></a>
-            </li>
-            <li>
-                <a href="/authenticate/linkedin">
-                <img alt="linkedin icon" title="linkedin" src="/assets/icons/linkedin-24x24.png"></a>
-            </li>
-            <li>
-                <a href="/authenticate/facebook">
-                <img alt="facebook icon" title="facebook" src="/assets/icons/facebook-24x24.png"></a>
-            </li>
-            <li>
-                <a href="javascript:void(0);" onclick="askOpenID('/authenticate/openid');">
-                    <img alt="openid icon" title="openid" src="/assets/icons/openid-24x24.png"></a>
-            </li>
-            <li>
-                <a href="/authenticate/foursquare">
-                <img alt="foursquare icon" title="foursquare" src="/assets/icons/foursquare-24x24.png"></a>
-            </li>
-        </ul>
+            <div class="box-footer">
+                <h6><a href="#forgotPassword">Forgot your password? Find your accoung now</a></h6>
+                <h6><a href="#signup">New to uMappin? Sign up now</a></h6>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
-    function askOpenID(url) {
-        var openid = prompt("Please enter your OpenID:", "yourname.myopenid.com");
-        if(openid) {
-            window.location.href = url + "?p=" + encodeURIComponent(openid);
-        }
-    }
-
     function submitLogin() {
-        $('#actionResult').css('display','none');
         var loginPost = $.post(
           $('#loginForm').attr('action'),
-          "email=" + $('#email').val() + "&password=" + $('#password').val()
+          "email=" + $('#email_login').val() + "&password=" + $('#password_login').val()
         );
         loginPost.done(function( data ) {
-            /*
-            $.get(
-                // Test for token-based authentication
-                //'/tokenauth/' + data.token + '/sessionuser',
-                '/sessionuser',
-                function(data) {
-                    setSessionUser(data);
-                    $('#actionResult').css('display','block').empty().html(
-                            "<div class='alert alert-success'>User Authenticated</div>"
-                    );
-                    sessionStorage.setItem("user", JSON.stringify(data));
-                    $('#content').html('');
-                }
-            );
-            */
             sessionStorage.setItem('token', data.token);
             $.ajax({
                 url: "/sessionuser",
@@ -97,21 +52,25 @@
                 beforeSend: function(xhr){xhr.setRequestHeader('token', data.token);},
                 success: function(resp) {
                     setSessionUser(resp);
-                    $('#actionResult').css('display','block').empty()
-                                      .html("<div class='alert alert-success'>User Authenticated</div>");
-                    $('#content').html('');
+                    location.href='./'
                 }
             });
         });
         loginPost.error(function( data ) {
-            $('#actionResult').css('display','block').empty().html(
+            $('#loginError').css('display','block').empty().html(
                 "<div class='alert alert-error'>" + data.responseText + "</div>");
         });
     }
 
     $('#loginForm').submit(function(event) {
         event.preventDefault();
-        submitLogin();
+
+        if($('#human').val() == '3'){
+            submitLogin();
+        }else{
+            $('#loginError').css('display','block').empty().html(
+                "<div class='alert alert-error'>Why didn't you reply the question?</div>");
+        }
+
     });
 </script>
-

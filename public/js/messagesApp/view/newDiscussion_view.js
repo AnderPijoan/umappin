@@ -5,12 +5,18 @@ var messagesApp = messagesApp || {};
 (function(){
 	messagesApp.NewDiscussionView = Backbone.View.extend({
 		el: '#newDiscussion',
+		friends_loaded :false,
 
 		
 		events: {
 			"click #send_new_discussion_button":   "create",
-			"click #form_all_check": 			"toggle_friends",
+			"focus #form_receivers": 			"load_friends",
 			//"click #cancelDiscussionButton": "destroy"
+		},
+		initialize: function () {
+			//triggered on sync
+			this.listenTo(messagesApp.followeds, 'sync', this.show_friends);
+
 		},
 
 		showDiscussionForm: function (){
@@ -24,55 +30,66 @@ var messagesApp = messagesApp || {};
 
 		},
 
-		toggle_friends:function(){
-			if (this.$el.find('#form_all_check').is(":checked")){
-				this.$el.find('#form_receivers').attr('disabled',true);
-			}else{
-				this.$el.find('#form_receivers').attr('disabled',false);
+		load_friends: function(){
+			if (!this.friends_loaded){
+				messagesApp.followeds.fetch();
+				this.friends_loaded = true;
 			}
+		},
+
+		show_friends: function(){
+			console.log("show friends");
+			console.log(messagesApp.followeds);
+			if (messagesApp.followeds.size() == 0){
+				this.$el.find('#form_receivers').attr("disabled", "disabled");
+			}else{
+				messagesApp.searchView = messagesApp.searchView || new messagesApp.UserSearchView(
+					{collection: messagesApp.followeds});
+				this.$el.find('#form_receivers').removeAttr("disabled");
+			}
+			
+
 		},
 
 		create: function (discussion) {
 			//Create ReceivedView and append it to the list
 			var subject = this.$el.find('#form_subject').val();
 			var message = this.$el.find('#form_message').val();
-			var toFriends = this.$el.find('#form_all_check').is(':checked');
 			var receivers = [];
 
-			if (!toFriends){
-				receivers = this.$el.find('#form_receivers').val().split(',');
-			}
+			messagesApp.followeds.getSelected().each(function(e){
+				receivers.push(e.get('id'));
+				e.set('selected',false);
+			});			
 
 			var newDiscussion={
 				"subject": subject,
 				"messages":{
 					"message":message,
 				},
-				"to_friends": toFriends,
 				"users": receivers,
 			};
-
 			var a = new messagesApp.Discussion(newDiscussion);
 			messagesApp.DiscussionCollection.add(a);
+			var that = this;
 			a.save({}, {  
 			    success:function(){
-			        alert(a.id);
-			    }
+			    	//clear form
+					that.$el.find('#form_subject').val('');
+					that.$el.find('#form_message').val('');
+					that.$el.find('#form_receivers').val('');
+					that.$el.find('#form_all_check').attr('checked', false);
+					that.$el.find('#form_receivers').attr('disabled',false);
+
+					//hide the modal dialog
+					that.$el.modal('hide');
+					this.friends_loaded = false;	
+					$('#receivers_list').html('');	   
+				}
 			});
 
-			//console.error(some);
-			//checx if the discussion have been send
-			if(true){
-				//clean the form
-				this.$el.find('#form_subject').val('');
-				this.$el.find('#form_message').val('');
-				this.$el.find('#form_receivers').val('');
-				this.$el.find('#form_all_check').attr('checked', false);
-				this.$el.find('#form_receivers').attr('disabled',false);
-
-				//hide the modal dialog
-				this.$el.modal('hide');
-			}
+			
+			
 			
 		}
 	});

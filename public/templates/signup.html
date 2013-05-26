@@ -1,123 +1,84 @@
-<div class="row">
-    <div class="span6">
-        <h1>Signup</h1>
+<div class="box-transparent span12">
+    <div class="row">
+        <div class="box span6 offset3">
+            <div class="box-header">
+                <h3>Join uMappin today</h3>
+            </div>
+            <div class="box-body">
+                <form action='/signup' id='registerForm'>
+                    <div class="row">
+                        <div class="span3">
+                        <div class="input-prepend">
+                            <div class="add-on"><span class="icon-users"></span></div>
+                            <input type="text" id="name" name="name" placeholder="Username" class="span3">
+                        </div>
+                        <div class="input-prepend">
+                            <div class="add-on"><span class="icon-envelop"></span></div>
+                            <input type="text" id="email" name="email"  placeholder="Email" class="span3">
+                        </div>
+                        <div class="input-prepend">
+                            <div class="add-on"><span class="icon-key"></span></div>
+                            <input type="password" id="password" name="password" placeholder="Password"  class="span3">
+                        </div>
+                        <div class="input-prepend">
+                            <div class="add-on"><span class="icon-key"></span></div>
+                            <input type="password" id="repeatPassword" name="repeatPassword" placeholder="Retype password" class="span3">
+                        </div>
+                        <div class="input-prepend">
+                            <div class="add-on"><span class="icon-users"></span></div>
+                            <input type="text" id="human" name="human" class="span3" placeholder="2 + 1?">
+                        </div>
+                        <input type="submit" value="Sign up" class="btn btn-primary span3">
+                        </div>
+                        <div class="span3">
+                            <h4>We gotta check... are you human?</h4>
+                            <div id="signupError"></div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="box-footer">
+                <h6><a href="#forgotPassword">Forgot your password? Find your accoung now</a></h6>
+                <h6><a href="#login">Have you got an account? Log in to uMappin</a></h6>
+            </div>
+        </div>
     </div>
-</div>
-
-<div id="signup" class="row">
-
-    <div class="span3">
-        <form action="/signup" id='registerForm' >
-            <div class="clearfix  " id="name_field">
-                <label for="name">Your name</label>
-                <div class="input">
-
-                    <input type="text" id="name" name="name" value="" >
-
-                    <span class="help-inline"></span>
-                    <span class="help-block">Required</span>
-                </div>
-            </div>
-            <div class="clearfix  " id="email_field">
-                <label for="email">Your e-mail address</label>
-                <div class="input">
-
-                    <input type="text" id="email" name="email" value="" >
-
-                    <span class="help-inline"></span>
-                    <span class="help-block"></span>
-                </div>
-            </div>
-            <div class="clearfix  " id="password_field">
-                <label for="password">Password</label>
-                <div class="input">
-
-                    <input type="password" id="password" name="password" >
-
-                    <span class="help-inline"></span>
-                    <span class="help-block">Minimum length: 5, Required</span>
-                </div>
-            </div>
-            <div class="clearfix  " id="repeatPassword_field">
-                <label for="repeatPassword">Repeat chosen password</label>
-                <div class="input">
-
-                    <input type="password" id="repeatPassword" name="repeatPassword" >
-
-                    <span class="help-inline"></span>
-                    <span class="help-block"></span>
-                </div>
-            </div>
-            <input type="submit" value="Sign up now" class="btn btn-primary">
-        </form>
-    </div>
-
-    <div class="span3">
-        or sign up using one of the following providers:
-        <ul class="providers">
-            <li>
-                 <a href="/authenticate/twitter">
-                    <img alt="twitter icon" title="twitter" src="/assets/icons/twitter-24x24.png">
-                </a>
-            </li>
-            <li>
-                <a href="/authenticate/google">
-                    <img alt="google icon" title="google" src="/assets/icons/google-24x24.png">
-                </a>
-            </li>
-            <li>
-                <a href="/authenticate/linkedin">
-                    <img alt="linkedin icon" title="linkedin" src="/assets/icons/linkedin-24x24.png">
-                </a>
-            </li>
-            <li>
-                <a href="/authenticate/facebook">
-                    <img alt="facebook icon" title="facebook" src="/assets/icons/facebook-24x24.png">
-                </a>
-            </li>
-            <li>
-                <a href="javascript:void(0);" onclick="askOpenID('/authenticate/openid');">
-                    <img alt="openid icon" title="openid" src="/assets/icons/openid-24x24.png">
-                </a>
-            </li>
-            <li>
-                <a href="/authenticate/foursquare">
-                    <img alt="foursquare icon" title="foursquare" src="/assets/icons/foursquare-24x24.png">
-                </a>
-            </li>
-        </ul>
-    </div>
-
 </div>
 
 <script>
-    function askOpenID(url) {
-        var openid = prompt("Please enter your OpenID:", "yourname.myopenid.com");
-        if(openid) {
-            window.location.href = url + "?p=" + encodeURIComponent(openid);
-        }
-    }
-
     function submitRegister() {
-        $('#actionResult').css('display','none');
         var registerPost = $.post(
                 $('#registerForm').attr('action'),
                 "name=" + $('#name').val() + "&email=" + $('#email').val() +
                     "&password=" + $('#password').val() + "&repeatPassword=" + $('#repeatPassword').val()
         );
         registerPost.done(function( data ) {
-            $('#actionResult').css('display','block').empty().html(
-                    "<div class='alert alert-success'>User Signed Up! Check your email to confirm</div>");
-			$('#content').html('');
+            console.log(responseText);
+            $('#signupError').css('display','block').empty().html(
+                "<div class='alert alert-success'>" + data.responseText + "</div>");
         });
         registerPost.error(function( data ) {
-            $('#actionResult').css('display','block').empty().html(
-                    "<div class='alert alert-info'>" + data.responseText + "</div>");
+            var alert;
+
+            if(data.responseText == 'Unverified User, click the link in your email'){
+                alert = 'alert-success';
+            }else{
+                alert = 'alert-error';
+            }
+
+            $('#signupError').css('display','block').empty().html(
+                "<div class='alert "+ alert +"'>" + data.responseText + "</div>");
         });
     }
 
     $('#registerForm').submit(function(event) {
         event.preventDefault();
-        submitRegister();
+
+        if($('#human').val() == '3'){
+            submitRegister();
+        }else{
+            $('#signupError').css('display','block').empty().html(
+                "<div class='alert alert-error'>Why didn't you reply the question?</div>");
+        }
     });
 </script>
