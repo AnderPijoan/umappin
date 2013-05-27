@@ -280,12 +280,12 @@ public class User extends Item implements Subject {
     public static User userFromJson(JsonNode srcJson) {
         JsonNode json = User.fromJson(srcJson);
         JsonNode jtemp = json.findValue("profilePicture");
-        if (!jtemp.isNull() && !jtemp.asText().equalsIgnoreCase(""))
+        if (!jtemp == null && !jtemp.asText().equalsIgnoreCase(""))
             ((ObjectNode)json).putPOJO("profilePicture", new ObjectId(jtemp.asText()));
         else
             ((ObjectNode)json).putNull("profilePicture");
         jtemp = json.findValue("maps");
-        if (!jtemp.isNull())  {
+        if (!jtemp == null)  {
             Iterator<String> it = jtemp.getFieldNames();
             ObjectNode mapsNodes = Json.newObject();
             while (it.hasNext()) {
