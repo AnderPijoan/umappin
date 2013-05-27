@@ -1,6 +1,8 @@
 package security;
 
+import models.SessionToken;
 import models.User;
+import play.mvc.Action;
 import play.mvc.Http;
 import play.mvc.Result;
 import be.objectify.deadbolt.java.AbstractDeadboltHandler;
@@ -14,6 +16,21 @@ public class MyDeadboltHandler extends AbstractDeadboltHandler {
 
 	@Override
 	public Result beforeAuthCheck(final Http.Context context) {
+
+        // Check token stuff ....
+        if (context.request().cookie("PLAY_SESSION") == null &&
+                    context.request().getHeader("token") != null) {
+            SessionToken st = SessionToken.findByToken(context.request().getHeader("token"));
+            if (st != null && !st.expired()) {
+                context.session().put(PlayAuthenticate.ORIGINAL_URL, context.request().uri());
+                context.session().put(PlayAuthenticate.USER_KEY, st.getUserId());
+                context.session().put(PlayAuthenticate.PROVIDER_KEY, st.getProviderId());
+                context.session().put(PlayAuthenticate.EXPIRES_KEY, Long.toString(st.getExpires().getTime()));
+                context.session().put(PlayAuthenticate.SESSION_ID_KEY, st.getToken());
+            }
+        }
+
+
 		if (PlayAuthenticate.isLoggedIn(context.session())) {
 			// user is logged in
 			return null;
