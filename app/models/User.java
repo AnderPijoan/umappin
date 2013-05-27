@@ -285,19 +285,23 @@ public class User extends Item implements Subject {
         else
             ((ObjectNode)json).putNull("profilePicture");
         jtemp = json.findValue("maps");
-        Iterator<String> it = jtemp.getFieldNames();
-        ObjectNode mapsNodes = Json.newObject();
-        while (it.hasNext()) {
-            String key = it.next();
-            JsonNode mapNode = jtemp.findPath(key);
-            Iterator<JsonNode> itnode = mapNode.getElements();
-            ArrayNode aux = new ArrayNode(JsonNodeFactory.instance);
-            while (itnode.hasNext())
-                aux.addPOJO(new ObjectId(itnode.next().asText()));
+        if (!jtemp.isNull())  {
+            Iterator<String> it = jtemp.getFieldNames();
+            ObjectNode mapsNodes = Json.newObject();
+            while (it.hasNext()) {
+                String key = it.next();
+                JsonNode mapNode = jtemp.findPath(key);
+                Iterator<JsonNode> itnode = mapNode.getElements();
+                ArrayNode aux = new ArrayNode(JsonNodeFactory.instance);
+                while (itnode.hasNext())
+                    aux.addPOJO(new ObjectId(itnode.next().asText()));
 
-            mapsNodes.put(key, aux);
+                mapsNodes.put(key, aux);
+            }
+            ((ObjectNode)json).put("maps", mapsNodes);
+        } else {
+            ((ObjectNode)json).putNull("maps");
         }
-        ((ObjectNode)json).put("maps", mapsNodes);
         return Json.fromJson(json, User.class);
     }
 
