@@ -31,7 +31,7 @@ public class TimelineREST extends ItemREST {
 			return ok(Json.toJson(Publication.publicationsToObjectNodes(publications)));
 		}
 	}
-
+	
 
 	public static Result getTimeline(String userId){
 		final User user = User.findById(userId, User.class);
@@ -39,6 +39,7 @@ public class TimelineREST extends ItemREST {
 			return badRequest(Constants.USERS_EMPTY.toString());
 		}
 		Timeline timeline = Timeline.findById(user.id, Timeline.class);
+		System.out.println("aqui llega..");
 		if (timeline == null) {
 			return badRequest(Constants.PUBLICATIONS_EMPTY.toString());
 		}
@@ -54,12 +55,10 @@ public class TimelineREST extends ItemREST {
 		}
 		Timeline timeline = Timeline.findById(user.id, Timeline.class);
 		if (timeline == null) {
-			System.out.println("por aqui "+user.id);
 			return badRequest(Constants.PUBLICATIONS_EMPTY.toString());
 		}
 		List<Publication> publications = timeline.getPublications(0, 10);
 		if (publications.size() == 0) {
-			System.out.println("por alla");
 			return badRequest(Constants.PUBLICATIONS_EMPTY.toString());
 		} else {
 			// Return the response

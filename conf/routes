@@ -15,7 +15,6 @@ GET     /assets/*file               controllers.Assets.at(path="/public", file)
 # --------------------------------------------------------------------------
 
 
-
 # ----------------------------- Authentication routes -------------------------
 POST    /login                      controllers.Application.doLogin
 

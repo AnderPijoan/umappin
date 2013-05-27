@@ -19,7 +19,7 @@ public class Publication extends Post {
 
 	public ObjectId postPicture;
 
-	public List<ObjectId> userLikesIds;
+	public List<ObjectId> userLikesIds = new ArrayList<ObjectId>();
 
 	@Override
 	public void delete() {
