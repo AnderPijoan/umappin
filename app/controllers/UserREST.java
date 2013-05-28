@@ -72,6 +72,29 @@ public class UserREST extends ItemREST {
     }
 
     @Restrict(@Group(Application.USER_ROLE))
+    public static Result putProfile(String id) {
+        JsonNode json = request().body().asJson();
+        if(json == null || id == null) {
+            return badRequest(Constants.JSON_EMPTY.toString());
+        } else {
+            User currUsr = User.findById(id, User.class);
+            if (currUsr == null) {
+                return notFound(Constants.JSON_EMPTY.toString());
+            } else {
+                ((ObjectNode)json).put("id", id);
+                User usr = User.userFromJson(json);
+                currUsr.name = usr.name;
+                currUsr.firstName = usr.firstName;
+                currUsr.lastName = usr.lastName;
+                currUsr.address = usr.address;
+                currUsr.phone = usr.phone;
+                currUsr.save();
+                return ok(currUsr.toJson());
+            }
+        }
+    }
+
+    @Restrict(@Group(Application.USER_ROLE))
     public static Result delete(String id) {
     	final User user = Application.getLocalUser(session());
 		if (user == null){
