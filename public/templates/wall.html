@@ -13,29 +13,16 @@
 	<div class="span9" id="comments_body"></div>
 </div>
 
-
-<script type="text/template" id="receiver-search-item-template">
-<div class="receiver_item" data-id="<%- rc.id %>">
-  <%- rc.name %>
-</script>
-
-<script type="text/template" id="receiver-selected-item-template">
-<div class="receiver_selected_item" >
-  <%- rc.name %>
-  <button data-id="<%- rc.id %>" class="btn btn-danger remove_selected_item">X</button>
-</script>
-
-
-
 <!-- This is the publications header template -->
 <script type="text/template" id="publication-head-template">
-        <% maxPhotosSeen=5; %>
+       <% maxPhotosSeen=5; %>
 
         <div class="span9 ">
             <div class="publication_head">
                 <div class="publication_subject"><a href="#wall/comment/<%- rc.id %>"><%- rc.subject %></a></div>
 				<div class="first_comment"><label> <%- rc.content %></label></div>
             </div>
+			<br/>
         </div>
 </script>
 
@@ -47,13 +34,13 @@
             <h2><%- rc.subject %></h2>
              <br/>
              <div class="comments span9">
-                 <% _.each(rc.comments, function(commentObject){ %>
+                 <% _.each(rc.messages, function(commentObject){ %>
                     <div>
-                    <img class="commentPhoto" src=<%- commentObject.user.photo%> />
-                    <span class="comment"><a href="/#account/<%- commentObject.user.id%>"><%- commentObject.user.name %></a>:<%= " " + commentObject.comment %>
+                    <span class="comment"><a href="/#account/<%- commentObject.user.id%>"><%- commentObject.user.name %></a>:<%= " " + commentObject.message %>
                     </span>
                     <span class="timeAgo"><%- commentObject.timeAgo%></span>
                     </div>
+					<br/>
                  <% }); %>
              </div>
              <textarea id="sending_comment" class="span8 replybox"></textarea>

@@ -3,10 +3,9 @@ var timelineApp = timelineApp || {};
 
 timelineApp.Router = Backbone.SubRoute.extend({
 	routes: {
-		'newPublication': 'newPublication',
-		'comment/:id' : 'comments',
-   		'received' : 'publicationHeaders',
-   		'/'	: 	'publicationHeaders'
+		'comment/:id' : 	'comments',
+   		'received' : 		'publicationHeaders',
+   		'/'	: 				'publicationHeaders'
 	},
 	initialize: function() {
 	    this.routesHit = 0;
@@ -30,6 +29,7 @@ timelineApp.Router = Backbone.SubRoute.extend({
 	comments: function(idComment){
 		this.loadTemplateIfNeed(function(){
 				publication = new timelineApp.Publication({id:idComment});
+				console.log(idComment);
 				publication.fetch(
 					{
 						success: function(){
@@ -49,19 +49,10 @@ timelineApp.Router = Backbone.SubRoute.extend({
 			timelineApp.PublicationCollection.fetch();
 		});
 	},
-	newPublication: function(id){
-		this.loadTemplateIfNeed(function(){
-			console.log('newPublication');
-			requirejs (['/assets/js/timelineApp/view/newPublication_view.js',
-				'/assets/js/timelineApp/view/userSearch_view.js'], function(){
-				timelineApp.newPublicationView.showPublicationForm();
-			});
-        });
-	},
 	loadTemplateIfNeed:function(callback){
 		//it reloads the template only if not set
 		if($('#comments_body').length ===0){
-			console.log("Load Comments template");
+			console.log("Load Publications template");
 			setTemplate ("/assets/templates/wall.html", callback);
 		}else{
 			callback();

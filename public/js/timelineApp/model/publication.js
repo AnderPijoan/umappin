@@ -16,6 +16,7 @@ var timelineApp = timelineApp || {};
 
         initialize: function(attrs, options) {
             this.on("invalid", function(model, error){
+            	alert("error");
                 console.log(error);
             });
             this.set(attrs, {validate: true});

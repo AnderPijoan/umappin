@@ -79,8 +79,7 @@ class umappin.Router extends Backbone.Router
     subroutes = @subroutes
     requirejs ['/assets/js/timelineApp/collection/publicationCollection.js'], () ->
      requirejs ['/assets/js/timelineApp/model/user.js'], () ->
-        requirejs [
-          '/assets/js/timelineApp/collection/followedCollection.js',
+        requirejs ['/assets/js/timelineApp/view/newPublication_view.js',
           '/assets/js/timelineApp/view/user_view.js'
         ], () ->
           requirejs ['/assets/js/timelineApp/routers/router.js'], () ->
