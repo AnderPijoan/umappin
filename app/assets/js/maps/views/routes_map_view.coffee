@@ -119,13 +119,17 @@ class window.Maps.RoutesMapView extends Maps.MapView
     $('img.removeTagImage').unbind('click').click () ->
       $(@).parent('li').remove()
       that.reloadTagEvents()
-    # TODO: Get tagKeys from server
+    url = "http://taginfo.openstreetmap.org/api/4/keys/all?page=1&rp=100&filter=in_wiki&sortname=count_all&sortorder=desc"
+    $.get url, (keys) =>
+      html = "<option val=''>&nbsp;</option>"
+      html = (html + "<option val='#{entry.key}'>#{entry.key}</option>") for entry in keys.data
+      $('select.tagKeySelect').html html
     $('select.tagKeySelect').change () ->
-      # TODO: Get tagValues from server
-      values = if $(@).val() is '' then [''] else [$(@).val()+'_1', $(@).val()+'_2', $(@).val()+'_3', $(@).val()+'_4']
-      html = ""
-      html = (html + "<option val='" + value + "'>" + value + "</option>") for value in values
-      $(@).next('select').html html
+      url = "http://taginfo.openstreetmap.org/api/4/key/values?key=#{$(@).val()}&page=1&rp=100&sortname=count&sortorder=desc"
+      $.get url, (resp) =>
+        html = "<option val=''>&nbsp;</option>"
+        html = (html + "<option val='#{entry.value}'>#{entry.value}</option>") for entry in resp.data
+        $(@).next('select').html html
 
 
 
