@@ -6,7 +6,7 @@ class window.Maps.RoutesMapView extends Maps.MapView
   drawLayer: null
   routesPopupTemplate: _.template $('#routes-popup-template').html()
   routeTagTemplate: _.template $('#route-tag-template').html()
-
+  routeLikeTemplate: _.template $('#route-like-template').html()
   # ---------------------------- Controls ------------------------------ #
   #Overriden
   initControls: ->
@@ -44,7 +44,12 @@ class window.Maps.RoutesMapView extends Maps.MapView
         @drawLayer
         'displayClass': 'olControlDragFeature'
         box: true
-        onSelect: (feat) => @showFeaturePopup feat
+        onSelect: (feat) =>
+          idr = feat.mapFeature.get 'id'
+          idu = Account.session.get 'id'
+          $.get "/routelikesrouteuser/#{idr}/#{idu}", (resp) =>
+            feat.liked = parseInt(resp) > 0
+            @showFeaturePopup feat
         onUnselect: (feat) => @removeFeaturePopup feat
       )
 
@@ -105,6 +110,22 @@ class window.Maps.RoutesMapView extends Maps.MapView
       @removeFeaturePopup feat
       @deleteRoute feat
 
+    $('.likeRouteButton').last().popover
+      html: true
+      content: that.routeLikeTemplate feat.mapFeature
+      container: 'body'
+
+    $('.likeRouteButton').last().change () ->
+      console.log $(@).parent()
+      rl = new Maps.RouteLike
+        routeId: feat.mapFeature.get 'id'
+        userId: Account.session.get 'id'
+        comment: $('#routeLikeComment-' + feat.mapFeature.get 'id').val()
+      rl.save()
+      $(@).popover('destroy')
+      $(@).parent().append("<label style='float:right'>Liked!!</label>")
+      $(@).remove()
+
   removeFeaturePopup: (feat) ->
     @map.removePopup feat.popup
     feat.popup.destroy()
@@ -131,6 +152,10 @@ class window.Maps.RoutesMapView extends Maps.MapView
         html = (html + "<option val='#{entry.value}'>#{entry.value}</option>") for entry in resp.data
         $(@).next('select').html html
 
+
+  # ---------------------------- Popup Handlers ------------------------------ #
+  saveRouteLike: (routeId) ->
+    alert "Save #{routeId} !!"
 
 
   # ---------------------------- Initialization ------------------------------ #
