@@ -137,8 +137,8 @@ public class OsmNode extends OsmFeature {
 		}
 		return node;
 	}
-	
-	
+
+
 	public static OsmNode findByGeom(JsonNode geometry){
 		DataSource ds = DB.getDataSource();
 		Connection conn = null;
@@ -185,14 +185,20 @@ public class OsmNode extends OsmFeature {
 		if (this.ds == null){
 			this.ds = DB.getDataSource();
 		}
-		
+
 		Connection conn = null;
 		PreparedStatement st;
 		ResultSet rs;
 
-		boolean collition = false;
-		
+		boolean reject = false;
+
 		try {
+
+			////////////////////////////////////////////////////////////////////////////////////
+			// OSM IDS START FROM 1 AND ON. IF WE CREATE A NEW NODE THAT DOESNT EXIST IN OSM,
+			// WE GIVE IT A NEGATIVE ID. EVERYTIME A NEGATIVE ID ENTERS, IT WILL WE REALOCATED TO
+			// THE HIGHEST AVAILABLE NEGATIVE ID
+			////////////////////////////////////////////////////////////////////////////////////
 
 			conn = ds.getConnection();
 
@@ -202,31 +208,52 @@ public class OsmNode extends OsmFeature {
 			st.setLong(1, this.id);
 			st.setString(2, Json.stringify(this.getGeometry()));
 			rs = st.executeQuery();
-			
+
+			// A node with the same ID or Location exists, check possible cases
 			if (rs.next()){
 
-				// Collition, chech possible cases:
-				
 				// Node id already exists
 				if(rs.getLong("id") == this.id){
-					
-					// Node has same or lower version than in DB
+					// If our Node has same or lower version than the one in DB, reject it
 					if (rs.getInt("vers") >= this.version){
-						System.out.println(this.id + " : same version");
-						collition = true;
+						reject = true;
 					}
 				}
-				// Position is used by another node
+				// Location is used by another node
 				else {
 					// Get the nodes tags and merge them with ours
-					System.out.println(this.id + " : merge");
 					this.tags.putAll(hstoreFormatToTags(rs.getString("tags")));
 				}
 			}
-			
-			if (!collition) {
+
+			// If theres no collition and the node won't be rejected
+			if (!reject) {
+
+				// If it is a node that we have created (its not taken from OSM)
+				// Try to realocate it
+				if(this.id < 0){
+
+					// Returns first negative available ID, NEEDS ID=0 DUMMY NODE INSERTED
+					sql = "SELECT (t1.id - 1) FROM osmnodes AS t1 LEFT JOIN osmnodes as t2 ON t1.id - 1 = t2.id WHERE t2.id IS NULL AND (t1.id <= 0) order by t1.id desc limit 1";
+					st = conn.prepareStatement(sql);
+					rs = st.executeQuery();
+
+					// We found a nodeId to give
+					if (rs.next()){
+
+						// Set the node to its new ID
+						long oldId = this.id;
+						this.id = rs.getLong("id");
+						
+						// Delete the old node
+						sql = "delete from osmnodes where id = ?";
+						st = conn.prepareStatement(sql);
+						st.setLong(1, oldId);
+						st.executeQuery();
+					}
+				}
+
 				// Try updating, if the node doesnt exists, the query does nothing
-				
 				sql = "update osmnodes set vers = ?, usr = ?, uid = ?, timest = ?, " +
 						"geom = ST_SimplifyPreserveTopology(ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913), " + TOLERANCE + ")" + 
 						(tags != null? ", tags = " + tagsToHstoreFormat(tags) : "" ) +
@@ -239,9 +266,8 @@ public class OsmNode extends OsmFeature {
 				st.setString(5, Json.stringify(this.getGeometry()));
 				st.setLong(6, this.id);
 				st.executeUpdate();
-				
+
 				// Try inserting, if the node exists, the query does nothing
-				
 				sql = "insert into osmnodes (id, vers, usr, uid, timest, geom " + 
 						(tags != null? ",tags" : "" ) + ") " +
 						"select ?, ?, ?, ?, ?, ST_SimplifyPreserveTopology(ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913), " + TOLERANCE + ") " + 
@@ -268,10 +294,10 @@ public class OsmNode extends OsmFeature {
 					e.printStackTrace();
 				}
 		}
-		
-		if (collition)
+
+		if (reject)
 			return null;
-		
+
 		return this;
 	}
 
@@ -285,7 +311,7 @@ public class OsmNode extends OsmFeature {
 		if (this.ds == null){
 			this.ds = DB.getDataSource();
 		}
-		
+
 		Connection conn = null;
 		PreparedStatement st;
 		try {
@@ -314,7 +340,7 @@ public class OsmNode extends OsmFeature {
 		return lonlat.getX();
 	}
 
-	
+
 	public JsonNode getGeometry(){
 
 		/* EXAMPLE :
@@ -322,14 +348,14 @@ public class OsmNode extends OsmFeature {
 		 */
 
 		ObjectNode geomNode = Json.newObject();
-		geomNode.put("type", "point");
+		geomNode.put("type", "Point");
 		Double[] lonlat = {this.lonlat.getX(), this.lonlat.getY()};
 		geomNode.put("coordinates", Json.toJson(lonlat));
 
 		return geomNode;
 	}
 
-	
+
 	public void setGeometry(JsonNode geometry) {
 
 		/* EXAMPLE :
@@ -397,35 +423,4 @@ public class OsmNode extends OsmFeature {
 			json.add(node.toJson());
 		return json;
 	}
-	
-	public static long getLowestId(){
-		
-		DataSource ds = DB.getDataSource();
-		Connection conn = null;
-		PreparedStatement st = null;
-		ResultSet rs;
-		long id = 0;
-
-		try {
-			conn = ds.getConnection();
-			
-			// Check if already exists
-			String sql = "select MIN(id) from osmnodes";
-			rs = st.executeQuery();
-			
-			if(rs.next())
-				id = rs.getLong("min");
-				
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			if (conn != null) try {
-				conn.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-		return id;
-	}
-
 }

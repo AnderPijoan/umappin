@@ -17,6 +17,7 @@ import org.xml.sax.InputSource;
 import play.mvc.Result;
 
 import models.osm.OsmNode;
+import models.osm.OsmWay;
 
 
 public class OsmFixmesREST {
@@ -83,11 +84,28 @@ public class OsmFixmesREST {
 									} catch (Exception e) {
 										e.printStackTrace();
 									}
-
 								}
 							}
 
 							// Parse Ways
+							NodeList wayList = osmElement.getElementsByTagName("way");
+
+							for (int y = 0; y < wayList.getLength(); y++)
+							{
+								// <way>
+								Node wayXML = wayList.item(y);
+								if (wayXML.getNodeType() == Node.ELEMENT_NODE)
+								{
+
+									try {
+										OsmWay way = new OsmWay(wayXML);
+										way.save();
+										
+									} catch (Exception e) {
+										e.printStackTrace();
+									}
+								}
+							}
 
 							// Parse Relations
 						}
