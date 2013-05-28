@@ -43,14 +43,19 @@ class window.Account.ProfileView extends Backbone.View
   update: ->
     if !@readonly
       if @validate
-        @model.save
+        json =
           name: @$el.find('#profile-name').val()
-          email: @$el.find('#profile-email').val()
+          #email: @$el.find('#profile-email').val()
           firstName: @$el.find('#profile-firstname').val()
           lastName: @$el.find('#profile-lastname').val()
           phone: @$el.find('#profile-phone').val()
           address: @$el.find('#profile-address').val()
-          { success: () => location.href="./" }
+        $.ajax
+          url: "/userprofile/#{@model.get 'id'}"
+          type: 'PUT'
+          contentType: 'application/json'
+          data: JSON.stringify json
+          success: (resp) -> console.log resp #location.reload()
       else
         $('#profileError').css('display','block').empty().html(
           "<div class='alert alert-error'>" + data.responseText + "</div>")

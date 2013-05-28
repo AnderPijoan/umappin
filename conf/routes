@@ -84,6 +84,7 @@ GET     /users/:id                  controllers.UserREST.get(id: String)
 GET     /users/:id/timeline         controllers.TimelineREST.getTimeline(id: String)
 POST    /users                      controllers.UserREST.post()
 PUT     /users/:id                  controllers.UserREST.put(id: String)
+PUT     /userprofile/:id            controllers.UserREST.putProfile(id: String)
 DELETE  /users/:id                  controllers.UserREST.delete(id: String)
 
 PUT     /api/users 					controllers.UserREST.update()
