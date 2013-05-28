@@ -106,6 +106,11 @@ public abstract class OsmFeature {
 	public static LinkedHashMap<String,String> hstoreFormatToTags(String hstore){
 		
 		LinkedHashMap<String,String> tags = new LinkedHashMap<String,String>();
+		
+		if(hstore == null){
+			return tags;
+		}
+		
 		String[] tagPairs = hstore.split(",");
 		
 		for (String tagKV : tagPairs){
@@ -132,6 +137,28 @@ public abstract class OsmFeature {
 				}
 			}
 		}
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (id ^ (id >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		OsmFeature other = (OsmFeature) obj;
+		if (id != other.id)
+			return false;
+		return true;
 	}
 	
 }

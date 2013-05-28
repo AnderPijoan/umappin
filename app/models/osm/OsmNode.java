@@ -117,8 +117,8 @@ public class OsmNode extends OsmFeature {
 			rs = st.executeQuery();
 			while (rs.next()) {
 				node = new OsmNode(rs.getLong("id"),
-						rs.getInt("version"),
-						rs.getString("user"),
+						rs.getInt("vers"),
+						rs.getString("usr"),
 						rs.getString("uid"),
 						0,
 						0,
@@ -154,8 +154,8 @@ public class OsmNode extends OsmFeature {
 			rs = st.executeQuery();
 			while (rs.next()) {
 				node = new OsmNode(rs.getLong("id"),
-						rs.getInt("version"),
-						rs.getString("user"),
+						rs.getInt("vers"),
+						rs.getString("usr"),
 						rs.getString("uid"),
 						0,
 						0,

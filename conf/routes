@@ -173,7 +173,7 @@ DELETE  /mapfeatures/:id             controllers.MapFeatureREST.deleteFeature(id
 # -------------------------------------------------------------------------------------------------------
 
 
-GET     /populateDB               controllers.games.OsmFixmesREST.populateDatabase()
+GET     /osmFixmes/populateDB        controllers.games.OsmFixmesREST.populateDatabase()
 
 
 #photo user 'likes' (to vote for a photo)

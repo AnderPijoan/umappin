@@ -165,11 +165,11 @@ public class OsmWay extends OsmFeature {
 				}
 				
 				way = new OsmWay(rs.getLong("id"),
-						rs.getInt("version"),
-						rs.getString("user"),
+						rs.getInt("vers"),
+						rs.getString("usr"),
 						rs.getString("uid"),
 						nodes,
-						rs.getDate("timestamp"),
+						rs.getDate("timest"),
 						hstoreFormatToTags(rs.getString("tags")));
 			}
 		} catch (SQLException e) {
@@ -193,21 +193,32 @@ public class OsmWay extends OsmFeature {
 		OsmWay way = null;
 		try {
 			conn = ds.getConnection();
-			String sql = "select id, vers, usr, uid, timest, tags, st_asgeojson(ST_Transform(ST_SetSRID(geom, 900913),4326)) as geometry " +
+			String sql = "select id, nodes, vers, usr, uid, timest, tags, st_asgeojson(ST_Transform(ST_SetSRID(geom, 900913),4326)) as geometry " +
 					"from osmways where geom = ST_SimplifyPreserveTopology(ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913), " + TOLERANCE + ")";
 			st = conn.prepareStatement(sql);
 			st.setString(1, Json.stringify(geometry));
 			rs = st.executeQuery();
 			while (rs.next()) {
+				Array nodesArray = rs.getArray("nodes");
+				Long[] nodeIds = (Long[]) nodesArray.getArray();
+				List<OsmNode> nodes = new ArrayList<OsmNode>();
+				
+				// Get the nodes
+				for(long nodeId : nodeIds){
+					OsmNode node = OsmNode.findById(nodeId);
+					if (node != null){
+						nodes.add(node);
+					}
+				}
+				
 				way = new OsmWay(
 						rs.getLong("id"),
-						rs.getInt("version"),
-						rs.getString("user"),
+						rs.getInt("vers"),
+						rs.getString("usr"),
 						rs.getString("uid"),
-						null,
+						nodes,
 						rs.getDate("timest"),
 						hstoreFormatToTags(rs.getString("tags")));
-				way.setGeometry(Json.parse(rs.getString("geometry")));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -299,7 +310,7 @@ public class OsmWay extends OsmFeature {
 				}
 
 				// Try updating, if the way doesnt exists, the query does nothing
-				sql = "update osmways set vers = ?, usr = ?, uid = ?, timest = ?, nodes = ? " +
+				sql = "update osmways set vers = ?, usr = ?, uid = ?, timest = ?, nodes = ?, " +
 						"geom = ST_SimplifyPreserveTopology(ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913), " + TOLERANCE + ")" + 
 						(tags != null? ", tags = " + tagsToHstoreFormat(tags) : "" ) +
 						" where id = ?";
@@ -314,13 +325,13 @@ public class OsmWay extends OsmFeature {
 					nodeIds[x] = this.nodes.get(x).id;
 				}
 				
-				st.setArray(5, conn.createArrayOf("BIGINT", nodeIds));
+				st.setArray(5, conn.createArrayOf("bigint", nodeIds));
 				st.setString(6, Json.stringify(this.getGeometry()));
 				st.setLong(7, this.id);
 				st.executeUpdate();
 
 				// Try inserting, if the node exists, the query does nothing
-				sql = "insert into osmnodes (id, vers, usr, uid, timest, nodes, geom " + 
+				sql = "insert into osmways (id, vers, usr, uid, timest, nodes, geom " + 
 						(tags != null? ",tags" : "" ) + ") " +
 						"select ?, ?, ?, ?, ?, ?, ST_SimplifyPreserveTopology(ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913), " + TOLERANCE + ") " + 
 						(tags != null? ", " + tagsToHstoreFormat(tags) : "" ) + " " +
@@ -331,7 +342,7 @@ public class OsmWay extends OsmFeature {
 				st.setString(3, this.user);
 				st.setString(4, this.uid);
 				st.setDate(5, new java.sql.Date(timeStamp.getTime()));
-				st.setArray(6, conn.createArrayOf("BIGINT", nodeIds));
+				st.setArray(6, conn.createArrayOf("bigint", nodeIds));
 				st.setString(7, Json.stringify(this.getGeometry()));
 				st.setLong(8, this.id);
 				st.executeUpdate();
