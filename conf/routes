@@ -86,6 +86,8 @@ POST    /users                      controllers.UserREST.post()
 PUT     /users/:id                  controllers.UserREST.put(id: String)
 DELETE  /users/:id                  controllers.UserREST.delete(id: String)
 
+PUT     /api/users 					controllers.UserREST.update()
+
 GET     /sessionuser                controllers.UserREST.getSessionUser
 
 # REST CRUD for discussions

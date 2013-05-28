@@ -118,4 +118,25 @@ public class UserREST extends ItemREST {
             return notFound(Constants.USER_NOT_LOGGED_IN.toString());
     }
 
+    //added by Oscar, used in android
+    
+    public static Result update(){
+        final User user = Application.getLocalUser(session());
+        if (user == null){
+            return badRequest(Constants.USER_NOT_LOGGED_IN.toString());
+        }
+        JsonNode json = request().body().asJson();
+        if(json == null) {
+            return badRequest(Constants.JSON_EMPTY.toString());
+        }
+        
+        user.firstName = json.findPath("firstName").getTextValue();
+        user.lastName = json.findPath("lastName").getTextValue();
+        user.email = json.findPath("email").getTextValue();
+
+        user.save();
+
+
+        return ok(Json.toJson(User.userToShortObjectNode(user)));
+    }
 }
