@@ -1,10 +1,14 @@
 var timelineApp = timelineApp || {};
-timelineApp.PUBLICATION_LIST_BODY ='<ul id="publication_list"></ul>';
 
 //this is the view controller for the all comments APP
 (function(){
 	timelineApp.AppView = Backbone.View.extend({
 		el: 'body',
+		
+		events: {
+            "click #send_new_publication_button":   "create"
+        },
+		
 		initialize: function () {
 			//triggered on sync
 			this.listenTo(timelineApp.PublicationCollection, 'sync', this.renderPublications);
@@ -19,11 +23,28 @@ timelineApp.PUBLICATION_LIST_BODY ='<ul id="publication_list"></ul>';
 			   	var view = new timelineApp.ReceivedView({ model: publication});
 			   	$('#publication_list').append(view.render().el);
 			});	
+		},
+		
+		create: function (event) {
+			//Create ReceivedView and append it to the list
+			var subject = this.$el.find('#form_subject').val();
+			var comment = this.$el.find('#form_comment').val();
+			
+			var a = new timelineApp.Publication({subject: this.$el.find('#form_subject').val(),
+            	message: this.$el.find('#form_comment').val()});
+			
+			timelineApp.PublicationCollection.add(a);
+			var that = this;
+			a.save({}, {  
+			    success:function(){
+			    	//clear form
+					that.$el.find('#form_subject').val('');
+					that.$el.find('#form_comment').val('');	   
+				}
+			});
 		}
 
-		//End Publications Headers methods
 	});
 })();
 
-//created here ... it will be at another place,...
 var appView = new timelineApp.AppView();

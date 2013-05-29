@@ -20,5 +20,3 @@ _.templateSettings.variable = "rc";
 		}
 	});
 }());
-
-//var timelineApp.receivedPublications = new timelineApp.ReceivedView();

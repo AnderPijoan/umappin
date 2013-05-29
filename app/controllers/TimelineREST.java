@@ -148,6 +148,7 @@ public class TimelineREST extends ItemREST {
 		if (user == null){
 			return badRequest(Constants.USER_NOT_LOGGED_IN.toString());
 		}
+
 		JsonNode json = request().body().asJson();
 		if(json == null) {
 			return badRequest(Constants.JSON_EMPTY.toString());
@@ -156,14 +157,17 @@ public class TimelineREST extends ItemREST {
 		Publication publication = null;
 		Message message = null;
 		Timeline timeline = null;
-
+		
 		publication = new Publication();		// Create Publication
 		publication.subject = json.findPath("subject").getTextValue();
+
+		/*
 		if (json.findPath("postPicture") != null){
 			publication.postPicture = new ObjectId(json.findPath("postPicture").getTextValue());
-		}
-		publication.save();
+		}*/
 
+		publication.save();
+		
 		try {
 
 			message = new Message();		// Create first message
