@@ -87,6 +87,7 @@ public class UserStatistics {
 		for (StatisticTypes std : StatisticTypes.values()) {
 			userStatistics.statistics.put(std.name(), 0);
 		}
+        userStatistics.save();
         return userStatistics;
     }
 	

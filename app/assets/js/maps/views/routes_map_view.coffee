@@ -127,9 +127,10 @@ class window.Maps.RoutesMapView extends Maps.MapView
       $(@).remove()
 
   removeFeaturePopup: (feat) ->
-    @map.removePopup feat.popup
-    feat.popup.destroy()
-    feat.popup = null
+    if (feat.popup)
+      @map.removePopup feat.popup
+      feat.popup.destroy()
+      feat.popup = null
 
   reloadTagEvents: ->
     that = @

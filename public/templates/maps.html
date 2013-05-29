@@ -69,11 +69,19 @@
 
         <button class='button saveRouteDataButton' id='saveRouteDataButton-<%=rc.mapFeature.id%>'>Save</button>
         <button class='button removeRouteButton' id='removeRouteButton-<%=rc.mapFeature.id%>'>Delete</button>
-        <% if (!rc.liked) { %>
-            <button class='button likeRouteButton' id='likeRouteButton-<%=rc.mapFeature.id%>'>Like</button>
-        <% } else {%>
-            <label style='float:right'>Liked!!</label>
-        <% } %>
+
+        <%
+            if (rc.mapFeature.get('user').id !== Account.session.get('id')) {
+                if (!rc.liked) {
+        %>
+                    <button class='button likeRouteButton' id='likeRouteButton-<%=rc.mapFeature.id%>'>Like</button>
+                <% } else { %>
+                    <label style='float:right'>Liked!!</label>
+        <%
+                   }
+            }
+        %>
+
     </div>
 
 </script>

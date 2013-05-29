@@ -1,26 +1,31 @@
 package controllers;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+import java.util.Map;
 
-import models.RouteLike;
+import models.*;
 import org.bson.types.ObjectId;
+import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
 
 import play.libs.Json;
 import play.mvc.Result;
-
-import models.Followed;
-import models.Follows;
-import models.User;
 
 
 public class RouteLikeREST extends ItemREST {
 	
 	public static Result getAllRouteLikes() { return getItems(RouteLike.class); }
     public static Result getRouteLike(String id) { return getItem(id, RouteLike.class); }
-    public static Result addRouteLike() { return addItem(RouteLike.class); }
+
+    public static Result addRouteLike() {
+        JsonNode json = request().body().asJson();
+        String userId = json.findPath("userId").getTextValue();
+        Map<String, Integer> stat = new HashMap<>();
+        stat.put(StatisticTypes.ROUTELIKES.name(), 1);
+        UserStatisticsREST.updateUserStatistics(userId, stat);
+        return addItem(RouteLike.class);
+    }
+
     public static Result updateRouteLike(String id) { return updateItem(id, RouteLike.class); }
     public static Result deleteRouteLike(String id) { return deleteItem(id, RouteLike.class); }
 

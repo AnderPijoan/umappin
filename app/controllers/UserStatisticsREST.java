@@ -1,9 +1,7 @@
 package controllers;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 import models.StatisticTypes;
 import models.User;
@@ -51,12 +49,6 @@ public class UserStatisticsREST extends Controller {
 	// PUT
 	@Restrict(@Group(Application.USER_ROLE))
 	public static Result updateUserStatistics(String userId) {
-		ObjectNode node;
-		boolean isConnectedUser = false;
-		final User connectedUser = Application.getLocalUser(session());
-		if(connectedUser != null){
-			isConnectedUser = (userId == connectedUser.getIdentifier());
-		}
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode json = request().body().asJson();
 		Map<String, Integer> statistics;
@@ -74,24 +66,40 @@ public class UserStatisticsREST extends Controller {
 		}catch(IOException e){
 			return badRequest(Constants.STATISTICS_PARSE_ERROR.toString());
 		}
-		// Retrieve the existing Statistics:
-		UserStatistics userStatistics = UserStatistics.findByUserId(userId);
-		if(userStatistics == null){
-			userStatistics = UserStatistics.init(userId);
-		}
-		Iterator<String> it = statistics.keySet().iterator();
-		String key;
-		while (it.hasNext()) {
-			key = it.next();
-			if(Arrays.asList(StatisticTypes.values()).contains(key)) {	// Check if the Statistic is valid.
-				userStatistics.updateStatistic(key, statistics.get(key));
-			}
-		}
-		node = UserStatistics.userStatisticsToObjectNode(userStatistics);
-		if(isConnectedUser){
-			userStatistics.setRead();
-		}
-		userStatistics.update();
-		return ok(Json.toJson(node));
+        UserStatistics userStatistics = updateUserStatistics(userId, statistics);
+        ObjectNode node = UserStatistics.userStatisticsToObjectNode(userStatistics);
+        return ok(Json.toJson(node));
 	}
+
+    // Auxiliar method for calling from backend
+    public static UserStatistics updateUserStatistics(String userId, Map<String,Integer> statistics) {
+        boolean isConnectedUser = false;
+        final User connectedUser = Application.getLocalUser(session());
+        if(connectedUser != null){
+            isConnectedUser = (userId == connectedUser.getIdentifier());
+        }
+        // Retrieve the existing Statistics:
+        UserStatistics userStatistics = UserStatistics.findByUserId(userId);
+        if(userStatistics == null){
+            userStatistics = UserStatistics.init(userId);
+        }
+        Iterator<String> it = statistics.keySet().iterator();
+        String key;
+        while (it.hasNext()) {
+            key = it.next();
+            List<String> types = new ArrayList<>();
+            for (StatisticTypes st : Arrays.asList(StatisticTypes.values()))
+                types.add(st.name());
+            if (types.contains(key)) {	// Check if the Statistic is valid.
+                userStatistics.updateStatistic(key, statistics.get(key));
+            }
+        }
+        if(isConnectedUser){
+            userStatistics.setRead();
+        }
+        userStatistics.update();
+        return userStatistics;
+    }
+
+
 }
