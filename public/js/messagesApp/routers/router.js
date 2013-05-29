@@ -30,18 +30,15 @@ messagesApp.Router = Backbone.SubRoute.extend({
 	messages: function(idMessage){
         //$("#messages-badge").show();
         var unread = JSON.parse(sessionStorage.getItem('unread-discusion'))
-        if(unread.length == 0){
-        	$("#messages-badge").hide();
-        	$("#message-unread").attr("href", "./#messages/");
-	    }else{
-	        $("#messages-badge").text(unread.length);
-	        $("#message-unread").attr("href", "./#messages/message/"+unread.pop().id)
-	        if(unread.length >= 0){
-	        	sessionStorage.setItem('unread-discusion',JSON.stringify(unread));
-	        }else{
+        if(unread){
+        	if(unread.length == 0){
 	        	$("#messages-badge").hide();
         		$("#message-unread").attr("href", "./#messages/");
-	        }
+        	}else{
+		        $("#messages-badge").text(unread.length);
+		        $("#message-unread").attr("href", "./#messages/message/"+unread.pop().id)
+		        sessionStorage.setItem('unread-discusion',JSON.stringify(unread));
+        	}
         }
 		this.loadTemplateIfNeed(function(){
 				discussion = new messagesApp.Discussion({id:idMessage});
