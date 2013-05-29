@@ -10,7 +10,7 @@ class window.Account.UserRowView extends Backbone.View
   followsView: null
   followedView: null
   tagName: 'li'
-  className: 'user-entry'
+  className: 'box user-entry'
   template: _.template $('#user-row-template').html()
 
   initialize: ->
@@ -30,8 +30,7 @@ class window.Account.UserRowView extends Backbone.View
       model: picture
       readonly: true
       showInfo: false
-      picWidth: '4em'
-      picHeight: '3em'
+      picWidth: '100%'
     if @model.get "profilePicture" then picture.fetch()
     @$el.find('div.row .span1').first().html @pictureView.render().el
 

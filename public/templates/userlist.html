@@ -3,79 +3,50 @@
 
 
 <!------------------------------------- HTML -------------------------------------->
-<div class="well">
-
-    <ul class="nav nav-tabs">
-        <li class="active"><a href="#profile" data-toggle="tab">Profile</a></li>
-        <li><a href="#users" data-toggle="tab" onclick='Account.loadUsersData()'>Users</a></li>
-    </ul>
-
-    <div id="myTabContent" class="tab-content">
-
-        <div class="tab-pane active in" id="profile">
-            <form id="profile-form"></form>
-        </div>
-
-        <div class="tab-pane fade" id="users">
-            <div id='users-filters'>
-
-                <div class="row-fluid">
-
-                    <div class="span3">
-                        <form class="navbar-search pull-left">
-                            <input id="textFilter" type="search" placeholder="Search" class='input-medium'>
-                        </form>
-                    </div>
-
-                    <div class="btn-group span3" data-toggle="buttons-checkbox">
-                        <button type="button" id="followsFilter" class="btn btn-primary">Following</button>
-                        <button type="button" id="followedFilter" class="btn btn-primary">Followed By</button>
-                    </div>
-
-                </div>
-
-                <div class="row-fluid">
-
-                    <div class="span1">
-                        <h4>Order By:</h4>
-                    </div>
-
-                    <div class="span2">
-                        <select id='orderFilter'>
-                            <option value='name'>Name</option>
-                            <option value='lastLogin'>Last Login</option>
-                            <option value='discussions'>Discussions</option>
-                            <option value='awards'>Awards</option>
-                        </select>
-                    </div>
-
-                </div>
-
-                <div class="row-fluid">
-
-                    <div class="span7">
-                        <ul id='userlist'></ul>
-                    </div>
-
-                </div>
-
+<div class="box-transparent span9">
+    <div class="row">
+        <div class="box span7 offset1">
+            <div class="box-header">
+                <h3>Friend   list</h3>
             </div>
+            <div class="box-body">
+                <div id="users">
+                    <div id='users-filters'>
+                        <div class="row">
+                            <div class="span6">
+                                <form class="navbar-search pull-left">
+                                    <div class="input-prepend">
+                                        <div class="add-on"><span class="icon-magnifying-glass"></span></div>
+                                        <input id="textFilter" type="search" placeholder="Search" class='input-xxlarge'>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="btn-group span3 offset4" data-toggle="buttons-checkbox">
+                                <button type="button" id="followsFilter" class="btn btn-primary">Following</button>
+                                <button type="button" id="followedFilter" class="btn btn-primary">Followed By</button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="span7">
+                                <ul id='userlist'></ul>
+                            </div>
+                        </div>
+                    </div>
 
+                </div>
+            </div>
         </div>
-
     </div>
-
 </div>
 
 
 <!------------------------------------- Templates -------------------------------------->
 <script type='text/template' id='user-row-template'>
   <div class='row'>
-    <div class="span2">
-        <img class="image img-rounded" src="/assets/img/140x140.gif" alt="placeholder image"
-            height="32" width="32">
+    <div class="span1">
+        <img class="image img-rounded" src="/assets/img/140x140.gif" alt="placeholder image">
     </div>
-    <div class="span6">
+    <div class="span3">
         <h3><%=rc.name%></h3>
     </div>
   </div>
@@ -89,37 +60,3 @@
     <label class=""><%=rc%></label>
 </script>
 
-
-<script type='text/template' id='userprofile-template'>
-    <div class="span3">
-        <div id='profilePictureHolder'></div>
-        <label>Username</label>
-        <input type="text" value="<%- rc.data.name %>" class="input-medium" required  id='profile-name'><br/>
-        <% if (!rc.readonly) { %>
-            <a href="#changePassword">Change Account password</a>
-        <% } %>
-        <br/><br/>
-        <h4>Last login Date: </h4>
-        <label><%- new Date(rc.lastLogin).toLocaleString() %></label><br/>
-        Account providers:
-        <img alt="password icon" title="password" src="/assets/icons/password-24x24.png">
-        <br/><br/>
-        Logged in with:
-        <img alt="password icon" title="password" src="/assets/icons/password-24x24.png">
-        <% if (!rc.readonly) { %>
-            <br/><br/><button id="profile-modify-button" class="btn btn-primary">Update</button>
-        <% } %>
-    </div>
-    <div class="span4">
-        <label>First Name</label>
-        <input type="text" value="<%- rc.data.firstName %>" class="input-xlarge" id='profile-firstname'>
-        <label>Last Name</label>
-        <input type="text" value="<%- rc.data.lastName %>" class="input-xlarge" id='profile-lastname'>
-        <label>Email</label>
-        <input type="text" value="<%- rc.data.email %>" class="input-xlarge" required  id='profile-email'>
-        <label>Phone</label>
-        <input type="text" value="<%- rc.data.phone %>" class="input-xlarge" id='profile-phone'>
-        <label>Address</label>
-        <textarea rows="3" class="input-xlarge" id='profile-address'><%- rc.address %></textarea>
-    </div>
-</script>
