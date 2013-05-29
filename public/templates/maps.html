@@ -26,16 +26,8 @@
 <!------------------------------------- New tag template -------------------------------------->
 <script type='text/template' id='route-tag-template'>
     <li>
-        <select class='tagKeySelect' data="<%= rc ? rc.key : '' %>">
-            <option value=''>&nbsp;</option>
-            <option value='aeroway'>Aeroway</option>
-            <option value='rail'>Rail</option>
-            <option value='shop'>Shop</option>
-            <option value='historic'>Historic</option>
-        </select>
-        <select class='tagValueSelect' data="<%= rc ? rc.value : '' %>">
-            <option value=''>&nbsp;</option>
-        </select>
+        <select class='tagKeySelect'></select>
+        <select class='tagValueSelect'></select>
         <img src="<%= rc != undefined ? '/assets/img/error.png' : '/assets/img/new-plus.png' %>"
              class="<%= rc != undefined ? 'removeTagImage' : 'addTagImage' %>">
     </li>
@@ -74,13 +66,34 @@
             <% } %>
             <%=(_.template($('#route-tag-template').html()))()%>
         </ul>
+
         <button class='button saveRouteDataButton' id='saveRouteDataButton-<%=rc.mapFeature.id%>'>Save</button>
         <button class='button removeRouteButton' id='removeRouteButton-<%=rc.mapFeature.id%>'>Delete</button>
+        <% if (!rc.liked) { %>
+            <button class='button likeRouteButton' id='likeRouteButton-<%=rc.mapFeature.id%>'>Like</button>
+        <% } else {%>
+            <label style='float:right'>Liked!!</label>
+        <% } %>
     </div>
+
 </script>
 
-
-
+<!------------------------------------- Route Like Template -------------------------------------->
+<script type='text/template' id='route-like-template'>
+    <div class="routeLikePop">
+        <div class="modal-header">
+            <label>You can post a comment now</label>
+        </div>
+        <div class="modal-body">
+            <textarea class='routeLikeComment' id='routeLikeComment-<%=rc.id%>' placeholder="Enter a comment"></textarea>
+        </div>
+        <div class="modal-footer">
+            <a href="javascript:$('.likeRouteButton').last().popover('hide');void(0)"
+               class="btn cancelRouteLikeButton">Cancel</a>
+            <a href="javascript:$('#likeRouteButton-<%=rc.id%>').change();void(0)" class="btn btn-primary saveRouteLikeButton">Like!</a>
+        </div>
+    </div>
+</script>
 
 <!------------------------------------- Feature popup template -------------------------------------->
 <script type='text/template' id='features-popup-template'>

@@ -24,7 +24,7 @@ public class User2RoutesREST extends ItemREST {
 		if (user2routes == null) {
 			return badRequest(Constants.ROUTES_EMPTY.toString());
 		}
-		List<Route> routes = user2routes.all();
+		List<Route> routes = Route.all(Route.class);
 		if (routes.size() == 0) {
 			return badRequest(Constants.ROUTES_EMPTY.toString());
 		} else {
@@ -53,6 +53,25 @@ public class User2RoutesREST extends ItemREST {
 	}
 
 
+	public static Result getUserRoutes(String id) {
+		final User user = Application.getLocalUser(session());
+		if (user == null){
+			return badRequest(Constants.USER_NOT_LOGGED_IN.toString());
+		}
+		User2Routes user2routes = User2Routes.findById(id, User2Routes.class);
+		if (user2routes == null) {
+			return badRequest(Constants.ROUTES_EMPTY.toString());
+		}
+		List<Route> routes = user2routes.all();
+		if (routes.size() == 0) {
+			return badRequest(Constants.ROUTES_EMPTY.toString());
+		} else {
+			// Return the response
+			return ok(Json.toJson(Route.routesToObjectNodes(routes)));
+		}
+	}
+	
+	
 	public static Result getRoute(String routeId) {
 		final User user = Application.getLocalUser(session());
 		if (user == null){

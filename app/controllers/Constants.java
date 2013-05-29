@@ -16,6 +16,12 @@ public enum Constants {
 
 	DISCUSSIONS_EMPTY("No discussion found"),
 	
+	FEATURE_REJECTED("Feature was rejected, check all fields"),
+	
+	NODES_EMPTY("No node found"),
+	
+	WAYS_EMPTY("No way found"),
+	
 	PUBLICATIONS_EMPTY("No publication found"),
 	
 	ROUTES_EMPTY("No route found"),
