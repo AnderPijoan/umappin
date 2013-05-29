@@ -173,6 +173,17 @@ GET     /mapfeatures/:id             controllers.MapFeatureREST.getFeature(id: S
 POST    /mapfeatures                 controllers.MapFeatureREST.addFeature()
 PUT     /mapfeatures/:id             controllers.MapFeatureREST.updateFeature(id: String)
 DELETE  /mapfeatures/:id             controllers.MapFeatureREST.deleteFeature(id: String)
+
+# REST CRUD for Routes Likes
+GET     /routelikes                 controllers.RouteLikeREST.getAllRouteLikes()
+GET     /routelikes/:id             controllers.RouteLikeREST.getRouteLike(id: String)
+GET     /routelikesuser/:id         controllers.RouteLikeREST.getUserRouteLikes(id: String)
+GET     /routelikesroute/:id        controllers.RouteLikeREST.getRouteRouteLikes(id: String)
+GET     /routelikesrouteuser/:idr/:idu    controllers.RouteLikeREST.getRouteUserRouteLikes(idr: String, idu: String)
+POST    /routelikes                 controllers.RouteLikeREST.addRouteLike()
+PUT     /routelikes/:id             controllers.RouteLikeREST.updateRouteLike(id: String)
+DELETE  /routelikes/:id             controllers.RouteLikeREST.deleteRouteLike(id: String)
+
 # -------------------------------------------------------------------------------------------------------
 
 
