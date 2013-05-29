@@ -1,19 +1,10 @@
 package controllers;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import models.RouteLike;
 import org.bson.types.ObjectId;
-import org.codehaus.jackson.node.ObjectNode;
-
-import play.libs.Json;
 import play.mvc.Result;
-
-import models.Followed;
-import models.Follows;
-import models.User;
 
 
 public class RouteLikeREST extends ItemREST {

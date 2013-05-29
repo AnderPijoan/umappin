@@ -4,7 +4,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -14,13 +13,15 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
+import controllers.ItemREST;
+
 import play.mvc.Result;
 
 import models.osm.OsmNode;
 import models.osm.OsmWay;
 
 
-public class OsmFixmesREST {
+public class OsmFixmesREST extends ItemREST{
 
 	public static Result populateDatabase() {
 
@@ -120,4 +121,5 @@ public class OsmFixmesREST {
 		}
 		return null;
 	}
+	
 }

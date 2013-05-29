@@ -82,6 +82,7 @@ DELETE  /followed/:id                controllers.FollowedREST.deleteFollowed(id:
 GET     /users                      controllers.UserREST.getAll()
 GET     /users/:id                  controllers.UserREST.get(id: String)
 GET     /users/:id/timeline         controllers.TimelineREST.getTimeline(id: String)
+GET     /users/:id/routes           controllers.User2RoutesREST.getUserRoutes(id: String)
 POST    /users                      controllers.UserREST.post()
 PUT     /users/:id                  controllers.UserREST.put(id: String)
 PUT     /userprofile/:id            controllers.UserREST.putProfile(id: String)
@@ -148,7 +149,7 @@ PUT		/users/:id/statistics		controllers.UserStatisticsREST.updateUserStatistics(
 #GET     /rest/awards				controllers.AwardREST.all
 #GET     /rest/awards/:type/:limit	controllers.AwardREST.findByAwardTypeLimit(type: String, limit: Integer)
 #GET     /rest/user/:id/awards	    controllers.AwardREST.findByUserId(id: String)
-#POST	/rest/user/:id/awards		controllers.AwardREST.saveUserAward(id: String)
+#POST	 /rest/user/:id/awards		controllers.AwardREST.saveUserAward(id: String)
 
 # REST CRUD for pictures
 GET     /photos/:id             controllers.PhotosREST.getPhoto(id: String)
@@ -173,6 +174,28 @@ GET     /mapfeatures/:id             controllers.MapFeatureREST.getFeature(id: S
 POST    /mapfeatures                 controllers.MapFeatureREST.addFeature()
 PUT     /mapfeatures/:id             controllers.MapFeatureREST.updateFeature(id: String)
 DELETE  /mapfeatures/:id             controllers.MapFeatureREST.deleteFeature(id: String)
+
+# REST CRUD for OSM Nodes
+GET     /osmnodes/:id                 controllers.osm.OsmNodeREST.getNodeById(id: Long)
+GET     /osmnodes/:id/json            controllers.osm.OsmNodeREST.getJsonNodeById(id: Long)
+GET     /osmnodes/:id/xml             controllers.osm.OsmNodeREST.getXmlNodeById(id: Long)
+GET     /osmnodes/intersects/:amount  controllers.osm.OsmNodeREST.getIntersectionNodes(amount: Integer)
+GET     /osmnodes/near/:amount        controllers.osm.OsmNodeREST.getNearNodes(amount: Integer)
+GET     /osmnodes/freeid/:amount      controllers.osm.OsmNodeREST.getFirstFreeId(amount: Integer)
+PUT     /osmnodes/:id                 controllers.osm.OsmNodeREST.updateNode(id: Long)
+POST    /osmnodes                     controllers.osm.OsmNodeREST.addNode()
+# DELETE  /osmnodes/:id                 controllers.osm.OsmNodeREST.deleteNode(id: Long)
+
+# REST CRUD for OSM Ways
+GET     /osmways/:id                 controllers.osm.OsmWayREST.getWayById(id: Long)
+GET     /osmways/:id/json            controllers.osm.OsmWayREST.getJsonWayById(id: Long)
+GET     /osmways/:id/xml             controllers.osm.OsmWayREST.getXmlWayById(id: Long)
+GET     /osmways/intersects/:amount  controllers.osm.OsmWayREST.getIntersectionWays(amount: Integer)
+GET     /osmways/near/:amount        controllers.osm.OsmWayREST.getNearWays(amount: Integer)
+GET     /osmways/freeid/:amount      controllers.osm.OsmWayREST.getFirstFreeId(amount: Integer)
+PUT     /osmways/:id                 controllers.osm.OsmWayREST.updateWay(id: Long)
+POST    /osmways                     controllers.osm.OsmWayREST.addWay()
+# DELETE  /osmways/:id                 controllers.osm.OsmWayREST.deleteWay(id: Long)
 
 # REST CRUD for Routes Likes
 GET     /routelikes                 controllers.RouteLikeREST.getAllRouteLikes()

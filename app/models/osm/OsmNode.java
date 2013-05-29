@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -16,8 +17,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.node.ArrayNode;
-import org.codehaus.jackson.node.JsonNodeFactory;
 import org.codehaus.jackson.node.ObjectNode;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -174,6 +173,92 @@ public class OsmNode extends OsmFeature {
 		}
 		return node;
 	}
+	
+	
+	public static List<OsmFeature> findByLocation(JsonNode geometry, int limit){
+		
+		DataSource ds = DB.getDataSource();
+		Connection conn = null;
+		PreparedStatement st;
+		ResultSet rs;
+		
+		List<OsmFeature> nodes = new ArrayList<OsmFeature>();
+		OsmNode node = null;
+		
+		try {
+			conn = ds.getConnection();
+			String sql = "select id, vers, usr, uid, timest, tags, st_asgeojson(ST_Transform(ST_SetSRID(geom, 900913),4326)) as geometry " +
+					"from osmnodes ORDER BY geom <-> ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913) LIMIT ?";
+			st = conn.prepareStatement(sql);
+			st.setString(1, Json.stringify(geometry));
+			st.setInt(2, limit);
+			rs = st.executeQuery();
+			while (rs.next()) {
+				node = new OsmNode(rs.getLong("id"),
+						rs.getInt("vers"),
+						rs.getString("usr"),
+						rs.getString("uid"),
+						0,
+						0,
+						rs.getDate("timest"),
+						OsmFeature.hstoreFormatToTags(rs.getString("tags")));
+				node.setGeometry(Json.parse(rs.getString("geometry")));
+				nodes.add(node);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) try {
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return nodes;
+	}
+	
+	
+	public static List<OsmFeature> findByIntersection(JsonNode geometry,int limit){
+
+		DataSource ds = DB.getDataSource();
+		Connection conn = null;
+		PreparedStatement st;
+		ResultSet rs;
+		
+		List<OsmFeature> nodes = new ArrayList<OsmFeature>();
+		OsmNode node = null;
+		
+		try {
+			conn = ds.getConnection();
+			String sql = "select id, vers, usr, uid, timest, tags, st_asgeojson(ST_Transform(ST_SetSRID(geom, 900913),4326)) as geometry " +
+					"from osmnodes where ST_Intersects(geom , ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913)) limit "+ limit;
+			st = conn.prepareStatement(sql);
+			st.setString(1, Json.stringify(geometry));
+			rs = st.executeQuery();
+			while (rs.next()) {
+				node = new OsmNode(rs.getLong("id"),
+						rs.getInt("vers"),
+						rs.getString("usr"),
+						rs.getString("uid"),
+						0,
+						0,
+						rs.getDate("timest"),
+						OsmFeature.hstoreFormatToTags(rs.getString("tags")));
+				node.setGeometry(Json.parse(rs.getString("geometry")));
+				nodes.add(node);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) try {
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return nodes;
+	}
+	
 
 	/** Update NodeOSM
 	 */
@@ -196,8 +281,7 @@ public class OsmNode extends OsmFeature {
 
 			////////////////////////////////////////////////////////////////////////////////////
 			// OSM IDS START FROM 1 AND ON. IF WE CREATE A NEW NODE THAT DOESNT EXIST IN OSM,
-			// WE GIVE IT A NEGATIVE ID. EVERYTIME A NEGATIVE ID ENTERS, IT WILL WE REALOCATED TO
-			// THE HIGHEST AVAILABLE NEGATIVE ID
+			// WE GIVE IT A NEGATIVE ID.
 			////////////////////////////////////////////////////////////////////////////////////
 
 			conn = ds.getConnection();
@@ -213,7 +297,7 @@ public class OsmNode extends OsmFeature {
 			if (rs.next()){
 
 				// Node id already exists
-				if(rs.getLong("id") == this.id){
+				if(this.id > 0 && rs.getLong("id") == this.id){
 					// If our Node has same or lower version than the one in DB, reject it
 					if (rs.getInt("vers") >= this.version){
 						reject = true;
@@ -228,30 +312,6 @@ public class OsmNode extends OsmFeature {
 
 			// If theres no collition and the node won't be rejected
 			if (!reject) {
-
-				// If it is a node that we have created (its not taken from OSM)
-				// Try to realocate it
-				if(this.id < 0){
-
-					// Returns first negative available ID, NEEDS ID=0 DUMMY NODE INSERTED
-					sql = "SELECT (t1.id - 1) FROM osmnodes AS t1 LEFT JOIN osmnodes as t2 ON t1.id - 1 = t2.id WHERE t2.id IS NULL AND (t1.id <= 0) order by t1.id desc limit 1";
-					st = conn.prepareStatement(sql);
-					rs = st.executeQuery();
-
-					// We found a nodeId to give
-					if (rs.next()){
-
-						// Set the node to its new ID
-						long oldId = this.id;
-						this.id = rs.getLong("id");
-						
-						// Delete the old node
-						sql = "delete from osmnodes where id = ?";
-						st = conn.prepareStatement(sql);
-						st.setLong(1, oldId);
-						st.executeQuery();
-					}
-				}
 
 				// Try updating, if the node doesnt exists, the query does nothing
 				sql = "update osmnodes set vers = ?, usr = ?, uid = ?, timest = ?, " +
@@ -295,8 +355,9 @@ public class OsmNode extends OsmFeature {
 				}
 		}
 
-		if (reject)
+		if (reject){
 			return null;
+		}
 
 		return this;
 	}
@@ -375,27 +436,35 @@ public class OsmNode extends OsmFeature {
 
 
 	// Export functions
-	public JsonNode toJson(){
+	public static ObjectNode toObjectNode(OsmNode node){
 
 		ObjectNode osmNodeNode = Json.newObject();
 		osmNodeNode.put("type", "Feature");
-		osmNodeNode.put("id", id);
-		osmNodeNode.put("version", version);
-		osmNodeNode.put("user", user);
-		osmNodeNode.put("uid", uid);
-		osmNodeNode.put("timestamp", new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(timeStamp));
-		osmNodeNode.put("geometry", this.getGeometry());
-		osmNodeNode.put("properties", Json.toJson(tags));
+		osmNodeNode.put("id", node.id);
+		osmNodeNode.put("version", node.version);
+		osmNodeNode.put("user", node.user);
+		osmNodeNode.put("uid", node.uid);
+		osmNodeNode.put("timestamp", new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(node.timeStamp));
+		osmNodeNode.put("geometry", node.getGeometry());
+		osmNodeNode.put("properties", Json.toJson(node.tags));
 
 		return osmNodeNode;
 	}
 
+	
+	public ObjectNode toOsmJson(){
+		return toObjectNode(this);
+	}
+	
+	
 	public Document toOsmXml() throws ParserConfigurationException{
 
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();  
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		Document document = builder.newDocument();
 
+		Element osmElement = document.createElement("osm");
+		
 		Element osmNodeElement = document.createElement("node");
 
 		osmNodeElement.setAttribute("id", id+"");
@@ -404,9 +473,9 @@ public class OsmNode extends OsmFeature {
 		osmNodeElement.setAttribute("lon", lonlat.getX()+"");
 		osmNodeElement.setAttribute("user", user);
 		osmNodeElement.setAttribute("uid", uid);
-		osmNodeElement.setAttribute("timestamp", new java.text.SimpleDateFormat("yyyy-mm-ddTHH:mm:ss:SSS").format(timeStamp));
+		osmNodeElement.setAttribute("timestamp", new java.text.SimpleDateFormat("yyyy-mm-dd'T'HH:mm:ss:SSS").format(timeStamp));
 
-		document.appendChild(osmNodeElement);
+		osmElement.appendChild(osmNodeElement);
 
 		for (String key : tags.keySet()){
 			Element osmTagElement = document.createElement("tag");
@@ -414,13 +483,55 @@ public class OsmNode extends OsmFeature {
 			osmTagElement.setAttribute("v", tags.get(key));
 			osmNodeElement.appendChild(osmTagElement);
 		}
+		
+		document.appendChild(osmElement);
 		return document;
 	}
+	
+	
+	/** Returns the first free negative id nearest to 0
+	 * @return long id
+	 */
+	public static List<Long> getFirstFreeId(int limit){
 
-	public static JsonNode listToJson(List<OsmNode> list) {
-		ArrayNode json = new ArrayNode(JsonNodeFactory.instance);
-		for (OsmNode node : list)
-			json.add(node.toJson());
-		return json;
+		DataSource ds = DB.getDataSource();
+		Connection conn = null;
+		PreparedStatement st;
+		ResultSet rs;
+
+		List<Long> ids = new ArrayList<Long>();
+		// If there are no more longs returned, fill them with the consecutives to fill limit
+		long lastId = 0;
+		
+		try {
+			conn = ds.getConnection();
+
+			// Returns first negative available ID, NEEDS ID=0 DUMMY NODE INSERTED
+			String sql = "SELECT (t1.id - 1) as result FROM osmnodes AS t1 LEFT JOIN osmnodes as t2 ON t1.id - 1 = t2.id WHERE t2.id IS NULL AND (t1.id <= 0) order by t1.id desc limit " + limit;
+			st = conn.prepareStatement(sql);
+			rs = st.executeQuery();
+
+			// We found a nodeId to give
+			while (rs.next()){
+				lastId = rs.getLong("result");
+				ids.add(rs.getLong("result"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) try {
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		// Fill missing ones
+		for (int x = ids.size(); x < limit; x++){
+			ids.add(--lastId);
+		}
+		
+		return ids;
 	}
+	
 }
