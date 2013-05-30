@@ -69,9 +69,10 @@ public class OsmWay extends OsmFeature {
 
 		id = json.findPath("id").getIntValue();
 		version = json.findPath("version").getIntValue();
-		user = json.findPath("user").getTextValue();
-		uid = json.findPath("uid").getTextValue();
-		timeStamp = new java.text.SimpleDateFormat("yyyy-mm-ddTHH:mm:ss:SSS").parse(json.findPath("timestamp").getTextValue());
+		user = json.findPath("user").isNull()? "uMappin" : json.findPath("user").getTextValue();
+		uid = json.findPath("uid").isNull()? "uMappin" : json.findPath("user").getTextValue();
+		timeStamp = json.findPath("timestamp").isNull()? new java.sql.Date(0):
+			new java.text.SimpleDateFormat("yyyy-mm-ddTHH:mm:ss:SSS").parse(json.findPath("timestamp").getTextValue());
 
 		setGeometry(json.findPath("geometry"));
 
@@ -94,11 +95,11 @@ public class OsmWay extends OsmFeature {
 
 		id = Long.parseLong(nodeElement.getAttribute("id"));
 		version = Integer.parseInt(nodeElement.getAttribute("version"));
-		user = nodeElement.getAttribute("user");
-		uid = nodeElement.getAttribute("uid");
+		user = nodeElement.getAttribute("user") == null? "uMappin" : nodeElement.getAttribute("user");
+		uid = nodeElement.getAttribute("uid") == null? "uMappin" : nodeElement.getAttribute("uid");
 
 		System.out.println("FIX TIMESTAMP : " + nodeElement.getAttribute("timestamp"));
-		timeStamp = new java.sql.Date(0);
+		timeStamp = nodeElement.getAttribute("timestamp") == null? new java.sql.Date(0) : new java.sql.Date(0);
 		//timeStamp = new java.text.SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssZ").parse("2010-01-02T10:04:33Z");
 		//timeStamp = new java.text.SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssZ").parse(nodeElement.getAttribute("timestamp"));
 
