@@ -7,7 +7,8 @@ public enum StatisticTypes {
     PARTICIPATIONS		("Game Participations"),
     WINS				("Games won"),
     UNFINISHED			("Games unfinished"),
-    PHOTOLIKES			("Likes on Loaded photos");
+    PHOTOLIKES			("Likes on Loaded photos"),
+    ROUTELIKES			("RouteLikes");
 	
 	private final String description;
 	

@@ -55,4 +55,3 @@ Account.loadUsersData = () ->
 Account.init = () ->
   Account.usersFiltersView = null
   Account.loadProfileData()
-  

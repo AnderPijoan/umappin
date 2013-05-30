@@ -206,6 +206,10 @@
 .menu a span {
   margin-right: 10px;
 }
+.menu a #messages-badge {
+  display: none;
+  float: right;
+}
 .menu a:hover,
 .menu a:focus {
   color: #fff;
@@ -298,6 +302,34 @@ input[type="color"]:focus,
 }
 #profile-picture #my-avatar {
   border-radius: 20px;
+}
+#content #users-filters form .input-prepend .add-on {
+  border-radius: 15px 0 0 15px;
+}
+#content #users-filters form .input-prepend input {
+  border-radius: 0 15px 15px 0;
+  width: 475px;
+}
+#content #users-filters .offset4 {
+  margin-left: 300px;
+}
+#content #users-filters .user-entry {
+  margin-right: 22px;
+  margin-left: -25px;
+}
+#content #users-filters .user-entry .row {
+  line-height: 5;
+}
+#content #users-filters .user-entry .span3 {
+  margin-left: 0;
+  width: 215px;
+}
+#content #users-filters .user-entry .span2 {
+  margin-left: 0;
+  width: 120px;
+}
+#content #users-filters .user-entry .span2 label {
+  line-height: 65px;
 }
 #content #forgot-error {
   width: 96%;
@@ -476,6 +508,18 @@ input[type="color"]:focus,
   width: 80%;
 }
 @media (min-width: 1200px) {
+  #content #users-filters form .input-prepend input {
+    width: 600px;
+  }
+  #content #users-filters .offset4 {
+    margin-left: 430px;
+  }
+  #content #users-filters .user-entry .span3 {
+    width: 275px;
+  }
+  #content #users-filters .user-entry .span2 {
+    width: 150px;
+  }
   #content .offset1-5 {
     margin-left: 80px;
   }
@@ -528,6 +572,18 @@ input[type="color"]:focus,
   }
 }
 @media (max-width: 979px) and (min-width: 768px) {
+  #content #users-filters form .input-prepend input {
+    width: 355px;
+  }
+  #content #users-filters .offset4 {
+    margin-left: 176px;
+  }
+  #content #users-filters .user-entry .span3 {
+    width: 140px;
+  }
+  #content #users-filters .user-entry .span2 {
+    width: 103px;
+  }
   #content .offset1-5 {
     margin-left: 50px;
   }
@@ -577,6 +633,45 @@ input[type="color"]:focus,
   }
 }
 @media (max-width: 767px) and (min-width: 480px) {
+  #content #users-filters form {
+    width: 89%;
+  }
+  #content #users-filters form .input-prepend {
+    width: 100%;
+  }
+  #content #users-filters form .input-prepend .add-on {
+    height: 22px;
+  }
+  #content #users-filters form .input-prepend input {
+    width: 100%;
+    padding: 0 10px;
+  }
+  #content #users-filters .btn-group {
+    clear: both;
+    margin-left: 0;
+    width: 51%;
+  }
+  #content #users-filters .user-entry .row {
+    line-height: 6;
+  }
+  #content #users-filters .user-entry .row .span3 {
+    width: 50%;
+    float: left;
+    margin: 18px 0;
+  }
+  #content #users-filters .user-entry .row .span2 {
+    width: 33%;
+    float: left;
+    line-height: 2;
+    margin-top: 16px;
+  }
+  #content #users-filters .user-entry .row .span2 label {
+    line-height: inherit;
+  }
+  #content #users-filters .user-entry .row .span1 {
+    float: left;
+    width: 15%;
+  }
   #content .offset1-5 {
     margin-left: 0;
   }
@@ -672,6 +767,43 @@ input[type="color"]:focus,
   }
 }
 @media (max-width: 480px) {
+  #content #users-filters form {
+    width: 82%;
+  }
+  #content #users-filters form .input-prepend {
+    width: 100%;
+  }
+  #content #users-filters form .input-prepend .add-on {
+    height: 22px;
+  }
+  #content #users-filters form .input-prepend input {
+    width: 100%;
+    padding: 0 10px;
+  }
+  #content #users-filters .btn-group {
+    clear: both;
+    margin-left: 0;
+    width: 54%;
+  }
+  #content #users-filters .user-entry .row {
+    line-height: 0;
+  }
+  #content #users-filters .user-entry .row .span3 {
+    width: 50%;
+    float: left;
+  }
+  #content #users-filters .user-entry .row .span2 {
+    width: 50%;
+    float: left;
+    margin-top: 9px;
+  }
+  #content #users-filters .user-entry .row .span2 label {
+    line-height: inherit;
+  }
+  #content #users-filters .user-entry .row .span1 {
+    float: left;
+    width: 50%;
+  }
   #content .offset1-5 {
     margin-left: 0;
   }

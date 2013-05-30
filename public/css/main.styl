@@ -152,6 +152,9 @@ box(opacy)
     padding-left: 20px;
     span
       margin-right: 10px;
+    #messages-badge
+      display none
+      float right
   a:hover,a:focus
     color white
     background-color color-olive
@@ -235,8 +238,30 @@ input[type="color"]:focus,
   background-color: color-beige
   #my-avatar
     border-radius 20px
-
 #content
+  #users-filters
+    form
+      .input-prepend
+        .add-on
+          border-radius: 15px 0 0 15px;
+        input
+          border-radius: 0 15px 15px 0;
+          width 475px
+    .offset4
+      margin-left 300px
+    .user-entry
+      margin-right: 22px;
+      margin-left: -25px;
+      .row
+        line-height 5
+      .span3
+        margin-left 0
+        width 215px
+      .span2
+        margin-left 0
+        width 120px
+        label
+          line-height: 65px;
   #forgot-error
     width: 96%;
     margin-bottom: 0 !important;
@@ -380,6 +405,18 @@ input[type="color"]:focus,
 
 @media (min-width: 1200px)
   #content
+    #users-filters
+      form
+        .input-prepend
+          input
+            width 600px
+      .offset4
+        margin-left: 430px;
+      .user-entry
+        .span3
+          width 275px
+        .span2
+          width 150px
     .offset1-5
       margin-left 80px
     form
@@ -423,9 +460,20 @@ input[type="color"]:focus,
   .menu
     a
       width: 86%;
-
 @media (max-width: 979px) and (min-width: 768px)
   #content
+    #users-filters
+      form
+        .input-prepend
+          input
+            width 355px
+      .offset4
+        margin-left: 176px;
+      .user-entry
+        .span3
+          width 140px
+        .span2
+          width 103px
     .offset1-5
       margin-left 50px
     form
@@ -466,9 +514,39 @@ input[type="color"]:focus,
   .menu
     a
       width: 78%;
-
 @media (max-width: 767px) and (min-width: 480px)
   #content
+    #users-filters
+      form
+        width: 89%;
+        .input-prepend
+          width: 100%;
+          .add-on
+            height: 22px;
+          input
+            width: 100%;
+            padding: 0 10px;
+      .btn-group
+        clear both
+        margin-left 0
+        width: 51%;
+      .user-entry
+        .row
+          line-height 6
+          .span3
+            width 50%
+            float left
+            margin 18px 0
+          .span2
+            width 33%
+            float left
+            line-height 2
+            margin-top: 16px;
+            label
+              line-height inherit
+          .span1
+            float left
+            width 15%
     .offset1-5
       margin-left 0
     .btn-primary
@@ -541,6 +619,35 @@ input[type="color"]:focus,
 
 @media (max-width: 480px)
   #content
+    #users-filters
+      form
+        width: 82%;
+        .input-prepend
+          width: 100%;
+          .add-on
+            height: 22px;
+          input
+            width: 100%;
+            padding: 0 10px;
+      .btn-group
+        clear both
+        margin-left 0
+        width: 54%;
+      .user-entry
+        .row
+          line-height 0
+          .span3
+            width 50%
+            float left
+          .span2
+            width 50%
+            float left
+            margin-top 9px
+            label
+              line-height inherit
+          .span1
+            float left
+            width 50%
     .offset1-5
       margin-left 0
     .btn-primary

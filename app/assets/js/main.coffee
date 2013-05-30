@@ -28,6 +28,12 @@ $ () ->
     Backbone.history.start()
   sessionRequest = $.get "/sessionuser?#{new Date().getTime()}"
   sessionRequest.done (data) ->
+    unreadDiscussions = $.get "/discussions/unread"
+    unreadDiscussions.done (unread) ->
+      $("#messages-badge").show();
+      $("#messages-badge").text(unread.length)
+      $("#message-unread").attr("href", "./#messages/message/"+unread.pop().id)
+      sessionStorage.setItem('unread-discusion',JSON.stringify(unread))
     if data.profilePicture
       profileImg = './photos/'+data.profilePicture+'/content'
     else
