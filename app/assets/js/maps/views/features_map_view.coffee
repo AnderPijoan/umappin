@@ -26,21 +26,21 @@ class window.Maps.FeaturesMapView extends Maps.MapView
         @drawLayer
         OpenLayers.Handler.Point
         'displayClass': 'olControlDrawFeaturePoint'
-        featureAdded: (feature, pixel) => @saveFeature feature
+        featureAdded: (feature, pixel) => @saveFeature feature, "node"
       )
 
       new OpenLayers.Control.DrawFeature(
         @drawLayer
         OpenLayers.Handler.Path
         'displayClass': 'olControlDrawFeaturePath'
-        featureAdded: (feature, pixel) => @saveFeature feature
+        featureAdded: (feature, pixel) => @saveFeature feature, "way"
       )
 
       new OpenLayers.Control.DrawFeature(
         @drawLayer
         OpenLayers.Handler.Polygon
         'displayClass': 'olControlDrawFeaturePolygon'
-        featureAdded: (feature, pixel) => @saveFeature feature
+        featureAdded: (feature, pixel) => @saveFeature feature, "relation"
       )
 
       new OpenLayers.Control.DrawFeature(
@@ -48,7 +48,7 @@ class window.Maps.FeaturesMapView extends Maps.MapView
         OpenLayers.Handler.RegularPolygon
         'displayClass': 'olControlDrawFeatureRegularPolygon'
         handlerOptions: { sides: 8 }
-        featureAdded: (feature, pixel) => @saveFeature feature
+        featureAdded: (feature, pixel) => @saveFeature feature, "relation"
       )
 
       new OpenLayers.Control.ModifyFeature(
@@ -129,20 +129,20 @@ class window.Maps.FeaturesMapView extends Maps.MapView
 
   # ---------------------------- REST/Feature handlers ------------------------------ #
   drawFeature: (featureId) ->
-    geojsonFormat = new OpenLayers.Format.GeoJSON()
-    feature = new Maps.Feature id: featureId
-    feature.fetch complete: (resp) =>
-      geom = geojsonFormat.read(JSON.stringify(feature.get 'geometry'), 'Geometry')
-      olGeom = new OpenLayers.Feature.Vector geom
-      olGeom.mapFeature = feature
-      @drawLayer.addFeatures [olGeom]
+    feature = new Maps.OsmNode id: featureId
+    feature.fetch complete: (resp) =>  @addFeatureToMap feature
 
-  saveFeature: (feature) ->
+
+  saveFeature: (feature, type) ->
     console.log feature
     geojsonFormat = new OpenLayers.Format.GeoJSON()
-    ft = new Maps.Feature
-      ownerId: @model.get 'ownerId'
-      geometry: JSON.parse geojsonFormat.write feature.geometry
+    ft = @createOsmFeature type
+    ft.set('user', (@model.get 'ownerId'))
+    ft.set('version', 1)
+    #ft.set('timeStamp', new Date())
+    osmgeom = feature.geometry.clone()
+    osmgeom.transform @map.getProjectionObject(), Maps.MapView.OSM_PROJECTION
+    ft.set('geometry', (JSON.parse geojsonFormat.write osmgeom))
     ft.once 'change', (evt) =>
       feature.mapFeature = ft
       fts = @model.get('features') or []
@@ -152,7 +152,11 @@ class window.Maps.FeaturesMapView extends Maps.MapView
 
   updateFeature: (feature) ->
     geojsonFormat = new OpenLayers.Format.GeoJSON()
-    feature.mapFeature.save geometry: JSON.parse geojsonFormat.write feature.geometry
+    osmgeom = feature.geometry.clone()
+    osmgeom.transform @map.getProjectionObject(), Maps.MapView.OSM_PROJECTION
+    feature.mapFeature.save
+      geometry: JSON.parse geojsonFormat.write osmgeom
+      version: feature.mapFeature.get('version') + 1
 
   deleteFeature: (feature) ->
     feature.mapFeature.destroy success: ()=>
@@ -160,3 +164,17 @@ class window.Maps.FeaturesMapView extends Maps.MapView
       @model.save
         features: features.splice(features.indexOf(feature.mapFeature.get 'id'), 1)
         { success: () => @drawLayer.removeFeatures [feature] }
+
+  createOsmFeature: (type) ->
+    ft = switch
+      when type is 'node' then new Maps.OsmNode
+      when type is 'way' then new Maps.OsmWay
+      when type is 'relation' then new Maps.OsmRelation
+
+  addFeatureToMap: (feature) =>
+    geojsonFormat = new OpenLayers.Format.GeoJSON()
+    osmGeom = geojsonFormat.read(JSON.stringify(feature.get 'geometry'), 'Geometry')
+    geom = osmGeom.clone().transform Maps.MapView.OSM_PROJECTION, @map.getProjectionObject()
+    olGeom = new OpenLayers.Feature.Vector geom
+    olGeom.mapFeature = feature
+    @drawLayer.addFeatures [olGeom]

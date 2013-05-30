@@ -171,7 +171,7 @@ public class OsmNodeREST extends ItemREST {
 		}
 		OsmNode newNode;
 		try {
-			if (!json.findPath("node").isNull()){
+			if (json.has("node") && !json.findPath("node").isNull()) {
 				newNode = new OsmNode(json.findPath("node"));
 			} else {
 				newNode = new OsmNode(json);
@@ -221,7 +221,7 @@ public class OsmNodeREST extends ItemREST {
 		}
 		OsmNode newNode;
 		try {
-			if (!json.findPath("node").isNull()){
+			if (json.has("node") && !json.findPath("node").isNull()){
 				newNode = new OsmNode(json.findPath("node"));
 			} else {
 				newNode = new OsmNode(json);
