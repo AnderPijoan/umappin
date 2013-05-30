@@ -19,7 +19,10 @@
 
         <div class="span9 ">
             <div class="publication_head">
-                <div class="publication_subject"><a href="#wall/comment/<%- rc.id %>"><%- rc.subject %></a></div>
+                <div class="publication_header">
+					<a><%- rc.subject %></a>
+					<a  href="#wall/comment/<%- rc.id %>"><span class="icon-bubbles"></span></a>
+				</div>
 				<div class="first_comment"><label> <%- rc.content %></label></div>
             </div>
 			<br/>
@@ -31,7 +34,7 @@
         <% maxPhotosSeen=5; %>
 
          <div class="span9 ">
-            <h2><%- rc.subject %></h2>
+            <h4><%- rc.subject %></h4>
              <br/>
              <div class="comments span9">
                  <% _.each(rc.messages, function(commentObject){ %>
