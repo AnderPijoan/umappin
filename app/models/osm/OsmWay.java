@@ -16,23 +16,16 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import models.User;
 
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.node.ArrayNode;
-import org.codehaus.jackson.node.JsonNodeFactory;
 import org.codehaus.jackson.node.ObjectNode;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import controllers.Application;
-import controllers.Constants;
-
 import play.db.DB;
 import play.libs.Json;
-import play.mvc.Result;
 
 public class OsmWay extends OsmFeature {
 
@@ -76,9 +69,10 @@ public class OsmWay extends OsmFeature {
 
 		id = json.findPath("id").getIntValue();
 		version = json.findPath("version").getIntValue();
-		user = json.findPath("user").getTextValue();
-		uid = json.findPath("uid").getTextValue();
-		timeStamp = new java.text.SimpleDateFormat("yyyy-mm-ddTHH:mm:ss:SSS").parse(json.findPath("timestamp").getTextValue());
+		user = json.findPath("user").isNull()? "uMappin" : json.findPath("user").getTextValue();
+		uid = json.findPath("uid").isNull()? "uMappin" : json.findPath("user").getTextValue();
+		timeStamp = json.findPath("timestamp").isNull()? new java.sql.Date(0):
+			new java.text.SimpleDateFormat("yyyy-mm-ddTHH:mm:ss:SSS").parse(json.findPath("timestamp").getTextValue());
 
 		setGeometry(json.findPath("geometry"));
 
@@ -101,11 +95,11 @@ public class OsmWay extends OsmFeature {
 
 		id = Long.parseLong(nodeElement.getAttribute("id"));
 		version = Integer.parseInt(nodeElement.getAttribute("version"));
-		user = nodeElement.getAttribute("user");
-		uid = nodeElement.getAttribute("uid");
+		user = nodeElement.getAttribute("user") == null? "uMappin" : nodeElement.getAttribute("user");
+		uid = nodeElement.getAttribute("uid") == null? "uMappin" : nodeElement.getAttribute("uid");
 
 		System.out.println("FIX TIMESTAMP : " + nodeElement.getAttribute("timestamp"));
-		timeStamp = new java.sql.Date(0);
+		timeStamp = nodeElement.getAttribute("timestamp") == null? new java.sql.Date(0) : new java.sql.Date(0);
 		//timeStamp = new java.text.SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssZ").parse("2010-01-02T10:04:33Z");
 		//timeStamp = new java.text.SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssZ").parse(nodeElement.getAttribute("timestamp"));
 
@@ -259,12 +253,22 @@ public class OsmWay extends OsmFeature {
 
 		try {
 
+			conn = ds.getConnection();
+
 			////////////////////////////////////////////////////////////////////////////////////
-			// OSM IDS START FROM 1 AND ON. IF WE CREATE A NEW WAY THAT DOESNT EXIST IN OSM,
-			// WE GIVE IT A NEGATIVE ID.
+			// OSM IDS START FROM 1 AND ON. 
+			// WHEN UPLOADING DATA TO OSM, THE NEW ELEMENTS HAVE NEGATIVE NODES.
+			// IF WE CREATE A NEW ELEMENT THAT DOESNT EXIST IN OSM, WE WILL STORE IT WITH NEGATIVE ID
+			// IN THE DATABASE.
+			// IF AN EDITOR SEND US A NEW ELEMENT THAT HAS CREATED, THE ID HAS TO BE 0 TO DIFFER IT
+			// FROM OSM EXISTING DATA (POSITIVE IDS) AND DATA WE HAVE CREATED (NEGATIVE IDS)
 			////////////////////////////////////////////////////////////////////////////////////
 
-			conn = ds.getConnection();
+			
+			// If the ID is 0, give it a new available (negative) ID
+			if (this.id == 0){
+				this.id = getFirstFreeId();
+			}
 
 			// Check if already exists
 			String sql = "select id, vers, tags from osmways where id = ? OR geom = ST_SimplifyPreserveTopology(ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913), " + TOLERANCE + ")";
@@ -679,29 +683,26 @@ public class OsmWay extends OsmFeature {
 	/** Returns the first free negative id nearest to 0
 	 * @return long id
 	 */
-	public static List<Long> getFirstFreeId(int limit){
+	public static Long getFirstFreeId(){
 
 		DataSource ds = DB.getDataSource();
 		Connection conn = null;
 		PreparedStatement st;
 		ResultSet rs;
 
-		List<Long> ids = new ArrayList<Long>();
-		// If there are no more longs returned, fill them with the consecutives to fill limit
-		long lastId = 0;
+		long id = 0;
 
 		try {
 			conn = ds.getConnection();
 
 			// Returns first negative available ID, NEEDS ID=0 DUMMY WAY INSERTED
-			String sql = "SELECT (t1.id - 1) as result FROM osmways AS t1 LEFT JOIN osmnodes as t2 ON t1.id - 1 = t2.id WHERE t2.id IS NULL AND (t1.id <= 0) order by t1.id desc limit " + limit;
+			String sql = "SELECT (t1.id - 1) as result FROM osmways AS t1 LEFT JOIN osmnodes as t2 ON t1.id - 1 = t2.id WHERE t2.id IS NULL AND (t1.id <= 0) order by t1.id desc limit 1";
 			st = conn.prepareStatement(sql);
 			rs = st.executeQuery();
 
 			// We found a nodeId to give
 			while(rs.next()){
-				lastId = rs.getLong("result");
-				ids.add(rs.getLong("result"));
+				id = rs.getLong("result");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -712,13 +713,7 @@ public class OsmWay extends OsmFeature {
 				e.printStackTrace();
 			}
 		}
-
-		// Fill missing ones
-		for (int x = ids.size(); x < limit; x++){
-			ids.add(--lastId);
-		}
-
-		return ids;
+		return id;
 	}
 
 }

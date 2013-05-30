@@ -31,7 +31,7 @@ public class TimelineREST extends ItemREST {
 			return ok(Json.toJson(Publication.publicationsToObjectNodes(publications)));
 		}
 	}
-
+	
 
 	public static Result getTimeline(String userId){
 		final User user = User.findById(userId, User.class);
@@ -39,6 +39,7 @@ public class TimelineREST extends ItemREST {
 			return badRequest(Constants.USERS_EMPTY.toString());
 		}
 		Timeline timeline = Timeline.findById(user.id, Timeline.class);
+		System.out.println("aqui llega..");
 		if (timeline == null) {
 			return badRequest(Constants.PUBLICATIONS_EMPTY.toString());
 		}
@@ -147,6 +148,7 @@ public class TimelineREST extends ItemREST {
 		if (user == null){
 			return badRequest(Constants.USER_NOT_LOGGED_IN.toString());
 		}
+
 		JsonNode json = request().body().asJson();
 		if(json == null) {
 			return badRequest(Constants.JSON_EMPTY.toString());
@@ -155,14 +157,17 @@ public class TimelineREST extends ItemREST {
 		Publication publication = null;
 		Message message = null;
 		Timeline timeline = null;
-
+		
 		publication = new Publication();		// Create Publication
 		publication.subject = json.findPath("subject").getTextValue();
+
+		/*
 		if (json.findPath("postPicture") != null){
 			publication.postPicture = new ObjectId(json.findPath("postPicture").getTextValue());
-		}
-		publication.save();
+		}*/
 
+		publication.save();
+		
 		try {
 
 			message = new Message();		// Create first message

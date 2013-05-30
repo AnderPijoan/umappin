@@ -22,7 +22,7 @@ public abstract class Post extends Item {
 	// Message/Content that the creator of the post entered
 	public ObjectId firstMessage;
 
-	public List<ObjectId> repliesIds;
+	public List<ObjectId> repliesIds = new ArrayList<ObjectId>();
 
 	@Formats.DateTime(pattern = "yyyy-MM-dd HH:mm:ss")
 	public Date lastWrote = new Date();
