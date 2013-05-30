@@ -206,6 +206,10 @@
 .menu a span {
   margin-right: 10px;
 }
+.menu a #messages-badge {
+  display: none;
+  float: right;
+}
 .menu a:hover,
 .menu a:focus {
   color: #fff;
