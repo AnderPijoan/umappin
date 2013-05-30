@@ -15,7 +15,6 @@ GET     /assets/*file               controllers.Assets.at(path="/public", file)
 # --------------------------------------------------------------------------
 
 
-
 # ----------------------------- Authentication routes -------------------------
 POST    /login                      controllers.Application.doLogin
 
@@ -139,7 +138,7 @@ PUT     /routes/:id                 controllers.User2RoutesREST.updateRoute(id: 
 GET     /awards						controllers.AwardREST.getAwards()
 GET     /awards/types				controllers.AwardREST.getAwardTypes()
 GET		/awards/:id					controllers.AwardREST.getAward(id: String)
-GET     /awards/type/:type			controllers.AwardREST.findByAwardType(type: String)
+GET     /awards/types/:type			controllers.AwardREST.findByAwardType(type: String)
 
 # REST CRUD for statistics
 GET     /users/:id/statistics		controllers.UserStatisticsREST.getUserStatistics(id: String)
@@ -181,7 +180,6 @@ GET     /osmnodes/:id/json            controllers.osm.OsmNodeREST.getJsonNodeByI
 GET     /osmnodes/:id/xml             controllers.osm.OsmNodeREST.getXmlNodeById(id: Long)
 GET     /osmnodes/intersects/:amount  controllers.osm.OsmNodeREST.getIntersectionNodes(amount: Integer)
 GET     /osmnodes/near/:amount        controllers.osm.OsmNodeREST.getNearNodes(amount: Integer)
-GET     /osmnodes/freeid/:amount      controllers.osm.OsmNodeREST.getFirstFreeId(amount: Integer)
 PUT     /osmnodes/:id                 controllers.osm.OsmNodeREST.updateNode(id: Long)
 POST    /osmnodes                     controllers.osm.OsmNodeREST.addNode()
 # DELETE  /osmnodes/:id                 controllers.osm.OsmNodeREST.deleteNode(id: Long)
@@ -192,7 +190,6 @@ GET     /osmways/:id/json            controllers.osm.OsmWayREST.getJsonWayById(i
 GET     /osmways/:id/xml             controllers.osm.OsmWayREST.getXmlWayById(id: Long)
 GET     /osmways/intersects/:amount  controllers.osm.OsmWayREST.getIntersectionWays(amount: Integer)
 GET     /osmways/near/:amount        controllers.osm.OsmWayREST.getNearWays(amount: Integer)
-GET     /osmways/freeid/:amount      controllers.osm.OsmWayREST.getFirstFreeId(amount: Integer)
 PUT     /osmways/:id                 controllers.osm.OsmWayREST.updateWay(id: Long)
 POST    /osmways                     controllers.osm.OsmWayREST.addWay()
 # DELETE  /osmways/:id                 controllers.osm.OsmWayREST.deleteWay(id: Long)

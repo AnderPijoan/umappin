@@ -61,12 +61,23 @@ public class UserStatistics {
 		List<Award> achievedAwards = Award.findByAwardTypeLimit(statistic, previousValue, newValue);
 		if(achievedAwards != null){
 			for(Award award : achievedAwards) {
-				this.userAwards.add(new UserAwards(award.getIdentifier()));
-				this.coins	+= award.coins;
-				this.points += award.points;
+				if(!hasAward(award.getIdentifier())){	// Comprobar que el usuario no ha conseguido ya el Award.
+					this.userAwards.add(new UserAwards(award.getIdentifier()));
+					this.coins	+= award.coins;
+					this.points += award.points;
+				}
 			}
 			updateLevel();
 		}
+	}
+	
+	private boolean hasAward(String id) {
+		for(UserAwards award : userAwards) {
+			if(award.getIdentifier() == id) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	private void updateLevel() {
@@ -152,6 +163,10 @@ public class UserStatistics {
 		
 		public void setRead() {
 			this.isNew = false;
+		}
+		
+		public String getIdentifier(){
+			return this.award;
 		}
 
 		/** Parses an user award list and prepares it for exporting to JSON
