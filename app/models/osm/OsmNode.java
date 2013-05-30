@@ -173,18 +173,18 @@ public class OsmNode extends OsmFeature {
 		}
 		return node;
 	}
-	
-	
+
+
 	public static List<OsmFeature> findByLocation(JsonNode geometry, int limit){
-		
+
 		DataSource ds = DB.getDataSource();
 		Connection conn = null;
 		PreparedStatement st;
 		ResultSet rs;
-		
+
 		List<OsmFeature> nodes = new ArrayList<OsmFeature>();
 		OsmNode node = null;
-		
+
 		try {
 			conn = ds.getConnection();
 			String sql = "select id, vers, usr, uid, timest, tags, st_asgeojson(ST_Transform(ST_SetSRID(geom, 900913),4326)) as geometry " +
@@ -216,18 +216,18 @@ public class OsmNode extends OsmFeature {
 		}
 		return nodes;
 	}
-	
-	
+
+
 	public static List<OsmFeature> findByIntersection(JsonNode geometry,int limit){
 
 		DataSource ds = DB.getDataSource();
 		Connection conn = null;
 		PreparedStatement st;
 		ResultSet rs;
-		
+
 		List<OsmFeature> nodes = new ArrayList<OsmFeature>();
 		OsmNode node = null;
-		
+
 		try {
 			conn = ds.getConnection();
 			String sql = "select id, vers, usr, uid, timest, tags, st_asgeojson(ST_Transform(ST_SetSRID(geom, 900913),4326)) as geometry " +
@@ -258,7 +258,7 @@ public class OsmNode extends OsmFeature {
 		}
 		return nodes;
 	}
-	
+
 
 	/** Update NodeOSM
 	 */
@@ -279,12 +279,22 @@ public class OsmNode extends OsmFeature {
 
 		try {
 
+			conn = ds.getConnection();
+
 			////////////////////////////////////////////////////////////////////////////////////
-			// OSM IDS START FROM 1 AND ON. IF WE CREATE A NEW NODE THAT DOESNT EXIST IN OSM,
-			// WE GIVE IT A NEGATIVE ID.
+			// OSM IDS START FROM 1 AND ON. 
+			// WHEN UPLOADING DATA TO OSM, THE NEW ELEMENTS HAVE NEGATIVE NODES.
+			// IF WE CREATE A NEW ELEMENT THAT DOESNT EXIST IN OSM, WE WILL STORE IT WITH NEGATIVE ID
+			// IN THE DATABASE.
+			// IF AN EDITOR SEND US A NEW ELEMENT THAT HAS CREATED, THE ID HAS TO BE 0 TO DIFFER IT
+			// FROM OSM EXISTING DATA (POSITIVE IDS) AND DATA WE HAVE CREATED (NEGATIVE IDS)
 			////////////////////////////////////////////////////////////////////////////////////
 
-			conn = ds.getConnection();
+			
+			// If the ID is 0, give it a new available (negative) ID
+			if (this.id == 0){
+				this.id = getFirstFreeId();
+			}
 
 			// Check if already exists
 			String sql = "select id, vers, tags from osmnodes where id = ? OR geom = ST_SimplifyPreserveTopology(ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913), " + TOLERANCE + ")";
@@ -451,12 +461,12 @@ public class OsmNode extends OsmFeature {
 		return osmNodeNode;
 	}
 
-	
+
 	public ObjectNode toOsmJson(){
 		return toObjectNode(this);
 	}
-	
-	
+
+
 	public Document toOsmXml() throws ParserConfigurationException{
 
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();  
@@ -464,7 +474,7 @@ public class OsmNode extends OsmFeature {
 		Document document = builder.newDocument();
 
 		Element osmElement = document.createElement("osm");
-		
+
 		Element osmNodeElement = document.createElement("node");
 
 		osmNodeElement.setAttribute("id", id+"");
@@ -483,38 +493,35 @@ public class OsmNode extends OsmFeature {
 			osmTagElement.setAttribute("v", tags.get(key));
 			osmNodeElement.appendChild(osmTagElement);
 		}
-		
+
 		document.appendChild(osmElement);
 		return document;
 	}
-	
-	
+
+
 	/** Returns the first free negative id nearest to 0
 	 * @return long id
 	 */
-	public static List<Long> getFirstFreeId(int limit){
+	public static Long getFirstFreeId(){
 
 		DataSource ds = DB.getDataSource();
 		Connection conn = null;
 		PreparedStatement st;
 		ResultSet rs;
 
-		List<Long> ids = new ArrayList<Long>();
-		// If there are no more longs returned, fill them with the consecutives to fill limit
-		long lastId = 0;
-		
+		long id = 0;
+
 		try {
 			conn = ds.getConnection();
 
 			// Returns first negative available ID, NEEDS ID=0 DUMMY NODE INSERTED
-			String sql = "SELECT (t1.id - 1) as result FROM osmnodes AS t1 LEFT JOIN osmnodes as t2 ON t1.id - 1 = t2.id WHERE t2.id IS NULL AND (t1.id <= 0) order by t1.id desc limit " + limit;
+			String sql = "SELECT (t1.id - 1) as result FROM osmnodes AS t1 LEFT JOIN osmnodes as t2 ON t1.id - 1 = t2.id WHERE t2.id IS NULL AND (t1.id <= 0) order by t1.id desc limit 1";
 			st = conn.prepareStatement(sql);
 			rs = st.executeQuery();
 
 			// We found a nodeId to give
 			while (rs.next()){
-				lastId = rs.getLong("result");
-				ids.add(rs.getLong("result"));
+				id = rs.getLong("result");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -525,13 +532,7 @@ public class OsmNode extends OsmFeature {
 				e.printStackTrace();
 			}
 		}
-		
-		// Fill missing ones
-		for (int x = ids.size(); x < limit; x++){
-			ids.add(--lastId);
-		}
-		
-		return ids;
+		return id;
 	}
-	
+
 }

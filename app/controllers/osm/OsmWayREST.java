@@ -277,10 +277,4 @@ public class OsmWayREST extends ItemREST {
 		List<OsmFeature> ways = OsmWay.findByIntersection(json.findPath("geometry"),limit);
 		return ok(Json.toJson(OsmFeature.toObjectNodes(ways)));
 	}
-
-
-	public static Result getFirstFreeId(int limit){
-		return ok(OsmWay.getFirstFreeId(limit) + "");
-	}
-
 }
