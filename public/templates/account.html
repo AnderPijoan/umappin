@@ -5,70 +5,83 @@
 <!------------------------------------- HTML -------------------------------------->
 <div class="well">
 
-    <ul class="nav nav-tabs">
-        <li class="active"><a href="#profile" data-toggle="tab">Profile</a></li>
-        <li><a href="#users" data-toggle="tab" onclick='Account.loadUsersData()'>Users</a></li>
-    </ul>
+	<ul class="nav nav-tabs">
+		<li class="active"><a href="#profile" data-toggle="tab">Profile</a></li>
+		<li><a href="#users" data-toggle="tab"
+			onclick='Account.loadUsersData()'>Users</a></li>
+		<li><a href="#statistics" data-toggle="tab"
+			onclick='Account.loadUserStatistics()'>Statistics</a></li>
+	</ul>
 
-    <div id="myTabContent" class="tab-content">
+	<div id="myTabContent" class="tab-content">
 
-        <div class="tab-pane active in" id="profile">
-            <form id="profile-form"></form>
-        </div>
+		<div class="tab-pane active in" id="profile">
+			<form id="profile-form"></form>
+		</div>
 
-        <div class="tab-pane fade" id="users">
-            <div id='users-filters'>
+		<div class="tab-pane fade" id="users">
+			<div id='users-filters'>
 
-                <div class="row">
+				<div class="row">
 
-                    <div class="span3">
-                        <form class="navbar-search pull-left">
-                            <input id="textFilter" type="search" placeholder="Search" class='input-medium'>
-                        </form>
-                    </div>
+					<div class="span3">
+						<form class="navbar-search pull-left">
+							<input id="textFilter" type="search" placeholder="Search"
+								class='input-medium'>
+						</form>
+					</div>
 
-                    <div class="btn-group span3" data-toggle="buttons-checkbox">
-                        <button type="button" id="followsFilter" class="btn btn-primary">Following</button>
-                        <button type="button" id="followedFilter" class="btn btn-primary">Followed By</button>
-                    </div>
+					<div class="btn-group span3" data-toggle="buttons-checkbox">
+						<button type="button" id="followsFilter" class="btn btn-primary">Following</button>
+						<button type="button" id="followedFilter" class="btn btn-primary">Followed
+							By</button>
+					</div>
 
-                </div>
+				</div>
 
-                <div class="row">
+				<div class="row">
 
-                    <div class="span1">
-                        <h4>Order By:</h4>
-                    </div>
+					<div class="span1">
+						<h4>Order By:</h4>
+					</div>
 
-                    <div class="span2">
-                        <select id='orderFilter'>
-                            <option value='name'>Name</option>
-                            <option value='lastLogin'>Last Login</option>
-                            <option value='discussions'>Discussions</option>
-                            <option value='awards'>Awards</option>
-                        </select>
-                    </div>
+					<div class="span2">
+						<select id='orderFilter'>
+							<option value='name'>Name</option>
+							<option value='lastLogin'>Last Login</option>
+							<option value='discussions'>Discussions</option>
+							<option value='awards'>Awards</option>
+						</select>
+					</div>
 
-                </div>
+				</div>
 
-                <div class="row">
+				<div class="row">
 
-                    <div class="span7">
-                        <ul id='userlist'></ul>
-                    </div>
+					<div class="span7">
+						<ul id='userlist'></ul>
+					</div>
 
-                </div>
+				</div>
 
-            </div>
+			</div>
 
-        </div>
-
-    </div>
+		</div>
+		<div class="tab-pane fade" id="statistics">
+			<div class="statisticContainer"></div>
+		</div>
+	</div>
 
 </div>
 
-
 <!------------------------------------- Templates -------------------------------------->
+<script type="text/template" id="statistic-Template">
+    <ul>
+        <li>Level: <%= level%></li>
+        <li>Points: <%= points%></li>
+    </ul>
+</script>
+
 <script type='text/template' id='user-row-template'>
   <div class='row'>
     <div class="span1">
@@ -122,4 +135,15 @@
         <label>Address</label>
         <textarea rows="3" class="input-xlarge" id='profile-address'><%- rc.data.address %></textarea>
     </div>
+</script>
+
+<script type="text/template" id="award-template">
+        <ul>
+            <li><%= name %></li>
+            <li><%= description %></li>
+            <li><%= coins %></li>
+            <li><%= points %></li>
+			<li><%= awardType %></li>
+			<li><%= limit %></li>
+        </ul>
 </script>

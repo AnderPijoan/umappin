@@ -96,6 +96,3 @@ var messagesApp = messagesApp || {};
 })();
 
 messagesApp.newDiscussionView = new messagesApp.NewDiscussionView();
-
-
-
