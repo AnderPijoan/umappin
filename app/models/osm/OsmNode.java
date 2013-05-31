@@ -365,7 +365,7 @@ public class OsmNode extends OsmFeature {
                         ((tags != null && tags.size() > 0) ? ", " + tagsToHstoreFormat(tags) : "" ) + ") returning id";
 
                   st = conn.prepareStatement(sql);
-                  st.setInt(1, this.id);
+                  st.setLong(1, this.id);
                   st.setInt(2, this.version);
                   st.setString(3, this.user);
                   st.setString(4, this.uid);
