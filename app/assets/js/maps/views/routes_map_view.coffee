@@ -88,11 +88,6 @@ class window.Maps.RoutesMapView extends Maps.MapView
     @map.addPopup(feat.popup)
     @reloadTagEvents()
 
-    $('div.routes-popup').last().find('select').each () ->
-      data = $(@).attr('data')
-      $(@).find('option').each () -> $(@).attr('selected', true) unless $(@).val() != data
-      $(@).change()
-
     that = @
     $('.saveRouteDataButton').last().bind 'click', (e) ->
       props = {}
@@ -126,6 +121,12 @@ class window.Maps.RoutesMapView extends Maps.MapView
       $(@).parent().append("<label style='float:right'>Liked!!</label>")
       $(@).remove()
 
+  setLastTagsToSelects: (type) ->
+    $('div.routes-popup').last().find("select.#{type}").each () ->
+      data = $(@).attr('data')
+      $(@).find('option').each () -> $(@).attr('selected', true) unless $(@).val() != data
+      $(@).change()
+
   removeFeaturePopup: (feat) ->
     if (feat.popup)
       @map.removePopup feat.popup
@@ -143,15 +144,18 @@ class window.Maps.RoutesMapView extends Maps.MapView
       that.reloadTagEvents()
     url = "http://taginfo.openstreetmap.org/api/4/keys/all?page=1&rp=100&filter=in_wiki&sortname=count_all&sortorder=desc"
     $.get url, (keys) =>
-      html = "<option val=''>&nbsp;</option>"
+      html = "<option val=''></option>"
       html = (html + "<option val='#{entry.key}'>#{entry.key}</option>") for entry in keys.data
       $('select.tagKeySelect').html html
+      that.setLastTagsToSelects('tagKeySelect')
     $('select.tagKeySelect').change () ->
+      $(@).attr('data', $(@).val())
       url = "http://taginfo.openstreetmap.org/api/4/key/values?key=#{$(@).val()}&page=1&rp=100&sortname=count&sortorder=desc"
       $.get url, (resp) =>
-        html = "<option val=''>&nbsp;</option>"
+        html = "<option val=''></option>"
         html = (html + "<option val='#{entry.value}'>#{entry.value}</option>") for entry in resp.data
         $(@).next('select').html html
+        that.setLastTagsToSelects('tagValueSelect')
 
 
   # ---------------------------- Popup Handlers ------------------------------ #
