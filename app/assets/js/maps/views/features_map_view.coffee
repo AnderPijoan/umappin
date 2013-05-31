@@ -172,7 +172,7 @@ class window.Maps.FeaturesMapView extends Maps.MapView
       when type is 'relation' then new Maps.OsmRelation
 
   addFeatureToMap: (feature) =>
-    if feature.geometry?
+    if feature.get('geometry')? and feature.get('geometry')!=null
       geojsonFormat = new OpenLayers.Format.GeoJSON()
       osmGeom = geojsonFormat.read(JSON.stringify(feature.get 'geometry'), 'Geometry')
       geom = osmGeom.clone().transform Maps.MapView.OSM_PROJECTION, @map.getProjectionObject()
