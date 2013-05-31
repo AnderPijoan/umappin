@@ -338,26 +338,43 @@ public class OsmNode extends OsmFeature {
                         // Get the nodes tags and merge them with ours
                         this.tags.putAll(hstoreFormatToTags(rs.getString("tags")));
                     }
+                    
+                    // If theres no collition and the node won't be rejected
+                    if (!reject) {
+
+                        // Try updating, if the node doesnt exists, the query does nothing
+                        sql = "update osmnodes set vers = ?, usr = ?, uid = ?, timest = ?, " +
+                                "geom = ST_SimplifyPreserveTopology(ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913), " + TOLERANCE + ")" +
+                                ((tags != null && tags.size() > 0) ? ", tags = " + tagsToHstoreFormat(tags) : "" ) +
+                                " where id = ?";
+
+                        st = conn.prepareStatement(sql);
+                        st.setInt(1, this.version);
+                        st.setString(2, this.user);
+                        st.setString(3, this.uid);
+                        st.setDate(4, new java.sql.Date(timeStamp.getTime()));
+                        st.setString(5, Json.stringify(this.getGeometry()));
+                        st.setLong(6, this.id);
+                        st.executeUpdate();
+                    }
+                } else {
+                  //Ok, it dos not exist but it has already an id
+                  sql = "insert into osmnodes (id, vers, usr, uid, timest, geom " +
+                        ((tags != null && tags.size() > 0) ? ",tags" : "" ) + ") " +
+                        "values (?, ?, ?, ?, ?, ST_SimplifyPreserveTopology(ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913), " + TOLERANCE + ") " +
+                        ((tags != null && tags.size() > 0) ? ", " + tagsToHstoreFormat(tags) : "" ) + ") returning id";
+
+                  st = conn.prepareStatement(sql);
+                  st.setInt(1, this.id);
+                  st.setInt(2, this.version);
+                  st.setString(3, this.user);
+                  st.setString(4, this.uid);
+                  st.setDate(5, new java.sql.Date(timeStamp.getTime()));
+                  st.setString(6, Json.stringify(this.getGeometry()));
+                  rs = st.executeUpdate();
                 }
 
-                // If theres no collition and the node won't be rejected
-                if (!reject) {
-
-                    // Try updating, if the node doesnt exists, the query does nothing
-                    sql = "update osmnodes set vers = ?, usr = ?, uid = ?, timest = ?, " +
-                            "geom = ST_SimplifyPreserveTopology(ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913), " + TOLERANCE + ")" +
-                            ((tags != null && tags.size() > 0) ? ", tags = " + tagsToHstoreFormat(tags) : "" ) +
-                            " where id = ?";
-
-                    st = conn.prepareStatement(sql);
-                    st.setInt(1, this.version);
-                    st.setString(2, this.user);
-                    st.setString(3, this.uid);
-                    st.setDate(4, new java.sql.Date(timeStamp.getTime()));
-                    st.setString(5, Json.stringify(this.getGeometry()));
-                    st.setLong(6, this.id);
-                    st.executeUpdate();
-                }
+                
             }
 
 		} catch (SQLException e) {
