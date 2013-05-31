@@ -299,6 +299,15 @@ public class OsmNode extends OsmFeature {
 
             if (this.id == 0) {
 
+                // Check if location already exists
+                sql = "select tags from osmnodes where geom = ST_SimplifyPreserveTopology(ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913), " + TOLERANCE + ")";
+                st = conn.prepareStatement(sql);
+                st.setString(1, Json.stringify(this.getGeometry()));
+                rs = st.executeQuery();
+                // If some node with the same Location exists, merge out tags
+                while (rs.next())
+                    this.tags.putAll(hstoreFormatToTags(rs.getString("tags")));
+
                 sql = "insert into osmnodes (vers, usr, uid, timest, geom " +
                         ((tags != null && tags.size() > 0) ? ",tags" : "" ) + ") " +
                         "values (?, ?, ?, ?, ST_SimplifyPreserveTopology(ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913), " + TOLERANCE + ") " +
@@ -322,47 +331,45 @@ public class OsmNode extends OsmFeature {
                 st.setLong(1, this.id);
                 st.setString(2, Json.stringify(this.getGeometry()));
                 rs = st.executeQuery();
-
+                boolean exists = false;
                 // A node with the same ID or Location exists, check possible cases
-                if (rs.next()){
-
+                while (rs.next()){
                     // Node id already exists
-                    if(this.id > 0 && rs.getLong("id") == this.id){
+                    if(this.id != 0 && rs.getLong("id") == this.id){
                         // If our Node has same or lower version than the one in DB, reject it
-                        if (rs.getInt("vers") >= this.version){
-                            reject = true;
-                        }
-                    }
-                    // Location is used by another node
-                    else {
+                        exists = true;
+                        reject = rs.getInt("vers") >= this.version;
+                        break;
+                    } else { // Location is used by another node
                         // Get the nodes tags and merge them with ours
                         this.tags.putAll(hstoreFormatToTags(rs.getString("tags")));
                     }
-                    
-                    // If theres no collition and the node won't be rejected
-                    if (!reject) {
+                }
+                // If theres no collition and the node won't be rejected
+                if (exists && !reject) {
+                    // Try updating, if the node doesnt exists, the query does nothing
+                    sql = "update osmnodes set vers = ?, usr = ?, uid = ?, timest = ?, " +
+                            "geom = ST_SimplifyPreserveTopology(ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913), " +
+                            TOLERANCE + ")" +
+                            ((tags != null && tags.size() > 0) ? ", tags = " + tagsToHstoreFormat(tags) : "" ) +
+                            " where id = ?";
 
-                        // Try updating, if the node doesnt exists, the query does nothing
-                        sql = "update osmnodes set vers = ?, usr = ?, uid = ?, timest = ?, " +
-                                "geom = ST_SimplifyPreserveTopology(ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913), " + TOLERANCE + ")" +
-                                ((tags != null && tags.size() > 0) ? ", tags = " + tagsToHstoreFormat(tags) : "" ) +
-                                " where id = ?";
+                    st = conn.prepareStatement(sql);
+                    st.setInt(1, this.version);
+                    st.setString(2, this.user);
+                    st.setString(3, this.uid);
+                    st.setDate(4, new java.sql.Date(timeStamp.getTime()));
+                    st.setString(5, Json.stringify(this.getGeometry()));
+                    st.setLong(6, this.id);
+                    st.executeUpdate();
+                }
 
-                        st = conn.prepareStatement(sql);
-                        st.setInt(1, this.version);
-                        st.setString(2, this.user);
-                        st.setString(3, this.uid);
-                        st.setDate(4, new java.sql.Date(timeStamp.getTime()));
-                        st.setString(5, Json.stringify(this.getGeometry()));
-                        st.setLong(6, this.id);
-                        st.executeUpdate();
-                    }
-                } else {
+                if (!exists) {
                   //Ok, it dos not exist but it has already an id
                   sql = "insert into osmnodes (id, vers, usr, uid, timest, geom " +
                         ((tags != null && tags.size() > 0) ? ",tags" : "" ) + ") " +
                         "values (?, ?, ?, ?, ?, ST_SimplifyPreserveTopology(ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913), " + TOLERANCE + ") " +
-                        ((tags != null && tags.size() > 0) ? ", " + tagsToHstoreFormat(tags) : "" ) + ") returning id";
+                        ((tags != null && tags.size() > 0) ? ", " + tagsToHstoreFormat(tags) : "" ) + ")";
 
                   st = conn.prepareStatement(sql);
                   st.setLong(1, this.id);
@@ -373,8 +380,6 @@ public class OsmNode extends OsmFeature {
                   st.setString(6, Json.stringify(this.getGeometry()));
                   st.executeUpdate();
                 }
-
-                
             }
 
 		} catch (SQLException e) {
