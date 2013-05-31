@@ -371,7 +371,7 @@ public class OsmNode extends OsmFeature {
                   st.setString(4, this.uid);
                   st.setDate(5, new java.sql.Date(timeStamp.getTime()));
                   st.setString(6, Json.stringify(this.getGeometry()));
-                  rs = st.executeUpdate();
+                  st.executeUpdate();
                 }
 
                 
