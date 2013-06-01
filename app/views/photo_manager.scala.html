@@ -18,7 +18,7 @@
         <a onclick="testPost()" href="#" style="margin-bottom: 2em;">test with POST (new photo)</a>
 
         <input type="text" name="string_content_photo_update" id="string_content_photo_update" placeholder="photo id here">
-        <a onclick="testPostUpdate()" href="#">test with POST (update photo)</a>
+        <a onclick="testPutUpdate()" href="#">test with PUT (update photo)</a>
     </fieldset>
 
     <fieldset>
@@ -178,13 +178,13 @@ function addOptionalUserQueryString(){
 
 }
 
-function testPostUpdate(){
+function testPutUpdate(){
 
     var id = $('#string_content_photo_update').val();
     var uri = '@routes.PhotosREST.updatePhoto("%s")'.replace("%s",id);
 
     $.ajax({
-        type: "POST",
+        type: "PUT",
         url: uri + addOptionalUserQueryString(),
         cache: false,
         dataType: "json",
@@ -401,7 +401,7 @@ function handleFileSelect(evt) {
 
 
                 $.ajax({
-                    type: "POST",
+                    type: "PUT",
                     url: url + addOptionalUserQueryString(),
                     dataType: "json",
                     contentType: "application/json; charset=utf-8",
