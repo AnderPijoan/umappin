@@ -87,6 +87,7 @@ class window.Maps.RoutesMapView extends Maps.MapView
     )
     @map.addPopup(feat.popup)
     @reloadTagEvents()
+    @setLastTagsToSelects('routeDifficultySelect')
 
     that = @
     $('.saveRouteDataButton').last().bind 'click', (e) ->

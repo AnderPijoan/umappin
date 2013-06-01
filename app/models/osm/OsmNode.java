@@ -6,10 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
 import javax.sql.DataSource;
 import javax.xml.parsers.DocumentBuilder;
@@ -29,6 +26,10 @@ public class OsmNode extends OsmFeature {
 
 	private Point2D lonlat; //Latitude and Longitude in Lat/Lon format AND EPSG:4326. 
 	// It is translated to an EPSG:90013 geometry in PostGIS
+
+    public Point2D getPoint() {
+        return lonlat;
+    }
 
 	/* EXPECTED DATA EXAMPLES :
 	 * 
@@ -282,8 +283,6 @@ public class OsmNode extends OsmFeature {
 
 		try {
 
-			conn = ds.getConnection();
-
 			////////////////////////////////////////////////////////////////////////////////////
 			// OSM IDS START FROM 1 AND ON. 
 			// WHEN UPLOADING DATA TO OSM, THE NEW ELEMENTS HAVE NEGATIVE NODES.
@@ -305,9 +304,14 @@ public class OsmNode extends OsmFeature {
                 st.setString(1, Json.stringify(this.getGeometry()));
                 rs = st.executeQuery();
                 // If some node with the same Location exists, merge out tags
-                while (rs.next())
-                    this.tags.putAll(hstoreFormatToTags(rs.getString("tags")));
-
+                while (rs.next()) {
+                    HashMap<String, String> othertags = hstoreFormatToTags(rs.getString("tags"));
+                    if (othertags != null && othertags.size() >= 0) {
+                        if (this.tags == null)
+                            this.tags = new LinkedHashMap<>();
+                        this.tags.putAll(othertags);
+                    }
+                }
                 sql = "insert into osmnodes (vers, usr, uid, timest, geom " +
                         ((tags != null && tags.size() > 0) ? ",tags" : "" ) + ") " +
                         "values (?, ?, ?, ?, ST_SimplifyPreserveTopology(ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913), " + TOLERANCE + ") " +
@@ -335,14 +339,19 @@ public class OsmNode extends OsmFeature {
                 // A node with the same ID or Location exists, check possible cases
                 while (rs.next()){
                     // Node id already exists
-                    if(this.id != 0 && rs.getLong("id") == this.id){
+                    if(this.id != 0 && rs.getLong("id") == this.id) {
                         // If our Node has same or lower version than the one in DB, reject it
                         exists = true;
                         reject = rs.getInt("vers") >= this.version;
                         break;
                     } else { // Location is used by another node
                         // Get the nodes tags and merge them with ours
-                        this.tags.putAll(hstoreFormatToTags(rs.getString("tags")));
+                        HashMap<String, String> othertags = hstoreFormatToTags(rs.getString("tags"));
+                        if (othertags != null && othertags.size() >= 0) {
+                            if (this.tags == null)
+                                this.tags = new LinkedHashMap<>();
+                            this.tags.putAll(othertags);
+                        }
                     }
                 }
                 // If theres no collition and the node won't be rejected
@@ -562,5 +571,10 @@ public class OsmNode extends OsmFeature {
 		}
 		return id;
 	}
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj) && this.lonlat.equals(((OsmNode)obj).getPoint()); //TODO Maybe an OR instead ???
+    }
 
 }

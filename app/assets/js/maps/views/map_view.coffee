@@ -75,9 +75,8 @@ class window.Maps.MapView extends Backbone.View
     keyboardControl = new OpenLayers.Control
     keyboardControl.handler = new OpenLayers.Handler.Keyboard(
       keyboardControl
-      'keyup': (e) =>
-        console.log "key #{e.keyCode}"
-        # TODO: handle different key events
+      #'keyup': (e) => console.log "key #{e.keyCode}"
+      # TODO: handle different key events
     )
     @controls.push keyboardControl
 

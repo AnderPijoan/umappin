@@ -41,9 +41,13 @@ public abstract class OsmFeature {
 		return id;
 	}
 
-	public long getVesion() {
+	public int getVesion() {
 		return version;
 	}
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
 
 	public Map<String,String> getTags() {
 		return tags;
