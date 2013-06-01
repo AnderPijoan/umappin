@@ -13,29 +13,35 @@ import models.osm.OsmFeature;
 import org.bson.types.ObjectId;
 import org.codehaus.jackson.JsonNode;
 
+import org.codehaus.jackson.node.ArrayNode;
+import org.codehaus.jackson.node.ObjectNode;
 import play.data.validation.Constraints.*;
 import play.db.DB;
 import play.libs.Json;
+import play.Logger;
 
 import java.io.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.sql.DataSource;
+
 
 @Entity
 public class Photo {
 
 	private static final String IS_BEAUTIFUL_COUNT = "is_beautiful_count";
 	private static final String IS_USEFUL_COUNT = "is_useful_count";
+	private static final String RANKING = "ranking";
+
+	private static final int OPEN_LAYERS_SRID = 4326;
+	private static final int OSM_SRID = 900913;
+
+	public static final  int MAX_RESULTS_RETURNED = 20;
+
 	@Id
 	private ObjectId id;
 
@@ -66,6 +72,15 @@ public class Photo {
 
 	@Embedded(IS_USEFUL_COUNT)
 	private int isUsefulCount;
+
+	@Embedded(RANKING)
+	private int ranking;
+
+	private java.util.Map<String, String> tags;
+
+	public static Photo findById(ObjectId obj) {
+		return MorphiaObject.datastore.get(Photo.class, obj);
+	}
 
 	public int getBeautifulCount() {
 		return isBeautifulCount;
@@ -153,9 +168,17 @@ public class Photo {
 		this.created = created;
 	}
 
+	public int getRanking() {
+		return ranking;
+	}
+
+	public void setRanking(int ranking) {
+		this.ranking = ranking;
+	}
+
 
 	/**
-	 * Save ONLY in MONGO
+	 * Saves in MONGO and the {@code GeoPoint} info is replicated in PostGIS (inserted/updated/deleted)
 	 * @return
 	 */
 	public ObjectId save() {
@@ -166,258 +189,25 @@ public class Photo {
 			}
 		}
 
+		//save in morphia first; we have to ensure it has an id, otherwise
+		//cannot be saved in GIS
 		MorphiaObject.datastore.save(this);
+
+		//check whether we have a longitude AND latitude and has content,
+		//if so, save in PostGIS
+		if(longitude != null && latitude != null && photoContents.size() > 0){
+			Logger.info("GeoPoint attempting to insert/update point for photo " + this.getId().toString());
+			GeoPoint.geosave(this);
+		}
+		else {
+			//if not, try to delete the potential postGis point associated to the photo
+			Logger.info("GeoPoint attempting to delete any point corresponding to photo " + this.getId().toString());
+			GeoPoint.geoDelete(this);
+		}
+
 		return this.getId();
 	}
 
-
-	/**
-	 * Save in MONGO and POSTGIS
-	 * @return
-	 */
-	public ObjectId geosave() {
-
-		DataSource ds = DB.getDataSource();
-		Connection conn = null;
-		PreparedStatement st;
-
-		// FIXME FILL THIS MAP!!
-		LinkedHashMap<String, String> tags = new LinkedHashMap<String, String>();
-
-		// POSTGIS
-		try {
-			conn = ds.getConnection();
-
-			// Try updating, if the photo doesnt exists, the query does nothing
-			String sql = "update photos set mongo_oid = ?, ranking = ?, timest = ?, " +
-					"location = ST_Transform(ST_SetSRID(?,4326),900913)" + 
-					(tags != null? ", tags = " + OsmFeature.tagsToHstoreFormat(tags) : "" ) +
-					" where id = ?";
-			st = conn.prepareStatement(sql);
-			st.setString(1, this.id.toString());
-			st.setInt(2, this.getBeautifulCount());
-			st.setDate(3, new java.sql.Date(created.getTime()));
-			st.setString(4, "ST_MakePoint(" + this.getLongitude() + "," + this.getLatitude() + ")");
-			st.executeUpdate();
-
-			// Try inserting, if the photo exists, the query does nothing
-			sql = "insert into photos (mongo_oid, ranking, timest, geom " + 
-					(tags != null? ",tags" : "" ) + ") " +
-					"select ?, ?, ?, ST_Transform(ST_SetSRID(?,4326),900913) " + 
-					(tags != null? ", " + OsmFeature.tagsToHstoreFormat(tags) : "" ) + " " +
-					"where not exists (select 1 from photos where mongo_oid = ?)";
-			st = conn.prepareStatement(sql);
-			st.setString(1, this.id.toString());
-			st.setInt(2, this.getBeautifulCount());
-			st.setDate(3, new java.sql.Date(created.getTime()));
-			st.setString(4, "ST_MakePoint(" + this.getLongitude() + "," + this.getLatitude() + ")");
-			st.setString(5, this.id.toString());
-			st.executeUpdate();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			if (conn != null) try {
-				conn.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-
-		// MONGO
-		return this.save();
-	}
-
-
-	public static Photo findById(ObjectId obj) {
-		return MorphiaObject.datastore.get(Photo.class, obj);
-	}
-
-
-	/** Get the amount limit tells of photos near the given location
-	 * 
-	 */
-	public static List<Photo> findByLocation(Double lon, Double lat, int limit) {
-
-		DataSource ds = DB.getDataSource();
-		Connection conn = null;
-		PreparedStatement st;
-		ResultSet rs;
-
-		List<Photo> photos = new ArrayList<Photo>();
-		Photo photo = null;
-
-		try {
-			conn = ds.getConnection();
-			String sql = "select mongo_oid, st_asgeojson(ST_Transform(ST_SetSRID(location, 900913),4326)) as geometry " +
-					"from photos ORDER BY location <-> ST_Transform(ST_SetSRID(?,4326),900913), ranking DESC LIMIT ?";
-			st = conn.prepareStatement(sql);
-			st.setString(1, "ST_MakePoint(" + lon + "," + lat + ")");
-			st.setInt(2, limit);
-			rs = st.executeQuery();
-
-			while (rs.next()) {
-				ObjectId oid = new ObjectId(rs.getString("mongo_oid"));
-				if (oid != null){
-					photo = Photo.findById(oid);
-					if (photo != null){
-						photos.add(photo);
-						// TODO maybe you would like to update the photos geometry
-					}
-				}
-			}
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			if (conn != null) try {
-				conn.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-		return photos;
-	}
-	
-	
-	/** Get the amount limit tells of photos near the given location but only for the given ranking
-	 * 
-	 */
-	public static List<Photo> findByLocationAndRanking(Double lon, Double lat, int ranking, int limit) {
-
-		DataSource ds = DB.getDataSource();
-		Connection conn = null;
-		PreparedStatement st;
-		ResultSet rs;
-
-		List<Photo> photos = new ArrayList<Photo>();
-		Photo photo = null;
-
-		try {
-			conn = ds.getConnection();
-			String sql = "select mongo_oid, st_asgeojson(ST_Transform(ST_SetSRID(location, 900913),4326)) as geometry " +
-					"from photos WHERE ranking = ? ORDER BY location <-> ST_Transform(ST_SetSRID(?,4326),900913) LIMIT ?";
-			st = conn.prepareStatement(sql);
-			st.setInt(1, ranking);
-			st.setString(2, "ST_MakePoint(" + lon + "," + lat + ")");
-			st.setInt(3, limit);
-			rs = st.executeQuery();
-
-			while (rs.next()) {
-				ObjectId oid = new ObjectId(rs.getString("mongo_oid"));
-				if (oid != null){
-					photo = Photo.findById(oid);
-					if (photo != null){
-						photos.add(photo);
-						// TODO maybe you would like to update the photos geometry
-					}
-				}
-			}
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			if (conn != null) try {
-				conn.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-		return photos;
-	}
-
-	
-	/** Get the amount limit tells of photos near the given location for the given key and value
-	 * 
-	 */
-	public static List<Photo> findByLocationAndKeyValue(Double lon, Double lat, String key, String value, int limit) {
-
-		DataSource ds = DB.getDataSource();
-		Connection conn = null;
-		PreparedStatement st;
-		ResultSet rs;
-
-		List<Photo> photos = new ArrayList<Photo>();
-		Photo photo = null;
-
-		try {
-			conn = ds.getConnection();
-			String sql = "select mongo_oid, st_asgeojson(ST_Transform(ST_SetSRID(location, 900913),4326)) as geometry " +
-					"from photos WHERE lower(tags->lower(?)) = lower(?) ORDER BY location <-> ST_Transform(ST_SetSRID(?,4326),900913), ranking DESC LIMIT ?";
-			st = conn.prepareStatement(sql);
-			st.setString(1, key);
-			st.setString(2, value);
-			st.setString(3, "ST_MakePoint(" + lon + "," + lat + ")");
-			st.setInt(4, limit);
-			rs = st.executeQuery();
-
-			while (rs.next()) {
-				ObjectId oid = new ObjectId(rs.getString("mongo_oid"));
-				if (oid != null){
-					photo = Photo.findById(oid);
-					if (photo != null){
-						photos.add(photo);
-						// TODO maybe you would like to update the photos geometry
-					}
-				}
-			}
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			if (conn != null) try {
-				conn.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-		return photos;
-	}
-	
-	
-	public static List<Photo> findByIntersection(JsonNode geometry, int limit) {
-
-		// Expected GEOJson geometry
-		
-		DataSource ds = DB.getDataSource();
-		Connection conn = null;
-		PreparedStatement st;
-		ResultSet rs;
-
-		List<Photo> photos = new ArrayList<Photo>();
-		Photo photo = null;
-
-		try {
-			conn = ds.getConnection();
-			String sql = "select mongo_oid, st_asgeojson(ST_Transform(ST_SetSRID(location, 900913),4326)) as geometry " +
-					"from photos where ST_Intersects(location, ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913)) ORDER BY ranking DESC LIMIT ?";
-			st = conn.prepareStatement(sql);
-			st.setString(1, Json.stringify(geometry));
-			st.setInt(2, limit);
-			rs = st.executeQuery();
-
-			while (rs.next()) {
-				ObjectId oid = new ObjectId(rs.getString("mongo_oid"));
-				if (oid != null){
-					photo = Photo.findById(oid);
-					if (photo != null){
-						photos.add(photo);
-						// TODO maybe you would like to update the photos geometry
-					}
-				}
-			}
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			if (conn != null) try {
-				conn.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-		return photos;
-	}
-	
 
 	public void addUpdateContent(File f, String mimeType) throws IOException {
 		Content c = new Content(f);
@@ -441,34 +231,12 @@ public class Photo {
 
 	}
 
-	/**
-	 * Delete from Mongo and PostGIS
-	 */
+
 	public void delete() {
-
-		// POSTGIS
-		DataSource ds = DB.getDataSource();
-		Connection conn = null;
-		PreparedStatement st;
-		try {
-			conn = ds.getConnection();
-			String sql = "delete from photos where id = ?";
-			st = conn.prepareStatement(sql);
-			st.setString(1, this.id.toString());
-			st.executeQuery();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			if (conn != null) try {
-				conn.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-
-		// MONGO
+		GeoPoint.geoDelete(this);
 		this.cleanUpExistingContents();
 		MorphiaObject.datastore.delete(this);
+
 	}
 
 	public void incrementCountersAndSave(int useful, int beautiful) {
@@ -501,6 +269,58 @@ public class Photo {
 				.field(PhotoUserLike.PHOTO_ID)
 				.equal(photo.getId());
 		MorphiaObject.datastore.delete(q);
+
+	}
+
+
+	public static List<Photo> findByPoligonAndTags(long[][][] polygon, int limit, int offset, java.util.Map<String, String> tags){
+
+		if(limit > MAX_RESULTS_RETURNED){
+			throw new IllegalArgumentException("can't query more than " + MAX_RESULTS_RETURNED + " records");
+		}
+
+		if(limit == 0){
+			limit = MAX_RESULTS_RETURNED;
+		}
+
+		// create a polygon json, see polygon example at http://www.geojson.org/geojson-spec.html#id4
+		// for instance the convex polygon
+		//
+		//		{ "type": "Polygon",
+		//				"coordinates": [
+		//			[ [100.0, 0.0], [101.0, 0.0], [101.0, 1.0], [100.0, 1.0], [100.0, 0.0] ]
+		//			]
+		//		}
+		ObjectNode json = Json.newObject();
+		try {
+			json.put("type", "Polygon");
+			ArrayNode polygonJson = json.putArray("coordinates");
+			//nested array, one for each closed route; realisticly there will be just one, the outer boundary
+			for(long[][] boundary : polygon){
+				ArrayNode boundaryJson = polygonJson.addArray();
+				for(long[] point : boundary){
+					ArrayNode pointJson = boundaryJson.addArray();
+					for(long coordinate : point){
+						pointJson.add(coordinate);
+					}
+				}
+			}
+		} catch (NullPointerException e) {
+			throw new IllegalArgumentException(
+					"array must be long[][][] and no element or nested array can be null: "
+					+ polygon != null ? polygon.toString() : "[]");
+		}
+
+		Logger.info("converted array " + polygon.toString() + " to geoJson " + Json.stringify(json));
+
+		Set<ObjectId> objIds = GeoPoint.findByIntersection(json, limit, offset, tags);
+
+		List<Photo> photos = MorphiaObject.datastore.createQuery(Photo.class)
+				.field("_id")
+				.in(objIds)
+				.order("-" + RANKING).asList();
+
+		return photos;
 
 	}
 
@@ -622,6 +442,287 @@ public class Photo {
 
 		public ObjectId getId() {
 			return id;
+		}
+	}
+
+	private static class GeoPoint {
+
+
+		/**
+		 * Saves in POSTGIS only
+		 * @return
+		 */
+		private static void geosave(Photo photo) {
+
+			if(photo.getId() == null){
+				throw new IllegalStateException("photo location cannot be saved, it lacks the id");
+			}
+			if(photo.getLongitude() == null || photo.getLatitude() == null || photo.getPhotoContents().size() == 0){
+				throw new IllegalArgumentException("photo location cannot be saved, latitude or longitude or Photo.Content is empty");
+			}
+
+			DataSource ds = DB.getDataSource();
+			Connection conn = null;
+			PreparedStatement st;
+
+			LinkedHashMap<String, String> tags = null;
+			if(photo.tags != null){
+				tags = new LinkedHashMap(photo.tags);
+			}
+
+			try {
+				conn = ds.getConnection();
+				// Try updating, if the photo doesn't exists, the query does nothing
+				String sql = "update photos set ranking = ?, timest = ?, " +
+					"location = ST_Transform(ST_SetSRID(ST_MakePoint(?, ?), " + OPEN_LAYERS_SRID + ")," + OSM_SRID + ")" +
+					(tags != null && tags.size() > 0 ? ", tags = " + OsmFeature.tagsToHstoreFormat(tags) : "" ) +
+					" where mongo_oid = ?";
+				st = conn.prepareStatement(sql);
+				st.setInt(1, photo.getRanking());
+				st.setDate(2, new java.sql.Date(new Date().getTime()));
+				st.setDouble(3, photo.getLongitude());
+				st.setDouble(4, photo.getLatitude());
+				st.setString(5, photo.getId().toString());
+				st.executeUpdate();
+
+				// Try inserting, if the photo exists, the query does nothing
+				sql = "insert into photos (mongo_oid, ranking, timest, location " +
+					(tags != null? ",tags" : "" ) + ") " +
+					"select ?, ?, ?, ST_Transform(ST_SetSRID(ST_MakePoint(?, ?), " + OPEN_LAYERS_SRID + ")," + OSM_SRID + ") " +
+					 (tags != null && tags.size() > 0 ? ", tags = " + OsmFeature.tagsToHstoreFormat(tags) : "" ) +
+					"where not exists (select 1 from photos where mongo_oid = ?)";
+				st = conn.prepareStatement(sql);
+				st.setString(1, photo.getId().toString());
+				st.setInt(2, photo.getRanking());
+				st.setDate(3, new java.sql.Date(new Date().getTime()));
+				st.setDouble(4, photo.getLongitude());
+				st.setDouble(5, photo.getLatitude());
+				st.setString(6, photo.getId().toString());
+				st.executeUpdate();
+
+				Logger.info("GeoPoint inserted/updated point for photo " + photo.getId().toString());
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+				Logger.error(
+						"GeoPoint: exception when saving location to PostGIS; skipping arror and going aheade with Photo save: "
+						+ e.getMessage());
+			} finally {
+				if (conn != null) try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+
+		}
+
+		/** Get the amount limit tells of photos near the given location
+		 *
+		 */
+		private static Set<ObjectId> findByLocation(Double lon, Double lat, int limit) {
+
+			DataSource ds = DB.getDataSource();
+			Connection conn = null;
+			PreparedStatement st;
+			ResultSet rs;
+
+			List<Photo> photos = new ArrayList<Photo>();
+			Photo photo = null;
+
+			Set<ObjectId> oids = new HashSet<>();
+
+			try {
+				conn = ds.getConnection();
+				String sql = "select mongo_oid, st_asgeojson(ST_Transform(ST_SetSRID(location, " + OSM_SRID + ")," + OPEN_LAYERS_SRID + ")) as geometry " +
+				"from photos ORDER BY location <-> ST_Transform(ST_SetSRID(?," + OPEN_LAYERS_SRID + ")," + OSM_SRID + "), ranking DESC LIMIT ?";
+				st = conn.prepareStatement(sql);
+				st.setString(1, "ST_MakePoint(" + lon + "," + lat + ")");
+				st.setInt(2, limit);
+				rs = st.executeQuery();
+
+				while (rs.next()) {
+					ObjectId oid = new ObjectId(rs.getString("mongo_oid"));
+
+					if (oid != null){
+						oids.add(oid);
+					}
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				if (conn != null) try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			return oids;
+		}
+
+		/** Get the amount limit tells of photos near the given location but only for the given ranking
+		 *
+		 */
+		private static List<Photo> findByLocationAndRanking(Double lon, Double lat, int ranking, int limit) {
+
+			DataSource ds = DB.getDataSource();
+			Connection conn = null;
+			PreparedStatement st;
+			ResultSet rs;
+
+			List<Photo> photos = new ArrayList<Photo>();
+			Photo photo = null;
+
+			try {
+				conn = ds.getConnection();
+				String sql = "select mongo_oid, st_asgeojson(ST_Transform(ST_SetSRID(location, " + OSM_SRID + ")," + OPEN_LAYERS_SRID + ")) as geometry " +
+				"from photos WHERE ranking = ? ORDER BY location <-> ST_Transform(ST_SetSRID(?," + OPEN_LAYERS_SRID + ")," + OSM_SRID + ") LIMIT ?";
+				st = conn.prepareStatement(sql);
+				st.setInt(1, ranking);
+				st.setString(2, "ST_MakePoint(" + lon + "," + lat + ")");
+				st.setInt(3, limit);
+				rs = st.executeQuery();
+
+				while (rs.next()) {
+					ObjectId oid = new ObjectId(rs.getString("mongo_oid"));
+					if (oid != null){
+
+						photo = findById(oid);
+						if (photo != null){
+							photos.add(photo);
+							// TODO maybe you would like to update the photos geometry
+						}
+					}
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				if (conn != null) try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			return photos;
+		}
+
+		/** Get the amount limit tells of photos near the given location for the given key and value
+		 *
+		 */
+		private static List<Photo> findByLocationAndKeyValue(Double lon, Double lat, String key, String value, int limit) {
+
+			DataSource ds = DB.getDataSource();
+			Connection conn = null;
+			PreparedStatement st;
+			ResultSet rs;
+
+			List<Photo> photos = new ArrayList<Photo>();
+			Photo photo = null;
+
+			try {
+				conn = ds.getConnection();
+				String sql = "select mongo_oid, st_asgeojson(ST_Transform(ST_SetSRID(location, " + OSM_SRID + ")," + OPEN_LAYERS_SRID + ")) as geometry " +
+				"from photos WHERE lower(tags->lower(?)) = lower(?) ORDER BY location <-> ST_Transform(ST_SetSRID(?," + OPEN_LAYERS_SRID + ")," + OSM_SRID + "), ranking DESC LIMIT ?";
+				st = conn.prepareStatement(sql);
+				st.setString(1, key);
+				st.setString(2, value);
+				st.setString(3, "ST_MakePoint(" + lon + "," + lat + ")");
+				st.setInt(4, limit);
+				rs = st.executeQuery();
+
+				while (rs.next()) {
+					ObjectId oid = new ObjectId(rs.getString("mongo_oid"));
+					if (oid != null){
+						photo = findById(oid);
+						if (photo != null){
+							photos.add(photo);
+							// TODO maybe you would like to update the photos geometry
+						}
+					}
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				if (conn != null) try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			return photos;
+		}
+
+		private static Set<ObjectId> findByIntersection(JsonNode geometry, int limit, int offset, java.util.Map<String, String> tags) {
+
+			// Expected GEOJson geometry
+
+			DataSource ds = DB.getDataSource();
+			Connection conn = null;
+			PreparedStatement st;
+			ResultSet rs;
+
+			//convert to a suitable type
+			LinkedHashMap<String, String> osmTags = null;
+			if(tags != null && tags.size() > 0) {
+				osmTags = new LinkedHashMap<String, String>(tags);
+			}
+
+			Set<ObjectId> oids = new HashSet<>();
+
+			try {
+				conn = ds.getConnection();
+				String sql = "select mongo_oid, st_asgeojson(ST_Transform(ST_SetSRID(location, " + OSM_SRID + ")," + OPEN_LAYERS_SRID + ")) as geometry " +
+				"from photos where ST_Intersects(location, ST_Transform(ST_SetSRID(st_geomfromgeojson(?)," + OPEN_LAYERS_SRID + ")," + OSM_SRID + ")) " +
+						(osmTags != null ? " and tags = " + OsmFeature.tagsToHstoreFormat(osmTags) : "" ) +
+						" ORDER BY ranking DESC LIMIT ? OFFSET ?";
+				st = conn.prepareStatement(sql);
+				st.setString(1, Json.stringify(geometry));
+				st.setInt(2, limit);
+				st.setInt(3, offset);
+				rs = st.executeQuery();
+
+				while (rs.next()) {
+					ObjectId oid = new ObjectId(rs.getString("mongo_oid"));
+					if (oid != null){
+						oids.add(oid);
+					}
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				if (conn != null) try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			return oids;
+		}
+
+		private static void geoDelete(Photo photo){
+
+			DataSource ds = DB.getDataSource();
+			Connection conn = null;
+			PreparedStatement st;
+			try {
+				conn = ds.getConnection();
+				String sql = "delete from photos where mongo_oid = ?";
+				st = conn.prepareStatement(sql);
+				st.setString(1, photo.getId().toString());
+				st.executeUpdate();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				if (conn != null) try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 
