@@ -273,7 +273,7 @@ public class Photo {
 	}
 
 
-	public static List<Photo> findByPoligonAndTags(long[][][] polygon, int limit, int offset, java.util.Map<String, String> tags){
+	public static List<Photo> findByPoligonAndTags(Double[][][] polygon, int limit, int offset, java.util.Map<String, String> tags){
 
 		if(limit > MAX_RESULTS_RETURNED){
 			throw new IllegalArgumentException("can't query more than " + MAX_RESULTS_RETURNED + " records");
@@ -296,11 +296,11 @@ public class Photo {
 			json.put("type", "Polygon");
 			ArrayNode polygonJson = json.putArray("coordinates");
 			//nested array, one for each closed route; realisticly there will be just one, the outer boundary
-			for(long[][] boundary : polygon){
+			for(Double[][] boundary : polygon){
 				ArrayNode boundaryJson = polygonJson.addArray();
-				for(long[] point : boundary){
+				for(Double[] point : boundary){
 					ArrayNode pointJson = boundaryJson.addArray();
-					for(long coordinate : point){
+					for(Double coordinate : point){
 						pointJson.add(coordinate);
 					}
 				}
@@ -449,7 +449,7 @@ public class Photo {
 
 
 		/**
-		 * Saves in POSTGIS only
+		 * Saves in POSTGIS the location of the photo
 		 * @return
 		 */
 		private static void geosave(Photo photo) {
@@ -505,7 +505,7 @@ public class Photo {
 			} catch (SQLException e) {
 				e.printStackTrace();
 				Logger.error(
-						"GeoPoint: exception when saving location to PostGIS; skipping arror and going aheade with Photo save: "
+						"GeoPoint: exception when saving location to PostGIS; skipping arror and going ahead; "
 						+ e.getMessage());
 			} finally {
 				if (conn != null) try {

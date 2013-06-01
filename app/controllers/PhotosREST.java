@@ -359,6 +359,45 @@ public class PhotosREST extends Controller {
         return ok(photoToJson(photo));
     }
 
+    public static Result getPhotosByRectangle(Double x1, Double x2, Double y1, Double y2, Integer offset, Integer limit){
+
+        //rect;x=39.001409,-84.578201;y=39.001409,-84.578201;
+
+        if(limit > Photo.MAX_RESULTS_RETURNED){
+            return badRequest("can't request more than " + Photo.MAX_RESULTS_RETURNED + " results");
+        }
+
+        if(x1 == null ||
+            x2 == null ||
+            y1 == null ||
+            y2 == null)
+        {
+            return badRequest("all four point of the rectangle must be specified");
+        }
+
+        if(offset < 0){
+            offset = 0;
+        }
+
+        Double[][][] rect = {{{x1, x2}, {y1, y2}}};
+
+        //tag search is not fully implemented, so we are passing them as null
+        List<Photo> photos = Photo.findByPoligonAndTags(rect, limit, offset, null);
+
+        Logger.info("found " + photos.size() + " photos in rect " + rect.toString());
+        ObjectNode json = Json.newObject();
+
+        ArrayNode arrayNode = json.putArray("photos");
+
+        for(Photo p : photos){
+            arrayNode.add(photoToJson(p));
+        }
+        json.put(RESULTS_OFFSET, offset);
+        json.put(RESULTS_LIMIT, limit);
+        return ok(json);
+
+
+    }
     private static String extractMimeImageContentType(byte[] bytes) {
 
         String type;
