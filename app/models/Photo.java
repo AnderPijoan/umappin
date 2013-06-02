@@ -40,6 +40,8 @@ public class Photo {
 	private static final int OPEN_LAYERS_SRID = 4326;
 	private static final int OSM_SRID = 900913;
 
+    //coordinate system in the traditional latitude and longitude projection
+    //unused at the moment
     private static final int LAT_LONG_SRID = 4326;
 
 	public static final  int MAX_RESULTS_RETURNED = 20;
@@ -206,6 +208,12 @@ public class Photo {
 		//cannot be saved in GIS
 		MorphiaObject.datastore.save(this);
 
+
+        //note, the following insert/update/delete in postGis could be made just in case a
+        //relevant detail has changed, not at every update.
+        // Just hook a flag (e.g. "toUpdateInGis = true") into the set methods of
+        // those fields and use the convention of never accessing directly the fields (use always a setter)
+
 		//check whether the photo is searcheable, has a longitude AND latitude and has content,
 		//if so, save in PostGIS
 		if(isSearchable && longitude != null && latitude != null && photoContents.size() > 0){
@@ -285,6 +293,15 @@ public class Photo {
 
 	}
 
+
+    /** Looks for Photos that intersect the specified polygon
+     *
+     * @param polygon A 3x3 matrix of Doubles, to represent generic polygons with holes, similar to the GeoJSON specs
+     * @param limit Max results returned in a single query for pagination
+     * @param offset First result to display. Starts with 0
+     * @param tags Map of key/values tags. Unsupported so far.
+     * @return List of photos ordered by photo ranking in descendant order
+     */
 
 	public static List<Photo> findByPoligonAndTags(Double[][][] polygon, int limit, int offset, java.util.Map<String, String> tags){
 
@@ -494,8 +511,8 @@ public class Photo {
 				conn = ds.getConnection();
 				// Try updating, if the photo doesn't exists, the query does nothing
 				String sql = "update photos set ranking = ?, timest = ?, " +
-					//"location = ST_Transform(ST_SetSRID(ST_MakePoint(?, ?), " + OPEN_LAYERS_SRID + ")," + OSM_SRID + ")" +
-					"location = ST_Transform(ST_SetSRID(ST_MakePoint(?, ?), " + LAT_LONG_SRID + ")," + OSM_SRID + ")" +
+					"location = ST_Transform(ST_SetSRID(ST_MakePoint(?, ?), " + OPEN_LAYERS_SRID + ")," + OSM_SRID + ")" +
+					//"location = ST_Transform(ST_SetSRID(ST_MakePoint(?, ?), " + LAT_LONG_SRID + ")," + OSM_SRID + ")" +
 					(tags != null && tags.size() > 0 ? ", tags = " + OsmFeature.tagsToHstoreFormat(tags) : "" ) +
 					" where mongo_oid = ?";
 				st = conn.prepareStatement(sql);
@@ -509,8 +526,8 @@ public class Photo {
 				// Try inserting, if the photo exists, the query does nothing
 				sql = "insert into photos (mongo_oid, ranking, timest, location " +
 					(tags != null? ",tags" : "" ) + ") " +
-					//"select ?, ?, ?, ST_Transform(ST_SetSRID(ST_MakePoint(?, ?), " + OPEN_LAYERS_SRID + ")," + OSM_SRID + ") " +
-					"select ?, ?, ?, ST_Transform(ST_SetSRID(ST_MakePoint(?, ?), " + LAT_LONG_SRID + ")," + OSM_SRID + ") " +
+					"select ?, ?, ?, ST_Transform(ST_SetSRID(ST_MakePoint(?, ?), " + OPEN_LAYERS_SRID + ")," + OSM_SRID + ") " +
+					//"select ?, ?, ?, ST_Transform(ST_SetSRID(ST_MakePoint(?, ?), " + LAT_LONG_SRID + ")," + OSM_SRID + ") " +
 					 (tags != null && tags.size() > 0 ? ", tags = " + OsmFeature.tagsToHstoreFormat(tags) : "" ) +
 					"where not exists (select 1 from photos where mongo_oid = ?)";
 				st = conn.prepareStatement(sql);
