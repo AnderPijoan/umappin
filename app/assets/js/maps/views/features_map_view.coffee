@@ -319,7 +319,7 @@ class window.Maps.FeaturesMapView extends Maps.MapView
     p.transform @map.getProjectionObject(), Maps.MapView.OSM_PROJECTION
     geojsonFormat = new OpenLayers.Format.GeoJSON()
     json = "{\"geometry\": #{geojsonFormat.write p} }"
-    amount = 20 # TODO: we'll pick it up from a control
+    amount = 2 # TODO: we'll pick it up from a control
     bounds = new OpenLayers.Bounds
     bounds.extend p
     $.ajax

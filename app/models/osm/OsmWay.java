@@ -349,8 +349,8 @@ public class OsmWay extends OsmFeature {
                 if (!exists) {
                     //Ok, it dos not exist but it has already an id
                     sql = "insert into osmways (id, vers, usr, uid, timest, nodes, geom " +
-                            (tags != null? ",tags" : "" ) + ") " +
-                            "select ?, ?, ?, ?, ?, ?, ST_SimplifyPreserveTopology(ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913), " + TOLERANCE + ") " +
+                            ((tags != null && tags.size() > 0) ? ",tags" : "" ) + ") " +
+                            "values (?, ?, ?, ?, ?, ?, ST_SimplifyPreserveTopology(ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913), " + TOLERANCE + ") " +
                             ((tags != null && tags.size() > 0) ?  ", " + tagsToHstoreFormat(tags) : "" ) + " )";
                     st = conn.prepareStatement(sql);
                     st.setLong(1, this.id);

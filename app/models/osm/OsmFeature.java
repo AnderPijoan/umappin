@@ -118,12 +118,28 @@ public abstract class OsmFeature {
 			return tags;
 		}
 
+        int tStart = 0;
+        String key = "", value = "";
+        for (int i = hstore.indexOf("\"", 0), t= 0; i != -1; i =  hstore.indexOf("\"", i+1), t++)
+            switch(t % 4) {
+                case 0:
+                case 2: tStart = i;
+                        break;
+                case 1: key = hstore.substring(tStart + 1, i);
+                        break;
+                case 3: value = hstore.substring(tStart + 1, i);
+                        tags.put(key.trim(), value.trim());
+                        break;
+            }
+
+        /* This does not work due to commas inside tags or values
 		String[] tagPairs = hstore.split(",");
 
 		for (String tagKV : tagPairs){
 			String[] KV = tagKV.split("=>");
 			tags.put(KV[0].replace("\"", "").trim(), KV[1].replace("\"", "").trim());
 		}
+		*/
 
 		return tags;
 	}
