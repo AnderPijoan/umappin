@@ -92,8 +92,8 @@ public class PhotoUserLike {
         if(offset < 0){
             offset = 0;
         }
-        if (limit <= 0 || limit > MAX_RESULTS_RETURNED){
-            limit = MAX_RESULTS_RETURNED;
+        if (limit <= 0 || limit > MAX_RESULTS_RETURNED + 1){
+            limit = MAX_RESULTS_RETURNED + 1;
         }
         q.offset(offset).limit(limit);
 

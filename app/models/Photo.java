@@ -40,9 +40,12 @@ public class Photo {
 	private static final int OPEN_LAYERS_SRID = 4326;
 	private static final int OSM_SRID = 900913;
 
-	public static final  int MAX_RESULTS_RETURNED = 20;
+    private static final int LAT_LONG_SRID = 4326;
 
-	@Id
+	public static final  int MAX_RESULTS_RETURNED = 20;
+    private static final String IS_SEARCHABLE = "is_searcheable";
+
+    @Id
 	private ObjectId id;
 
 	@Required
@@ -76,11 +79,19 @@ public class Photo {
 	@Embedded(RANKING)
 	private int ranking;
 
+    //specifies if a photo should show up in non-spot queries (like geo-queries)
+	@Embedded(IS_SEARCHABLE)
+	private boolean isSearchable = false;
+
 	private java.util.Map<String, String> tags;
 
-	public static Photo findById(ObjectId obj) {
-		return MorphiaObject.datastore.get(Photo.class, obj);
-	}
+    public boolean isSearchable() {
+        return isSearchable;
+    }
+
+    public void setSearchable(boolean searchable) {
+        this.isSearchable = searchable;
+    }
 
 	public int getBeautifulCount() {
 		return isBeautifulCount;
@@ -108,7 +119,6 @@ public class Photo {
 	public ObjectId getId() {
 		return id;
 	}
-
 
 	public ObjectId getOwnerId() {
 		return ownerId;
@@ -176,6 +186,9 @@ public class Photo {
 		this.ranking = ranking;
 	}
 
+    public static Photo findById(ObjectId obj) {
+        return MorphiaObject.datastore.get(Photo.class, obj);
+    }
 
 	/**
 	 * Saves in MONGO and the {@code GeoPoint} info is replicated in PostGIS (inserted/updated/deleted)
@@ -193,9 +206,9 @@ public class Photo {
 		//cannot be saved in GIS
 		MorphiaObject.datastore.save(this);
 
-		//check whether we have a longitude AND latitude and has content,
+		//check whether the photo is searcheable, has a longitude AND latitude and has content,
 		//if so, save in PostGIS
-		if(longitude != null && latitude != null && photoContents.size() > 0){
+		if(isSearchable && longitude != null && latitude != null && photoContents.size() > 0){
 			Logger.info("GeoPoint attempting to insert/update point for photo " + this.getId().toString());
 			GeoPoint.geosave(this);
 		}
@@ -275,13 +288,9 @@ public class Photo {
 
 	public static List<Photo> findByPoligonAndTags(Double[][][] polygon, int limit, int offset, java.util.Map<String, String> tags){
 
-		if(limit > MAX_RESULTS_RETURNED){
-			throw new IllegalArgumentException("can't query more than " + MAX_RESULTS_RETURNED + " records");
-		}
-
-		if(limit == 0){
-			limit = MAX_RESULTS_RETURNED;
-		}
+        if (limit <= 0 || limit > MAX_RESULTS_RETURNED + 1){
+            limit = MAX_RESULTS_RETURNED + 1;
+        }
 
 		// create a polygon json, see polygon example at http://www.geojson.org/geojson-spec.html#id4
 		// for instance the convex polygon
@@ -313,19 +322,30 @@ public class Photo {
 
 		Logger.info("converted array " + polygon.toString() + " to geoJson " + Json.stringify(json));
 
-		Set<ObjectId> objIds = GeoPoint.findByIntersection(json, limit, offset, tags);
+        Set<ObjectId> objIds = GeoPoint.findByIntersection(json, limit, offset, tags);
 
-		List<Photo> photos = MorphiaObject.datastore.createQuery(Photo.class)
-				.field("_id")
-				.in(objIds)
-				.order("-" + RANKING).asList();
+        if(objIds.size() > 0) {
+            List<Photo> photos = MorphiaObject.datastore.createQuery(Photo.class)
+                    .field("_id")
+                    .in(objIds)
+                    .order("-" + RANKING).asList();
+            return photos;
 
-		return photos;
+        }
 
+        // to get a readable result from the database use:
+        //    SELECT mongo_oid, ranking, timest, tags,
+        //        ST_AsGeoJSON(ST_Transform(ST_SetSRID(location, 900913), 4326)) as openLayers_coords,
+        //        ST_AsGeoJSON(location) as raw_coords
+        //    FROM photos;
+
+        //no result found, returning empty List
+        return new ArrayList<Photo>();
 	}
 
 
-	@Entity("Photo_Content")
+
+    @Entity("Photo_Content")
 	public static class Content{
 
 		public void setId(ObjectId id) {
@@ -474,7 +494,8 @@ public class Photo {
 				conn = ds.getConnection();
 				// Try updating, if the photo doesn't exists, the query does nothing
 				String sql = "update photos set ranking = ?, timest = ?, " +
-					"location = ST_Transform(ST_SetSRID(ST_MakePoint(?, ?), " + OPEN_LAYERS_SRID + ")," + OSM_SRID + ")" +
+					//"location = ST_Transform(ST_SetSRID(ST_MakePoint(?, ?), " + OPEN_LAYERS_SRID + ")," + OSM_SRID + ")" +
+					"location = ST_Transform(ST_SetSRID(ST_MakePoint(?, ?), " + LAT_LONG_SRID + ")," + OSM_SRID + ")" +
 					(tags != null && tags.size() > 0 ? ", tags = " + OsmFeature.tagsToHstoreFormat(tags) : "" ) +
 					" where mongo_oid = ?";
 				st = conn.prepareStatement(sql);
@@ -488,7 +509,8 @@ public class Photo {
 				// Try inserting, if the photo exists, the query does nothing
 				sql = "insert into photos (mongo_oid, ranking, timest, location " +
 					(tags != null? ",tags" : "" ) + ") " +
-					"select ?, ?, ?, ST_Transform(ST_SetSRID(ST_MakePoint(?, ?), " + OPEN_LAYERS_SRID + ")," + OSM_SRID + ") " +
+					//"select ?, ?, ?, ST_Transform(ST_SetSRID(ST_MakePoint(?, ?), " + OPEN_LAYERS_SRID + ")," + OSM_SRID + ") " +
+					"select ?, ?, ?, ST_Transform(ST_SetSRID(ST_MakePoint(?, ?), " + LAT_LONG_SRID + ")," + OSM_SRID + ") " +
 					 (tags != null && tags.size() > 0 ? ", tags = " + OsmFeature.tagsToHstoreFormat(tags) : "" ) +
 					"where not exists (select 1 from photos where mongo_oid = ?)";
 				st = conn.prepareStatement(sql);

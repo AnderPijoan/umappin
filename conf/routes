@@ -164,8 +164,10 @@ GET     /photos/:photoId/userlikes          controllers.PhotosREST.getPhotoUserL
 
 
 #find photos by rectangle
-#GET     /photos/rect;x=$a<\d+(\.\d*)>          controllers.PhotosREST.getPhotosByRectangle(a : Double, b : Double?= 0, c : Double?= 0, d : Double?= 0, offset : Integer ?= 0, limit : Integer ?= models.Photo.MAX_RESULTS_RETURNED)
-GET     /photos/rect;x=$a<\d+(\.\d*)>,$b<\d+(\.\d*)>;y=$c<\d+(\.\d*)>,$d<\d+(\.\d*)>          controllers.PhotosREST.getPhotosByRectangle(a : Double, b : Double, c : Double, d : Double, offset : Integer ?= 0, limit : Integer ?= models.Photo.MAX_RESULTS_RETURNED)
+#GET     /photos/rect;x=:a          controllers.PhotosREST.getPhotosByRectangle(a : Double, b : Double?= 0, c : Double?= 0, d : Double?= 0, offset : Integer ?= 0, limit : Integer ?= models.Photo.MAX_RESULTS_RETURNED)
+#GET     /photos/rect;x=$a<\d+(\.\d*)>,$b<\d+(\.\d*)>;y=$c<\d+(\.\d*)>,$d<\d+(\.\d*)>          controllers.PhotosREST.getPhotosByRectangle(a : Double, b : Double, c : Double, d : Double, offset : Integer ?= 0, limit : Integer ?= models.Photo.MAX_RESULTS_RETURNED)
+#GET     /photos/rect;x=:a,:b;y=:c,:d          controllers.PhotosREST.getPhotosByRectangle(a : Double, b : Double, c : Double, d : Double, offset : Integer ?= 0, limit : Integer ?= models.Photo.MAX_RESULTS_RETURNED)
+GET     /photos/rect                           controllers.PhotosREST.getPhotosByRectangle(x1 : Double, x2 : Double, y1 : Double, y2 : Double, offset : Integer ?= 0, limit : Integer ?= models.Photo.MAX_RESULTS_RETURNED)
 
 
 # REST CRUD for pictures

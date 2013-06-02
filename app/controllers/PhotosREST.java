@@ -51,9 +51,11 @@ public class PhotosREST extends Controller {
     //max size of a photo uploaded via multipart form = 4MB
     public static final int MAX_MULTIPART_UPLOAD_SIZE = 6 * 1024 * 1024;
     //json attribute that specify the pagination params
+    public static final String RESULTS_RETURNED = "results";
     public static final String RESULTS_OFFSET = "offset";
     public static final String RESULTS_LIMIT = "limit";
-
+    private static final String RESULTS_HAS_NEXT = "has_next";
+    private static final String PHOTO_IS_SEARCHABLE = "is_searchable";
 
     @BodyParser.Of(value = BodyParser.MultipartFormData.class,
             maxLength = MAX_MULTIPART_UPLOAD_SIZE)
@@ -217,6 +219,7 @@ public class PhotosREST extends Controller {
         if(json.has(TITLE)) photo.setTitle(json.findPath(TITLE).getTextValue());
         if(json.has(DESCRIPTION)) photo.setDescription(json.findPath(DESCRIPTION).getTextValue());
         if(json.has(ID)) photo.setId(stringToObjectId(json.findPath(ID).getTextValue()));
+        if(json.has(PHOTO_IS_SEARCHABLE)) photo.setSearchable(json.findPath(PHOTO_IS_SEARCHABLE).getBooleanValue());
         return photo;
     }
 
@@ -240,6 +243,8 @@ public class PhotosREST extends Controller {
 
         if(photo.getUsefulCount() != 0) json.put(IS_USEFUL_COUNT, photo.getUsefulCount());
         if(photo.getBeautifulCount() != 0) json.put(IS_BEAUTIFUL_COUNT, photo.getBeautifulCount());
+
+        json.put(PHOTO_IS_SEARCHABLE, photo.isSearchable());
 
 
         //if the photo is already persisted (as it normally would)
@@ -379,21 +384,29 @@ public class PhotosREST extends Controller {
             offset = 0;
         }
 
-        Double[][][] rect = {{{x1, x2}, {y1, y2}}};
+        Double[][][] rect = {{
+                {x1, y1},
+                {x1, y2},
+                {x2, y2},
+                {x2, y1}
+        }};
 
         //tag search is not fully implemented, so we are passing them as null
-        List<Photo> photos = Photo.findByPoligonAndTags(rect, limit, offset, null);
+        List<Photo> photos = Photo.findByPoligonAndTags(rect, limit + 1, offset, null);
 
-        Logger.info("found " + photos.size() + " photos in rect " + rect.toString());
+        Logger.info("found " + photos.size() + " photo(s) in rect");
         ObjectNode json = Json.newObject();
 
-        ArrayNode arrayNode = json.putArray("photos");
+        ArrayNode arrayNode = json.putArray(RESULTS_RETURNED);
 
-        for(Photo p : photos){
+        for(int i = 0; i < limit && i < photos.size(); i++){
+            Photo p = photos.get(i);
             arrayNode.add(photoToJson(p));
         }
         json.put(RESULTS_OFFSET, offset);
         json.put(RESULTS_LIMIT, limit);
+        json.put(RESULTS_HAS_NEXT, photos.size() > limit ? true : false);
+
         return ok(json);
 
 
@@ -490,9 +503,10 @@ public class PhotosREST extends Controller {
 
         PhotoUserLike photoUserLike = null;
         {
+            //request one result more than limit, to see if there are more results
             List<PhotoUserLike> userLikesList = PhotoUserLike
                     .getFromPhotoAndUser(
-                            photoObjId, userObjId, offset, limit);
+                            photoObjId, userObjId, offset, limit + 1);
 
             //results found and user was not specified: return a list
             if(userObjId == null  && userLikesList.size() > 0){
@@ -501,9 +515,9 @@ public class PhotosREST extends Controller {
                 Logger.info("found " + userLikesList.size() + " likes");
                 ObjectNode json = Json.newObject();
 
-                ArrayNode arrayNode = json.putArray("userLikes");
-
-                for(PhotoUserLike ul : userLikesList){
+                ArrayNode arrayNode = json.putArray(RESULTS_RETURNED);
+                for(int i = 0; i < limit && i < userLikesList.size(); i++){
+                    PhotoUserLike ul = userLikesList.get(i);
                     Logger.info("user like currently is " + ul.getId().toString());
                     Logger.info("user in like currently is " + ul.getUserId().toString());
 
@@ -511,6 +525,7 @@ public class PhotosREST extends Controller {
                 }
                 json.put(RESULTS_OFFSET, offset);
                 json.put(RESULTS_LIMIT, limit);
+                json.put(RESULTS_HAS_NEXT, userLikesList.size() > limit ? true : false);
                 return ok(json);
 
             }
