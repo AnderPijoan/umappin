@@ -12,6 +12,8 @@ import play.mvc.Result;
 import models.Followed;
 import models.Follows;
 import models.User;
+import org.bson.types.ObjectId;
+
 
 
 public class FollowsREST extends ItemREST {
@@ -47,6 +49,62 @@ public class FollowsREST extends ItemREST {
     		}
     	}
     	return ok(Json.toJson(followsNode));
+
+    }
+    public static Result addfollows(String id){
+        final User user = Application.getLocalUser(session());
+        if (user == null){
+            return badRequest(Constants.USER_NOT_LOGGED_IN.toString());
+        }
+        Follows  userFollows = Follows.findByUserId(user.id);
+        if (userFollows == null){
+            userFollows = new Follows();
+            userFollows.setUserId(user.id.toString());
+
+        }
+        List<String> follows = userFollows.follow;
+        follows.add(id);
+        userFollows.save();
+
+        //Update user followedInfo
+
+        Followed usersFollowed = Followed.findByUserId(new ObjectId(id));
+        if (usersFollowed == null){
+            usersFollowed = new Followed();
+            usersFollowed.setUserId(id);
+        }
+        List<String>followed = usersFollowed.follow;
+        followed.add(user.id.toString());
+        usersFollowed.save();
+        return ok(Json.toJson(follows));
+
+    }
+    public static Result unfollow(String id){
+        final User user = Application.getLocalUser(session());
+        if (user == null){
+            return badRequest(Constants.USER_NOT_LOGGED_IN.toString());
+        }
+        Follows  userFollows = Follows.findByUserId(user.id);
+        if (userFollows == null){
+            userFollows = new Follows();
+            userFollows.setUserId(user.id.toString());
+
+        }
+        List<String> follows = userFollows.follow;
+        follows.remove(id);
+        userFollows.save();
+
+        //Update user followedInfo
+
+        Followed usersFollowed = Followed.findByUserId(new ObjectId(id));
+        if (usersFollowed == null){
+            usersFollowed = new Followed();
+            usersFollowed.setUserId(id);
+        }
+        List<String>followed = usersFollowed.follow;
+        followed.remove(user.id.toString());
+        usersFollowed.save();
+        return ok(Json.toJson(follows));
 
     }
     

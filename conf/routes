@@ -68,6 +68,8 @@ GET		/followsInfo			    controllers.FollowsREST.getAllFollowsInfo()
 POST    /follows                    controllers.FollowsREST.addFollows()
 PUT     /follows/:id                controllers.FollowsREST.updateFollows(id: String)
 DELETE  /follows/:id                controllers.FollowsREST.deleteFollows(id: String)
+PUT    /api/addFollows/:id  		controllers.FollowsREST.addfollows(id: String)
+PUT 	/api/unfollow/:id 			controllers.FollowsREST.unfollow(id: String)
 
 # REST CRUD for Followed
 GET     /followed                    controllers.FollowedREST.getAllFollowed()
@@ -76,7 +78,6 @@ GET     /followed/:id                controllers.FollowedREST.getFollowed(id: St
 POST    /followed                    controllers.FollowedREST.addFollowed()
 PUT     /followed/:id                controllers.FollowedREST.updateFollowed(id: String)
 DELETE  /followed/:id                controllers.FollowedREST.deleteFollowed(id: String)
-
 # REST CRUD for Users
 GET     /users                      controllers.UserREST.getAll()
 GET     /users/:id                  controllers.UserREST.get(id: String)
@@ -150,6 +151,24 @@ PUT		/users/:id/statistics		controllers.UserStatisticsREST.updateUserStatistics(
 #GET     /rest/user/:id/awards	    controllers.AwardREST.findByUserId(id: String)
 #POST	 /rest/user/:id/awards		controllers.AwardREST.saveUserAward(id: String)
 
+
+#photo user 'likes' (to vote for a photo)
+
+#to send a Json entity specifying that the user finds the photo interesting and/or useful
+POST    /photos/:photoId/userlikes   controllers.PhotosREST.setPhotoUserLike(photoId: String)
+
+#did :userId like :photoId ?
+GET     /photos/:photoId/userlikes/:userId   controllers.PhotosREST.getPhotoUserLikes(photoId: String, userId:String, offset : Integer = 0, limit : Integer = 1)
+
+#who likes :photoId ?
+GET     /photos/:photoId/userlikes          controllers.PhotosREST.getPhotoUserLikes(photoId : String, userId = null, offset : Integer ?= 0, limit : Integer ?= models.PhotoUserLike.MAX_RESULTS_RETURNED)
+
+
+#find photos by rectangle:
+# /photos/rect?x1={x1}&x2={x2}&y1={y1}&y2={y2}
+GET     /photos/rect                           controllers.PhotosREST.getPhotosByRectangle(x1 : Double, x2 : Double, y1 : Double, y2 : Double, offset : Integer ?= 0, limit : Integer ?= models.Photo.MAX_RESULTS_RETURNED)
+
+
 # REST CRUD for pictures
 GET     /photos/:id             controllers.PhotosREST.getPhoto(id: String)
 POST    /photos                 controllers.PhotosREST.newPhoto()
@@ -222,13 +241,3 @@ DELETE  /featurelikes/:id             controllers.FeatureLikeREST.deleteFeatureL
 GET     /osmFixmes/populateDB        controllers.games.OsmFixmesREST.populateDatabase()
 
 
-#photo user 'likes' (to vote for a photo)
-
-#to send a Json entity specifying that the user finds the photo interesting and/or useful
-POST    /rest/photos/:photoId/userlikes   controllers.PhotosREST.setPhotoUserLike(photoId: String)
-
-#did :userId like :photoId ?
-GET     /rest/photos/:photoId/userlikes/:userId   controllers.PhotosREST.getPhotoUserLikes(photoId: String, userId:String, offset : Integer = 0, limit : Integer = 1)
-
-#who likes :photoId ?
-GET     /rest/photos/:photoId/userlikes          controllers.PhotosREST.getPhotoUserLikes(photoId : String, userId = null, offset : Integer ?= 0, limit : Integer ?= models.PhotoUserLike.MAX_RESULTS_RETURNED)

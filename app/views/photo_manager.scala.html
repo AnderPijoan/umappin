@@ -18,7 +18,7 @@
         <a onclick="testPost()" href="#" style="margin-bottom: 2em;">test with POST (new photo)</a>
 
         <input type="text" name="string_content_photo_update" id="string_content_photo_update" placeholder="photo id here">
-        <a onclick="testPostUpdate()" href="#">test with POST (update photo)</a>
+        <a onclick="testPutUpdate()" href="#">test with PUT (update photo)</a>
     </fieldset>
 
     <fieldset>
@@ -85,7 +85,7 @@
 
 
 
-</fieldset>
+    </fieldset>
     <fieldset>
         <h2>
             Photo Like
@@ -98,7 +98,13 @@
 
     </fieldset>
 
-
+    <fieldset>
+        <h2>
+            Photo Search in Rect
+        </h2>
+        <input type="text" id="photoRect" placeholder="rect here: [[x1, x2], [y1, y2]]" value="[[-14, -14], [-14, 14]]"/>
+        <a href="#" onclick="getPhotosInRect()">Get the photos in the specified rectangle</a>
+    </fieldset>
 
 
 
@@ -178,13 +184,13 @@ function addOptionalUserQueryString(){
 
 }
 
-function testPostUpdate(){
+function testPutUpdate(){
 
     var id = $('#string_content_photo_update').val();
     var uri = '@routes.PhotosREST.updatePhoto("%s")'.replace("%s",id);
 
     $.ajax({
-        type: "POST",
+        type: "PUT",
         url: uri + addOptionalUserQueryString(),
         cache: false,
         dataType: "json",
@@ -313,6 +319,29 @@ function testPhotoLike(){
 
     }
 
+    function getPhotosInRect()
+    {
+
+        var rect;
+        try{
+            rect = eval($('#photoRect').val());
+        }catch(e){
+            alert("invalid format for rectangle, must be like [[x1, x2], [y1, y2]]")
+        }
+        $.ajax({
+            type: "GET",
+            url: "@routes.PhotosREST.getPhotosByRectangle(1.1,2.2,3.3,4.4)".replace('1.1', rect[0][0]).replace('2.2', rect[0][1]).replace('3.3', rect[1][0]).replace(4.4, rect[1][1]),
+            cache: false,
+            dataType: "json",
+            contentType: "application/json; charset=utf-8"
+        }).done(function( msg ) {
+            document.getElementById("returned_content").innerHTML = JSON.stringify(msg);
+        }).fail(function( msg ) {
+            document.getElementById("returned_content").innerHTML = "Request was unsuccessful:\n" + JSON.stringify(msg);
+        });
+
+    }
+
 </script>
 
 <script type="text/javascript">
@@ -401,7 +430,7 @@ function handleFileSelect(evt) {
 
 
                 $.ajax({
-                    type: "POST",
+                    type: "PUT",
                     url: url + addOptionalUserQueryString(),
                     dataType: "json",
                     contentType: "application/json; charset=utf-8",
