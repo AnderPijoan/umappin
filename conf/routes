@@ -68,6 +68,8 @@ GET		/followsInfo			    controllers.FollowsREST.getAllFollowsInfo()
 POST    /follows                    controllers.FollowsREST.addFollows()
 PUT     /follows/:id                controllers.FollowsREST.updateFollows(id: String)
 DELETE  /follows/:id                controllers.FollowsREST.deleteFollows(id: String)
+PUT    /api/addFollows/:id  		controllers.FollowsREST.addfollows(id: String)
+GET 	/api/unfollow/:id 			controllers.FollowsREST.unfollow(id: String)
 
 # REST CRUD for Followed
 GET     /followed                    controllers.FollowedREST.getAllFollowed()
@@ -76,7 +78,6 @@ GET     /followed/:id                controllers.FollowedREST.getFollowed(id: St
 POST    /followed                    controllers.FollowedREST.addFollowed()
 PUT     /followed/:id                controllers.FollowedREST.updateFollowed(id: String)
 DELETE  /followed/:id                controllers.FollowedREST.deleteFollowed(id: String)
-
 # REST CRUD for Users
 GET     /users                      controllers.UserREST.getAll()
 GET     /users/:id                  controllers.UserREST.get(id: String)
