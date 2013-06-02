@@ -26,8 +26,8 @@
 <!------------------------------------- New tag template -------------------------------------->
 <script type='text/template' id='route-tag-template'>
     <li>
-        <select class='tagKeySelect'></select>
-        <select class='tagValueSelect'></select>
+        <select class='tagKeySelect' data="<%= (rc && rc.key) ? rc.key : '' %>"></select>
+        <select class='tagValueSelect' data="<%= (rc && rc.value) ? rc.value : '' %>"></select>
         <img src="<%= rc != undefined ? '/assets/img/error.png' : '/assets/img/new-plus.png' %>"
              class="<%= rc != undefined ? 'removeTagImage' : 'addTagImage' %>">
     </li>

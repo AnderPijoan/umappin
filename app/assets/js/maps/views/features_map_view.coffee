@@ -26,21 +26,21 @@ class window.Maps.FeaturesMapView extends Maps.MapView
         @drawLayer
         OpenLayers.Handler.Point
         'displayClass': 'olControlDrawFeaturePoint'
-        featureAdded: (feature, pixel) => @saveFeature feature
+        featureAdded: (feature, pixel) => @saveFeature feature, "point"
       )
 
       new OpenLayers.Control.DrawFeature(
         @drawLayer
         OpenLayers.Handler.Path
         'displayClass': 'olControlDrawFeaturePath'
-        featureAdded: (feature, pixel) => @saveFeature feature
+        featureAdded: (feature, pixel) => @saveFeature feature, "linestring"
       )
 
       new OpenLayers.Control.DrawFeature(
         @drawLayer
         OpenLayers.Handler.Polygon
         'displayClass': 'olControlDrawFeaturePolygon'
-        featureAdded: (feature, pixel) => @saveFeature feature
+        featureAdded: (feature, pixel) => @saveFeature feature, "polygon"
       )
 
       new OpenLayers.Control.DrawFeature(
@@ -48,14 +48,15 @@ class window.Maps.FeaturesMapView extends Maps.MapView
         OpenLayers.Handler.RegularPolygon
         'displayClass': 'olControlDrawFeatureRegularPolygon'
         handlerOptions: { sides: 8 }
-        featureAdded: (feature, pixel) => @saveFeature feature
+        featureAdded: (feature, pixel) => @saveFeature feature, "polygon"
       )
 
       new OpenLayers.Control.ModifyFeature(
         @drawLayer
         'displayClass': 'olControlModifyFeature'
         mode: OpenLayers.Control.ModifyFeature.RESHAPE | OpenLayers.Control.ModifyFeature.DRAG
-        onModificationStart: (feature) => console.log feature
+        createVertices: false #TODO handle new node creations ....
+        #onModificationStart: (feature) => console.log feature
         onModificationEnd: (feature) => @updateFeature feature
       )
 
@@ -63,7 +64,7 @@ class window.Maps.FeaturesMapView extends Maps.MapView
         @drawLayer
         'displayClass': 'olControlModifyFeature'
         mode: OpenLayers.Control.ModifyFeature.RESIZE | OpenLayers.Control.ModifyFeature.ROTATE | OpenLayers.Control.ModifyFeature.DRAG
-        onModificationStart: (feature) => console.log feature
+        #onModificationStart: (feature) => console.log feature
         onModificationEnd: (feature) => @updateFeature feature
       )
 
@@ -128,31 +129,39 @@ class window.Maps.FeaturesMapView extends Maps.MapView
 
 
   # ---------------------------- REST/Feature handlers ------------------------------ #
-  drawFeature: (featureId) ->
-    geojsonFormat = new OpenLayers.Format.GeoJSON()
-    feature = new Maps.Feature id: featureId
-    feature.fetch complete: (resp) =>
-      geom = geojsonFormat.read(JSON.stringify(feature.get 'geometry'), 'Geometry')
-      olGeom = new OpenLayers.Feature.Vector geom
-      olGeom.mapFeature = feature
-      @drawLayer.addFeatures [olGeom]
+  drawFeature: (feat) ->
+    feature = switch
+      when feat.type is 'node' then new Maps.OsmNode id: feat.id
+      when feat.type is 'way' then new Maps.OsmWay id: feat.id
+      when feat.type is 'relation' then new Maps.OsmRelation id: feat.id
+    feature.fetch complete: (resp) =>  @addFeatureToMap feature
 
-  saveFeature: (feature) ->
+  saveFeature: (feature, type) ->
     console.log feature
-    geojsonFormat = new OpenLayers.Format.GeoJSON()
-    ft = new Maps.Feature
-      ownerId: @model.get 'ownerId'
-      geometry: JSON.parse geojsonFormat.write feature.geometry
+    ft = @createOsmFeature feature, type
+    ft.set('user', (@model.get 'ownerId'))
+    ft.set('version', 1)
     ft.once 'change', (evt) =>
       feature.mapFeature = ft
       fts = @model.get('features') or []
-      fts.push ft.get 'id'
+      osmtype = switch
+        when type is 'point' then 'node'
+        when (type is 'linestring' or type is 'polygon') then 'way'
+        when type is 'relation' then 'relation'
+      fts.push type: osmtype, id: ft.get 'id'
       @model.save features: fts
     ft.save()
 
   updateFeature: (feature) ->
     geojsonFormat = new OpenLayers.Format.GeoJSON()
-    feature.mapFeature.save geometry: JSON.parse geojsonFormat.write feature.geometry
+    osmgeom = feature.geometry.clone()
+    osmgeom.transform @map.getProjectionObject(), Maps.MapView.OSM_PROJECTION
+    geom = JSON.parse geojsonFormat.write osmgeom
+    switch feature.mapFeature.get('geometry').type
+      when "LineString", "Polygon" then geom.node_ids = feature.mapFeature.get('geometry').node_ids
+    feature.mapFeature.save
+      geometry: geom
+      version: feature.mapFeature.get('version') + 1
 
   deleteFeature: (feature) ->
     feature.mapFeature.destroy success: ()=>
@@ -160,3 +169,32 @@ class window.Maps.FeaturesMapView extends Maps.MapView
       @model.save
         features: features.splice(features.indexOf(feature.mapFeature.get 'id'), 1)
         { success: () => @drawLayer.removeFeatures [feature] }
+
+  createOsmFeature: (feature, type) ->
+    ft = switch
+      when type is 'point' then new Maps.OsmNode
+      when type is 'linestring', 'polygon' then new Maps.OsmWay
+      when type is 'relation' then new Maps.OsmRelation
+    geojsonFormat = new OpenLayers.Format.GeoJSON()
+    osmgeom = feature.geometry.clone()
+    osmgeom.transform @map.getProjectionObject(), Maps.MapView.OSM_PROJECTION
+    geom = JSON.parse geojsonFormat.write osmgeom
+    nodes = []
+    switch type
+      when 'linestring'
+        nodes.push 0 for c in feature.geometry.components
+        geom.node_ids = nodes
+      when 'polygon'
+        nodes.push 0 for c in feature.geometry.components[0].components
+        geom.node_ids = nodes
+    ft.set('geometry', geom)
+
+  addFeatureToMap: (feature) =>
+    if feature.get('geometry')? and feature.get('geometry')!=null
+      geojsonFormat = new OpenLayers.Format.GeoJSON()
+      osmGeom = geojsonFormat.read(JSON.stringify(feature.get 'geometry'), 'Geometry')
+      geom = osmGeom.clone().transform Maps.MapView.OSM_PROJECTION, @map.getProjectionObject()
+      olGeom = new OpenLayers.Feature.Vector geom
+      olGeom.mapFeature = feature
+      @drawLayer.addFeatures [olGeom]
+    

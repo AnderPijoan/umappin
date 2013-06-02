@@ -41,9 +41,13 @@ public abstract class OsmFeature {
 		return id;
 	}
 
-	public long getVesion() {
+	public int getVesion() {
 		return version;
 	}
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
 
 	public Map<String,String> getTags() {
 		return tags;
@@ -79,7 +83,7 @@ public abstract class OsmFeature {
 		StringBuilder result = new StringBuilder("hstore(array[");
 		boolean first = true;
 
-		if (tags != null)
+		if (tags != null && tags.size() > 0)
 			for(String key : tags.keySet()){
 				if (first){
 					result.append("'" + key + "'");
@@ -92,7 +96,7 @@ public abstract class OsmFeature {
 		first = true;
 		result.append("],array[");
 
-		if (tags != null)
+		if (tags != null && tags.size() > 0)
 			for (String value : tags.values()){
 				if (first){
 					result.append("'" + value + "'");
