@@ -69,7 +69,7 @@ POST    /follows                    controllers.FollowsREST.addFollows()
 PUT     /follows/:id                controllers.FollowsREST.updateFollows(id: String)
 DELETE  /follows/:id                controllers.FollowsREST.deleteFollows(id: String)
 PUT    /api/addFollows/:id  		controllers.FollowsREST.addfollows(id: String)
-GET 	/api/unfollow/:id 			controllers.FollowsREST.unfollow(id: String)
+PUT 	/api/unfollow/:id 			controllers.FollowsREST.unfollow(id: String)
 
 # REST CRUD for Followed
 GET     /followed                    controllers.FollowedREST.getAllFollowed()
