@@ -79,9 +79,11 @@ public class OsmWay extends OsmFeature {
 		JsonNode propertiesNode = json.findPath("properties");
 		tags = new LinkedHashMap<String, String>();
 
-		for (int x = 0; x < propertiesNode.size(); x++){
-			tags.put(propertiesNode.get(x).get(0).asText(), propertiesNode.get(x).get(1).asText());
-		}
+        Iterator it = propertiesNode.getFieldNames();
+        while (it.hasNext()) {
+            String key = (String)it.next();
+            tags.put(key, propertiesNode.get(key).getTextValue());
+        }
 	}
 
 
@@ -428,12 +430,14 @@ public class OsmWay extends OsmFeature {
 
 		Double[][] coordinates = new Double[nodes.size()][2];
 		Long[] ids = new Long[nodes.size()];
+        Integer[] versions = new Integer[nodes.size()];
 
 		for(int x = 0; x < nodes.size(); x++){
 			OsmNode node = nodes.get(x);
 			coordinates[x][0] = node.getLon();
 			coordinates[x][1] = node.getLat();
 			ids[x] = node.id;
+            versions[x] = node.version;
 		}
         JsonNode coord;
         if (nodes.get(0).equals(nodes.get(nodes.size()-1))) {
@@ -448,6 +452,7 @@ public class OsmWay extends OsmFeature {
         }
 		geomNode.put("coordinates", coord);
 		geomNode.put("node_ids", Json.toJson(ids));
+        geomNode.put("node_versions", Json.toJson(versions));
 
 		return geomNode;
 	}
@@ -464,7 +469,7 @@ public class OsmWay extends OsmFeature {
 		nodes = new ArrayList<OsmNode>();
 		JsonNode coordinatesNode = geometry.findPath("coordinates");
 		JsonNode idsNode = geometry.findPath("node_ids");
-
+        JsonNode versionsNode = geometry.findPath("node_versions");
 		if (geometry.findPath("type").asText().toUpperCase().equals("LINESTRING") && coordinatesNode.size() == idsNode.size()){
 
 			for(int x = 0; x < coordinatesNode.size(); x++){
@@ -487,6 +492,7 @@ public class OsmWay extends OsmFeature {
                     );
 				} else {
 					node.setGeometry(osmNodeNode);
+                    node.setVersion(versionsNode.get(x).getIntValue());
 				}
 				nodes.add(node);
 			}
@@ -513,6 +519,7 @@ public class OsmWay extends OsmFeature {
 							null);
 				} else {
 					node.setGeometry(osmNodeNode);
+                    node.setVersion(versionsNode.get(x).getIntValue());
 				}
 				nodes.add(node);
 			}

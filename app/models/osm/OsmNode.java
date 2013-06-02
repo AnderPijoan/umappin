@@ -69,9 +69,11 @@ public class OsmNode extends OsmFeature {
 		JsonNode propertiesNode = json.findPath("properties");
 		tags = new LinkedHashMap<String, String>();
 
-		for (int x = 0; x < propertiesNode.size(); x++){
-			tags.put(propertiesNode.get(x).get(0).asText(), propertiesNode.get(x).get(1).asText());
-		}
+        Iterator it = propertiesNode.getFieldNames();
+        while (it.hasNext()) {
+            String key = (String)it.next();
+            tags.put(key, propertiesNode.get(key).getTextValue());
+        }
 	}
 
 	/** OSM XML Node parser

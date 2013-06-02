@@ -238,8 +238,6 @@ public class OsmWayREST extends ItemREST {
 		}
 
 		if (way.getVesion() < newWay.getVesion()) {
-            for (OsmNode node : newWay.getNodes())
-                node.setVersion(newWay.getVesion());
 			newWay = newWay.save();
 		}
 

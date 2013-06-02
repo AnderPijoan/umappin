@@ -179,7 +179,7 @@ GET     /osmnodes/:id                 controllers.osm.OsmNodeREST.getNodeById(id
 GET     /osmnodes/:id/json            controllers.osm.OsmNodeREST.getJsonNodeById(id: Long)
 GET     /osmnodes/:id/xml             controllers.osm.OsmNodeREST.getXmlNodeById(id: Long)
 GET     /osmnodes/intersects/:amount  controllers.osm.OsmNodeREST.getIntersectionNodes(amount: Integer)
-GET     /osmnodes/near/:amount        controllers.osm.OsmNodeREST.getNearNodes(amount: Integer)
+POST    /osmnodes/near/:amount        controllers.osm.OsmNodeREST.getNearNodes(amount: Integer)
 PUT     /osmnodes/:id                 controllers.osm.OsmNodeREST.updateNode(id: Long)
 POST    /osmnodes                     controllers.osm.OsmNodeREST.addNode()
 # DELETE  /osmnodes/:id                 controllers.osm.OsmNodeREST.deleteNode(id: Long)
@@ -189,10 +189,12 @@ GET     /osmways/:id                 controllers.osm.OsmWayREST.getWayById(id: L
 GET     /osmways/:id/json            controllers.osm.OsmWayREST.getJsonWayById(id: Long)
 GET     /osmways/:id/xml             controllers.osm.OsmWayREST.getXmlWayById(id: Long)
 GET     /osmways/intersects/:amount  controllers.osm.OsmWayREST.getIntersectionWays(amount: Integer)
-GET     /osmways/near/:amount        controllers.osm.OsmWayREST.getNearWays(amount: Integer)
+POST    /osmways/near/:amount        controllers.osm.OsmWayREST.getNearWays(amount: Integer)
 PUT     /osmways/:id                 controllers.osm.OsmWayREST.updateWay(id: Long)
 POST    /osmways                     controllers.osm.OsmWayREST.addWay()
 # DELETE  /osmways/:id                 controllers.osm.OsmWayREST.deleteWay(id: Long)
+
+POST    /osmfeatures/near/:amount        controllers.osm.OsmFeatureREST.getNearFeatures(amount: Integer)
 
 # REST CRUD for Routes Likes
 GET     /routelikes                 controllers.RouteLikeREST.getAllRouteLikes()
@@ -203,6 +205,16 @@ GET     /routelikesrouteuser/:idr/:idu    controllers.RouteLikeREST.getRouteUser
 POST    /routelikes                 controllers.RouteLikeREST.addRouteLike()
 PUT     /routelikes/:id             controllers.RouteLikeREST.updateRouteLike(id: String)
 DELETE  /routelikes/:id             controllers.RouteLikeREST.deleteRouteLike(id: String)
+
+# REST CRUD for Features Likes
+GET     /featurelikes                 controllers.FeatureLikeREST.getAllFeatureLikes()
+GET     /featurelikes/:id             controllers.FeatureLikeREST.getFeatureLike(id: String)
+GET     /featurelikesuser/:id         controllers.FeatureLikeREST.getUserFeatureLikes(id: String)
+GET     /featurelikesfeature/:id        controllers.FeatureLikeREST.getFeatureFeatureLikes(id: String)
+GET     /featurelikesfeatureuser/:idf/:idu    controllers.FeatureLikeREST.getFeatureUserFeatureLikes(idf: String, idu: String)
+POST    /featurelikes                 controllers.FeatureLikeREST.addFeatureLike()
+PUT     /featurelikes/:id             controllers.FeatureLikeREST.updateFeatureLike(id: String)
+DELETE  /featurelikes/:id             controllers.FeatureLikeREST.deleteFeatureLike(id: String)
 
 # -------------------------------------------------------------------------------------------------------
 
