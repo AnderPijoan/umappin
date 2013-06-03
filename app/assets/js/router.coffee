@@ -17,12 +17,12 @@ class umappin.Router extends Backbone.Router
     'forgotPassword':     'forgotPassword'
     'userlist':           'userlist'
     'profile':            'profile'
+    'awards':			  'awards'	
 
   account: (id) ->
     @params = if id? then id: id else null
     setTemplate "/assets/templates/account.html", () ->
       requirejs ['/assets/js/account/account_main.js'], () ->
-      	requirejs ['/assets/js/StatisticsApp.js'], () ->
         	Account.init()
 
   userlist: () ->
@@ -76,6 +76,11 @@ class umappin.Router extends Backbone.Router
     requirejs ['/assets/js/timelineApp/collection/publicationCollection.js'], () ->
           requirejs ['/assets/js/timelineApp/routers/router.js'], () ->
             subroutes.timelineRouter or= new timelineApp.Router "wall/"
+            
+  awards: () ->
+    setTemplate "/assets/templates/awards.html", () ->
+      requirejs ['/assets/js/StatisticsApp.js'], () ->
+        statisticView.hello()
 
   login: () ->
     setTemplate "/assets/templates/login.html"

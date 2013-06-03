@@ -10,10 +10,12 @@ $(function(){
 		className: "#statisticContainer",
 
 		template:$("#statistic-Template").html(),
+		
+		hello:function () {
+			alert("hello");
+		},
 
 		render:function () {
-			this.model.set({"level":3, "points":65});
-			alert(JSON.stringify(this.model));
 			var tmpl = _.template(this.template);
 			this.$el.html(tmpl(this.model.toJSON()));
 			return this;

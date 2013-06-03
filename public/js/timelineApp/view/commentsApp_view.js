@@ -22,7 +22,7 @@ var timelineApp = timelineApp || {};
 			timelineApp.PublicationCollection.each(function(publication){
 			   	var view = new timelineApp.ReceivedView({ model: publication});
 			   	$('#publication_list').append(view.render().el);
-			});	
+			});
 		},
 		
 		create: function (event) {
