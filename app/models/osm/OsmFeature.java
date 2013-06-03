@@ -32,6 +32,7 @@ public abstract class OsmFeature {
 	protected String uid;           // Users id
 	protected Date timeStamp;       // Elements timestamp
 	protected LinkedHashMap<String,String> tags; // Elements tags
+    protected String featurePicture;
 
 
 	/**

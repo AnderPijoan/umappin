@@ -112,6 +112,7 @@
             <p>Lon: &nbsp; <%=rc.geometry.getBounds().getCenterLonLat().lon%></p>
             <p>Lat: &nbsp; <%=rc.geometry.getBounds().getCenterLonLat().lat%></p>
         </h4>
+        <div class='featurePictureHolder'></div>
         <ul class='tagsList'>
             <% for (var p in rc.mapFeature.get("properties")) { %>
                 <%= (_.template($('#item-tag-template').html()))({key: p, value: rc.mapFeature.get("properties")[p]}) %>

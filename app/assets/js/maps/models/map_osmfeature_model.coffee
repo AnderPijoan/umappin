@@ -9,3 +9,4 @@ class window.Maps.OsmFeature extends Backbone.Model
     uid: null
     timeStamp: null
     properties: {}
+    featurePicture: null

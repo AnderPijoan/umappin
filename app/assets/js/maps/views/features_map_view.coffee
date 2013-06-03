@@ -7,6 +7,7 @@ class window.Maps.FeaturesMapView extends Maps.MapView
   featurePopupTemplate: _.template $('#feature-popup-template').html()
   itemTagTemplate: _.template $('#item-tag-template').html()
   itemLikeTemplate: _.template $('#item-like-template').html()
+  featurePictureView: null
 
   # ---------------------------- Controls ------------------------------ #
   initControls: ->
@@ -132,6 +133,26 @@ class window.Maps.FeaturesMapView extends Maps.MapView
       (evt) =>  @removeFeaturePopup feat
     )
     @map.addPopup(feat.popup)
+
+    picture = new Picture id: feat.mapFeature.get "featurePicture"
+    @featurePictureView = new PictureView
+      model: picture
+      readonly: feat.mapFeature.get("user") != Account.session.get("id")
+      showInfo: false
+      picWidth: '8em'
+    $('div.featurePictureHolder').last().append @featurePictureView.render().el
+
+    if feat.mapFeature.get "profilePicture"
+      picture.fetch()
+    else
+      picture.save
+        owner_id: Account.session.get("id")
+        { success: () =>
+            feat.mapFeature.save
+              featurePicture: picture.get 'id'
+              version: feat.mapFeature.get('version') + 1
+        }
+
     @reloadTagEvents()
 
     that = @
@@ -319,7 +340,7 @@ class window.Maps.FeaturesMapView extends Maps.MapView
     p.transform @map.getProjectionObject(), Maps.MapView.OSM_PROJECTION
     geojsonFormat = new OpenLayers.Format.GeoJSON()
     json = "{\"geometry\": #{geojsonFormat.write p} }"
-    amount = 2 # TODO: we'll pick it up from a control
+    amount = 20 # TODO: we'll pick it up from a control
     bounds = new OpenLayers.Bounds
     bounds.extend p
     $.ajax

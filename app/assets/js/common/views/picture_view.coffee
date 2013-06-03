@@ -25,7 +25,7 @@ class window.PictureView extends Backbone.View
   render: ->
     if not @model.get('id') and not @readonly
       @model.save
-        owner_id: Account.profile.get 'id'
+        owner_id: Account.session.get 'id'
         { success: () => @render() }
     else if @template
       $(@el).html @template { data: @model.attributes, readonly: @readonly, showInfo: @showInfo }

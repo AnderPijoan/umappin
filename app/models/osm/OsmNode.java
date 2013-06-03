@@ -62,7 +62,7 @@ public class OsmNode extends OsmFeature {
 		timeStamp = (json.has("timeStamp") && !json.findPath("timeStamp").isNull())
                         ? new java.text.SimpleDateFormat("yyyy-mm-dd'T'HH:mm:ssZ").parse(json.findPath("timeStamp").getTextValue())
                         : new Date();
-
+        this.featurePicture =  json.findPath("featurePicture").getTextValue();
 
 		setGeometry(json.findPath("geometry"));
 
@@ -101,13 +101,14 @@ public class OsmNode extends OsmFeature {
 		setTags(nodeElement.getElementsByTagName("tag"));
 	}
 
-	public OsmNode (long id, int version, String user, String uid, double lat, double lon, Date timeStamp, LinkedHashMap<String,String> tags){
+	public OsmNode (long id, int version, String user, String uid, double lat, double lon, Date timeStamp, String featurePicture, LinkedHashMap<String,String> tags){
 		this.id = id;
 		this.version = version;
 		this.user = user;
 		this.uid = uid;
 		this.lonlat = new Point2D.Double(lon, lat);
 		this.timeStamp = timeStamp;
+        this.featurePicture = featurePicture;
 		this.tags = tags;
 	}
 
@@ -119,7 +120,7 @@ public class OsmNode extends OsmFeature {
 		OsmNode node = null;
 		try {
 			conn = ds.getConnection();
-			String sql = "select id, vers, usr, uid, timest, tags, st_asgeojson(ST_Transform(ST_SetSRID(geom, 900913),4326)) as geometry from osmnodes where id = ?";
+			String sql = "select id, vers, usr, uid, timest, featurepicture, tags, st_asgeojson(ST_Transform(ST_SetSRID(geom, 900913),4326)) as geometry from osmnodes where id = ?";
 			st = conn.prepareStatement(sql);
 			st.setLong(1, id);
 			rs = st.executeQuery();
@@ -131,6 +132,7 @@ public class OsmNode extends OsmFeature {
 						0,
 						0,
 						rs.getDate("timest"),
+                        rs.getString("featurepicture"),
 						hstoreFormatToTags(rs.getString("tags")));
 				node.setGeometry(Json.parse(rs.getString("geometry")));
 			}
@@ -155,7 +157,7 @@ public class OsmNode extends OsmFeature {
 		OsmNode node = null;
 		try {
 			conn = ds.getConnection();
-			String sql = "select id, vers, usr, uid, timest, tags, st_asgeojson(ST_Transform(ST_SetSRID(geom, 900913),4326)) as geometry " +
+			String sql = "select id, vers, usr, uid, timest, featurepicture, tags, st_asgeojson(ST_Transform(ST_SetSRID(geom, 900913),4326)) as geometry " +
 					"from osmnodes where geom = ST_SimplifyPreserveTopology(ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913), " + TOLERANCE + ")";
 			st = conn.prepareStatement(sql);
 			st.setString(1, Json.stringify(geometry));
@@ -168,6 +170,7 @@ public class OsmNode extends OsmFeature {
 						0,
 						0,
 						rs.getDate("timest"),
+                        rs.getString("featurepicture"),
 						hstoreFormatToTags(rs.getString("tags")));
 				node.setGeometry(Json.parse(rs.getString("geometry")));
 			}
@@ -196,7 +199,7 @@ public class OsmNode extends OsmFeature {
 
 		try {
 			conn = ds.getConnection();
-			String sql = "select id, vers, usr, uid, timest, tags, st_asgeojson(ST_Transform(ST_SetSRID(geom, 900913),4326)) as geometry " +
+			String sql = "select id, vers, usr, uid, timest, featurepicture, tags, st_asgeojson(ST_Transform(ST_SetSRID(geom, 900913),4326)) as geometry " +
 					"from osmnodes ORDER BY geom <-> ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913) LIMIT ?";
 			st = conn.prepareStatement(sql);
 			st.setString(1, Json.stringify(geometry));
@@ -210,6 +213,7 @@ public class OsmNode extends OsmFeature {
 						0,
 						0,
 						rs.getDate("timest"),
+                        rs.getString("featurepicture"),
 						OsmFeature.hstoreFormatToTags(rs.getString("tags")));
 				node.setGeometry(Json.parse(rs.getString("geometry")));
 				nodes.add(node);
@@ -239,7 +243,7 @@ public class OsmNode extends OsmFeature {
 
 		try {
 			conn = ds.getConnection();
-			String sql = "select id, vers, usr, uid, timest, tags, st_asgeojson(ST_Transform(ST_SetSRID(geom, 900913),4326)) as geometry " +
+			String sql = "select id, vers, usr, uid, timest, featurepicture, tags, st_asgeojson(ST_Transform(ST_SetSRID(geom, 900913),4326)) as geometry " +
 					"from osmnodes where ST_Intersects(geom , ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913)) limit "+ limit;
 			st = conn.prepareStatement(sql);
 			st.setString(1, Json.stringify(geometry));
@@ -252,6 +256,7 @@ public class OsmNode extends OsmFeature {
 						0,
 						0,
 						rs.getDate("timest"),
+                        rs.getString("featurepicture"),
 						OsmFeature.hstoreFormatToTags(rs.getString("tags")));
 				node.setGeometry(Json.parse(rs.getString("geometry")));
 				nodes.add(node);
@@ -359,7 +364,7 @@ public class OsmNode extends OsmFeature {
                 // If theres no collition and the node won't be rejected
                 if (exists && !reject) {
                     // Try updating, if the node doesnt exists, the query does nothing
-                    sql = "update osmnodes set vers = ?, usr = ?, uid = ?, timest = ?, " +
+                    sql = "update osmnodes set vers = ?, usr = ?, uid = ?, timest = ?, featurepicture = ?" +
                             "geom = ST_SimplifyPreserveTopology(ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913), " +
                             TOLERANCE + ")" +
                             ((tags != null && tags.size() > 0) ? ", tags = " + tagsToHstoreFormat(tags) : "" ) +
@@ -370,8 +375,9 @@ public class OsmNode extends OsmFeature {
                     st.setString(2, this.user);
                     st.setString(3, this.uid);
                     st.setDate(4, new java.sql.Date(timeStamp.getTime()));
-                    st.setString(5, Json.stringify(this.getGeometry()));
-                    st.setLong(6, this.id);
+                    st.setString(5, this.featurePicture);
+                    st.setString(6, Json.stringify(this.getGeometry()));
+                    st.setLong(7, this.id);
                     st.executeUpdate();
                 }
 
@@ -496,6 +502,7 @@ public class OsmNode extends OsmFeature {
 		osmNodeNode.put("timeStamp", new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(node.timeStamp));
 		osmNodeNode.put("geometry", node.getGeometry());
 		osmNodeNode.put("properties", Json.toJson(node.tags));
+        osmNodeNode.put("featurePicture", node.featurePicture);
 
 		return osmNodeNode;
 	}
