@@ -32,6 +32,7 @@ public abstract class OsmFeature {
 	protected String uid;           // Users id
 	protected Date timeStamp;       // Elements timestamp
 	protected LinkedHashMap<String,String> tags; // Elements tags
+    protected String featurePicture;
 
 
 	/**
@@ -41,9 +42,13 @@ public abstract class OsmFeature {
 		return id;
 	}
 
-	public long getVesion() {
+	public int getVesion() {
 		return version;
 	}
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
 
 	public Map<String,String> getTags() {
 		return tags;
@@ -79,7 +84,7 @@ public abstract class OsmFeature {
 		StringBuilder result = new StringBuilder("hstore(array[");
 		boolean first = true;
 
-		if (tags != null)
+		if (tags != null && tags.size() > 0)
 			for(String key : tags.keySet()){
 				if (first){
 					result.append("'" + key + "'");
@@ -92,7 +97,7 @@ public abstract class OsmFeature {
 		first = true;
 		result.append("],array[");
 
-		if (tags != null)
+		if (tags != null && tags.size() > 0)
 			for (String value : tags.values()){
 				if (first){
 					result.append("'" + value + "'");
@@ -114,12 +119,28 @@ public abstract class OsmFeature {
 			return tags;
 		}
 
+        int tStart = 0;
+        String key = "", value = "";
+        for (int i = hstore.indexOf("\"", 0), t= 0; i != -1; i =  hstore.indexOf("\"", i+1), t++)
+            switch(t % 4) {
+                case 0:
+                case 2: tStart = i;
+                        break;
+                case 1: key = hstore.substring(tStart + 1, i);
+                        break;
+                case 3: value = hstore.substring(tStart + 1, i);
+                        tags.put(key.trim(), value.trim());
+                        break;
+            }
+
+        /* This does not work due to commas inside tags or values
 		String[] tagPairs = hstore.split(",");
 
 		for (String tagKV : tagPairs){
 			String[] KV = tagKV.split("=>");
 			tags.put(KV[0].replace("\"", "").trim(), KV[1].replace("\"", "").trim());
 		}
+		*/
 
 		return tags;
 	}

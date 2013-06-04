@@ -176,7 +176,7 @@ public class Route extends Item {
 			
 			String sql = "update routes set mongo_oid = ?, difficulty = ?, timest = ?, " +
 					"geom = ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913)" + 
-					((tags != null && tags.size() > 0) ? ", tags = " + OsmFeature.tagsToHstoreFormat(tags) : "" ) +
+					", tags = " + ((tags != null && tags.size() > 0) ? OsmFeature.tagsToHstoreFormat(tags) : "NULL" ) +
 					" where mongo_oid = ?";
 			st = conn.prepareStatement(sql);
 

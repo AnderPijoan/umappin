@@ -1,6 +1,7 @@
 window.Maps or= {}
 
 class window.Maps.OsmFeature extends Backbone.Model
+  urlRoot: '/osmfeatures'
   defaults:
     id: null
     version: null
@@ -8,3 +9,4 @@ class window.Maps.OsmFeature extends Backbone.Model
     uid: null
     timeStamp: null
     properties: {}
+    featurePicture: null

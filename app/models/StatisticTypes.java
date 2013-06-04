@@ -8,7 +8,8 @@ public enum StatisticTypes {
     WINS				("Games won"),
     UNFINISHED			("Games unfinished"),
     PHOTOLIKES			("Likes on Loaded photos"),
-    ROUTELIKES			("RouteLikes");
+    ROUTELIKES			("RouteLikes"),
+    FEATURELIKES		("FeatureLikes");
 	
 	private final String description;
 	

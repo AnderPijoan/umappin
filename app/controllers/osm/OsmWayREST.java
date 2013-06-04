@@ -174,7 +174,7 @@ public class OsmWayREST extends ItemREST {
 		}
 		OsmWay newWay;
 		try {
-			if (!json.findPath("way").isNull()){
+			if (json.has("way") && !json.findPath("way").isNull()){
 				newWay = new OsmWay(json.findPath("way"));
 			} else {
 				newWay = new OsmWay(json);
@@ -223,7 +223,7 @@ public class OsmWayREST extends ItemREST {
 		}
 		OsmWay newWay;
 		try {
-			if (!json.findPath("way").isNull()){
+			if (json.has("way") && !json.findPath("way").isNull()){
 				newWay = new OsmWay(json.findPath("way"));
 			} else {
 				newWay = new OsmWay(json);
@@ -237,7 +237,7 @@ public class OsmWayREST extends ItemREST {
 			return badRequest(Constants.JSON_MALFORMED.toString());
 		}
 
-		if (way.getVesion() < newWay.getVesion()){
+		if (way.getVesion() < newWay.getVesion()) {
 			newWay = newWay.save();
 		}
 

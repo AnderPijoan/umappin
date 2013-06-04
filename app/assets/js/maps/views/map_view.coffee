@@ -14,6 +14,7 @@ class window.Maps.MapView extends Backbone.View
   baseLayers: []
   geoLocationControl: null
   searchBarTemplate: _.template $('#search-bar-template').html()
+  locationFeature: null
 
   # ----------------------------- Base Layers ------------------------------- #
   initBaseLayers: () ->
@@ -75,9 +76,8 @@ class window.Maps.MapView extends Backbone.View
     keyboardControl = new OpenLayers.Control
     keyboardControl.handler = new OpenLayers.Handler.Keyboard(
       keyboardControl
-      'keyup': (e) =>
-        console.log "key #{e.keyCode}"
-        # TODO: handle different key events
+      'keyup': (e) => dummy = true #console.log "key #{e.keyCode}"
+      # TODO: handle different key events
     )
     @controls.push keyboardControl
 
@@ -98,19 +98,19 @@ class window.Maps.MapView extends Backbone.View
       @
       (e) ->
         geoLocationLayer.removeAllFeatures()
-        geoPlace = new OpenLayers.Feature.Vector(
+        @locationFeature = new OpenLayers.Feature.Vector(
           e.point
-        {}
-        {
-          graphicName: 'circle'
-          strokeColor: '#0000FF'
-          strokeWidth: 1
-          fillOpacity: 0.5
-          fillColor: '#0000BB'
-          pointRadius: 20
-        }
+          {}
+          {
+            graphicName: 'circle'
+            strokeColor: '#0000FF'
+            strokeWidth: 1
+            fillOpacity: 0.5
+            fillColor: '#0000BB'
+            pointRadius: 20
+          }
         )
-        geoLocationLayer.addFeatures [geoPlace]
+        geoLocationLayer.addFeatures [@locationFeature]
         @handleGeoLocated e
     )
     @geoLocationControl.events.register(

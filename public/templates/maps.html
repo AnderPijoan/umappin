@@ -24,14 +24,32 @@
 </script>
 
 <!------------------------------------- New tag template -------------------------------------->
-<script type='text/template' id='route-tag-template'>
+<script type='text/template' id='item-tag-template'>
     <li>
-        <select class='tagKeySelect'></select>
-        <select class='tagValueSelect'></select>
+        <select class='tagKeySelect' data="<%= (rc && rc.key) ? rc.key : '' %>"></select>
+        <select class='tagValueSelect' data="<%= (rc && rc.value) ? rc.value : '' %>"></select>
         <img src="<%= rc != undefined ? '/assets/img/error.png' : '/assets/img/new-plus.png' %>"
              class="<%= rc != undefined ? 'removeTagImage' : 'addTagImage' %>">
     </li>
 </script>
+
+<!------------------------------------- Item Like Template -------------------------------------->
+<script type='text/template' id='item-like-template'>
+    <div class="itemLikePop">
+        <div class="modal-header">
+            <label>You can post a comment now</label>
+        </div>
+        <div class="modal-body">
+            <textarea class='itemLikeComment' id='itemLikeComment-<%=rc.id%>' placeholder="Enter a comment"></textarea>
+        </div>
+        <div class="modal-footer">
+            <a href="javascript:$('.likeItemButton').last().popover('hide');void(0)"
+               class="btn cancelItemLikeButton">Cancel</a>
+            <a href="javascript:$('#likeItemButton-<%=rc.id%>').change();void(0)" class="btn btn-primary saveItemLikeButton">Like!</a>
+        </div>
+    </div>
+</script>
+
 
 <!------------------------------------- Route popup template -------------------------------------->
 <script type='text/template' id='routes-popup-template'>
@@ -62,9 +80,9 @@
         <h4>Tags</h4>
         <ul class='tagsList'>
             <% for (var p in rc.mapFeature.get("properties")) { %>
-                <%=(_.template($('#route-tag-template').html()))({key: p, value: rc.mapFeature.get("properties")[p]})%>
+                <%= (_.template($('#item-tag-template').html()))({key: p, value: rc.mapFeature.get("properties")[p]}) %>
             <% } %>
-            <%=(_.template($('#route-tag-template').html()))()%>
+            <%= (_.template($('#item-tag-template').html()))() %>
         </ul>
 
         <button class='button saveRouteDataButton' id='saveRouteDataButton-<%=rc.mapFeature.id%>'>Save</button>
@@ -74,7 +92,7 @@
             if (rc.mapFeature.get('user').id !== Account.session.get('id')) {
                 if (!rc.liked) {
         %>
-                    <button class='button likeRouteButton' id='likeRouteButton-<%=rc.mapFeature.id%>'>Like</button>
+                    <button class='button likeRouteButton' id='likeItemButton-<%=rc.mapFeature.id%>'>Like</button>
                 <% } else { %>
                     <label style='float:right'>Liked!!</label>
         <%
@@ -86,24 +104,43 @@
 
 </script>
 
-<!------------------------------------- Route Like Template -------------------------------------->
-<script type='text/template' id='route-like-template'>
-    <div class="routeLikePop">
-        <div class="modal-header">
-            <label>You can post a comment now</label>
-        </div>
-        <div class="modal-body">
-            <textarea class='routeLikeComment' id='routeLikeComment-<%=rc.id%>' placeholder="Enter a comment"></textarea>
-        </div>
-        <div class="modal-footer">
-            <a href="javascript:$('.likeRouteButton').last().popover('hide');void(0)"
-               class="btn cancelRouteLikeButton">Cancel</a>
-            <a href="javascript:$('#likeRouteButton-<%=rc.id%>').change();void(0)" class="btn btn-primary saveRouteLikeButton">Like!</a>
-        </div>
-    </div>
-</script>
 
 <!------------------------------------- Feature popup template -------------------------------------->
+<script type='text/template' id='feature-popup-template'>
+    <div class='feature-popup'>
+        <h4>
+            <p>Lon: &nbsp; <%=rc.geometry.getBounds().getCenterLonLat().lon%></p>
+            <p>Lat: &nbsp; <%=rc.geometry.getBounds().getCenterLonLat().lat%></p>
+        </h4>
+        <div class='featurePictureHolder'></div>
+        <ul class='tagsList'>
+            <% for (var p in rc.mapFeature.get("properties")) { %>
+                <%= (_.template($('#item-tag-template').html()))({key: p, value: rc.mapFeature.get("properties")[p]}) %>
+            <% } %>
+            <%= (_.template($('#item-tag-template').html()))() %>
+        </ul>
+
+        <button class='button saveFeatureDataButton' id='saveFeatureDataButton-<%=rc.mapFeature.id%>'>Save</button>
+        <button class='button removeFeatureButton' id='removeFeatureButton-<%=rc.mapFeature.id%>'>Delete</button>
+
+        <%
+            if (rc.mapFeature.get('user') !== Account.session.get('id')) {
+                if (!rc.liked) {
+        %>
+                    <button class='button likeFeatureButton' id='likeItemButton-<%=rc.mapFeature.id%>'>Like</button>
+        <%      } else { %>
+                    <label style='float:right'>Liked!!</label>
+        <%
+                }
+            }
+        %>
+
+    </div>
+
+</script>
+
+
+<!------------------------------------- Feature popup template (Generic) -------------------------------------->
 <script type='text/template' id='features-popup-template'>
     <h4><%=rc.type%> - &nbsp; Lon: &nbsp; <%=rc.lon%>, &nbsp; Lat: &nbsp; <%=rc.lat%></h4>
     <% for (var t in rc.tags) { %>

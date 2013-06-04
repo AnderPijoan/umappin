@@ -5,8 +5,8 @@ _.templateSettings.variable = 'rc'
 class window.Maps.RoutesMapView extends Maps.MapView
   drawLayer: null
   routesPopupTemplate: _.template $('#routes-popup-template').html()
-  routeTagTemplate: _.template $('#route-tag-template').html()
-  routeLikeTemplate: _.template $('#route-like-template').html()
+  itemTagTemplate: _.template $('#item-tag-template').html()
+  itemLikeTemplate: _.template $('#item-like-template').html()
   # ---------------------------- Controls ------------------------------ #
   #Overriden
   initControls: ->
@@ -87,11 +87,7 @@ class window.Maps.RoutesMapView extends Maps.MapView
     )
     @map.addPopup(feat.popup)
     @reloadTagEvents()
-
-    $('div.routes-popup').last().find('select').each () ->
-      data = $(@).attr('data')
-      $(@).find('option').each () -> $(@).attr('selected', true) unless $(@).val() != data
-      $(@).change()
+    @setLastTagsToSelects('routeDifficultySelect')
 
     that = @
     $('.saveRouteDataButton').last().bind 'click', (e) ->
@@ -112,19 +108,24 @@ class window.Maps.RoutesMapView extends Maps.MapView
 
     $('.likeRouteButton').last().popover
       html: true
-      content: that.routeLikeTemplate feat.mapFeature
+      content: that.itemLikeTemplate feat.mapFeature
       container: 'body'
 
     $('.likeRouteButton').last().change () ->
-      console.log $(@).parent()
       rl = new Maps.RouteLike
         routeId: feat.mapFeature.get 'id'
         userId: Account.session.get 'id'
-        comment: $('#routeLikeComment-' + feat.mapFeature.get 'id').val()
+        comment: $('#itemLikeComment-' + feat.mapFeature.get 'id').val()
       rl.save()
       $(@).popover('destroy')
       $(@).parent().append("<label style='float:right'>Liked!!</label>")
       $(@).remove()
+
+  setLastTagsToSelects: (type) ->
+    $('div.routes-popup').last().find("select.#{type}").each () ->
+      data = $(@).attr('data')
+      $(@).find('option').each () -> $(@).attr('selected', true) unless $(@).val() != data
+      $(@).change()
 
   removeFeaturePopup: (feat) ->
     if (feat.popup)
@@ -136,27 +137,25 @@ class window.Maps.RoutesMapView extends Maps.MapView
     that = @
     $('img.addTagImage').unbind('click').click () ->
       $(@).removeClass('addTagImage').addClass('removeTagImage').attr('src', '/assets/img/error.png')
-      $('ul.tagsList').append that.routeTagTemplate()
+      $('ul.tagsList').append that.itemTagTemplate()
       that.reloadTagEvents()
     $('img.removeTagImage').unbind('click').click () ->
       $(@).parent('li').remove()
       that.reloadTagEvents()
     url = "http://taginfo.openstreetmap.org/api/4/keys/all?page=1&rp=100&filter=in_wiki&sortname=count_all&sortorder=desc"
     $.get url, (keys) =>
-      html = "<option val=''>&nbsp;</option>"
+      html = "<option val=''></option>"
       html = (html + "<option val='#{entry.key}'>#{entry.key}</option>") for entry in keys.data
       $('select.tagKeySelect').html html
+      that.setLastTagsToSelects('tagKeySelect')
     $('select.tagKeySelect').change () ->
+      $(@).attr('data', $(@).val())
       url = "http://taginfo.openstreetmap.org/api/4/key/values?key=#{$(@).val()}&page=1&rp=100&sortname=count&sortorder=desc"
       $.get url, (resp) =>
-        html = "<option val=''>&nbsp;</option>"
+        html = "<option val=''></option>"
         html = (html + "<option val='#{entry.value}'>#{entry.value}</option>") for entry in resp.data
-        $(@).next('select').html html
-
-
-  # ---------------------------- Popup Handlers ------------------------------ #
-  saveRouteLike: (routeId) ->
-    alert "Save #{routeId} !!"
+        $(@).next('select').html(html).change () -> $(@).attr('data', $(@).val())
+        that.setLastTagsToSelects('tagValueSelect')
 
 
   # ---------------------------- Initialization ------------------------------ #
@@ -207,7 +206,7 @@ class window.Maps.RoutesMapView extends Maps.MapView
     p.transform @map.getProjectionObject(), Maps.MapView.OSM_PROJECTION
     geojsonFormat = new OpenLayers.Format.GeoJSON()
     json = "{\"geometry\": #{geojsonFormat.write p} }"
-    amount = 6 # TODO: we'll pick it up from a control
+    amount = 5 # TODO: we'll pick it up from a control
     difficulty = -1 # TODO: we'll pick it up from a control
     bounds = new OpenLayers.Bounds
     bounds.extend p
