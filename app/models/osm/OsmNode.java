@@ -373,8 +373,6 @@ public class OsmNode extends OsmFeature {
                   st.setString(6, Json.stringify(this.getGeometry()));
                   st.executeUpdate();
                 }
-
-                
             }
 
 		} catch (SQLException e) {
