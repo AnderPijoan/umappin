@@ -69,3 +69,11 @@ Maps.initRoutesMap = () ->
             Maps.routesMapView = new Maps.RoutesMapView
               el: $('#map-container')
               model: Maps.routesMap
+
+Maps.initPhotosMap = () ->
+  requirejs ['/assets/js/maps/models/map_model.js'], () ->
+    requirejs ['/assets/js/maps/views/map_view.js'], () ->
+      requirejs ['/assets/js/maps/views/photos_map_view.js'], () ->
+        Maps.photosMapview = new Maps.PhotosMapView
+          el: $('#map-container')
+          model: new Maps.Map

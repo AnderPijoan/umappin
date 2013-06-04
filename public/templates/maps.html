@@ -191,3 +191,48 @@
         <button class='button removeMarkerButton' id='removeMarkerButton-<%=rc.id%>'>Remove Marker</button>
     </div>
 </script>
+
+
+
+<!------------------------------------- Photos popup template -------------------------------------->
+<script type='text/template' id='photos-popup-template'>
+    <h4>Photo created on: &nbsp;<%=rc.properties.date_created%></h4>
+    <label>Location: Lon - <%=rc.geometry.coordinates[0]%>, Lat - <%=rc.geometry.coordinates[1]%></label>
+    <div class='photoComments'>
+        <% for (var c in rc.properties.comments) { %>
+        <div class='photoComment'>
+            Comment by:&nbsp;<a href='<%=rc.properties.comments[c].user_url%>'><%=rc.properties.comments[c].user || 'Unknown'%></a>
+            <label><%=rc.properties.comments[c].date%>:&nbsp;<%=rc.properties.comments[c].action%></label>
+            <%=rc.properties.comments[c].html%>
+        </div>
+        <% } %>
+    </div>
+    <div class='newPhotoComment'>
+        <label>Add a new Comment:</label>
+        <textarea id='newPhotoCommentText_<%=rc.properties.id%>' placeholder='type comment here'></textarea>
+        <button class='button newPhotoCommentButton' id='newPhotoCommentButton_<%=rc.properties.id%>'>Post Comment</button>
+        <input type='hidden' id='newPhotoCommentUrl_<%=rc.properties.id%>' value='<%=rc.properties.comment_url%>'>
+        <button class='button closePhotoButton' id='closePhotoButton_<%=rc.properties.id%>'>Close photo</button>
+        <input type='hidden' id='closePhotoUrl_<%=rc.properties.id%>' value='<%=rc.properties.close_url%>'>
+    </div>
+</script>
+
+<!------------------------------------- Photos comment template -------------------------------------->
+<script type='text/template' id='photos-comment-template'>
+    <div class='photoComment'>
+        Comment by:&nbsp;<a href='<%=rc.user_url%>'><%=rc.user || 'Unknown'%></a>
+        <label><%=rc.date%>:&nbsp;<%=rc.action%></label>
+        <%=rc.html%>
+    </div>
+</script>
+
+<!------------------------------------- New photo template -------------------------------------->
+<script type='text/template' id='photos-new-template'>
+    <div class='newPhoto'>
+        <label>Location: Lon - <%=rc.lon%>, Lat - <%=rc.lat%></label>
+        <label>Create a new Photo:</label>
+        <textarea id='newPhotoText-<%=rc.id%>' placeholder='type comment here'></textarea>
+        <button class='button newPhotoButton' id='newPhotoButton-<%=rc.id%>'>Post Photo</button>
+        <button class='button removePhotoButton' id='removePhotoButton-<%=rc.id%>'>Remove Photo</button>
+    </div>
+</script>        
