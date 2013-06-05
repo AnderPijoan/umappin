@@ -32,7 +32,7 @@ class window.Maps.PhotosMapView extends Maps.MapView
   # Overriden
   handleGeoLocated: (e) ->
     super
-    @getPhotosAroundLonLat e.point.x, e.point.y
+    @getPhotosAroundLocation e.point
 
   # ---------------------------- Search handler ------------------------------ #
   # Overriden
@@ -40,20 +40,22 @@ class window.Maps.PhotosMapView extends Maps.MapView
     super
     p = new OpenLayers.Geometry.Point location.lon, location.lat
     p.transform Maps.MapView.OSM_PROJECTION, @map.getProjectionObject()
-    @getPhotosAroundLonLat p.x, p.y
-
     marker = new OpenLayers.Marker(
       new OpenLayers.LonLat(p.x, p.y)
       new OpenLayers.Icon location.icon
     )
     @photosLayer.addMarker marker
+    @getPhotosAroundLocation p
+
+  getPhotosAroundLocation: (p) ->
     @map.zoomToExtent p.getBounds()
+    @getViewPortPhotos()
 
-
-  getPhotosAroundLonLat: (lon, lat) ->
-    p = new OpenLayers.Geometry.Point lon, lat
-    p.transform @map.getProjectionObject(), Maps.MapView.OSM_PROJECTION
-    @getMapPhotos p.getBounds(), new OpenLayers.Geometry.Point(lon, lat)
+  getViewPortPhotos: () ->
+    viewBounds = @map.getExtent().transform @map.getProjectionObject(), Maps.MapView.OSM_PROJECTION
+    v = viewBounds.toArray(false)
+    bbox = "x1=#{v[0]}&x2=#{v[2]}&y1=#{v[1]}&y2=#{v[3]}"
+    @getMapPhotos bbox
 
   # ---------------------------- Initialization ------------------------------ #
   initialize: ->
@@ -67,23 +69,23 @@ class window.Maps.PhotosMapView extends Maps.MapView
 
 
   # -------------------------------- OSM photos loader ---------------------------- #
-  getMapPhotos: (bbox, origin) ->
+  getMapPhotos: (bbox) ->
     $.ajax
-      url: 'http://api.openstreetmap.org/api/0.6/notes.json?bbox=' + bbox.toBBOX()
+      url: "/photos/rect?#{bbox}"
       success: (data) =>
         json = $.parseJSON data
         json = json ? data
         #data = JSON.parse data unless $.isPlainObject(data)
-        if json.features.length < @minPhotos
-          @getMapPhotos @extendBounds(bbox, 0.05), origin
+        results = json.results
+        if (results.length < @minPhotos) and (@map.getZoom() > 2)
+          @map.zoomOut()
+          @getViewPortPhotos()
         else
-          bbox = new OpenLayers.Bounds
-          for feature in json.features
+          for feature in results
             do (feature) =>
-              x = feature.geometry.coordinates[0]
-              y = feature.geometry.coordinates[1]
+              x = feature.get('longitude')
+              y = feature.get('latitude')
               lonlat = new OpenLayers.LonLat(x, y)
-              bbox.extend lonlat
               feat = new OpenLayers.Feature @photosLayer, lonlat.transform(
                 Maps.MapView.OSM_PROJECTION
                 @map.getProjectionObject()
@@ -93,16 +95,14 @@ class window.Maps.PhotosMapView extends Maps.MapView
               feat.data.overflow = 'auto'
               size = new OpenLayers.Size 32, 32
               offset = new OpenLayers.Pixel(-(size.w/2), -size.h)
-              feat.data.icon = new OpenLayers.Icon('/assets/img/140x140.gif', size, offset)
+              src = feature.get('get_photo_content') ? '/assets/img/140x140.gif'
+              feat.data.icon = new OpenLayers.Icon(src, size, offset)
               photo = feat.createMarker()
+              feat.mapPhoto = feature
               that = @
               photo.events.register "mousedown", feat, (evt) -> that.selectPhotoHandler evt, feat, lonlat
               photo.events.register "touchstart", feat, (evt) -> that.selectPhotoHandler evt, feat, lonlat
               @photosLayer.addMarker(photo)
-          bbox.transform(Maps.MapView.OSM_PROJECTION, @map.getProjectionObject())
-          bbox.extend new OpenLayers.LonLat(origin.x, origin.y)
-          @map.zoomTo Math.round @map.getZoomForExtent bbox
-          @map.zoomOut()
 
   createPhoto: (lnglat) ->
     feat = new OpenLayers.Feature @photosLayer, lnglat
@@ -114,6 +114,16 @@ class window.Maps.PhotosMapView extends Maps.MapView
     offset = new OpenLayers.Pixel(-(size.w/2), -size.h)
     feat.data.icon = new OpenLayers.Icon('/assets/img/140x140.gif', size, offset)
     photo = feat.createMarker()
+    p = new OpenLayers.Geometry.Point lnglat.lon, lnglat.lat
+    p.transform @map.getProjectionObject(), Maps.MapView.OSM_PROJECTION
+    picture = new Maps.Picture
+      latitude: p.y
+      longitude: p.x
+      owner_id: Account.session.get('id')
+      date_created: new Date()
+    picture.save()
+    feat.mapPhoto = picture
+
     that = @
     lonlat = new OpenLayers.LonLat(lnglat.lon, lnglat.lat).transform(
       @map.getProjectionObject()
@@ -130,9 +140,18 @@ class window.Maps.PhotosMapView extends Maps.MapView
       photo.popup = photo.createPopup(true)
       @map.addPopup(photo.popup)
       photo.popup.show()
+      @addPictureView photo.mapPhoto, 'newPhotoHolder'
       $('.newPhotoButton').bind('click', (evt) => @postNewPhoto(evt, lonlat))
       $('.removePhotoButton').bind 'click', (evt) -> photo.destroy()
     OpenLayers.Event.stop(evt)
+
+  addPictureView: (picture, containerClass) ->
+    @featurePictureView = new PictureView
+      model: picture
+      readonly: picture.get("owner_id") != Account.session.get("id")
+      showInfo: false
+      picWidth: '8em'
+    $("div.#{containerClass}").last().append @featurePictureView.render().el
 
   selectPhotoHandler: (evt, photo, lonlat) ->
     if photo.popup
@@ -141,6 +160,7 @@ class window.Maps.PhotosMapView extends Maps.MapView
       photo.popup = photo.createPopup(true)
       @map.addPopup(photo.popup)
       photo.popup.show()
+      @addPictureView photo.mapPhoto, 'mapPhotoHolder'
       $('.newPhotoCommentButton').bind('click', (e) => @postPhotoComment(e))
       $('.closePhotoButton').bind('click', (e) => @closePhoto(e))
     OpenLayers.Event.stop(evt)
@@ -160,10 +180,11 @@ class window.Maps.PhotosMapView extends Maps.MapView
   postNewPhoto: (evt, lonlat) ->
     id = $(evt.target).attr('id').split('-')[1]
     comment = $(evt.target).prev().val()
-    url = 'http://api.openstreetmap.org/api/0.6/photos?lat='+lonlat.lat+'&lon='+lonlat.lon+'&text='+comment
+    url = '/photos?lat='+lonlat.lat+'&lon='+lonlat.lon+'&text='+comment
     $.post url, (data) =>
-      data = @photo2json $(data).find('photo') # TODO check here photo creation
-      $(evt.target).parent().parent().html @photosPopupTemplate data
+      json = $.parseJSON data
+      json = json ? data
+      $(evt.target).parent().parent().html @photosPopupTemplate json
       $('.newPhotoCommentButton').bind('click', (e) => @postPhotoComment(e))
       $('.closePhotoButton').bind('click', (e) => @closePhoto(e))
 
@@ -178,32 +199,3 @@ class window.Maps.PhotosMapView extends Maps.MapView
       #data = JSON.parse data unless $.isPlainObject(data)
       postedcomment = json.properties.comments[json.properties.comments.length-1]
       container.append @photosCommentTemplate postedcomment
-
-  # Aux function for easily extending bounds
-  extendBounds: (bbox, ext) ->
-    xbbox = bbox.toArray(false)
-    xbbox = [xbbox[0]-ext, xbbox[1]-ext, xbbox[2]+ext, xbbox[3]+ext]
-    new OpenLayers.Bounds(xbbox)
-
-
-  # -------------------------- custom xml to json parser -------------------------- #
-  photo2json: (data) ->
-    json = data
-    ###
-    json =
-      id: $(data).find('id').text()
-      lat: $(data).attr('lat')
-      lon: $(data).attr('lon')
-      url: $(data).find('url').text().replace(/\/(\d+)$/, '/$1.json')
-      comment_url: $(data).find('comment_url').text().replace('comment', 'comment.json')
-      close_url: $(data).find('close_url').text().replace('close', 'close.json')
-      date_created: $(data).find('date_created').text()
-      status: $(data).find('status').text()
-      comments: []
-    $(data).find('comments comment').each () ->
-      json.comments.push
-        date: $(@).find('date').text()
-        text: $(@).find('text').text()
-        html: $(@).find('html').text()
-    json
-    ###

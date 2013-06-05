@@ -197,7 +197,8 @@
 <!------------------------------------- Photos popup template -------------------------------------->
 <script type='text/template' id='photos-popup-template'>
     <h4>Photo created on: &nbsp;<%=rc.properties.date_created%></h4>
-    <label>Location: Lon - <%=rc.geometry.coordinates[0]%>, Lat - <%=rc.geometry.coordinates[1]%></label>
+    <label>Location: Lon - <%=rc.get('longitude')%>, Lat - <%=rc.get('latitude')%></label>
+    <div class='mapPhotoHolder'></div>
     <div class='photoComments'>
         <% for (var c in rc.properties.comments) { %>
         <div class='photoComment'>
@@ -230,7 +231,8 @@
 <script type='text/template' id='photos-new-template'>
     <div class='newPhoto'>
         <label>Location: Lon - <%=rc.lon%>, Lat - <%=rc.lat%></label>
-        <label>Create a new Photo:</label>
+        <label>Locate a new Photo:</label>
+        <div class='newPhotoHolder'></div>
         <textarea id='newPhotoText-<%=rc.id%>' placeholder='type comment here'></textarea>
         <button class='button newPhotoButton' id='newPhotoButton-<%=rc.id%>'>Post Photo</button>
         <button class='button removePhotoButton' id='removePhotoButton-<%=rc.id%>'>Remove Photo</button>
