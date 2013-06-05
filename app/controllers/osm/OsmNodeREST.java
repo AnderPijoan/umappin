@@ -184,6 +184,7 @@ public class OsmNodeREST extends ItemREST {
 
 	
 	public static Result deleteNode(long id){
+		
 		final User user = Application.getLocalUser(session());
 		if (user == null){
 			return badRequest(Constants.USER_NOT_LOGGED_IN.toString());
@@ -192,6 +193,7 @@ public class OsmNodeREST extends ItemREST {
 		if (node == null){
 			return badRequest(Constants.NODES_EMPTY.toString());
 		}
+		// FIXME delete photo
 		node.delete();
 		return ok();
 	}

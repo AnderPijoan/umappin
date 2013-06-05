@@ -22,7 +22,7 @@ import org.xml.sax.SAXException;
 
 public abstract class OsmFeature {
 
-	public final static double TOLERANCE = 1; // Tolerance for symplyfing geometries when inserting to PostGIS
+	public final static double TOLERANCE = 100; // Tolerance for symplyfing geometries when inserting to PostGIS
 
 	protected DataSource ds;
 

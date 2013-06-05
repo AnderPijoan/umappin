@@ -66,25 +66,25 @@ public class OsmWay extends OsmFeature {
 
 	public OsmWay(JsonNode json) throws ParseException {
 
-        id = json.has("id") ? json.findPath("id").getIntValue() : 0;
+		id = json.has("id") ? json.findPath("id").getIntValue() : 0;
 		version = json.findPath("version").getIntValue();
 		user = (!json.has("user") || json.findPath("user").isNull()) ? "uMappin" : json.findPath("user").getTextValue();
 		uid = (!json.has("uid") || json.findPath("uid").isNull()) ? "uMappin" : json.findPath("user").getTextValue();
-        timeStamp = (json.has("timeStamp") && !json.findPath("timeStamp").isNull())
-                ? new java.text.SimpleDateFormat("yyyy-mm-dd'T'HH:mm:ssZ").parse(json.findPath("timeStamp").getTextValue())
-                : new Date();
-        this.featurePicture = json.findPath("featurePicture").getTextValue();
+		timeStamp = (json.has("timeStamp") && !json.findPath("timeStamp").isNull())
+				? new java.text.SimpleDateFormat("yyyy-mm-dd'T'HH:mm:ssZ").parse(json.findPath("timeStamp").getTextValue())
+						: new Date();
+				this.featurePicture = json.findPath("featurePicture").getTextValue();
 
-		setGeometry(json.findPath("geometry"));
+				setGeometry(json.findPath("geometry"));
 
-		JsonNode propertiesNode = json.findPath("properties");
-		tags = new LinkedHashMap<String, String>();
+				JsonNode propertiesNode = json.findPath("properties");
+				tags = new LinkedHashMap<String, String>();
 
-        Iterator it = propertiesNode.getFieldNames();
-        while (it.hasNext()) {
-            String key = (String)it.next();
-            tags.put(key, propertiesNode.get(key).getTextValue());
-        }
+				Iterator it = propertiesNode.getFieldNames();
+				while (it.hasNext()) {
+					String key = (String)it.next();
+					tags.put(key, propertiesNode.get(key).getTextValue());
+				}
 	}
 
 
@@ -138,7 +138,7 @@ public class OsmWay extends OsmFeature {
 		this.uid = uid;
 		this.nodes = nodes;
 		this.timeStamp = timestamp;
-        this.featurePicture = featurePicture;
+		this.featurePicture = featurePicture;
 		this.tags = tags;
 	}
 
@@ -151,6 +151,7 @@ public class OsmWay extends OsmFeature {
 		OsmWay way = null;
 		try {
 			conn = ds.getConnection();
+
 			// geom is not withdrawn, we generate the geometry from the nodes
 			String sql = "select id, nodes, vers, usr, uid, timest, featurepicture, tags from osmways where id = ?";
 			st = conn.prepareStatement(sql);
@@ -160,23 +161,38 @@ public class OsmWay extends OsmFeature {
 				Array nodesArray = rs.getArray("nodes");
 				Long[] nodeIds = (Long[]) nodesArray.getArray();
 				List<OsmNode> nodes = new ArrayList<OsmNode>();
+				boolean brokenWay = false;
 
 				// Get the nodes
 				for(long nodeId : nodeIds){
 					OsmNode node = OsmNode.findById(nodeId);
 					if (node != null){
 						nodes.add(node);
+					} else {
+						brokenWay = true;
 					}
 				}
 
-				way = new OsmWay(rs.getLong("id"),
-						rs.getInt("vers"),
-						rs.getString("usr"),
-						rs.getString("uid"),
-						nodes,
-						rs.getDate("timest"),
-                        rs.getString("featurepicture"),
-						hstoreFormatToTags(rs.getString("tags")));
+				if (!brokenWay){
+					way = new OsmWay(rs.getLong("id"),
+							rs.getInt("vers"),
+							rs.getString("usr"),
+							rs.getString("uid"),
+							nodes,
+							rs.getDate("timest"),
+							rs.getString("featurepicture"),
+							hstoreFormatToTags(rs.getString("tags")));
+				} else {
+					sql = "delete from osmways where id = ?";
+					st = conn.prepareStatement(sql);
+					st.setLong(1, rs.getLong("id"));
+					st.executeUpdate();
+					for(long nodeId : nodeIds){
+						OsmNode node = OsmNode.findById(nodeId);
+						if (node != null)
+							node.delete();
+					}
+				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -210,24 +226,39 @@ public class OsmWay extends OsmFeature {
 				Array nodesArray = rs.getArray("nodes");
 				Long[] nodeIds = (Long[]) nodesArray.getArray();
 				List<OsmNode> nodes = new ArrayList<OsmNode>();
+				boolean brokenWay = false;
 
 				// Get the nodes
 				for(long nodeId : nodeIds){
 					OsmNode node = OsmNode.findById(nodeId);
 					if (node != null){
 						nodes.add(node);
+					} else {
+						brokenWay = true;
 					}
 				}
 
-				way = new OsmWay(
-						rs.getLong("id"),
-						rs.getInt("vers"),
-						rs.getString("usr"),
-						rs.getString("uid"),
-						nodes,
-						rs.getDate("timest"),
-                        rs.getString("featurepicture"),
-						hstoreFormatToTags(rs.getString("tags")));
+				if (!brokenWay){
+					way = new OsmWay(
+							rs.getLong("id"),
+							rs.getInt("vers"),
+							rs.getString("usr"),
+							rs.getString("uid"),
+							nodes,
+							rs.getDate("timest"),
+							rs.getString("featurepicture"),
+							hstoreFormatToTags(rs.getString("tags")));
+				} else {
+					sql = "delete from osmways where id = ?";
+					st = conn.prepareStatement(sql);
+					st.setLong(1, rs.getLong("id"));
+					st.executeUpdate();
+					for(long nodeId : nodeIds){
+						OsmNode node = OsmNode.findById(nodeId);
+						if (node != null)
+							node.delete();
+					}
+				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -257,8 +288,8 @@ public class OsmWay extends OsmFeature {
 		try {
 
 			conn = ds.getConnection();
-            String sql;
-            ////////////////////////////////////////////////////////////////////////////////////
+			String sql;
+			////////////////////////////////////////////////////////////////////////////////////
 			// OSM IDS START FROM 1 AND ON. 
 			// WHEN UPLOADING DATA TO OSM, THE NEW ELEMENTS HAVE NEGATIVE NODES.
 			// IF WE CREATE A NEW ELEMENT THAT DOESNT EXIST IN OSM, WE WILL STORE IT WITH NEGATIVE ID
@@ -267,107 +298,135 @@ public class OsmWay extends OsmFeature {
 			// FROM OSM EXISTING DATA (POSITIVE IDS) AND DATA WE HAVE CREATED (NEGATIVE IDS)
 			////////////////////////////////////////////////////////////////////////////////////
 
-            // Save all the nodes (they might have changes)
-            for(OsmNode node : nodes) node.save();
-            Long[] nodeIds = new Long[this.nodes.size()];
-            for(int x = 0; x < this.nodes.size(); x++) nodeIds[x] = this.nodes.get(x).id;
+			// Save all the nodes (they might have changes)
+			for(OsmNode node : nodes) 
+				node.save();
+			
+			// Purge list
+			Iterator<OsmNode> it = nodes.iterator();
+			while (it.hasNext()){
+				OsmNode node = it.next();
+				if (node == null){
+					it.remove();
+				}
+				if (node.id == 0){
+					it.remove();
+				}
+				if (node.getGeometry() == null){
+					it.remove();
+				}
+			}
 
+			Long[] nodeIds = new Long[this.nodes.size()];
+
+			for(int x = 0; x < this.nodes.size(); x++)
+				if (this.nodes.get(x).id != 0)
+					nodeIds[x] = this.nodes.get(x).id;
+			
 			// If the ID is 0, give it a new available (negative) ID
-			if (this.id == 0) {
-                // Check if location already exists
-                sql = "select tags from osmways where geom = ST_SimplifyPreserveTopology(ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913), " + TOLERANCE + ")";
-                st = conn.prepareStatement(sql);
-                st.setString(1, Json.stringify(this.getGeometry()));
-                rs = st.executeQuery();
-                // If some way with the same Location exists, merge out tags
-                while (rs.next()) {
-                    HashMap<String, String> othertags = hstoreFormatToTags(rs.getString("tags"));
-                    if (othertags != null && othertags.size() >= 0) {
-                        if (this.tags == null)
-                            this.tags = new LinkedHashMap<>();
-                        this.tags.putAll(othertags);
-                    }
-                }
+			if (this.id == 0 && !nodes.isEmpty()) {
 
-                sql = "insert into osmways (vers, usr, uid, timest, nodes, geom " +
-                        ((tags != null && tags.size() > 0) ? ",tags" : "" ) + ") " +
-                        "values (?, ?, ?, ?, ?, ST_SimplifyPreserveTopology(ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913), " + TOLERANCE + ") " +
-                        ((tags != null && tags.size() > 0) ? ", " + tagsToHstoreFormat(tags) : "" ) + ") returning id";
+				// Check if location already exists
+				sql = "select id, tags from osmways where geom = ST_SimplifyPreserveTopology(ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913), " + TOLERANCE + ")";
+				st = conn.prepareStatement(sql);
+				st.setString(1, Json.stringify(this.getGeometry()));
+				rs = st.executeQuery();
 
-                st = conn.prepareStatement(sql);
-                st.setInt(1, this.version);
-                st.setString(2, this.user);
-                st.setString(3, this.uid);
-                st.setDate(4, new java.sql.Date(timeStamp.getTime()));
-                st.setArray(5, conn.createArrayOf("bigint", nodeIds));
-                st.setString(6, Json.stringify(this.getGeometry()));
-                rs = st.executeQuery();
-                if (rs.next())
-                    this.id = rs.getLong("id");
+				// If some way with the same location exists, merge out tags
+				while (rs.next()) {
+
+					this.id = rs.getInt("id");
+
+					HashMap<String, String> othertags = hstoreFormatToTags(rs.getString("tags"));
+					if (othertags != null && othertags.size() >= 0) {
+						if (this.tags == null)
+							this.tags = new LinkedHashMap<>();
+							this.tags.putAll(othertags);
+					}
+					
+					
+					
+				}
+				
+				sql = "insert into osmways (vers, usr, uid, timest, nodes, geom " +
+						((tags != null && tags.size() > 0) ? ",tags" : "" ) + ") " +
+						"values (?, ?, ?, ?, ?, ST_SimplifyPreserveTopology(ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913), " + TOLERANCE + ") " +
+						((tags != null && tags.size() > 0) ? ", " + tagsToHstoreFormat(tags) : "" ) + ") returning id";
+
+				st = conn.prepareStatement(sql);
+				st.setInt(1, this.version);
+				st.setString(2, this.user);
+				st.setString(3, this.uid);
+				st.setDate(4, new java.sql.Date(timeStamp.getTime()));
+				st.setArray(5, conn.createArrayOf("bigint", nodeIds));
+				st.setString(6, Json.stringify(this.getGeometry()));
+				rs = st.executeQuery();
+				if (rs.next())
+					this.id = rs.getLong("id");
 
 			} else {
-                // Check if already exists
-                sql = "select id, vers, tags from osmways where id = ? OR geom = ST_SimplifyPreserveTopology(ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913), " + TOLERANCE + ")";
-                st = conn.prepareStatement(sql);
-                st.setLong(1, this.id);
-                st.setString(2, Json.stringify(this.getGeometry()));
-                rs = st.executeQuery();
-                boolean exists = false;
-                // A way with the same ID or Location exists, check possible cases
-                while (rs.next()){
-                    // Way id already exists
-                    if(this.id != 0 && rs.getLong("id") == this.id) {
-                        // If our Way has same or lower version than the one in DB, reject it
-                        exists = true;
-                        reject = rs.getInt("vers") >= this.version;
-                        break;
-                    } else { // Location is used by another way
-                        // Get the ways tags and merge them with ours
-                        HashMap<String, String> othertags = hstoreFormatToTags(rs.getString("tags"));
-                        if (othertags != null && othertags.size() >= 0) {
-                            if (this.tags == null)
-                                this.tags = new LinkedHashMap<>();
-                            this.tags.putAll(othertags);
-                        }
-                    }
-                }
-                // If theres no collition and the way won't be rejected
-                if (exists && !reject) {
-                    // Try updating
-                    sql = "update osmways set vers = ?, usr = ?, uid = ?, timest = ?, featurepicture = ?, nodes = ?, " +
-                            "geom = ST_SimplifyPreserveTopology(ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913), " +
-                            TOLERANCE + ")" +
-                            ((tags != null && tags.size() > 0) ? ", tags = " + tagsToHstoreFormat(tags) : "" ) +
-                            " where id = ?";
-                    st = conn.prepareStatement(sql);
-                    st.setInt(1, this.version);
-                    st.setString(2, this.user);
-                    st.setString(3, this.uid);
-                    st.setDate(4, new java.sql.Date(timeStamp.getTime()));
-                    st.setString(5, this.featurePicture);
-                    st.setArray(6, conn.createArrayOf("bigint", nodeIds));
-                    st.setString(7, Json.stringify(this.getGeometry()));
-                    st.setLong(8, this.id);
-                    st.executeUpdate();
-                }
+				// Check if already exists
+				sql = "select id, vers, tags from osmways where id = ? OR geom = ST_SimplifyPreserveTopology(ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913), " + TOLERANCE + ")";
+				st = conn.prepareStatement(sql);
+				st.setLong(1, this.id);
+				st.setString(2, Json.stringify(this.getGeometry()));
+				rs = st.executeQuery();
+				boolean exists = false;
+				// A way with the same ID or Location exists, check possible cases
+				while (rs.next()){
+					// Way id already exists
+					if(this.id != 0 && rs.getLong("id") == this.id) {
+						// If our Way has same or lower version than the one in DB, reject it
+						exists = true;
+						reject = rs.getInt("vers") >= this.version;
+						break;
+					} else { // Location is used by another way
+						// Get the ways tags and merge them with ours
+						HashMap<String, String> othertags = hstoreFormatToTags(rs.getString("tags"));
+						if (othertags != null && othertags.size() >= 0) {
+							if (this.tags == null)
+								this.tags = new LinkedHashMap<>();
+								this.tags.putAll(othertags);
+						}
+					}
+				}
+				// If theres no collition and the way won't be rejected
+				if (exists && !reject) {
+					// Try updating
+					sql = "update osmways set vers = ?, usr = ?, uid = ?, timest = ?, featurepicture = ?, nodes = ?, " +
+							"geom = ST_SimplifyPreserveTopology(ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913), " +
+							TOLERANCE + ")" +
+							((tags != null && tags.size() > 0) ? ", tags = " + tagsToHstoreFormat(tags) : "" ) +
+							" where id = ?";
+					st = conn.prepareStatement(sql);
+					st.setInt(1, this.version);
+					st.setString(2, this.user);
+					st.setString(3, this.uid);
+					st.setDate(4, new java.sql.Date(timeStamp.getTime()));
+					st.setString(5, this.featurePicture);
+					st.setArray(6, conn.createArrayOf("bigint", nodeIds));
+					st.setString(7, Json.stringify(this.getGeometry()));
+					st.setLong(8, this.id);
+					st.executeUpdate();
+				}
 
-                if (!exists) {
-                    //Ok, it dos not exist but it has already an id
-                    sql = "insert into osmways (id, vers, usr, uid, timest, nodes, geom " +
-                            ((tags != null && tags.size() > 0) ? ",tags" : "" ) + ") " +
-                            "values (?, ?, ?, ?, ?, ?, ST_SimplifyPreserveTopology(ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913), " + TOLERANCE + ") " +
-                            ((tags != null && tags.size() > 0) ?  ", " + tagsToHstoreFormat(tags) : "" ) + " )";
-                    st = conn.prepareStatement(sql);
-                    st.setLong(1, this.id);
-                    st.setInt(2, this.version);
-                    st.setString(3, this.user);
-                    st.setString(4, this.uid);
-                    st.setDate(5, new java.sql.Date(timeStamp.getTime()));
-                    st.setArray(6, conn.createArrayOf("bigint", nodeIds));
-                    st.setString(7, Json.stringify(this.getGeometry()));
-                    st.executeUpdate();
-                }
-            }
+				if (!exists) {
+					//Ok, it dos not exist but it has already an id
+					sql = "insert into osmways (id, vers, usr, uid, timest, nodes, geom " +
+							((tags != null && tags.size() > 0) ? ",tags" : "" ) + ") " +
+							"values (?, ?, ?, ?, ?, ?, ST_SimplifyPreserveTopology(ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913), " + TOLERANCE + ") " +
+							((tags != null && tags.size() > 0) ?  ", " + tagsToHstoreFormat(tags) : "" ) + " )";
+					st = conn.prepareStatement(sql);
+					st.setLong(1, this.id);
+					st.setInt(2, this.version);
+					st.setString(3, this.user);
+					st.setString(4, this.uid);
+					st.setDate(5, new java.sql.Date(timeStamp.getTime()));
+					st.setArray(6, conn.createArrayOf("bigint", nodeIds));
+					st.setString(7, Json.stringify(this.getGeometry()));
+					st.executeUpdate();
+				}
+			}
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -406,7 +465,7 @@ public class OsmWay extends OsmFeature {
 			String sql = "delete from osmways where id = ?";
 			st = conn.prepareStatement(sql);
 			st.setLong(1, this.id);
-			st.executeQuery();
+			st.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -435,29 +494,29 @@ public class OsmWay extends OsmFeature {
 
 		Double[][] coordinates = new Double[nodes.size()][2];
 		Long[] ids = new Long[nodes.size()];
-        Integer[] versions = new Integer[nodes.size()];
+		Integer[] versions = new Integer[nodes.size()];
 
 		for(int x = 0; x < nodes.size(); x++){
 			OsmNode node = nodes.get(x);
 			coordinates[x][0] = node.getLon();
 			coordinates[x][1] = node.getLat();
 			ids[x] = node.id;
-            versions[x] = node.version;
+			versions[x] = node.version;
 		}
-        JsonNode coord;
-        if (nodes.get(0).equals(nodes.get(nodes.size()-1))) {
-            // If it is a closed way
-            geomNode.put("type", "Polygon");
-            coord = new ArrayNode(JsonNodeFactory.instance);
-            ((ArrayNode)coord).add(Json.toJson(coordinates));
-        } else {
-            // If it is not closed
-            geomNode.put("type", "LineString");
-            coord = Json.toJson(coordinates);
-        }
+		JsonNode coord;
+		if (nodes.get(0).equals(nodes.get(nodes.size()-1))) {
+			// If it is a closed way
+			geomNode.put("type", "Polygon");
+			coord = new ArrayNode(JsonNodeFactory.instance);
+			((ArrayNode)coord).add(Json.toJson(coordinates));
+		} else {
+			// If it is not closed
+			geomNode.put("type", "LineString");
+			coord = Json.toJson(coordinates);
+		}
 		geomNode.put("coordinates", coord);
 		geomNode.put("node_ids", Json.toJson(ids));
-        geomNode.put("node_versions", Json.toJson(versions));
+		geomNode.put("node_versions", Json.toJson(versions));
 
 		return geomNode;
 	}
@@ -474,7 +533,7 @@ public class OsmWay extends OsmFeature {
 		nodes = new ArrayList<OsmNode>();
 		JsonNode coordinatesNode = geometry.findPath("coordinates");
 		JsonNode idsNode = geometry.findPath("node_ids");
-        JsonNode versionsNode = geometry.findPath("node_versions");
+		JsonNode versionsNode = geometry.findPath("node_versions");
 		if (geometry.findPath("type").asText().toUpperCase().equals("LINESTRING") && coordinatesNode.size() == idsNode.size()){
 
 			for(int x = 0; x < coordinatesNode.size(); x++){
@@ -493,12 +552,12 @@ public class OsmWay extends OsmFeature {
 							coordinatesNode.get(x).get(1).asDouble(),
 							coordinatesNode.get(x).get(0).asDouble(),
 							new Date(),
-                            null,
+							null,
 							null
-                    );
+							);
 				} else {
 					node.setGeometry(osmNodeNode);
-                    node.setVersion(versionsNode.get(x).getIntValue());
+					node.setVersion(versionsNode.get(x).getIntValue());
 				}
 				nodes.add(node);
 			}
@@ -522,15 +581,15 @@ public class OsmWay extends OsmFeature {
 							coordinatesNode.get(0).get(x).get(1).asDouble(),
 							coordinatesNode.get(0).get(x).get(0).asDouble(),
 							new Date(),
-                            null,
+							null,
 							null);
 				} else {
 					node.setGeometry(osmNodeNode);
-                    node.setVersion(versionsNode.get(x).getIntValue());
+					node.setVersion(versionsNode.get(x).getIntValue());
 				}
 				nodes.add(node);
 			}
-            nodes.add(nodes.get(0));
+			nodes.add(nodes.get(0));
 		}
 	}
 
@@ -547,7 +606,7 @@ public class OsmWay extends OsmFeature {
 		osmWayNode.put("timestamp", new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(way.timeStamp));
 		osmWayNode.put("geometry", way.getGeometry());
 		osmWayNode.put("properties", Json.toJson(way.tags));
-        osmWayNode.put("featurePicture", way.featurePicture);
+		osmWayNode.put("featurePicture", way.featurePicture);
 
 		return osmWayNode;
 	}
@@ -610,7 +669,7 @@ public class OsmWay extends OsmFeature {
 	}
 
 
-	public static List<OsmFeature> findByLocation(JsonNode geometry,int limit){
+	public static List<OsmFeature> findByLocation(JsonNode geometry, int limit){
 
 		DataSource ds = DB.getDataSource();
 		Connection conn = null;
@@ -633,25 +692,44 @@ public class OsmWay extends OsmFeature {
 				Array nodesArray = rs.getArray("nodes");
 				Long[] nodeIds = (Long[]) nodesArray.getArray();
 				List<OsmNode> nodes = new ArrayList<OsmNode>();
+				boolean brokenWay = false;
 
 				// Get the nodes
-				for(long nodeId : nodeIds){
-					OsmNode node = OsmNode.findById(nodeId);
-					if (node != null){
-						nodes.add(node);
+				if (nodeIds == null){
+					brokenWay = true;
+				} else {
+					for(long nodeId : nodeIds){
+						OsmNode node = OsmNode.findById(nodeId);
+						if (node != null){
+							nodes.add(node);
+						} else {
+							brokenWay = true;
+						}
 					}
 				}
 
-				way = new OsmWay(
-						rs.getLong("id"),
-						rs.getInt("vers"),
-						rs.getString("usr"),
-						rs.getString("uid"),
-						nodes,
-						rs.getDate("timest"),
-                        rs.getString("featurepicture"),
-						OsmFeature.hstoreFormatToTags(rs.getString("tags")));
-				ways.add(way);
+				if (!brokenWay){
+					way = new OsmWay(
+							rs.getLong("id"),
+							rs.getInt("vers"),
+							rs.getString("usr"),
+							rs.getString("uid"),
+							nodes,
+							rs.getDate("timest"),
+							rs.getString("featurepicture"),
+							OsmFeature.hstoreFormatToTags(rs.getString("tags")));
+					ways.add(way);
+				} else {
+					sql = "delete from osmways where id = ?";
+					st = conn.prepareStatement(sql);
+					st.setLong(1, rs.getLong("id"));
+					st.executeUpdate();
+					for(long nodeId : nodeIds){
+						OsmNode node = OsmNode.findById(nodeId);
+						if (node != null)
+							node.delete();
+					}
+				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -705,7 +783,7 @@ public class OsmWay extends OsmFeature {
 						rs.getString("uid"),
 						nodes,
 						rs.getDate("timest"),
-                        rs.getString("featurepicture"),
+						rs.getString("featurepicture"),
 						OsmFeature.hstoreFormatToTags(rs.getString("tags")));
 				ways.add(way);
 			}
