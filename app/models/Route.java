@@ -12,6 +12,7 @@ import models.osm.OsmFeature;
 import org.bson.types.ObjectId;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
+import org.h2.constant.SysProperties;
 
 import play.db.DB;
 import play.libs.Json;
@@ -104,6 +105,7 @@ public class Route extends Item {
 				rs = st.executeQuery();
 				
 				while (rs.next()) {
+					System.out.println();
 					route.setGeometry(Json.parse(rs.getString("geometry")));
                     String tags = rs.getString("tags");
                     if (tags != null && !tags.equals(""))
@@ -142,7 +144,6 @@ public class Route extends Item {
 				st.setString(1, oid.toString());
 				rs = st.executeQuery();
 				while (rs.next()) {
-					
 					route.setGeometry(Json.parse(rs.getString("geometry")));
                     String tags = rs.getString("tags");
                     if (tags != null && !tags.equals(""))
@@ -155,6 +156,9 @@ public class Route extends Item {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
+				}
+				if (route.geometry == null){
+					return null;
 				}
 			}
 			return route;
@@ -175,7 +179,7 @@ public class Route extends Item {
 			// Try updating, if the route doesnt exists, the query does nothing
 			
 			String sql = "update routes set mongo_oid = ?, difficulty = ?, timest = ?, " +
-					"geom = ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913)" + 
+					"geom = ST_SimplifyPreserveTopology(ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913), " + OsmFeature.TOLERANCE + ")" + 
 					", tags = " + ((tags != null && tags.size() > 0) ? OsmFeature.tagsToHstoreFormat(tags) : "NULL" ) +
 					" where mongo_oid = ?";
 			st = conn.prepareStatement(sql);
@@ -191,7 +195,7 @@ public class Route extends Item {
 			
 			sql = "insert into routes (mongo_oid, difficulty, timest, geom " + 
 					((tags != null && tags.size() > 0) ? ",tags" : "" ) + ") " +
-					"select ?, ?, ?, ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913) " +
+					"select ?, ?, ?, ST_SimplifyPreserveTopology(ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913), " + OsmFeature.TOLERANCE + ") " +
 					((tags != null && tags.size() > 0) ? ", " + OsmFeature.tagsToHstoreFormat(tags) : "" ) + " " +
 					"where not exists (select 1 from routes where mongo_oid = ?)";
 			st = conn.prepareStatement(sql);

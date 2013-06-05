@@ -80,6 +80,7 @@ PUT     /followed/:id                controllers.FollowedREST.updateFollowed(id:
 DELETE  /followed/:id                controllers.FollowedREST.deleteFollowed(id: String)
 # REST CRUD for Users
 GET     /users                      controllers.UserREST.getAll()
+GET     /users/shortinfo            controllers.UserREST.getAllShortInfo()
 GET     /users/:id                  controllers.UserREST.get(id: String)
 GET     /users/:id/timeline         controllers.TimelineREST.getTimeline(id: String)
 GET     /users/:id/routes           controllers.User2RoutesREST.getUserRoutes(id: String)

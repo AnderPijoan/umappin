@@ -1,6 +1,7 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.bson.types.ObjectId;
@@ -21,13 +22,15 @@ public class User2Routes extends Item {
 	public List<Route> all() {
 		if (MorphiaObject.datastore != null) {
 			List<Route> result = new ArrayList<Route>();
-			for (ObjectId oid : routeIds){
-				Route route = MorphiaObject.datastore.get(Route.class, oid);
+			Iterator<ObjectId> it = routeIds.iterator();
+			while(it.hasNext()){
+				ObjectId oid = it.next();
+				Route route = Route.findById(oid);
 				if (route != null){
 					result.add(route);
 				} else {
 					Route.removeFromGis(oid);
-					routeIds.remove(oid);
+					it.remove();
 				}
 			}
 			return result;

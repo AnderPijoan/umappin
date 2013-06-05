@@ -39,7 +39,6 @@ public class TimelineREST extends ItemREST {
 			return badRequest(Constants.USERS_EMPTY.toString());
 		}
 		Timeline timeline = Timeline.findById(user.id, Timeline.class);
-		System.out.println("aqui llega..");
 		if (timeline == null) {
 			return badRequest(Constants.PUBLICATIONS_EMPTY.toString());
 		}
