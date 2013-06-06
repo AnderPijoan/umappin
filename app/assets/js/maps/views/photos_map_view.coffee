@@ -96,7 +96,8 @@ class window.Maps.PhotosMapView extends Maps.MapView
     feat.data.overflow = 'auto'
     size = new OpenLayers.Size 32, 32
     offset = new OpenLayers.Pixel(-(size.w/2), -size.h)
-    src = mapPhoto.get('get_content_location') ? '/assets/img/140x140.gif'
+    photoUrl = mapPhoto.get('get_content_location')
+    src = if photoUrl then "#{photoUrl}?#{new Date().getTime()}" else '/assets/img/140x140.gif'
     feat.data.icon = new OpenLayers.Icon(src, size, offset)
     photo = feat.createMarker()
     feat.mapPhoto = mapPhoto
@@ -104,6 +105,10 @@ class window.Maps.PhotosMapView extends Maps.MapView
     photo.events.register "mousedown", feat, (evt) -> that.selectPhotoHandler evt, feat, lonlat
     photo.events.register "touchstart", feat, (evt) -> that.selectPhotoHandler evt, feat, lonlat
     @photosLayer.addMarker(photo)
+    @listenTo mapPhoto, 'change', () ->
+      @stopListening mapPhoto
+      photo.destroy()
+      @createMapPhoto mapPhoto
 
   createPhoto: (lnglat) ->
     p = new OpenLayers.Geometry.Point lnglat.lon, lnglat.lat
