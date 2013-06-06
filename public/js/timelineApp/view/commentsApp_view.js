@@ -21,7 +21,7 @@ var timelineApp = timelineApp || {};
 			$('#comments_body').html('<ul id="publication_list"> </ul>');
 			timelineApp.PublicationCollection.each(function(publication){
 			   	var view = new timelineApp.ReceivedView({ model: publication});
-			   	$('#publication_list').append(view.render().el);
+			   	$('#publication_list').prepend(view.render().el);
 			});
 		},
 		
@@ -48,3 +48,4 @@ var timelineApp = timelineApp || {};
 })();
 
 var appView = new timelineApp.AppView();
+alert("entro");
