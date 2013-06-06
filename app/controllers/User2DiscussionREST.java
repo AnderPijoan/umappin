@@ -88,7 +88,7 @@ public class User2DiscussionREST extends ItemREST {
 		}
 		List<Discussion> discussions = user2disc.unread();
 		if (discussions.size() == 0) {
-			return notFound(Constants.DISCUSSIONS_EMPTY.toString());
+			return ok(Constants.DISCUSSIONS_EMPTY.toString());
 		} else {
 			// Return the response
 			return ok(Json.toJson(Discussion.discussionsToObjectNodes(discussions)));
