@@ -191,3 +191,23 @@
         <button class='button removeMarkerButton' id='removeMarkerButton-<%=rc.id%>'>Remove Marker</button>
     </div>
 </script>
+
+
+
+<!------------------------------------- Photos popup template -------------------------------------->
+<script type='text/template' id='photos-popup-template'>
+    <h4>Photo created on: &nbsp;<%=rc.get('date_created')%></h4>
+    <label>Location: Lon - <%=rc.get('longitude')%>, Lat - <%=rc.get('latitude')%></label>
+    <div class='mapPhotoHolder'></div>
+    <h4>Tags</h4>
+    <ul class='tagsList'>
+        <% if (rc.tags != null) for (var t in rc.get("tags")) { %>
+            <%= (_.template($('#item-tag-template').html()))({key: t, value: rc.mapFeature.get("tags")[t]}) %>
+        <% } %>
+        <%= (_.template($('#item-tag-template').html()))() %>
+    </ul>
+    <button class='button savePhotoButton' id='savePhotoButton_<%=rc.get('id')%>'>Save</button>
+    <button class='button deletePhotoButton' id='deletePhotoButton_<%=rc.get('id')%>'>Delete</button>
+</script>
+
+      
