@@ -21,11 +21,11 @@ public class TimelineREST extends ItemREST {
 		}
 		Timeline timeline = Timeline.findById(user.id, Timeline.class);
 		if (timeline == null) {
-			return badRequest(Constants.TIMELINE_EMPTY.toString());
+			return notFound(Constants.TIMELINE_EMPTY.toString());
 		}
 		List<Publication> publications = timeline.all();
 		if (publications.size() == 0) {
-			return badRequest(Constants.PUBLICATIONS_EMPTY.toString());
+			return notFound(Constants.PUBLICATIONS_EMPTY.toString());
 		} else {
 			// Return the response
 			return ok(Json.toJson(Publication.publicationsToObjectNodes(publications)));
@@ -36,11 +36,11 @@ public class TimelineREST extends ItemREST {
 	public static Result getTimeline(String userId){
 		final User user = User.findById(userId, User.class);
 		if (user == null){
-			return badRequest(Constants.USERS_EMPTY.toString());
+			return notFound(Constants.USERS_EMPTY.toString());
 		}
-		Timeline timeline = Timeline.findById(user.id, Timeline.class);
+		Timeline timeline = Timeline.findById(userId, Timeline.class);
 		if (timeline == null) {
-			return badRequest(Constants.PUBLICATIONS_EMPTY.toString());
+			return notFound(Constants.PUBLICATIONS_EMPTY.toString());
 		}
 		// Return the response
 		return ok(Json.toJson(Timeline.timelineToShortObjectNode(timeline)));
@@ -54,11 +54,11 @@ public class TimelineREST extends ItemREST {
 		}
 		Timeline timeline = Timeline.findById(user.id, Timeline.class);
 		if (timeline == null) {
-			return badRequest(Constants.PUBLICATIONS_EMPTY.toString());
+			return notFound(Constants.TIMELINE_EMPTY.toString());
 		}
 		List<Publication> publications = timeline.getPublications(0, 10);
 		if (publications.size() == 0) {
-			return badRequest(Constants.PUBLICATIONS_EMPTY.toString());
+			return notFound(Constants.PUBLICATIONS_EMPTY.toString());
 		} else {
 			// Return the response
 			return ok(Json.toJson(Publication.publicationsToObjectNodes(publications)));
@@ -73,11 +73,11 @@ public class TimelineREST extends ItemREST {
 		}
 		Timeline timeline = Timeline.findById(user.id, Timeline.class);
 		if (timeline == null) {
-			return badRequest(Constants.PUBLICATIONS_EMPTY.toString());
+			return notFound(Constants.TIMELINE_EMPTY.toString());
 		}
 		List<Publication> publications = timeline.getPublications(0, amount);
 		if (publications.size() == 0) {
-			return badRequest(Constants.PUBLICATIONS_EMPTY.toString());
+			return notFound(Constants.PUBLICATIONS_EMPTY.toString());
 		} else {
 			// Return the response
 			return ok(Json.toJson(Publication.publicationsToObjectNodes(publications)));
@@ -92,11 +92,11 @@ public class TimelineREST extends ItemREST {
 		}
 		Timeline timeline = Timeline.findById(user.id, Timeline.class);
 		if (timeline == null) {
-			return badRequest(Constants.TIMELINE_EMPTY.toString());
+			return notFound(Constants.TIMELINE_EMPTY.toString());
 		}
 		List<Publication> publications = timeline.getPublications(from, to);
 		if (publications.size() == 0) {
-			return badRequest(Constants.PUBLICATIONS_EMPTY.toString());
+			return notFound(Constants.PUBLICATIONS_EMPTY.toString());
 		} else {
 			// Return the response
 			return ok(Json.toJson(Publication.publicationsToObjectNodes(publications)));
@@ -111,11 +111,11 @@ public class TimelineREST extends ItemREST {
 		}
 		Timeline timeline = Timeline.findById(user.id, Timeline.class);
 		if (timeline == null) {
-			return badRequest(Constants.PUBLICATIONS_EMPTY.toString());
+			return notFound(Constants.PUBLICATIONS_EMPTY.toString());
 		}
 		Publication publication = timeline.findPublicationById(publicationId);
 		if (publication == null) {
-			return badRequest(Constants.PUBLICATIONS_EMPTY.toString());
+			return notFound(Constants.PUBLICATIONS_EMPTY.toString());
 		}
 		// Return the response
 		return ok(Json.toJson(Publication.publicationToFullObjectNode(publication)));
@@ -129,11 +129,11 @@ public class TimelineREST extends ItemREST {
 		}
 		Timeline timeline = Timeline.findById(user.id, Timeline.class);
 		if (timeline == null) {
-			return badRequest(Constants.PUBLICATIONS_EMPTY.toString());
+			return notFound(Constants.PUBLICATIONS_EMPTY.toString());
 		}
 		Publication publication = timeline.findPublicationById(publicationId);
 		if (publication == null) {
-			return badRequest(Constants.PUBLICATIONS_EMPTY.toString());
+			return notFound(Constants.PUBLICATIONS_EMPTY.toString());
 		}
 
 		// Return the response
@@ -159,6 +159,7 @@ public class TimelineREST extends ItemREST {
 		
 		publication = new Publication();		// Create Publication
 		publication.subject = json.findPath("subject").getTextValue();
+		publication.writerId = user.id;
 
 		/*
 		if (json.findPath("postPicture") != null){
@@ -219,11 +220,11 @@ public class TimelineREST extends ItemREST {
 		}
 		Timeline timeline = Timeline.findById(user.id, Timeline.class);
 		if (timeline == null) {
-			return badRequest(Constants.TIMELINE_EMPTY.toString());
+			return notFound(Constants.TIMELINE_EMPTY.toString());
 		}
 		Publication publication = timeline.findPublicationById(publicationId);
 		if (publication == null){
-			return badRequest(Constants.PUBLICATIONS_EMPTY.toString());
+			return notFound(Constants.PUBLICATIONS_EMPTY.toString());
 		}
 
 		timeline.removePublication(publication);
@@ -244,16 +245,16 @@ public class TimelineREST extends ItemREST {
 		}
 		Timeline timeline = Timeline.findById(user.id, Timeline.class);
 		if (timeline == null) {
-			return badRequest(Constants.TIMELINE_EMPTY.toString());
+			return notFound(Constants.TIMELINE_EMPTY.toString());
 		}
 		String publicationId = json.findPath("publication_id").getTextValue(); 
 		Publication publication = timeline.findPublicationById(publicationId);
 		if (publication == null) {
-			return badRequest(Constants.PUBLICATIONS_EMPTY.toString());
+			return notFound(Constants.PUBLICATIONS_EMPTY.toString());
 		}
 		Message message = publication.findMessageById(messageId);
 		if (message == null){
-			return badRequest(Constants.MESSAGES_EMPTY.toString());
+			return notFound(Constants.MESSAGES_EMPTY.toString());
 		}
 		// Return a copy of the message
 		return ok(Json.toJson(Message.messageToObjectNode(message)));
@@ -271,16 +272,16 @@ public class TimelineREST extends ItemREST {
 		}
 		Timeline timeline = Timeline.findById(user.id, Timeline.class);
 		if (timeline == null) {
-			return badRequest(Constants.TIMELINE_EMPTY.toString());
+			return notFound(Constants.TIMELINE_EMPTY.toString());
 		}
 		String publicationId = json.findPath("publication_id").getTextValue(); 
 		Publication publication = timeline.findPublicationById(publicationId);
 		if (publication == null) {
-			return badRequest(Constants.PUBLICATIONS_EMPTY.toString());
+			return notFound(Constants.PUBLICATIONS_EMPTY.toString());
 		}
 		Message message = publication.findMessageById(messageId);
 		if (message == null){
-			return badRequest(Constants.MESSAGES_EMPTY.toString());
+			return notFound(Constants.MESSAGES_EMPTY.toString());
 		}
 
 		message.message = json.findPath("message").getTextValue();
@@ -302,12 +303,12 @@ public class TimelineREST extends ItemREST {
 		}
 		Timeline timeline = Timeline.findById(user.id, Timeline.class);
 		if (timeline == null) {
-			return badRequest(Constants.TIMELINE_EMPTY.toString());
+			return notFound(Constants.TIMELINE_EMPTY.toString());
 		}
 		String publicationId = json.findPath("publication_id").getTextValue(); 
 		Publication publication = timeline.findPublicationById(publicationId);
 		if (publication == null) {
-			return badRequest(Constants.PUBLICATIONS_EMPTY.toString());
+			return notFound(Constants.PUBLICATIONS_EMPTY.toString());
 		}
 
 		Message message = new Message();
@@ -334,12 +335,12 @@ public class TimelineREST extends ItemREST {
 		}
 		Timeline timeline = Timeline.findById(user.id, Timeline.class);
 		if (timeline == null) {
-			return badRequest(Constants.TIMELINE_EMPTY.toString());
+			return notFound(Constants.TIMELINE_EMPTY.toString());
 		}
 		String publicationId = json.findPath("publication_id").getTextValue(); 
 		Publication publication = timeline.findPublicationById(publicationId);
 		if (publication == null) {
-			return badRequest(Constants.PUBLICATIONS_EMPTY.toString());
+			return notFound(Constants.PUBLICATIONS_EMPTY.toString());
 		}
 
 		// If the message replying to its really from this publication
@@ -357,7 +358,7 @@ public class TimelineREST extends ItemREST {
 			// Return a copy of the message
 			return ok(Json.toJson(Message.messageToObjectNode(message)));
 		}
-		return badRequest(Constants.MESSAGES_EMPTY.toString());
+		return notFound(Constants.MESSAGES_EMPTY.toString());
 	}
 
 
@@ -372,16 +373,16 @@ public class TimelineREST extends ItemREST {
 		}
 		Timeline timeline = Timeline.findById(user.id, Timeline.class);
 		if (timeline == null) {
-			return badRequest(Constants.TIMELINE_EMPTY.toString());
+			return notFound(Constants.TIMELINE_EMPTY.toString());
 		}
 		String publicationId = json.findPath("publication_id").getTextValue(); 
 		Publication publication = timeline.findPublicationById(publicationId);
 		if (publication == null) {
-			return badRequest(Constants.PUBLICATIONS_EMPTY.toString());
+			return notFound(Constants.PUBLICATIONS_EMPTY.toString());
 		}
 		Message message = publication.findMessageById(id);
 		if (message == null){
-			return badRequest(Constants.MESSAGES_EMPTY.toString());
+			return notFound(Constants.MESSAGES_EMPTY.toString());
 		}
 
 		// If someone is trying to delete the first message from a publication

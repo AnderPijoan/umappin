@@ -77,6 +77,7 @@ public class Publication extends Post {
 				}
 			}
 		}
+		this.save();
 		return users;
 	}
 

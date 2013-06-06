@@ -22,11 +22,11 @@ public class User2RoutesREST extends ItemREST {
 		}
 		User2Routes user2routes = User2Routes.findById(user.id, User2Routes.class);
 		if (user2routes == null) {
-			return badRequest(Constants.ROUTES_EMPTY.toString());
+			return notFound(Constants.ROUTES_EMPTY.toString());
 		}
 		List<Route> routes = Route.all(Route.class);
 		if (routes.size() == 0) {
-			return badRequest(Constants.ROUTES_EMPTY.toString());
+			return notFound(Constants.ROUTES_EMPTY.toString());
 		} else {
 			// Return the response
 			return ok(Json.toJson(Route.routesToObjectNodes(routes)));
@@ -41,11 +41,11 @@ public class User2RoutesREST extends ItemREST {
 		}
 		User2Routes user2routes = User2Routes.findById(user.id, User2Routes.class);
 		if (user2routes == null) {
-			return badRequest(Constants.ROUTES_EMPTY.toString());
+			return notFound(Constants.ROUTES_EMPTY.toString());
 		}
 		List<Route> routes = user2routes.all();
 		if (routes.size() == 0) {
-			return badRequest(Constants.ROUTES_EMPTY.toString());
+			return notFound(Constants.ROUTES_EMPTY.toString());
 		} else {
 			// Return the response
 			return ok(Json.toJson(Route.routesToObjectNodes(routes)));
@@ -60,11 +60,11 @@ public class User2RoutesREST extends ItemREST {
 		}
 		User2Routes user2routes = User2Routes.findById(id, User2Routes.class);
 		if (user2routes == null) {
-			return badRequest(Constants.ROUTES_EMPTY.toString());
+			return notFound(Constants.ROUTES_EMPTY.toString());
 		}
 		List<Route> routes = user2routes.all();
 		if (routes.size() == 0) {
-			return badRequest(Constants.ROUTES_EMPTY.toString());
+			return notFound(Constants.ROUTES_EMPTY.toString());
 		} else {
 			// Return the response
 			return ok(Json.toJson(Route.routesToObjectNodes(routes)));
@@ -79,7 +79,7 @@ public class User2RoutesREST extends ItemREST {
 		}
 		Route route = Route.findById(routeId);
 		if (route == null) {
-			return badRequest(Constants.ROUTES_EMPTY.toString());
+			return notFound(Constants.ROUTES_EMPTY.toString());
 		}
 		// Return the response
 		return ok(Json.toJson(Route.routeToFullObjectNode(route)));
@@ -119,11 +119,11 @@ public class User2RoutesREST extends ItemREST {
 		}
 		User2Routes user2route = User2Routes.findById(user.id, User2Routes.class);
 		if (user2route == null) {
-			return badRequest(Constants.ROUTES_EMPTY.toString());
+			return notFound(Constants.ROUTES_EMPTY.toString());
 		}
 		Route route = user2route.findRouteById(routeId);
 		if (route == null){
-			return badRequest(Constants.ROUTES_EMPTY.toString());
+			return notFound(Constants.ROUTES_EMPTY.toString());
 		}
 
 		route.difficulty = json.findPath("difficulty").getIntValue();
@@ -203,7 +203,7 @@ public class User2RoutesREST extends ItemREST {
 		User2Routes user2routes = User2Routes.findById(user.id, User2Routes.class);
 
 		if (user2routes == null || !user2routes.routeIds.contains(new ObjectId(id))){
-			return badRequest(Constants.ROUTES_EMPTY.toString());
+			return notFound(Constants.ROUTES_EMPTY.toString());
 		}
 		Route route = user2routes.findRouteById(id);
 
