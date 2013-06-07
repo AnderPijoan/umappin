@@ -368,7 +368,7 @@ public class PhotosREST extends Controller {
 
         //rect;x=39.001409,-84.578201;y=39.001409,-84.578201;
 
-        if(limit > Photo.MAX_RESULTS_RETURNED){
+        if(limit.intValue() > Photo.MAX_RESULTS_RETURNED){
             return badRequest("can't request more than " + Photo.MAX_RESULTS_RETURNED + " results");
         }
 
@@ -392,7 +392,7 @@ public class PhotosREST extends Controller {
         }};
 
         //tag search is not fully implemented, so we are passing them as null
-        List<Photo> photos = Photo.findByPoligonAndTags(rect, limit + 1, offset, null);
+        List<Photo> photos = Photo.findByPoligonAndTags(rect, limit.intValue() + 1, offset, null);
 
         Logger.info("found " + photos.size() + " photo(s) in rect");
         ObjectNode json = Json.newObject();
@@ -404,8 +404,8 @@ public class PhotosREST extends Controller {
             arrayNode.add(photoToJson(p));
         }
         json.put(RESULTS_OFFSET, offset);
-        json.put(RESULTS_LIMIT, limit);
-        json.put(RESULTS_HAS_NEXT, photos.size() > limit ? true : false);
+        json.put(RESULTS_LIMIT, limit.intValue());
+        json.put(RESULTS_HAS_NEXT, photos.size() > limit.intValue() ? true : false);
 
         return ok(json);
 
@@ -477,7 +477,7 @@ public class PhotosREST extends Controller {
     public static Result getPhotoUserLikes(String photoId, String userId, Integer offset, Integer limit){
 
 
-        if(limit > PhotoUserLike.MAX_RESULTS_RETURNED){
+        if(limit.intValue() > PhotoUserLike.MAX_RESULTS_RETURNED){
             return badRequest("can't request more than " + PhotoUserLike.MAX_RESULTS_RETURNED + " results");
         }
         if(offset < 0){
@@ -506,7 +506,7 @@ public class PhotosREST extends Controller {
             //request one result more than limit, to see if there are more results
             List<PhotoUserLike> userLikesList = PhotoUserLike
                     .getFromPhotoAndUser(
-                            photoObjId, userObjId, offset, limit + 1);
+                            photoObjId, userObjId, offset, limit.intValue() + 1);
 
             //results found and user was not specified: return a list
             if(userObjId == null  && userLikesList.size() > 0){
@@ -516,7 +516,7 @@ public class PhotosREST extends Controller {
                 ObjectNode json = Json.newObject();
 
                 ArrayNode arrayNode = json.putArray(RESULTS_RETURNED);
-                for(int i = 0; i < limit && i < userLikesList.size(); i++){
+                for(int i = 0; i < limit.intValue() && i < userLikesList.size(); i++){
                     PhotoUserLike ul = userLikesList.get(i);
                     Logger.info("user like currently is " + ul.getId().toString());
                     Logger.info("user in like currently is " + ul.getUserId().toString());
@@ -524,8 +524,8 @@ public class PhotosREST extends Controller {
                     arrayNode.add(userLikeToJson(ul));
                 }
                 json.put(RESULTS_OFFSET, offset);
-                json.put(RESULTS_LIMIT, limit);
-                json.put(RESULTS_HAS_NEXT, userLikesList.size() > limit ? true : false);
+                json.put(RESULTS_LIMIT, limit.intValue());
+                json.put(RESULTS_HAS_NEXT, userLikesList.size() > limit.intValue() ? true : false);
                 return ok(json);
 
             }
@@ -752,6 +752,13 @@ public class PhotosREST extends Controller {
         }
     }
 
-
+    // Quick REST service to retrieve just all the likes for a photo
+    public static Result getPhotoLikeStats(String photoId) {
+        JsonNode json = PhotoUserLike.getPhotoStats(photoId);
+        if (json == null || json.isNull())
+            return badRequest();
+        else
+            return ok(json);
+    }
 
 }

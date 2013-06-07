@@ -25,7 +25,7 @@ class window.Maps.PhotosMapView extends Maps.MapView
     addPhotoControl.activate()
     # Event for reloading photos on drag/zoom
     @map.events.register 'moveend', @, (evt) ->
-      @getViewPortPhotos()
+      @getViewPortPhotos false
   # ---------------------------- Geolocation Handler ------------------------------ #
   # Overriden
   handleGeoLocated: (e) ->
@@ -47,13 +47,13 @@ class window.Maps.PhotosMapView extends Maps.MapView
 
   getPhotosAroundLocation: (p) ->
     @map.zoomToExtent p.getBounds()
-    @getViewPortPhotos()
+    @getViewPortPhotos true
 
-  getViewPortPhotos: () ->
+  getViewPortPhotos: (expand) ->
     viewBounds = @map.getExtent().transform @map.getProjectionObject(), Maps.MapView.OSM_PROJECTION
     v = viewBounds.toArray(false)
     bbox = "x1=#{v[0]}&x2=#{v[2]}&y1=#{v[1]}&y2=#{v[3]}"
-    @getMapPhotos bbox
+    @getMapPhotos bbox, expand
 
   # ---------------------------- Initialization ------------------------------ #
   initialize: ->
@@ -67,7 +67,7 @@ class window.Maps.PhotosMapView extends Maps.MapView
 
 
   # -------------------------------- OSM photos loader ---------------------------- #
-  getMapPhotos: (bbox) ->
+  getMapPhotos: (bbox, expand) ->
     $.ajax
       url: "/photos/rect?#{bbox}"
       success: (data) =>
@@ -75,9 +75,10 @@ class window.Maps.PhotosMapView extends Maps.MapView
         json = json ? data
         #data = JSON.parse data unless $.isPlainObject(data)
         results = json.results
-        if (results.length < @minPhotos) and (@map.getZoom() > 12)
+        if (results.length < @minPhotos) and expand
           @map.zoomOut()
-          @getViewPortPhotos()
+          expand = @map.getZoom() > 12
+          @getViewPortPhotos expand
         else
           @photosLayer.clearMarkers()
           for feature in results
@@ -104,8 +105,34 @@ class window.Maps.PhotosMapView extends Maps.MapView
     photo = feat.createMarker()
     feat.mapPhoto = mapPhoto
     that = @
-    photo.events.register "mousedown", feat, (evt) -> that.selectPhotoHandler evt, feat, lonlat
-    photo.events.register "touchstart", feat, (evt) -> that.selectPhotoHandler evt, feat, lonlat
+    photo.events.registerPriority "click", feat, (evt) ->
+      $.ajax(
+        url: "photos/#{mapPhoto.get('id')}/userlikes/#{Account.session.get('id')}"
+      ).always (resp) =>
+        mapPhoto.likes = if resp.user_id then { is_beautiful: resp.is_beautiful, is_useful: resp.is_useful } else null
+        $.ajax(
+          url: "photos/#{mapPhoto.get('id')}/likestats"
+        ).always (stats) =>
+          mapPhoto.stats = stats
+          if photo.popup?
+            photo.popup.setContentHTML(that.photosPopupTemplate mapPhoto)
+          else
+            feat.data.popupContentHTML = that.photosPopupTemplate mapPhoto
+          that.selectPhotoHandler evt, feat, lonlat
+    photo.events.register "touchstart", feat, (evt) ->
+      $.ajax(
+        url: "photos/#{mapPhoto.get('id')}/userlikes/#{Account.session.get('id')}"
+      ).always (resp) =>
+        mapPhoto.likes = if resp.user_id then { is_beautiful: resp.is_beautiful, is_useful: resp.is_useful } else null
+        $.ajax(
+          url: "photos/#{mapPhoto.get('id')}/likestats"
+        ).always (stats) =>
+          mapPhoto.stats = likes
+          if photo.popup?
+            photo.popup.setContentHTML(that.photosPopupTemplate mapPhoto)
+          else
+            feat.data.popupContentHTML = that.photosPopupTemplate mapPhoto
+          that.selectPhotoHandler evt, feat, lonlat
     @photosLayer.addMarker(photo)
     @listenTo mapPhoto, 'change', () ->
       @stopListening mapPhoto
@@ -135,17 +162,47 @@ class window.Maps.PhotosMapView extends Maps.MapView
       photo.popup.toggle()
     else
       photo.popup = photo.createPopup(true)
+      photo.popup.panMapIfOutOfView = false
       @map.addPopup(photo.popup)
       photo.popup.show()
       @addPictureView photo.mapPhoto
+      $('.beautifulPhotoButton').bind('click', (e) => @beautifulPhoto(e, photo.mapPhoto))
+      $('.usefulPhotoButton').bind('click', (e) => @usefulPhoto(e, photo.mapPhoto))
+      $('.likeallPhotoButton').bind('click', (e) => @likeallPhoto(e, photo.mapPhoto))
       $('.savePhotoButton').bind('click', (e) => @savePhoto(e, photo.mapPhoto))
-      $('.deletePhotoButton').bind('click', (e) => @deletePhoto(photo.mapPhoto))
+      $('.deletePhotoButton').bind('click', (e) => @deletePhoto(photo))
     OpenLayers.Event.stop(evt)
 
   savePhoto: (e, photo) ->
-    photo.save()
-      #{ success: (resp) => console.log resp } # TODO set view data first
+    photo.save
+      title: $(e.target).parents('div.photos-popup').find('input[type=text]').val()
+      description: $(e.target).parents('div.photos-popup').find('textarea').val()
 
   deletePhoto: (photo) ->
+    photo.mapPhoto.destroy()
+    photo.popup.destroy()
     photo.destroy()
-      #{ success: (resp) => console.log resp } #TODO delete feature & popup
+
+  beautifulPhoto: (e, photo) -> @likePhoto(e, photo, '{"is_useful": 0, "is_beautiful": 1}')
+
+  usefulPhoto: (e, photo) -> @likePhoto(e, photo, '{"is_useful": 1, "is_beautiful": 0}')
+
+  likeallPhoto: (e, photo) -> @likePhoto(e, photo, '{"is_useful": 1, "is_beautiful": 1}')
+
+  likePhoto: (e, photo, like) ->
+    $.ajax
+      url: "photos/#{photo.get('id')}/userlikes"
+      type: 'POST'
+      contentType: 'application/json'
+      data: like
+      success: (resp) ->
+        html = "<label>Marked as:</label>"
+        if resp.is_beautiful == 1
+          newval = parseInt($(e.target).parents('.photos-popup').find('.beautifulsField').val())
+          $(e.target).parents('.photos-popup').find('.beautifulsField').val(newval+1)
+          html += "<label>Beautiful</label>"
+        if resp.is_useful == 1
+          newval = parseInt($(e.target).parents('.photos-popup').find('.usefulsField').val())
+          $(e.target).parents('.photos-popup').find('.usefulsField').val(newval+1)
+          html += "<label>Useful</label>"
+        $(e.target).parent().parent().html html
