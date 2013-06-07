@@ -23,8 +23,9 @@ class window.Maps.PhotosMapView extends Maps.MapView
     super
     # Activate controls after loading stuff
     addPhotoControl.activate()
-
-
+    # Event for reloading photos on drag/zoom
+    @map.events.register 'moveend', @, (evt) ->
+      @getViewPortPhotos()
   # ---------------------------- Geolocation Handler ------------------------------ #
   # Overriden
   handleGeoLocated: (e) ->
@@ -74,10 +75,11 @@ class window.Maps.PhotosMapView extends Maps.MapView
         json = json ? data
         #data = JSON.parse data unless $.isPlainObject(data)
         results = json.results
-        if (results.length < @minPhotos) and (@map.getZoom() > 2)
+        if (results.length < @minPhotos) and (@map.getZoom() > 12)
           @map.zoomOut()
           @getViewPortPhotos()
         else
+          @photosLayer.clearMarkers()
           for feature in results
             do (feature) =>
               mapPhoto = new Maps.Picture feature
