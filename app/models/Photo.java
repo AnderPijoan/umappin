@@ -48,7 +48,8 @@ public class Photo {
     private static final int LAT_LONG_SRID = 4326;
 
 	public static final  int MAX_RESULTS_RETURNED = 20;
-    private static final String IS_SEARCHABLE = "is_searcheable";
+    private static final String IS_SEARCHABLE = "is_searchable";
+    private static final long IMAGE_ASYNC_RESIZE_TIMEOUT = 10000L;
 
     @Id
 	private ObjectId id;
@@ -58,7 +59,7 @@ public class Photo {
 	private ObjectId ownerId;
 
 	@Reference(lazy=true)
-	private Set<Content> photoContents = new HashSet<Content>();
+	private List<Content> photoContents = new ArrayList<Content>();
 
 	@Embedded("title")
 	private String title;
@@ -167,11 +168,11 @@ public class Photo {
 		this.description = description;
 	}
 
-	public Set<Content> getPhotoContents() {
+	public List<Content> getPhotoContents() {
 		return photoContents;
 	}
 
-	public void setPhotoContents(Set<Content> photoContents) {
+	public void setPhotoContents(List<Content> photoContents) {
 		this.photoContents = photoContents;
 	}
 
@@ -207,9 +208,18 @@ public class Photo {
 			}
 		}
 
-		//save in morphia first; we have to ensure it has an id, otherwise
-		//cannot be saved in GIS
-		MorphiaObject.datastore.save(this);
+
+        //save in morphia first; we have to ensure it has an id, otherwise
+        //cannot be saved in GIS
+        MorphiaObject.datastore.save(this);
+
+        //now, that all the structure is persisted on the DB,
+        // we can launch the async creation of resized copies, that independently reads and writes the DB.
+        // We resize if the resized versions weren't already created,
+        // so if there is just one photo, then there is just the original, and go ahead resizing...
+        if(getPhotoContents().size() == 1){
+            this.createMultipleResizedContentsAsync();
+        }
 
 
         //note, the following insert/update/delete in postGis could be made just in case a
@@ -245,11 +255,12 @@ public class Photo {
 	}
 
     private void handleIncomingContent(String mimeType, Content c) {
-        createMultipleResizedContentsAsync();
 
         c.setMimeType(mimeType);
         cleanUpExistingContents();
         photoContents.add(c);
+
+        //createMultipleResizedContentsAsync();
     }
 
 
@@ -369,11 +380,18 @@ public class Photo {
         return new ArrayList<Photo>();
 	}
 
+    /**
+     * creates resized copies of the current photo by invoking a proper akka actor.
+     * The results are computed asynchronously ad persiste into the db
+     */
     private void createMultipleResizedContentsAsync() {
 
+        Logger.info("about to launch async resize for photo " + this.getId().toString());
         ActorRef imageResizer = Akka.system().actorOf(utils.ImageResizerActor.mkProps());
 
-        akka.pattern.Patterns.ask(imageResizer, this, 1000L);
+
+        //ask an actor to resize the photo given its id (String)
+        akka.pattern.Patterns.ask(imageResizer, this.getId().toString(), IMAGE_ASYNC_RESIZE_TIMEOUT);
 //        Akka.asPromise(akka.pattern.Patterns.ask(imageResizer, this, 1000L)).map(
 //            new F.Function<Object,String>() {
 //                public String apply(Object response) {
@@ -387,7 +405,8 @@ public class Photo {
 
     @Entity("Photo_Content")
 	public static class Content{
-
+        //sizes in pixels for all the resized versions. The size refers to the side
+        public static final List<Integer> SIZES = Arrays.asList(50, 150, 500, 1000);
 		public void setId(ObjectId id) {
 			this.id = id;
 		}
