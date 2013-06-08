@@ -261,4 +261,4 @@ DELETE  /featurelikes/:id             controllers.FeatureLikeREST.deleteFeatureL
 
 GET     /osmFixmes/populateDB        controllers.games.OsmFixmesREST.populateDatabase()
 
-
+POST    /invitemail           controllers.MailREST.sendInviteMail()

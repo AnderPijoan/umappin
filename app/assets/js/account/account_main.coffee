@@ -100,15 +100,15 @@ Account._loadUserList = () ->
   Account.userfollowed or= new Account.UserFollowed
   Account.relatedusers or= new Account.RelatedUsers
 
-  Account.userfollows.fetch()
-  Account.userfollowed.fetch()
-  Account.relatedusers.fetch()
-
-  Account.usersFiltersView = new Account.UsersFiltersView
+  Account.usersFiltersView or= new Account.UsersFiltersView
     collection: Account.relatedusers
     follows: Account.userfollows
     followed: Account.userfollowed
     refUser: Account.profile
+
+  Account.userfollows.fetch()
+  Account.userfollowed.fetch()
+  Account.relatedusers.fetch()
 
 Account.init = () ->
   Account.usersFiltersView = null
