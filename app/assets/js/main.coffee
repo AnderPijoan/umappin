@@ -28,13 +28,15 @@ $ () ->
     Backbone.history.start()
   sessionRequest = $.get "/sessionuser?#{new Date().getTime()}"
   sessionRequest.done (data) ->
-    unreadDiscussions = $.get "/discussions/unread"
-    unreadDiscussions.done (unread) ->
-      if unread != 'No discussion found'
-        $("#messages-badge").show();
-        $("#messages-badge").text(unread.length)
-        $("#message-unread").attr("href", "./#messages/message/"+unread.pop().id)
-        sessionStorage.setItem('unread-discusion',JSON.stringify(unread))
+    setInterval ->
+      unreadDiscussions = $.get "/discussions/unread"
+      unreadDiscussions.done (unread) ->
+        if unread != 'No discussion found'
+          $("#messages-badge").show();
+          $("#messages-badge").text(unread.length)
+          $("#message-unread").attr("href", "./#messages/message/"+unread.pop().id)
+          sessionStorage.setItem('unread-discusion',JSON.stringify(unread))
+    , 10000
     if data.profilePicture
       profileImg = './photos/'+data.profilePicture+'/content'
     else
