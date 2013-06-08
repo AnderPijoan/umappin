@@ -28,6 +28,7 @@ timelineApp.Router = Backbone.SubRoute.extend({
 	publicationHeaders: function(){
 		this.loadTemplateIfNeed(function(){
 			console.log("routing received");
+			$('#new_post').show();
 			timelineApp.PublicationCollection.fetch();
 		});
 	},

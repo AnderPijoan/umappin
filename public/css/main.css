@@ -734,6 +734,10 @@ input[type="color"]:focus,
   #content #comments_body .span7 {
     width: 98%;
   }
+  #content #comments_body button.replybox {
+    width: 49%;
+    height: 46px;
+  }
   #content ul#publication_list {
     margin: 0;
   }
@@ -883,6 +887,10 @@ input[type="color"]:focus,
 @media (max-width: 480px) {
   #content #comments_body .span7 {
     width: 98%;
+  }
+  #content #comments_body button.replybox {
+    width: 49%;
+    height: 46px;
   }
   #content ul#publication_list {
     margin: 0;
