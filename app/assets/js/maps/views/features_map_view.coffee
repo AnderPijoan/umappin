@@ -7,6 +7,7 @@ class window.Maps.FeaturesMapView extends Maps.MapView
   featurePopupTemplate: _.template $('#feature-popup-template').html()
   itemTagTemplate: _.template $('#item-tag-template').html()
   itemLikeTemplate: _.template $('#item-like-template').html()
+  featurePictureView: null
 
   # ---------------------------- Controls ------------------------------ #
   initControls: ->
@@ -104,7 +105,7 @@ class window.Maps.FeaturesMapView extends Maps.MapView
   handleGeoLocated: (e) ->
     super
     @map.zoomToExtent e.point.getBounds()
-    @fetchFeatures e.point.x, e.point.y
+    @fetchFeatures e.point.x, e.point.y, true
 
   # ---------------------------- Initialization ------------------------------ #
   initialize: ->
@@ -132,6 +133,26 @@ class window.Maps.FeaturesMapView extends Maps.MapView
       (evt) =>  @removeFeaturePopup feat
     )
     @map.addPopup(feat.popup)
+
+    picture = new Picture id: feat.mapFeature.get "featurePicture"
+    @featurePictureView = new PictureView
+      model: picture
+      readonly: feat.mapFeature.get("user") != Account.session.get("id")
+      showInfo: false
+      picWidth: '8em'
+    $('div.featurePictureHolder').last().append @featurePictureView.render().el
+
+    if feat.mapFeature.get "profilePicture"
+      picture.fetch()
+    else
+      picture.save
+        owner_id: Account.session.get("id")
+        { success: () =>
+            feat.mapFeature.save
+              featurePicture: picture.get 'id'
+              version: feat.mapFeature.get('version') + 1
+        }
+
     @reloadTagEvents()
 
     that = @
@@ -297,7 +318,7 @@ class window.Maps.FeaturesMapView extends Maps.MapView
     super
     p = new OpenLayers.Geometry.Point location.lon, location.lat
     p.transform Maps.MapView.OSM_PROJECTION, @map.getProjectionObject()
-    @fetchFeatures p.x, p.y
+    @fetchFeatures p.x, p.y, true
     @locationFeature = new OpenLayers.Feature.Vector(
       p
       {}
@@ -310,16 +331,16 @@ class window.Maps.FeaturesMapView extends Maps.MapView
 
   reloadFeatures: () ->
     p = @locationFeature.geometry
-    @fetchFeatures p.x, p.y
+    @fetchFeatures p.x, p.y, false
     @drawLayer.removeAllFeatures()
     @drawLayer.addFeatures [@locationFeature]
 
-  fetchFeatures: (lon, lat) ->
+  fetchFeatures: (lon, lat, expand) ->
     p = new OpenLayers.Geometry.Point lon, lat
     p.transform @map.getProjectionObject(), Maps.MapView.OSM_PROJECTION
     geojsonFormat = new OpenLayers.Format.GeoJSON()
     json = "{\"geometry\": #{geojsonFormat.write p} }"
-    amount = 2 # TODO: we'll pick it up from a control
+    amount = 20 # TODO: we'll pick it up from a control
     bounds = new OpenLayers.Bounds
     bounds.extend p
     $.ajax
@@ -330,4 +351,4 @@ class window.Maps.FeaturesMapView extends Maps.MapView
       success: (data) =>
         @drawFeature r, bounds for r in data unless data == null
         bounds.transform Maps.MapView.OSM_PROJECTION, @map.getProjectionObject()
-        @map.zoomTo Math.floor @map.getZoomForExtent bounds
+        @map.zoomTo Math.floor @map.getZoomForExtent bounds unless not expand

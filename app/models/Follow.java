@@ -1,6 +1,9 @@
 package models;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import org.bson.types.ObjectId;
 
 public class Follow extends Item {
 
@@ -19,6 +22,15 @@ public class Follow extends Item {
 
     public List<String> getFollow() {
         return follow;
+    }
+    
+    public List<ObjectId> getFollowOids() {
+    	List<ObjectId> result = new ArrayList<ObjectId>();
+    	
+    	for(String id : follow){
+    		result.add(new ObjectId(id));
+    	}
+        return result;
     }
 
     public void setFollow(List<String> follow) {

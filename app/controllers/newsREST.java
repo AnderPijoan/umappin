@@ -17,15 +17,15 @@ public class newsREST extends ItemREST {
 		}
 		Follows userFollows = Follows.findByUserId(user.id);
 		if (userFollows == null){
-			return badRequest(Constants.USERS_EMPTY.toString());
+			return notFound(Constants.USERS_EMPTY.toString());
 		}
-
+		
 		// Super query
 		List<Publication> publications = 
-				MorphiaObject.datastore.find(Publication.class).field("writerId").hasAnyOf(userFollows.getFollow()).order("_id").asList();
+				MorphiaObject.datastore.find(Publication.class).field("writerId").hasAnyOf(userFollows.getFollowOids()).order("_id").asList();
 
 		if (publications != null && publications.size() == 0) {
-			return badRequest(Constants.PUBLICATIONS_EMPTY.toString());
+			return notFound(Constants.PUBLICATIONS_EMPTY.toString());
 		} else {
 			// Return the response
 			return ok(Json.toJson(Publication.publicationsToObjectNodes(publications)));
@@ -40,15 +40,15 @@ public class newsREST extends ItemREST {
 		}
 		Follows userFollows = Follows.findByUserId(user.id);
 		if (userFollows == null){
-			return badRequest(Constants.USERS_EMPTY.toString());
+			return notFound(Constants.USERS_EMPTY.toString());
 		}
-
+		
 		// Super query
 		List<Publication> publications = 
-				MorphiaObject.datastore.find(Publication.class).field("writerId").hasAnyOf(userFollows.getFollow()).order("_id").limit(20).asList();
+				MorphiaObject.datastore.find(Publication.class).field("writerId").hasAnyOf(userFollows.getFollowOids()).order("_id").limit(20).asList();
 
 		if (publications != null && publications.size() == 0) {
-			return badRequest(Constants.PUBLICATIONS_EMPTY.toString());
+			return notFound(Constants.PUBLICATIONS_EMPTY.toString());
 		} else {
 			// Return the response
 			return ok(Json.toJson(Publication.publicationsToObjectNodes(publications)));
@@ -63,15 +63,15 @@ public class newsREST extends ItemREST {
 		}
 		Follows userFollows = Follows.findByUserId(user.id);
 		if (userFollows == null){
-			return badRequest(Constants.USERS_EMPTY.toString());
+			return notFound(Constants.USERS_EMPTY.toString());
 		}
 
 		// Super query
 		List<Publication> publications = 
-				MorphiaObject.datastore.find(Publication.class).field("writerId").hasAnyOf(userFollows.getFollow()).order("_id").offset(from).limit(to-from).asList();
+				MorphiaObject.datastore.find(Publication.class).field("writerId").hasAnyOf(userFollows.getFollowOids()).order("_id").offset(from).limit(to-from).asList();
 
 		if (publications != null && publications.size() == 0) {
-			return badRequest(Constants.PUBLICATIONS_EMPTY.toString());
+			return notFound(Constants.PUBLICATIONS_EMPTY.toString());
 		} else {
 			// Return the response
 			return ok(Json.toJson(Publication.publicationsToObjectNodes(publications)));

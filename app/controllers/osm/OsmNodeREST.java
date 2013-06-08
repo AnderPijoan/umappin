@@ -1,15 +1,8 @@
 package controllers.osm;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.List;
-
-import javax.sql.DataSource;
-
 import models.User;
 import models.osm.OsmFeature;
 import models.osm.OsmNode;
@@ -19,7 +12,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSSerializer;
 
-import play.db.DB;
 import play.libs.Json;
 import play.mvc.Result;
 import controllers.Application;
@@ -192,6 +184,7 @@ public class OsmNodeREST extends ItemREST {
 
 	
 	public static Result deleteNode(long id){
+		
 		final User user = Application.getLocalUser(session());
 		if (user == null){
 			return badRequest(Constants.USER_NOT_LOGGED_IN.toString());
@@ -200,6 +193,7 @@ public class OsmNodeREST extends ItemREST {
 		if (node == null){
 			return badRequest(Constants.NODES_EMPTY.toString());
 		}
+		// FIXME delete photo
 		node.delete();
 		return ok();
 	}

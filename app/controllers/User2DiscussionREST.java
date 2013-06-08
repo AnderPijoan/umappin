@@ -32,7 +32,7 @@ public class User2DiscussionREST extends ItemREST {
 		}
 		List<Discussion> discussions = user2disc.all();
 		if (discussions.size() == 0) {
-			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
+			return notFound(Constants.DISCUSSIONS_EMPTY.toString());
 		} else {
 			// Return the response
 			return ok(Json.toJson(Discussion.discussionsToObjectNodes(discussions)));
@@ -50,7 +50,7 @@ public class User2DiscussionREST extends ItemREST {
 		}
 		List<Discussion> discussions = user2disc.getDiscussions(0, 10);
 		if (discussions.size() == 0) {
-			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
+			return notFound(Constants.DISCUSSIONS_EMPTY.toString());
 		} else {
 			// Return the response
 			return ok(Json.toJson(Discussion.discussionsToObjectNodes(discussions)));
@@ -69,7 +69,7 @@ public class User2DiscussionREST extends ItemREST {
 		}
 		List<Discussion> discussions = user2disc.getDiscussions(from, to);
 		if (discussions.size() == 0) {
-			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
+			return notFound(Constants.DISCUSSIONS_EMPTY.toString());
 		} else {
 			// Return the response
 			return ok(Json.toJson(Discussion.discussionsToObjectNodes(discussions)));
@@ -88,7 +88,7 @@ public class User2DiscussionREST extends ItemREST {
 		}
 		List<Discussion> discussions = user2disc.unread();
 		if (discussions.size() == 0) {
-			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
+			return ok(Constants.DISCUSSIONS_EMPTY.toString());
 		} else {
 			// Return the response
 			return ok(Json.toJson(Discussion.discussionsToObjectNodes(discussions)));
@@ -107,7 +107,7 @@ public class User2DiscussionREST extends ItemREST {
 		}
 		Discussion discussion = user2disc.findDiscussionById(discussionId);
 		if (discussion == null) {
-			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
+			return notFound(Constants.DISCUSSIONS_EMPTY.toString());
 		}
 		// Return the response
 		return ok(Json.toJson(Discussion.discussionToFullObjectNode(discussion)));
@@ -130,11 +130,11 @@ public class User2DiscussionREST extends ItemREST {
 		String discussionId = json.findPath("discussion_id").getTextValue(); 
 		Discussion discussion = user2disc.findDiscussionById(discussionId);
 		if (discussion == null) {
-			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
+			return notFound(Constants.DISCUSSIONS_EMPTY.toString());
 		}
 		Message message = discussion.findMessageById(messageId);
 		if (message == null){
-			return badRequest(Constants.MESSAGES_EMPTY.toString());
+			return notFound(Constants.MESSAGES_EMPTY.toString());
 		}
 
 		// Return a copy of the message
@@ -153,16 +153,16 @@ public class User2DiscussionREST extends ItemREST {
 		}
 		User2Discussion user2disc = User2Discussion.findById(user.id, User2Discussion.class);
 		if (user2disc == null) {
-			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
+			return notFound(Constants.DISCUSSIONS_EMPTY.toString());
 		}
 		String discussionId = json.findPath("discussion_id").getTextValue(); 
 		Discussion discussion = user2disc.findDiscussionById(discussionId);
 		if (discussion == null) {
-			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
+			return notFound(Constants.DISCUSSIONS_EMPTY.toString());
 		}
 		Message message = discussion.findMessageById(messageId);
 		if (message == null){
-			return badRequest(Constants.MESSAGES_EMPTY.toString());
+			return notFound(Constants.MESSAGES_EMPTY.toString());
 		}
 
 		message.message = json.findPath("message").getTextValue();
@@ -300,11 +300,11 @@ public class User2DiscussionREST extends ItemREST {
 		}
 		User2Discussion user2disc = User2Discussion.findById(user.id, User2Discussion.class);
 		if (user2disc == null || !user2disc.discussionIds.contains(new ObjectId(id))){
-			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
+			return notFound(Constants.DISCUSSIONS_EMPTY.toString());
 		}
 		Discussion discussion = user2disc.findDiscussionById(id);
 		if (discussion == null || !discussion.userIds.contains(user.id)){
-			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
+			return notFound(Constants.DISCUSSIONS_EMPTY.toString());
 		}
 
 		user2disc.removeDiscussion(discussion);
@@ -337,12 +337,12 @@ public class User2DiscussionREST extends ItemREST {
 		}
 		User2Discussion user2disc = User2Discussion.findById(user.id, User2Discussion.class);
 		if (user2disc == null) {
-			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
+			return notFound(Constants.DISCUSSIONS_EMPTY.toString());
 		}
 		String discussionId = json.findPath("discussion_id").getTextValue(); 
 		Discussion discussion = user2disc.findDiscussionById(discussionId);
 		if (discussion == null) {
-			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
+			return notFound(Constants.DISCUSSIONS_EMPTY.toString());
 		}
 
 		Message message = new Message();
@@ -375,12 +375,12 @@ public class User2DiscussionREST extends ItemREST {
 		}
 		User2Discussion user2disc = User2Discussion.findById(user.id, User2Discussion.class);
 		if (user2disc == null) {
-			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
+			return notFound(Constants.DISCUSSIONS_EMPTY.toString());
 		}
 		String discussionId = json.findPath("discussion_id").getTextValue(); 
 		Discussion discussion = user2disc.findDiscussionById(discussionId);
 		if (discussion == null) {
-			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
+			return notFound(Constants.DISCUSSIONS_EMPTY.toString());
 		}
 
 		// If the message replying to its really from this discussion
@@ -404,7 +404,7 @@ public class User2DiscussionREST extends ItemREST {
 			// Return a copy of the discussion
 			return ok(Json.toJson(Message.messageToObjectNode(message)));
 		}
-		return badRequest(Constants.MESSAGES_EMPTY.toString());
+		return notFound(Constants.MESSAGES_EMPTY.toString());
 	}
 
 
@@ -424,11 +424,11 @@ public class User2DiscussionREST extends ItemREST {
 		String discussionId = json.findPath("discussion_id").getTextValue(); 
 		Discussion discussion = user2disc.findDiscussionById(discussionId);
 		if (discussion == null) {
-			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
+			return notFound(Constants.DISCUSSIONS_EMPTY.toString());
 		}
 		Message message = discussion.findMessageById(id);
 		if (message == null){
-			return badRequest(Constants.MESSAGES_EMPTY.toString());
+			return notFound(Constants.MESSAGES_EMPTY.toString());
 		}
 		
 		// If someone is trying to delete the first message from a discussion
@@ -475,11 +475,11 @@ public class User2DiscussionREST extends ItemREST {
 
 		User2Discussion user2disc = User2Discussion.findById(user.id, User2Discussion.class);
 		if (user2disc == null) {
-			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
+			return notFound(Constants.DISCUSSIONS_EMPTY.toString());
 		}
 		List<Discussion> discussions = user2disc.all();
 		if (discussions.size() == 0) {
-			return badRequest(Constants.DISCUSSIONS_EMPTY.toString());
+			return notFound(Constants.DISCUSSIONS_EMPTY.toString());
 		} else {
 			// Return the response
 			return ok(Json.toJson(Discussion.discussionsToObjectNodes(discussions)));

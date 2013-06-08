@@ -80,6 +80,7 @@ PUT     /followed/:id                controllers.FollowedREST.updateFollowed(id:
 DELETE  /followed/:id                controllers.FollowedREST.deleteFollowed(id: String)
 # REST CRUD for Users
 GET     /users                      controllers.UserREST.getAll()
+GET     /users/shortinfo            controllers.UserREST.getAllShortInfo()
 GET     /users/:id                  controllers.UserREST.get(id: String)
 GET     /users/:id/timeline         controllers.TimelineREST.getTimeline(id: String)
 GET     /users/:id/routes           controllers.User2RoutesREST.getUserRoutes(id: String)
@@ -163,6 +164,8 @@ GET     /photos/:photoId/userlikes/:userId   controllers.PhotosREST.getPhotoUser
 #who likes :photoId ?
 GET     /photos/:photoId/userlikes          controllers.PhotosREST.getPhotoUserLikes(photoId : String, userId = null, offset : Integer ?= 0, limit : Integer ?= models.PhotoUserLike.MAX_RESULTS_RETURNED)
 
+#Retrieves just all the likes for a photo
+GET     /photos/:photoId/likestats          controllers.PhotosREST.getPhotoLikeStats(photoId : String)
 
 #find photos by rectangle:
 # /photos/rect?x1={x1}&x2={x2}&y1={y1}&y2={y2}

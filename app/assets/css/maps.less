@@ -67,14 +67,26 @@ div.searchControl{
 }
 
 div.routes-popup,
-div.feature-popup {
+div.feature-popup,
+div.photos-popup {
 
   width: auto;
   height: auto;
-  min-width: 15em;
-  min-height: 10em;
-  max-width: 40em;
-  max-height: 40em;
+  min-width: 20em;
+  min-height: 20em;
+  max-width: 70em;
+  max-height: 100em;
+
+  hr {
+    margin: 0em .5em;
+  }
+
+  div.sidebuttons {
+
+    button {
+      width: 8em;
+    }
+  }
 
   h4 {
     font-size: 1em;
@@ -83,6 +95,10 @@ div.feature-popup {
       margin: 0;
     }
 
+  }
+
+  div.featurePictureHolder {
+    min-height: 8em;
   }
 
   p {
@@ -109,6 +125,11 @@ div.feature-popup {
       cursor: pointer;
     }
 
+  }
+
+  .usefulsField,
+  .beautifulsField {
+    width: 3em;
   }
 
 }

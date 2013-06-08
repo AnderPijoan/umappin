@@ -33,6 +33,15 @@ public class UserREST extends ItemREST {
             return ok(Json.toJson(nodes));
         }
     }
+    
+    public static Result getAllShortInfo() {
+        List<User> users =  User.all(User.class);
+        if (users.size() == 0) {
+            return notFound(Constants.JSON_EMPTY.toString());
+        } else {
+            return ok(Json.toJson(User.usersToShortObjectNode(users)));
+        }
+    }
 
     public static Result get(String id) {
         User usr = User.findById(id, User.class);

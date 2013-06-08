@@ -25,15 +25,17 @@ class window.PictureView extends Backbone.View
   render: ->
     if not @model.get('id') and not @readonly
       @model.save
-        owner_id: Account.profile.get 'id'
+        owner_id: Account.session.get 'id'
         { success: () => @render() }
     else if @template
       $(@el).html @template { data: @model.attributes, readonly: @readonly, showInfo: @showInfo }
       $(@el).find('img').css('width', @picWidth).css('height', @picHeight)
       if not @readonly
         filename = null
+        upel = $('.uploader')
         upclick
-          element: document.getElementById 'uploader'
+          #element: document.getElementById 'uploader'
+          element: upel[upel.length-1]
           action: "/photos/#{@model.get 'id'}/content"
           onstart: (fname) => filename = fname
           oncomplete: () =>

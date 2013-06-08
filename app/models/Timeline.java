@@ -17,8 +17,6 @@ public class Timeline extends Item {
 	// THE OBJECTID OF WALL IS THE SAME AS THE USERS, TO GET IT DIRECTLY
 	///////////////////////////////////////////////////////////////////////////////
 
-	public ObjectId userId;
-
 	public List<ObjectId> postIds;
 
 	public List<Publication> all() {
@@ -34,6 +32,7 @@ public class Timeline extends Item {
 				postIte.remove();
 			}
 		}
+		this.save();
 		return publications;
 	}
 
@@ -60,7 +59,7 @@ public class Timeline extends Item {
 		postIds = null;
 		this.save();
 	}
-
+	
 
 	public Publication findPublicationById(String id) {
 		if (postIds != null && postIds.contains(new ObjectId(id))){
@@ -70,7 +69,8 @@ public class Timeline extends Item {
 			} else {
 				postIds.remove(new ObjectId(id));
 			}
-		} 
+		}
+		this.save();
 		return null;
 	}
 	
@@ -114,6 +114,7 @@ public class Timeline extends Item {
 				}
 			}
 		}
+		this.save();
 		return publications;
 	}
 
@@ -125,7 +126,7 @@ public class Timeline extends Item {
 	public static ObjectNode timelineToShortObjectNode(Timeline timeline) {
 		ObjectNode timelineNode = Json.newObject();
 		timelineNode.put("id", timeline.id.toString());
-		timelineNode.put("user", User.userToShortObjectNode(timeline.userId));
+		timelineNode.put("user", User.userToShortObjectNode(timeline.id));
 		timelineNode.put("publications", Json.toJson(Publication.publicationsToObjectNodes(timeline.getPublications(0, 10))));
 		return timelineNode;
 	}
