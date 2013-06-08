@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
 
 import play.libs.Json;
@@ -49,8 +50,8 @@ public class FollowsREST extends ItemREST {
     		}
     	}
     	return ok(Json.toJson(followsNode));
-
     }
+
     public static Result addfollows(String id){
         final User user = Application.getLocalUser(session());
         if (user == null){
@@ -107,5 +108,29 @@ public class FollowsREST extends ItemREST {
         return ok(Json.toJson(follows));
 
     }
-    
+
+    // Get all the user follows
+    public static Result getAllUserFollows(){
+        final User user = Application.getLocalUser(session());
+        if (user == null)
+            return badRequest(Constants.USER_NOT_LOGGED_IN.toString());
+        List<Follows> userFollows = Follows.findRelatedByUserId(user.id.toString());
+        if (userFollows == null)
+            return badRequest();
+        List<JsonNode> nodes = new ArrayList<JsonNode>();
+        for (Follows uf : userFollows)
+            nodes.add(uf.toJson());
+        return ok(Json.toJson(nodes));
+    }
+
+    // GEt just the user follows
+    public static Result getUserFollows(String userId){
+        final User user = Application.getLocalUser(session());
+        if (user == null)
+            return badRequest(Constants.USER_NOT_LOGGED_IN.toString());
+        Follows userFollows = Follows.findByUserId(new ObjectId(userId));
+        if (userFollows == null)
+            return notFound();
+        return ok(userFollows.toJson());
+    }
 }

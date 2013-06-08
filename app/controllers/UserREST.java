@@ -2,12 +2,7 @@ package controllers;
 
 import be.objectify.deadbolt.java.actions.Group;
 import be.objectify.deadbolt.java.actions.Restrict;
-import models.Discussion;
-import models.Message;
-import models.Publication;
-import models.Timeline;
-import models.User;
-import models.User2Discussion;
+import models.*;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
@@ -17,7 +12,9 @@ import providers.MyUsernamePasswordAuthUser;
 import providers.MyUsernamePasswordAuthProvider.MySignup;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class UserREST extends ItemREST {
 
@@ -33,7 +30,30 @@ public class UserREST extends ItemREST {
             return ok(Json.toJson(nodes));
         }
     }
-    
+
+    // Get all the user follows
+    public static Result getAllRelated(){
+        final User user = Application.getLocalUser(session());
+        if (user == null)
+            return badRequest(Constants.USER_NOT_LOGGED_IN.toString());
+        List<Follows> userFollows = Follows.findRelatedByUserId(user.id.toString());
+        List<Followed> userFollowed = Followed.findRelatedByUserId(user.id.toString());
+        if (userFollows == null || userFollowed == null)
+            return badRequest();
+        Set<String> ids = new HashSet<>();
+        for (Follows ufs : userFollows)
+            ids.add(ufs.getUserId());
+        for (Followed ufd : userFollowed)
+            ids.add(ufd.getUserId());
+        List<JsonNode> nodes = new ArrayList<JsonNode>();
+        for (String id : ids) {
+            User usr = User.findById(id, User.class);
+            if (usr.emailValidated)
+                nodes.add(usr.toJson());
+        }
+        return ok(Json.toJson(nodes));
+    }
+
     public static Result getAllShortInfo() {
         List<User> users =  User.all(User.class);
         if (users.size() == 0) {

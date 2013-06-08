@@ -29,8 +29,9 @@ class umappin.Router extends Backbone.Router
   userlist: () ->
     setTemplate "/assets/templates/userlist.html", () ->
       requirejs ['/assets/js/account/account_main.js'], () ->
-        Account.init()
-        Account.loadUsersData();
+        Account.loadUserList()
+        #Account.init()
+        #Account.loadUsersData();
 
   profile: () ->
     setTemplate "/assets/templates/profile.html", () ->
