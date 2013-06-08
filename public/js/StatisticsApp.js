@@ -42,4 +42,5 @@ $(function(){
 	});
 	
     statisticView = new StatisticView();
+    //alert("entro");
 });

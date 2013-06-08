@@ -20,6 +20,8 @@ var timelineApp = timelineApp || {};
 		renderPublications: function(){
 			$('#comments_body').html('<ul id="publication_list"> </ul>');
 			timelineApp.PublicationCollection.each(function(publication){
+				var date = new Date(publication.get("timeStamp"));
+				publication.set({"date": date.toUTCString()});
 			   	var view = new timelineApp.ReceivedView({ model: publication});
 			   	$('#publication_list').prepend(view.render().el);
 			});
@@ -39,13 +41,14 @@ var timelineApp = timelineApp || {};
 			    success:function(){
 			    	//clear form
 					that.$el.find('#form_subject').val('');
-					that.$el.find('#form_comment').val('');	   
+					that.$el.find('#form_comment').val('');
 				}
 			});
 		}
-
+		
 	});
+	
+	appView = (typeof appView === 'undefined') ? new timelineApp.AppView() : appView;
+	
 })();
-
-var appView = new timelineApp.AppView();
-alert("entro");
+	

@@ -40,6 +40,3 @@ timelineApp.Router = Backbone.SubRoute.extend({
 		}
 	}
 });
-
-
-
