@@ -1,6 +1,7 @@
 package models;
 
 //import play.modules.morphia.Model;
+import akka.actor.ActorRef;
 import com.google.code.morphia.Datastore;
 import com.google.code.morphia.annotations.*;
 
@@ -17,6 +18,8 @@ import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 import play.data.validation.Constraints.*;
 import play.db.DB;
+import play.libs.Akka;
+import play.libs.F;
 import play.libs.Json;
 import play.Logger;
 
@@ -232,19 +235,25 @@ public class Photo {
 
 	public void addUpdateContent(File f, String mimeType) throws IOException {
 		Content c = new Content(f);
-		c.setMimeType(mimeType);
-		cleanUpExistingContents();
-		photoContents.add(c);
+        handleIncomingContent(mimeType, c);
 	}
+
 	public void addUpdateContent(byte[] bytes, String mimeType){
 		Content c = new Content(bytes);
-		c.setMimeType(mimeType);
-		cleanUpExistingContents();
-		photoContents.add(c);
+        handleIncomingContent(mimeType, c);
+
 	}
 
+    private void handleIncomingContent(String mimeType, Content c) {
+        createMultipleResizedContentsAsync();
 
-	private void cleanUpExistingContents(){
+        c.setMimeType(mimeType);
+        cleanUpExistingContents();
+        photoContents.add(c);
+    }
+
+
+    private void cleanUpExistingContents(){
 		for(Content c : photoContents) {
 			photoContents.remove(c);
 			c.delete();
@@ -360,6 +369,20 @@ public class Photo {
         return new ArrayList<Photo>();
 	}
 
+    private void createMultipleResizedContentsAsync() {
+
+        ActorRef imageResizer = Akka.system().actorOf(utils.ImageResizerActor.mkProps());
+
+        akka.pattern.Patterns.ask(imageResizer, this, 1000L);
+//        Akka.asPromise(akka.pattern.Patterns.ask(imageResizer, this, 1000L)).map(
+//            new F.Function<Object,String>() {
+//                public String apply(Object response) {
+//                    Logger.info("applied resizing to photo: " + response.toString());
+//                    return "ok";
+//                }
+//            }
+//        );
+    }
 
 
     @Entity("Photo_Content")
@@ -480,7 +503,9 @@ public class Photo {
 		public ObjectId getId() {
 			return id;
 		}
-	}
+
+
+    }
 
 	private static class GeoPoint {
 
