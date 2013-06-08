@@ -14,6 +14,7 @@ timelineApp.Router = Backbone.SubRoute.extend({
 				publication.fetch(
 					{
 						success: function(){
+							$('#new_post').hide();
 							view = new timelineApp.CommentsView({ model: publication });
 							$('#comments_body').html(view.addTimeAgoAndRender().el);
 						},

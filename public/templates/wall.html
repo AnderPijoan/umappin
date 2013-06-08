@@ -5,15 +5,15 @@
                 <h3>Wall</h3>
             </div>
             <div class="box-body">
-                <div id="new_post">
+                <div id="new_post" style="text-align: right;">
                     <input id="form_subject" class="input-block-level" type="text"
                         name="subject" placeholder="Subject">
                     <textarea name="comment" id="form_comment" rows="3"
                         class="input-block-level" placeholder="Share your thoughts..."></textarea>
-                    <button id="send_new_publication_button" class="bnt-large btn-success ">Post</button>
+                    <button id="send_new_publication_button" class="btn btn-primary"
+                        style="margin-bottom: 20px;">Post</button>
                 </div>
-                <div class="row-fluid">
-                    <div class="span9" id="comments_body"></div>
+                <div id="comments_body" class="row">
                 </div>
             </div>
         </div>
@@ -22,20 +22,19 @@
 
 <!-- This is the publications header template -->
 <script type="text/template" id="publication-head-template">
-       <% maxPhotosSeen=5; %>
+        <% maxPhotosSeen=5; %>
 
-        <div class="span9 ">
+        <div class="box span7">
             <div class="publication_head">
                 <div class="publication_header">
-					<a  href="#wall/comment/<%- rc.id %>">
-                        <%- rc.subject %>
+					<a href="#wall/comment/<%- rc.id %>">
                         <span class="icon-bubbles"></span>
+                        <span> <%- rc.subject %></span>
                     </a>
-                    <span><%- rc.timeAgo%></span>
+                    <span class="time-ago"><%- rc.timeAgo%></span>
 				</div>
-				<div class="first_comment"><label> <%- rc.content %></label></div>
+				<div class="first_comment"><span><%- rc.content %></span></div>
             </div>
-			<br/>
         </div>
 </script>
 
@@ -43,23 +42,27 @@
 <script type="text/template" id="comments-template">
         <% maxPhotosSeen=5; %>
 
-         <div class="span9 ">
+         <div class="span7">
             <h4><%- rc.subject %></h4>
-             <br/>
-             <div class="comments span9">
+             <div class="comments">
                  <% _.each(rc.messages, function(commentObject){ %>
-                    <div>
-                    <span class="comment"><a href="/#account/<%- commentObject.user.id%>"><%- commentObject.user.name %></a>:<%= " " + commentObject.message %>
+                    <span class="comment">
+                        <label>
+                            <a class="wall-user-reply" href="/#account/<%- commentObject.user.id%>"><%- commentObject.user.name %></a>
+                        </label>
+                        <span>
+                            <%= " " + commentObject.message %>
+                        </span>
                     </span>
                     <span class="timeAgo"><%- commentObject.timeAgo%></span>
-                    </div>
-					<br/>
                  <% }); %>
              </div>
-             <textarea id="sending_comment" class="span8 replybox"></textarea>
+             <textarea id="sending_comment" class="replybox"></textarea>
              <button id="reply" class="replybox">Reply</button>
+             <button id="backWall" class="replybox">Back to wall</button>
          </div>
-     </script>
+</script>
+
 <script src="/assets/js/timelineApp/model/publication.js"></script>
 <script src="/assets/js/timelineApp/model/comment.js"></script>
 <script src="/assets/js/timelineApp/view/receivedComments_view.js"></script>

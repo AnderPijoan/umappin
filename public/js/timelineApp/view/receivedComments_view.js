@@ -5,6 +5,7 @@ _.templateSettings.variable = "rc";
 
 	timelineApp.ReceivedView = Backbone.View.extend({
 		tagName:  'li',
+        className: 'row',
 
 		//set the publication template
 		template: _.template($('#publication-head-template').html()),
@@ -23,19 +24,19 @@ _.templateSettings.variable = "rc";
                 timeAgo=(dateComment.getMonth()+1) + "/" + dateComment.getDate() +
                 		"/" + dateComment.getFullYear();
             } else if ((diff/(1000*60*60*24).toFixed(0)) > 1) {
-            	timeAgo=(diff / (1000*60*60*24)).toFixed(0) + " days ago";
+            	timeAgo=(diff / (1000*60*60*24)).toFixed(0) + " days";
             } else if (parseInt((diff/(1000*60*60*24).toFixed(0)),10) == 1){
             	timeAgo="Yesterday";
             } else if (parseInt((diff/(1000*60*60).toFixed(0)),10) > 1) {
-            	timeAgo=dateDiff.getHours() + " hours ago";
+            	timeAgo=dateDiff.getHours() + " hours";
             } else if (parseInt((diff/(1000*60*60).toFixed(0)),10) == 1) {
-            	timeAgo="1 hour ago";
+            	timeAgo="1 hour";
             } else if (parseInt((diff/(1000*60).toFixed(0)),10) > 1) {
-            	timeAgo=dateDiff.getMinutes() + " minutes ago";
+            	timeAgo=dateDiff.getMinutes() + " mins";
             } else if (parseInt((diff/(1000*60).toFixed(0)),10) == 1) {
-            	timeAgo="1 minute ago";
+            	timeAgo="1 min";
             } else {
-            	timeAgo=dateDiff.getSeconds() + " seconds ago";
+            	timeAgo=dateDiff.getSeconds() + " secs";
             }
             this.model.set("timeAgo", timeAgo);
         },

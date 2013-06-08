@@ -9,7 +9,8 @@ _.templateSettings.variable = "rc";
         template: _.template($('#comments-template').html()),
 
         events: {
-            "click #reply": "reply"
+            "click #reply": "reply",
+            "click #backWall": "backWall"
         },
 
         initialize: function(attrs, options) {
@@ -68,6 +69,10 @@ _.templateSettings.variable = "rc";
                         }
                     }
                 );
+        },
+        backWall: function() {
+            $('#new_post').show();
+            location.href = "/#wall/";
         }
 	});
 }());
