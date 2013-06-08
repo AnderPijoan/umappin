@@ -1,16 +1,23 @@
-
-<h2>Wall</h2>
-
-<div id="new_post">
-	<input id="form_subject" class="input-block-level" type="text"
-		name="subject" placeholder="Subject">
-	<textarea name="comment" id="form_comment" rows="3"
-		class="input-block-level" placeholder="Share your thoughts..."></textarea>
-	<button id="send_new_publication_button" class="bnt-large btn-success ">Post</button>
-</div>
-
-<div class="row-fluid">
-	<div class="span9" id="comments_body"></div>
+<div class="box-transparent span9">
+    <div class="row">
+        <div class="box span7 offset1">
+            <div class="box-header">
+                <h3>Wall</h3>
+            </div>
+            <div class="box-body">
+                <div id="new_post">
+                    <input id="form_subject" class="input-block-level" type="text"
+                        name="subject" placeholder="Subject">
+                    <textarea name="comment" id="form_comment" rows="3"
+                        class="input-block-level" placeholder="Share your thoughts..."></textarea>
+                    <button id="send_new_publication_button" class="bnt-large btn-success ">Post</button>
+                </div>
+                <div class="row-fluid">
+                    <div class="span9" id="comments_body"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- This is the publications header template -->
@@ -20,8 +27,11 @@
         <div class="span9 ">
             <div class="publication_head">
                 <div class="publication_header">
-					<a><%- rc.subject %></a>
-					<a  href="#wall/comment/<%- rc.id %>"><span class="icon-bubbles"></span></a>
+					<a  href="#wall/comment/<%- rc.id %>">
+                        <%- rc.subject %>
+                        <span class="icon-bubbles"></span>
+                    </a>
+                    <span><%- rc.timeAgo%></span>
 				</div>
 				<div class="first_comment"><label> <%- rc.content %></label></div>
             </div>
