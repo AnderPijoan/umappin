@@ -1,29 +1,24 @@
-
-	<h2>Messages</h2>
-<p>Manage your messages</p>
-<div class ="row-fluid">
-    <div class="span2 offset9">
-        <a href="#messages/newDiscussion" role="button" class="btn">New Message</a>
+<div class="box-transparent span9">
+    <div id="messages-section" class="row">
+        <div class="box span7 offset1">
+            <div class="box-header">
+                <h3>Messages</h3>
+                <a href="#messages/newDiscussion" role="button" class="btn btn-primary">New Message</a>
+                <div style="clear:both">
+                </div>
+            </div>
+            <div class="box-body">
+              <div>
+                  <div id="messages_body" >
+                    <!-- Message content -->
+                  </div>
+                  <div style="clear:both;">
+                  </div>
+              </div>
+            </div>
+        </div>
     </div>
 </div>
-<div class="row-fluid">
-
-    <div class="span3 bs-docs-sidebar">
-        <ul class="nav nav-list bs-docs-sidenav " id="subsec_nav" >
-            <li id="received_messages"class="active"><a tabindex="-1" href="#messages/received">Messages</a></li>
-
-            </ul>
-        </div>
-        <div class="span9" id="messages_body" >
-
-
-        </div>
-
-
-    </div>
-</div>
-
-
 
 <!-- Modal -->
 <div id="newDiscussion" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -68,16 +63,21 @@
 <!-- This is the discussions header template -->
 <script type="text/template" id="discussion-head-template">
         <% maxPhotosSeen=5; %>
-
-        <div class="span9 ">
             <div class="discussion_head">
-                <div class="discussion_subject"><a href="#messages/message/<%- rc.id %>"><%- rc.subject %></a></div>
+                <div class="discussion_subject">
+                  <span>
+                    <a href="#messages/message/<%- rc.id %>"><%- rc.subject %></a></div>
+                  </span>
+                  <span class="timeAgo">
+                    <%- rc.timeAgo %>
+                  </span>
                 <div class="discussion_participants_photo">
                     <% for (i=0; i<maxPhotosSeen;i++) { %>
-                        <% if (rc.users[i]) { %>    
+                        <% if (rc.users[i]) { %>
                             <img id="photo<%- rc.users[i].name %>" class="messagePhoto" src="<%- rc.users[i].profilePicture%>" title="<%- rc.users[i].name %>"/>
+                            <span><%- rc.users[i].name %></span>
                         <% } else {break;}} %>
-                    <% if (rc.users.length > maxPhotosSeen) {plusUsers=rc.users.length-maxPhotosSeen;%> 
+                    <% if (rc.users.length > maxPhotosSeen) {plusUsers=rc.users.length-maxPhotosSeen;%>
                         <span class="plusUsers">+<%- plusUsers %></span>
                     <% } %>
                 </div>
@@ -85,37 +85,36 @@
                    <!-- <div class="author_name"><a href="/#account/userID">USERNAME</a></div>-->
                 <!--</div>  -->
             </div>
-        </div>
 </script>
 
 <!-- This is the template to show a discussion-->
-     <script type="text/template" id="messages-template">
-        <% maxPhotosSeen=5; %>
+<script type="text/template" id="messages-template">
+  <% maxPhotosSeen=5; %>
 
-         <div class="span9 ">
-            <h2><%- rc.subject %></h2>
-             <br/>
-             <div class="messages span9">
-                 <% _.each(rc.messages, function(messageObject){ %>
-                    <div>
-                    <img class="messagePhoto" src=<%- messageObject.user.profilePicture%> />
-                    <span class="message"><a href="/#account/<%- messageObject.user.id%>"><%- messageObject.user.name %></a>:<%= " " + messageObject.message %>
-                    </span>
-                    <span class="timeAgo"><%- messageObject.timeAgo%></span>
-                    </div>
-                 <% }); %>
-             </div>
-             <textarea id="sending_message" class="span8 replybox"></textarea>
-             <button id="reply" class="replybox">Reply</button>
-         </div>
-     </script>
-     <script src="/assets/js/messagesApp/model/discussion.js"></script>
-     <script src="/assets/js/messagesApp/model/message.js"></script>
+   <div>
+      <h2><%- rc.subject %></h2>
+       <br/>
+       <div class="messages">
+           <% _.each(rc.messages, function(messageObject){ %>
+              <div>
+              <img class="messagePhoto" src=<%- messageObject.user.profilePicture%> />
+              <span class="message"><a href="/#account/<%- messageObject.user.id%>"><%- messageObject.user.name %></a>:<%= " " + messageObject.message %>
+              </span>
+              <span class="timeAgo"><%- messageObject.timeAgo%></span>
+              </div>
+           <% }); %>
+       </div>
+       <textarea id="sending_message" class="span8 replybox"></textarea>
+       <button id="reply" class="replybox">Reply</button>
+   </div>
+</script>
+<script src="/assets/js/messagesApp/model/discussion.js"></script>
+<script src="/assets/js/messagesApp/model/message.js"></script>
 
-    <script src="/assets/js/messagesApp/view/receivedMessages_view.js"></script>
-    <script src="/assets/js/messagesApp/view/messagesApp_view.js"></script>
+<script src="/assets/js/messagesApp/view/receivedMessages_view.js"></script>
+<script src="/assets/js/messagesApp/view/messagesApp_view.js"></script>
 
 
-    <script src="/assets/js/messagesApp/view/discussionMessages_view.js"></script>
+<script src="/assets/js/messagesApp/view/discussionMessages_view.js"></script>
 
 

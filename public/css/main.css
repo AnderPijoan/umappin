@@ -304,6 +304,17 @@ input[type="color"]:focus,
 #profile-picture #my-avatar {
   border-radius: 20px;
 }
+#content #messages-section .box-header h3 {
+  float: left;
+}
+#content #messages-section .box-header a {
+  text-decoration: none;
+  color: #fff;
+  font-weight: bold;
+  float: right;
+  letter-spacing: 1px;
+  margin: 7px 0;
+}
 #content #comments_body .span7 {
   width: 510px;
   text-align: right;
@@ -731,6 +742,9 @@ input[type="color"]:focus,
   }
 }
 @media (max-width: 767px) and (min-width: 480px) {
+  #content #messages-section .box-header a {
+    width: auto;
+  }
   #content #comments_body .span7 {
     width: 98%;
   }
@@ -885,6 +899,9 @@ input[type="color"]:focus,
   }
 }
 @media (max-width: 480px) {
+  #content #messages-section .box-header a {
+    width: auto;
+  }
   #content #comments_body .span7 {
     width: 98%;
   }
