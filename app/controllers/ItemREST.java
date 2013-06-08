@@ -54,6 +54,7 @@ public class ItemREST extends Controller {
             return notFound(Constants.JSON_EMPTY.toString());
         } else {
             ((ObjectNode)json).put("id", id);
+            System.out.println(json);
             T item = T.fromJson(json, klass);
             item.save();
             return ok(item.toJson());

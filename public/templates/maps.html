@@ -191,3 +191,62 @@
         <button class='button removeMarkerButton' id='removeMarkerButton-<%=rc.id%>'>Remove Marker</button>
     </div>
 </script>
+
+
+
+<!------------------------------------- Photos popup template -------------------------------------->
+<script type='text/template' id='photos-popup-template'>
+    <div class='photos-popup'>
+        <div class='row'>
+            <div class='.span7'>
+                <div class='mapPhotoHolder'></div>
+            </div>
+            <div class='.span5 sidebuttons'>
+                <% if (rc.get('owner_id') != Account.session.get('id')) { %>
+                    <% if (!rc.likes) { %>
+                        <div class="btn-group btn-group-vertical">
+                            <button class='btn beautifulPhotoButton' id='beautifulPhotoButton_<%=rc.get('id')%>'>Beautiful</button>
+                            <button class='btn usefulPhotoButton' id='usefulPhotoButton_<%=rc.get('id')%>'>Useful</button>
+                            <button class='btn likeallPhotoButton' id='likeallPhotoButton_<%=rc.get('id')%>'>Both</button>
+                        </div>
+                    <% } else { %>
+                        <label>Marked as:</label>
+                        <% if (rc.likes.is_beautiful == 1) { %><label>Beautiful</label><% } %>
+                        <% if (rc.likes.is_useful == 1) { %><label>Useful</label><% } %>
+                    <% } %>
+                <% } else {%>
+                    <div class="btn-group btn-group-vertical">
+                        <button class='btn savePhotoButton' id='savePhotoButton_<%=rc.get('id')%>'>Save</button>
+                        <button class='btn deletePhotoButton' id='deletePhotoButton_<%=rc.get('id')%>'>Delete</button>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+        <hr>
+        <% if (rc.stats) { %>
+            <p>
+                Beautifuls:
+                <input type='text' class='beautifulsField' readonly value="<%=rc.stats.beautifuls%>">
+                &nbsp; &nbsp; &nbsp;
+                Usefuls:
+                <input type='text' class='usefulsField' readonly value="<%=rc.stats.usefuls%>">
+            </p>
+        <% } %>
+        <hr>
+        <% if (rc.get('owner_id') != Account.session.get('id')) { %>
+            <label><%=rc.get('title')%></label>
+            <hr>
+            <label><%=rc.get('description')%></label>
+        <% } else { %>
+            <input type='text' value="<%=rc.get('title')%>" placeholder='Title'>
+            <textarea value="<%=rc.get('description')%>" placeholder='Description'><%=rc.get('description')%></textarea>
+        <% } %>
+        <hr>
+        <label><%=new Date(rc.get('date_created')).toLocaleDateString()%></label>
+        <label><%=new Date(rc.get('date_created')).toLocaleTimeString()%></label>
+        <label>Lon - <%=rc.get('longitude')%></label>
+        <label>Lat - <%=rc.get('latitude')%></label>
+    </div>
+</script>
+
+      

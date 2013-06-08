@@ -6,7 +6,10 @@ import com.google.code.morphia.annotations.Id;
 import com.google.code.morphia.query.Query;
 import controllers.MorphiaObject;
 import org.bson.types.ObjectId;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.node.ObjectNode;
 import play.data.validation.Constraints;
+import play.libs.Json;
 
 import java.util.List;
 
@@ -17,7 +20,7 @@ public class PhotoUserLike {
     public static final String PHOTO_ID = "photo_id";
 
     //max number of photoUserLike returned in a query
-    public static final int MAX_RESULTS_RETURNED = 20;
+    public static final int MAX_RESULTS_RETURNED = 99999;
 
     @Id
     private ObjectId id;
@@ -107,5 +110,22 @@ public class PhotoUserLike {
     public ObjectId save() {
         MorphiaObject.datastore.save(this);
         return this.getId();
+    }
+
+
+    // Quick method to retrieve just all the likes for a photo
+    public static JsonNode getPhotoStats(String photoId) {
+        ObjectNode json = Json.newObject();
+        List<PhotoUserLike> photoUserLikes = MorphiaObject.datastore.find(PhotoUserLike.class)
+                .field(PHOTO_ID).equal(new ObjectId(photoId)).asList();
+        if (photoUserLikes == null) return null;
+        int beautifuls = 0, usefuls = 0;
+        for (PhotoUserLike pul : photoUserLikes) {
+            beautifuls += pul.getPhotoIsBeautiful() ? 1 : 0;
+            usefuls += pul.getPhotoIsUseful() ? 1 : 0;
+        }
+        json.put("beautifuls", beautifuls);
+        json.put("usefuls", usefuls);
+        return json;
     }
 }

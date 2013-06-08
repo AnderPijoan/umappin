@@ -33,8 +33,10 @@ public class User2Routes extends Item {
 					it.remove();
 				}
 			}
+			this.save();
 			return result;
 		} else {
+			this.save();
 			return new ArrayList<Route>();
 		}
 	}
@@ -49,7 +51,8 @@ public class User2Routes extends Item {
 				Route.removeFromGis(new ObjectId(id));
 				routeIds.remove(new ObjectId(id));
 			}
-		} 
+		}
+		this.save();
 		return null;
 	}
 
@@ -62,8 +65,10 @@ public class User2Routes extends Item {
 			} else {
 				Route.removeFromGis(oid);
 				routeIds.remove(oid);
+
 			}
 		}
+		this.save();
 		return null;
 	}
 	

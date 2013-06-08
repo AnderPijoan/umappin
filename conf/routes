@@ -164,6 +164,8 @@ GET     /photos/:photoId/userlikes/:userId   controllers.PhotosREST.getPhotoUser
 #who likes :photoId ?
 GET     /photos/:photoId/userlikes          controllers.PhotosREST.getPhotoUserLikes(photoId : String, userId = null, offset : Integer ?= 0, limit : Integer ?= models.PhotoUserLike.MAX_RESULTS_RETURNED)
 
+#Retrieves just all the likes for a photo
+GET     /photos/:photoId/likestats          controllers.PhotosREST.getPhotoLikeStats(photoId : String)
 
 #find photos by rectangle:
 # /photos/rect?x1={x1}&x2={x2}&y1={y1}&y2={y2}

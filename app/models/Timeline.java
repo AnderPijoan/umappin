@@ -32,6 +32,7 @@ public class Timeline extends Item {
 				postIte.remove();
 			}
 		}
+		this.save();
 		return publications;
 	}
 
@@ -58,7 +59,7 @@ public class Timeline extends Item {
 		postIds = null;
 		this.save();
 	}
-
+	
 
 	public Publication findPublicationById(String id) {
 		if (postIds != null && postIds.contains(new ObjectId(id))){
@@ -68,7 +69,8 @@ public class Timeline extends Item {
 			} else {
 				postIds.remove(new ObjectId(id));
 			}
-		} 
+		}
+		this.save();
 		return null;
 	}
 	
@@ -112,6 +114,7 @@ public class Timeline extends Item {
 				}
 			}
 		}
+		this.save();
 		return publications;
 	}
 

@@ -105,7 +105,7 @@ class window.Maps.FeaturesMapView extends Maps.MapView
   handleGeoLocated: (e) ->
     super
     @map.zoomToExtent e.point.getBounds()
-    @fetchFeatures e.point.x, e.point.y
+    @fetchFeatures e.point.x, e.point.y, true
 
   # ---------------------------- Initialization ------------------------------ #
   initialize: ->
@@ -318,7 +318,7 @@ class window.Maps.FeaturesMapView extends Maps.MapView
     super
     p = new OpenLayers.Geometry.Point location.lon, location.lat
     p.transform Maps.MapView.OSM_PROJECTION, @map.getProjectionObject()
-    @fetchFeatures p.x, p.y
+    @fetchFeatures p.x, p.y, true
     @locationFeature = new OpenLayers.Feature.Vector(
       p
       {}
@@ -331,11 +331,11 @@ class window.Maps.FeaturesMapView extends Maps.MapView
 
   reloadFeatures: () ->
     p = @locationFeature.geometry
-    @fetchFeatures p.x, p.y
+    @fetchFeatures p.x, p.y, false
     @drawLayer.removeAllFeatures()
     @drawLayer.addFeatures [@locationFeature]
 
-  fetchFeatures: (lon, lat) ->
+  fetchFeatures: (lon, lat, expand) ->
     p = new OpenLayers.Geometry.Point lon, lat
     p.transform @map.getProjectionObject(), Maps.MapView.OSM_PROJECTION
     geojsonFormat = new OpenLayers.Format.GeoJSON()
@@ -351,4 +351,4 @@ class window.Maps.FeaturesMapView extends Maps.MapView
       success: (data) =>
         @drawFeature r, bounds for r in data unless data == null
         bounds.transform Maps.MapView.OSM_PROJECTION, @map.getProjectionObject()
-        @map.zoomTo Math.floor @map.getZoomForExtent bounds
+        @map.zoomTo Math.floor @map.getZoomForExtent bounds unless not expand

@@ -5,7 +5,7 @@
 <!------------------------------------- HTML -------------------------------------->
 <div id="<%= rc.readonly ? 'dummy' : 'dropPicture' %>">
 
-  <img id="<%= rc.readonly ? 'dummy' : 'uploader' %>" class="image img-rounded" alt="placeholder image"
+  <img id="<%= rc.readonly ? 'dummy' : 'uploader' %>" class="image img-rounded <%= rc.readonly ? 'dummy' : 'uploader' %>" alt="placeholder image"
        src="<%= rc.data.get_content_location ? rc.data.get_content_location+'?t='+new Date().getTime() : '/assets/img/140x140.gif' %>">
 
 

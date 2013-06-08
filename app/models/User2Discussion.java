@@ -39,6 +39,7 @@ public class User2Discussion extends Item {
 					result.add(discussion);
 				} else {
 					discussionIds.remove(oid);
+					this.save();
 				}
 			}
 			return result;
@@ -57,6 +58,7 @@ public class User2Discussion extends Item {
 				} else {
 					unread.remove(oid);
 					discussionIds.remove(oid);
+					this.save();
 				}
 			}
 			return result;
@@ -75,6 +77,7 @@ public class User2Discussion extends Item {
 				return discussion;
 			} else {
 				discussionIds.remove(new ObjectId(id));
+				this.save();
 			}
 		} 
 		return null;
@@ -89,6 +92,7 @@ public class User2Discussion extends Item {
 				return discussion;
 			} else {
 				discussionIds.remove(oid);
+				this.save();
 			}
 		}
 		return null;
@@ -131,6 +135,7 @@ public class User2Discussion extends Item {
 
 		if (unread != null && read){
 			unread.remove(discussion.id);
+			this.save();
 		} else if (unread != null && !unread.contains(discussion.id)) {
 			unread.add(discussion.id);
 		}
@@ -152,6 +157,7 @@ public class User2Discussion extends Item {
 					discussions.add(discussion);
 				} else {
 					discussionIte.remove();
+					this.save();
 				}
 			}
 		}

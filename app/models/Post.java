@@ -68,6 +68,7 @@ public abstract class Post extends Item {
 			}
 			repliesIds.remove(oid);
 		}
+		this.save();
 		return null;
 	}
 
@@ -91,6 +92,7 @@ public abstract class Post extends Item {
 				}
 				repliesIds.remove(oid);
 			}
+		this.save();
 		return null;
 	}
 
@@ -115,6 +117,7 @@ public abstract class Post extends Item {
 					repliesIds.remove(oid);
 				}
 			}
+		this.save();
 		return messages;
 	}
 
