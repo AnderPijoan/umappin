@@ -27,11 +27,13 @@
         <div class="box span7">
             <div class="publication_head">
                 <div class="publication_header">
-					<a><%- rc.subject %></a>
-					<a href="#wall/comment/<%- rc.id %>"><span class="icon-bubbles"><%- rc.replies %></span></a>
+                    <a href="#wall/comment/<%- rc.id %>">
+                        <span class="icon-bubbles"></span>
+                        <span> <%- rc.subject %></span>
+                    </a>
+                    <span class="time-ago"><%- rc.timeAgo%></span>
 				</div>
-				<div class="publication_date"><label> <%- rc.date.toLocaleDateString() %> <%- rc.date.toLocaleTimeString() %></label></div>
-				<div class="first_comment"><label> <%- rc.content %></label></div>
+				<div class="first_comment"><span><%- rc.content %></span></div>
             </div>
         </div>
 </script>
@@ -44,8 +46,13 @@
             <h4><%- rc.subject %></h4>
              <div class="comments">
                  <% _.each(rc.messages, function(commentObject){ %>
-                    <div>
-                    <span class="comment"><a href="#wall/user/<%- commentObject.user.id%>"><%- commentObject.user.name %></a>:<%= " " + commentObject.message %>
+                    <span class="comment">
+                        <label>
+                            <a class="wall-user-reply" href="/#wall/user/<%- commentObject.user.id%>"><%- commentObject.user.name %></a>
+                        </label>
+                        <span>
+                            <%= " " + commentObject.message %>
+                        </span>
                     </span>
                     <span class="timeAgo"><%- commentObject.timeAgo%></span>
                  <% }); %>
