@@ -196,10 +196,12 @@
                 text: "el texto",
                 html: "el texto en html"
             };
-        var inviteFriendsPost = $.post(
-                $('#inviteFriendsForm').attr('action'),
-                JSON.stringify(inviteFriendsJson)
-        );
+        var inviteFriendsPost = $.ajax({
+                url: $('#inviteFriendsForm').attr('action'),
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(inviteFriendsJson)
+        });
         inviteFriendsPost.done(function( data ) {
             if(data == 'Your account has not been verified, yet. An e-mail including instructions on how to verify it has been sent out. Retry resetting your password afterwards.'){
                 toastNotify(data);
