@@ -84,6 +84,7 @@ class window.Maps.PhotosMapView extends Maps.MapView
           for feature in results
             do (feature) =>
               mapPhoto = new Maps.Picture feature
+              if feature? then mapPhoto.altContent = feature.alternate_contents
               @createMapPhoto mapPhoto
               
   createMapPhoto: (mapPhoto) ->  
@@ -99,8 +100,11 @@ class window.Maps.PhotosMapView extends Maps.MapView
     feat.data.overflow = 'auto'
     size = new OpenLayers.Size 32, 32
     offset = new OpenLayers.Pixel(-(size.w/2), -size.h)
-    photoUrl = mapPhoto.get('get_content_location')
-    src = if photoUrl then "#{photoUrl}?#{new Date().getTime()}" else '/assets/img/140x140.gif'
+    if mapPhoto.altContent?
+      photoUrl = "#{mapPhoto.altContent.micro.content}&#{new Date().getTime()}"
+    else if mapPhoto.get('get_content_location')?
+      photoUrl = "#{mapPhoto.get('get_content_location')}?#{new Date().getTime()}"
+    src = if photoUrl then photoUrl else '/assets/img/140x140.gif'
     feat.data.icon = new OpenLayers.Icon(src, size, offset)
     photo = feat.createMarker()
     feat.mapPhoto = mapPhoto
