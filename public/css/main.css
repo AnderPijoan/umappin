@@ -2,6 +2,7 @@
 @import "bootstrap-responsive.min.css";
 @import "icons/icons.css";
 @import "jNotify.jquery.css";
+@import "typeahead.css";
 @font-face {
   font-family: 'Engagement';
   font-style: normal;
@@ -672,6 +673,9 @@ input[type="color"]:focus,
   width: 80%;
 }
 @media (min-width: 1200px) {
+  .dropdown-menu > li > a {
+    width: 425px;
+  }
   #content #comments_body .span7 {
     width: 640px;
   }
@@ -751,6 +755,18 @@ input[type="color"]:focus,
   }
 }
 @media (max-width: 979px) and (min-width: 768px) {
+  .dropdown-menu > li > a {
+    font-size: 14pt;
+    font-weight: bold;
+    width: 150px;
+  }
+  .dropdown-menu > li > a span {
+    margin-left: 20px;
+  }
+  .dropdown-menu > li > a img {
+    width: 30px;
+    height: 30px;
+  }
   #content #comments_body .span7 {
     width: 385px;
   }
@@ -836,6 +852,20 @@ input[type="color"]:focus,
   }
 }
 @media (max-width: 767px) and (min-width: 480px) {
+  .dropdown-menu {
+    margin-left: -30px;
+    width: 108%;
+  }
+  .dropdown-menu > li > a {
+    width: 100%;
+  }
+  .dropdown-menu > li > a span {
+    margin-left: 20px;
+  }
+  .dropdown-menu > li > a img {
+    width: 50px;
+    height: 50px;
+  }
   #content #messages-section .box-header a {
     width: auto;
   }
@@ -1005,6 +1035,20 @@ input[type="color"]:focus,
   }
 }
 @media (max-width: 480px) {
+  .dropdown-menu {
+    margin-left: -30px;
+    width: 100%;
+  }
+  .dropdown-menu > li > a {
+    width: 100%;
+  }
+  .dropdown-menu > li > a span {
+    margin-left: 20px;
+  }
+  .dropdown-menu > li > a img {
+    width: 50px;
+    height: 50px;
+  }
   #content #messages-section .box-header a {
     width: auto;
   }
