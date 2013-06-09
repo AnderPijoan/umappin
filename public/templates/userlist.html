@@ -21,11 +21,21 @@
                                     </div>
                                 </form>
                             </div>
-                            <div class="btn-group span3 offset4" data-toggle="buttons-checkbox">
+                            <div class="span3">
+                                Order By: &nbsp;
+                                <select id='orderFilter'>
+                                    <option value='name'>Name</option>
+                                    <option value='lastLogin'>Last Login</option>
+                                    <option value='discussions'>Discussions</option>
+                                    <option value='awards'>Awards</option>
+                                </select>
+                            </div>
+                            <div class="btn-group span3 offset1" data-toggle="buttons-checkbox">
                                 <button type="button" id="followsFilter" class="btn btn-primary">Following</button>
                                 <button type="button" id="followedFilter" class="btn btn-primary">Followed By</button>
                             </div>
                         </div>
+
                         <div class="row">
                             <div class="span7">
                                 <ul id='userlist'></ul>

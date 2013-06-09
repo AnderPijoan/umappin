@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bson.types.ObjectId;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 public class Follow extends Item {
 
@@ -23,7 +24,8 @@ public class Follow extends Item {
     public List<String> getFollow() {
         return follow;
     }
-    
+
+    @JsonIgnore
     public List<ObjectId> getFollowOids() {
     	List<ObjectId> result = new ArrayList<ObjectId>();
     	

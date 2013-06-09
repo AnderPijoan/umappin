@@ -5,6 +5,8 @@ import models.Follows;
 
 import models.User;
 
+import org.bson.types.ObjectId;
+import org.codehaus.jackson.JsonNode;
 import play.mvc.Result;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -49,6 +51,29 @@ public class FollowedREST extends ItemREST {
 
     }
 
-    
+    // Get all the user followed
+    public static Result getAllUserFollowed(){
+        final User user = Application.getLocalUser(session());
+        if (user == null)
+            return badRequest(Constants.USER_NOT_LOGGED_IN.toString());
+        List<Followed> userFollowed = Followed.findRelatedByUserId(user.id.toString());
+        if (userFollowed == null)
+            return badRequest();
+        List<JsonNode> nodes = new ArrayList<JsonNode>();
+        for (Followed uf : userFollowed)
+            nodes.add(uf.toJson());
+        return ok(Json.toJson(nodes));
 
+    }
+
+    // Get just the user followed
+    public static Result getUserFollowed(String userId){
+        final User user = Application.getLocalUser(session());
+        if (user == null)
+            return badRequest(Constants.USER_NOT_LOGGED_IN.toString());
+        Followed userFollowed = Followed.findByUserId(new ObjectId(userId));
+        if (userFollowed == null)
+            return notFound();
+        return ok(userFollowed.toJson());
+    }
 }
