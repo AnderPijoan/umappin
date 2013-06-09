@@ -19,7 +19,6 @@ import org.codehaus.jackson.node.ObjectNode;
 import play.data.validation.Constraints.*;
 import play.db.DB;
 import play.libs.Akka;
-import play.libs.F;
 import play.libs.Json;
 import play.Logger;
 
@@ -29,6 +28,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.sql.DataSource;
 
@@ -36,7 +36,7 @@ import javax.sql.DataSource;
 @Entity
 public class Photo {
 
-	private static final String IS_BEAUTIFUL_COUNT = "is_beautiful_count";
+    private static final String IS_BEAUTIFUL_COUNT = "is_beautiful_count";
 	private static final String IS_USEFUL_COUNT = "is_useful_count";
 	private static final String RANKING = "ranking";
 
@@ -49,6 +49,8 @@ public class Photo {
 
 	public static final  int MAX_RESULTS_RETURNED = 20;
     private static final String IS_SEARCHABLE = "is_searchable";
+
+    //timeout of async image resize in millisecs
     private static final long IMAGE_ASYNC_RESIZE_TIMEOUT = 10000L;
 
     @Id
@@ -58,6 +60,8 @@ public class Photo {
 	@Embedded("owner_id")
 	private ObjectId ownerId;
 
+    //name of the Content entities used by Photo to reference the contents in the DB
+    public static final String PHOTO_CONTENTS = "photoContents";
 	@Reference(lazy=true)
 	private List<Content> photoContents = new ArrayList<Content>();
 
@@ -89,6 +93,7 @@ public class Photo {
 	@Embedded(IS_SEARCHABLE)
 	private boolean isSearchable = false;
 
+    //not supported yet
 	private java.util.Map<String, String> tags;
 
     public boolean isSearchable() {
@@ -213,15 +218,6 @@ public class Photo {
         //cannot be saved in GIS
         MorphiaObject.datastore.save(this);
 
-        //now, that all the structure is persisted on the DB,
-        // we can launch the async creation of resized copies, that independently reads and writes the DB.
-        // We resize if the resized versions weren't already created,
-        // so if there is just one photo, then there is just the original, and go ahead resizing...
-        if(getPhotoContents().size() == 1){
-            this.createMultipleResizedContentsAsync();
-        }
-
-
         //note, the following insert/update/delete in postGis could be made just in case a
         //relevant detail has changed, not at every update.
         // Just hook a flag (e.g. "toUpdateInGis = true") into the set methods of
@@ -260,13 +256,16 @@ public class Photo {
         cleanUpExistingContents();
         photoContents.add(c);
 
-        //createMultipleResizedContentsAsync();
     }
 
 
     private void cleanUpExistingContents(){
-		for(Content c : photoContents) {
+        //immutable copy of the list of contents.
+        //beware that it can be altered concurrently by the ImageResizerActor
+        CopyOnWriteArrayList<Content> contents = new CopyOnWriteArrayList<Content>(this.getPhotoContents());
+		for(Content c : contents) {
 			photoContents.remove(c);
+            Logger.info("deleting Photo.Content " + c.getId().toString() + " for photo " + this.getId().toString());
 			c.delete();
 		}
 
@@ -384,7 +383,7 @@ public class Photo {
      * creates resized copies of the current photo by invoking a proper akka actor.
      * The results are computed asynchronously ad persiste into the db
      */
-    private void createMultipleResizedContentsAsync() {
+    public void createAndSaveMultipleResizedContents_async() {
 
         Logger.info("about to launch async resize for photo " + this.getId().toString());
         ActorRef imageResizer = Akka.system().actorOf(utils.ImageResizerActor.mkProps());
@@ -406,8 +405,14 @@ public class Photo {
     @Entity("Photo_Content")
 	public static class Content{
         //sizes in pixels for all the resized versions. The size refers to the side
-        public static final List<Integer> SIZES = Arrays.asList(50, 150, 500, 1000);
-		public void setId(ObjectId id) {
+        //If changed, the ascendant ordering must be kept
+        public static final List<Integer> RESIZE_SIZES = Arrays.asList(50, 150, 500, 1024, 2048);
+        //these are the corresponding names for the sizes above
+        public static final List<String> RESIZE_NAMES = Arrays.asList("micro", "thumbnail", "small", "medium", "large");
+        //target type of the resized images
+        public static final String IMAGE_RESIZE_TYPE = "jpeg";
+
+        public void setId(ObjectId id) {
 			this.id = id;
 		}
 
@@ -473,7 +478,7 @@ public class Photo {
 
 
 		//needed for Morphia deserialilization
-		private Content() {}
+		public Content() {}
 
 		//only an instance of photo can create Content.
 		private Content(File file) throws IOException {
