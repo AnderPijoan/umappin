@@ -63,6 +63,7 @@
 <!-- This is the discussions header template -->
 <script type="text/template" id="discussion-head-template">
         <% maxPhotosSeen=5; %>
+        <div class="box span7">
             <div class="discussion_head">
                 <div class="discussion_subject">
                   <span>
@@ -74,8 +75,10 @@
                 <div class="discussion_participants_photo">
                     <% for (i=0; i<maxPhotosSeen;i++) { %>
                         <% if (rc.users[i]) { %>
+                          <div class="box">
                             <img id="photo<%- rc.users[i].name %>" class="messagePhoto" src="<%- rc.users[i].profilePicture%>" title="<%- rc.users[i].name %>"/>
                             <span><%- rc.users[i].name %></span>
+                          </div>
                         <% } else {break;}} %>
                     <% if (rc.users.length > maxPhotosSeen) {plusUsers=rc.users.length-maxPhotosSeen;%>
                         <span class="plusUsers">+<%- plusUsers %></span>
@@ -85,6 +88,7 @@
                    <!-- <div class="author_name"><a href="/#account/userID">USERNAME</a></div>-->
                 <!--</div>  -->
             </div>
+        </div>
 </script>
 
 <!-- This is the template to show a discussion-->

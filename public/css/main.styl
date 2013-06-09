@@ -336,6 +336,41 @@ input[type="color"]:focus,
           text-overflow: ellipsis;
       textarea
         width 99%
+  #discussion_list .box
+    padding 0
+    width: 510px;
+    margin-left: 0px;
+    .discussion_participants_photo
+      text-align left
+      padding: 0 10px;
+      .box
+        width: auto;
+        display: inline-block;
+        line-height: 4;
+    .discussion_subject
+      overflow hidden
+      text-align left
+      line-height: 2;
+      font-size: 14pt;
+      padding 0 10px
+      a
+        width: 100%;
+        display: inline-block;
+        height: 30px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        -ms-word-wrap: normal;
+        word-wrap: normal;
+      .icon-bubbles
+        margin 5px
+    .time-ago
+      float right
+    .timeAgo
+      float: right;
+      font-size: 12pt;
+      line-height: 4;
+      margin-right: 5px;
   #publication_list .box
     padding 0
     width: 510px;
@@ -546,6 +581,11 @@ input[type="color"]:focus,
     #comments_body
       .span7
         width: 640px;
+    #discussion_list .box
+      width: 656px;
+      .publication_header
+        a
+          width: 70%;
     #publication_list .box
       width: 656px;
       .publication_header
@@ -624,6 +664,11 @@ input[type="color"]:focus,
     #comments_body
       .span7
         width: 385px;
+    #discussion_list .box
+      width: 383px;
+      .publication_header
+        a
+          width: 47%;
     #publication_list .box
       width: 383px;
       .publication_header
@@ -714,6 +759,16 @@ input[type="color"]:focus,
       button.replybox
         width 49%
         height 46px
+    ul#discussion_list
+      margin 0
+      .box
+        width: 100%;
+        .publication_header
+          a
+            width: 72%;
+        .time-ago
+          width: 24%;
+          text-align right
     ul#publication_list
       margin 0
       .box
@@ -855,6 +910,20 @@ input[type="color"]:focus,
       button.replybox
         width 49%
         height 46px
+    ul#discussion_list
+      margin 0
+      .box
+        width: 100%;
+        .publication_header
+          font-size: 12pt;
+          a
+            width: 61%;
+        .time-ago
+          width: 37%;
+          text-align: right;
+          overflow: hidden;
+          -ms-word-wrap normal
+          word-wrap normal
     ul#publication_list
       margin 0
       .box
