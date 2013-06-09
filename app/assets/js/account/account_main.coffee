@@ -44,9 +44,6 @@ Account.loadUsersData = () ->
         '/assets/js/account/collections/follow_collection.js'
       ], () ->
         requirejs [
-          '/assets/js/account/collections/userfollows_collection.js'
-          '/assets/js/account/collections/userfollowed_collection.js'
-          '/assets/js/account/collections/relateduser_collection.js'
           '/assets/js/account/collections/follows_collection.js'
           '/assets/js/account/collections/followed_collection.js'
         ], () ->
@@ -86,8 +83,8 @@ Account.loadUserList = () ->
           '/assets/js/account/collections/user_collection.js'
         ], () ->
           requirejs [
-            '/assets/js/account/models/follows_model.js'
-            '/assets/js/account/models/followed_model.js'
+            '/assets/js/account/models/usrfollows_model.js'
+            '/assets/js/account/models/usrfollowed_model.js'
             '/assets/js/account/collections/follow_collection.js'
           ], () ->
             requirejs [

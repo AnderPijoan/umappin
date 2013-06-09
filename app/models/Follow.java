@@ -11,7 +11,7 @@ public class Follow extends Item {
 	private static final long serialVersionUID = 1L;
 
     public String userId;
-    public List<String> follow;
+    public List<String> follow = new ArrayList<>();
 
     public String getUserId() {
         return userId;
