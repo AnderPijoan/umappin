@@ -2,6 +2,7 @@
 @import "bootstrap-responsive.min.css"
 @import "icons/icons.css"
 @import "jNotify.jquery.css"
+@import "typeahead.css"
 
 @font-face {
   font-family: 'Engagement';
@@ -74,7 +75,6 @@ box(opacy)
     text-align: left;
     margin: 0 0 -11px 0;
     border-radius: 0 0 8px 8px;
-
 .box
   box(1)
   h4
@@ -201,7 +201,6 @@ body
     font-weight: bold;
     font-family: inherit;
     letter-spacing: 1px;
-
 textarea:focus,
 input[type="text"]:focus,
 input[type="password"]:focus,
@@ -541,6 +540,8 @@ input[type="color"]:focus,
   width 80%
 
 @media (min-width: 1200px)
+  .dropdown-menu > li > a
+    width 425px
   #content
     #comments_body
       .span7
@@ -610,6 +611,15 @@ input[type="color"]:focus,
     a
       width: 86%;
 @media (max-width: 979px) and (min-width: 768px)
+  .dropdown-menu > li > a
+    font-size: 14pt;
+    font-weight: bold;
+    width: 150px;
+  .dropdown-menu > li > a span
+    margin-left: 20px;
+  .dropdown-menu > li > a img
+    width: 30px;
+    height: 30px;
   #content
     #comments_body
       .span7
@@ -683,6 +693,16 @@ input[type="color"]:focus,
     a
       width: 78%;
 @media (max-width: 767px) and (min-width: 480px)
+  .dropdown-menu
+    margin-left -30px
+    width 108%
+  .dropdown-menu > li > a
+    width: 100%;
+  .dropdown-menu > li > a span
+    margin-left: 20px;
+  .dropdown-menu > li > a img
+    width: 50px;
+    height: 50px;
   #content
     #messages-section
       .box-header
@@ -814,6 +834,16 @@ input[type="color"]:focus,
     display none
 
 @media (max-width: 480px)
+  .dropdown-menu
+    margin-left -30px
+    width 100%
+  .dropdown-menu > li > a
+    width: 100%;
+  .dropdown-menu > li > a span
+    margin-left: 20px;
+  .dropdown-menu > li > a img
+    width: 50px;
+    height: 50px;
   #content
     #messages-section
       .box-header
