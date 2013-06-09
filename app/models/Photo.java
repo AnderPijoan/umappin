@@ -38,18 +38,18 @@ public class Photo {
 
     private static final String IS_BEAUTIFUL_COUNT = "is_beautiful_count";
 	private static final String IS_USEFUL_COUNT = "is_useful_count";
-	private static final String RANKING = "ranking";
+	public static final String RANKING = "ranking";
+    public static final int INITIAL_PHOTO_RANKING = 100;
 
-	private static final int OPEN_LAYERS_SRID = 4326;
+    public static final String OWNER_ID = "owner_id";
+
+    private static final int OPEN_LAYERS_SRID = 4326;
+
 	private static final int OSM_SRID = 900913;
 
-    //coordinate system in the traditional latitude and longitude projection
-    //unused at the moment
-    private static final int LAT_LONG_SRID = 4326;
+    public static final  int MAX_RESULTS_RETURNED = 20;
 
-	public static final  int MAX_RESULTS_RETURNED = 20;
     private static final String IS_SEARCHABLE = "is_searchable";
-
     //timeout of async image resize in millisecs
     private static final long IMAGE_ASYNC_RESIZE_TIMEOUT = 10000L;
 
@@ -57,7 +57,7 @@ public class Photo {
 	private ObjectId id;
 
 	@Required
-	@Embedded("owner_id")
+	@Embedded(OWNER_ID)
 	private ObjectId ownerId;
 
     //name of the Content entities used by Photo to reference the contents in the DB
@@ -87,7 +87,7 @@ public class Photo {
 	private int isUsefulCount;
 
 	@Embedded(RANKING)
-	private int ranking;
+	private int ranking = INITIAL_PHOTO_RANKING;
 
     //specifies if a photo should show up in non-spot queries (like geo-queries)
 	@Embedded(IS_SEARCHABLE)

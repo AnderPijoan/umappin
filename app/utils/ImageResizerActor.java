@@ -113,21 +113,6 @@ public class ImageResizerActor extends UntypedActor {
             photo.setPhotoContents(contents);
             photo.save();
 
-            //the following doesn't work because the photoContents are lazy references
-//            //update just the content of the Photo object, to avoid conflicts with other concurrent updates on other fields
-//            Datastore ds = MorphiaObject.datastore;
-//
-//            Query<Photo> updateQuery = ds.createQuery(Photo.class)
-//                    .field("_id").equal(photo.getId());
-//
-//            UpdateOperations<Photo> ops = ds.createUpdateOperations(Photo.class).set(Photo.PHOTO_CONTENTS, contents);
-//            //note that 'update' gives a compile time error (overloaded
-//            // 'update' methods are not correctly resolved by the compiler)
-//            // so we use the 'updateFirst' version, that is fine, given that we
-//            // expect one result only
-//
-//            ds.updateFirst(updateQuery, ops);
-
             Logger.info(ImageResizerActor.class.getName() + ": persisted all resized copies of photo " + photo.getId().toString());
 
             originalImage.flush();
@@ -171,71 +156,8 @@ public class ImageResizerActor extends UntypedActor {
     }
 
 
-    public static byte[] resize(File icon) {
-        try {
-            BufferedImage originalImage = ImageIO.read(icon);
-
-
-            int height = originalImage.getHeight();
-            int width = originalImage.getWidth();
-
-            System.out.println("h x w = " + height + " x " + width);
-            //originalImage= Scalr.resize(originalImage, Scalr.Method.QUALITY, Scalr.Mode.FIT_EXACT, 128, 153);
-            //To save with original ratio uncomment next line and comment the above.
-            originalImage = Scalr.resize(originalImage, Scalr.Method.QUALITY, 128, 128);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(originalImage, "jpg", baos);
-            originalImage.flush();
-            baos.flush();
-            byte[] imageInByte = baos.toByteArray();
-            baos.close();
-            return imageInByte;
-        } catch (Exception e) {
-            return null;
-        }
-
-
-    }
-
-    /*
-        public static void main(String[] arg) throws Exception{
-    	String inputFile = "C:\\Users\\a.digangi\\Desktop\\ricetta paella DSCF8427.JPG";
-    	String outputFile = "C:\\Users\\a.digangi\\Desktop\\ricetta paella DSCF8427.resized.JPG";
-    	File f = new File(inputFile);
-    	FileOutputStream fos = new FileOutputStream(outputFile);
-
-    	byte[] imageBytes = resize(f);
-
-    	fos.write(imageBytes);
-    	fos.close();
-    	System.out.println("resized?");
-    }
-
-    public static final List<Integer> RESIZE_SIZES = Arrays.asList(50, 150, 500, 1000);
-
-    public static void resizeImage(String photo){
-
-    	//get the photo max side
-    	//int maxSide = ...
-
-    	//look up the first size that is smaller than that
-    	//while(maxSide < SIZE(i)){continue}
-    	//now we have our first target size
-    	//indexSize = i;
-    	//sizeIndex = ...
-
-    	//for k = indexSize, k > 0, k--
-    	//resize with that target
-    	//resized = resize(image, SIZE(k))
-    	//photo.content(k) = resized
-
-    	//photo.save();
 
 
 
-    }
-}
-
-    */
 
 }

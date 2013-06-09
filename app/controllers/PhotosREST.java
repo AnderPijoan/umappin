@@ -272,7 +272,7 @@ public class PhotosREST extends Controller {
             ObjectNode alternateContentsJson = Json.newObject();
             for(int i = 0; i < noOfContents - 1; i++){
                 ObjectNode altJson = Json.newObject();
-                altJson.put("index", String.valueOf(i + 1));
+                altJson.put("index", i + 1);
                 altJson.put("max_side", Photo.Content.RESIZE_SIZES.get(i));
                 altJson.put(
                         "content",
