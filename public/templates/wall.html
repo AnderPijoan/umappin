@@ -23,7 +23,7 @@
 					<a><%- rc.subject %></a>
 					<a href="#wall/comment/<%- rc.id %>"><span class="icon-bubbles"><%- rc.replies %></span></a>
 				</div>
-				<div class="publication_date"><label> <%- rc.date %></label></div>
+				<div class="publication_date"><label> <%- rc.date.toLocaleDateString() %> <%- rc.date.toLocaleTimeString() %></label></div>
 				<div class="first_comment"><label> <%- rc.content %></label></div>
             </div>
 			<br/>
@@ -40,7 +40,7 @@
              <div class="comments span9">
                  <% _.each(rc.messages, function(commentObject){ %>
                     <div>
-                    <span class="comment"><a href="/#account/<%- commentObject.user.id%>"><%- commentObject.user.name %></a>:<%= " " + commentObject.message %>
+                    <span class="comment"><a href="#wall/user/<%- commentObject.user.id%>"><%- commentObject.user.name %></a>:<%= " " + commentObject.message %>
                     </span>
                     <span class="timeAgo"><%- commentObject.timeAgo%></span>
                     </div>

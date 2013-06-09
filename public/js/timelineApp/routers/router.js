@@ -4,7 +4,9 @@ var timelineApp = timelineApp || {};
 timelineApp.Router = Backbone.SubRoute.extend({
 	routes: {
 		'comment/:id' : 	'comments',
-   		'/'	: 				'publicationHeaders'
+		'news' :			'news',
+   		'/'	: 				'publicationHeaders',
+   		'user/:id' :		'userWall'
 	},
 
 	comments: function(idComment){
@@ -24,10 +26,21 @@ timelineApp.Router = Backbone.SubRoute.extend({
 				);
 		});
 	},
+	news: function(){
+		this.loadNewsTemplateIfNeed(function(){
+			timelineApp.NewsCollection.fetch();
+		});
+	},
 	publicationHeaders: function(){
 		this.loadTemplateIfNeed(function(){
 			console.log("routing received");
 			timelineApp.PublicationCollection.fetch();
+		});
+	},
+	userWall: function(idUser){
+		this.loadUserTemplateIfNeed(function(){
+			console.log("User "+idUser+" Wall");
+			//timelineApp.PublicationCollection.fetch();
 		});
 	},
 	loadTemplateIfNeed:function(callback){
@@ -35,6 +48,24 @@ timelineApp.Router = Backbone.SubRoute.extend({
 		if($('#comments_body').length ===0){
 			console.log("Load Publications template");
 			setTemplate ("/assets/templates/wall.html", callback);
+		}else{
+			callback();
+		}
+	},
+	loadNewsTemplateIfNeed:function(callback){
+		//it reloads the template only if not set
+		if($('#news_body').length ===0){
+			console.log("Load News template");
+			setTemplate ("/assets/templates/activity.html", callback);
+		}else{
+			callback();
+		}
+	},
+	loadUserTemplateIfNeed:function(callback){
+		//it reloads the template only if not set
+		if($('#userNews_body').length ===0){
+			console.log("Load User Activity template");
+			setTemplate ("/assets/templates/userActivity.html", callback);
 		}else{
 			callback();
 		}

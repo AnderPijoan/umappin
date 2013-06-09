@@ -1,0 +1,28 @@
+
+<h2>User News</h2>
+
+<div class="row-fluid">
+	<div class="span9" id="userNews_body"></div>
+</div>
+
+<!-- This is the publications header template -->
+<script type="text/template" id="publication-head-template">
+        <div class="span9 ">
+            <div class="publication_head">
+                <div class="publication_header">
+					<a><%- rc.subject %></a>
+					<a href="#wall/comment/<%- rc.id %>"><span class="icon-bubbles"><%- rc.replies %></span></a>
+				</div>
+				<div class="publication_date"><label> <%- rc.date.toLocaleDateString() %> <%- rc.date.toLocaleTimeString() %></label></div>
+				<div class="first_comment"><label> <%- rc.content %></label></div>
+            </div>
+			<br/>
+        </div>
+</script>
+
+<!-- This is the template to show a publication comments and reply to it-->
+<script src="/assets/js/timelineApp/model/publication.js"></script>
+<script src="/assets/js/timelineApp/model/comment.js"></script>
+<script src="/assets/js/timelineApp/view/receivedComments_view.js"></script>
+<script src="/assets/js/timelineApp/view/commentsApp_view.js"></script>
+<script src="/assets/js/timelineApp/view/publicationComments_view.js"></script>
