@@ -7,14 +7,14 @@
   font-family: 'Engagement';
   font-style: normal;
   font-weight: 400;
-  src: local('Engagement'), local('Engagement-Regular'), url(http://themes.googleusercontent.com/static/fonts/engagement/v2/IYnYh0uOiuydvYrbHKIjwRsxEYwM7FgeyaSgU71cLG0.woff) format('woff');
+  src: local('Engagement'), local('Engagement-Regular'), url('fonts/IYnYh0uOiuydvYrbHKIjwRsxEYwM7FgeyaSgU71cLG0.woff') format('woff');
 }
 
 @font-face {
   font-family: 'Noto Serif';
   font-style: normal;
   font-weight: 400;
-  src: local('Noto Serif'), local('NotoSerif'), url(http://themes.googleusercontent.com/static/fonts/notoserif/v1/eCpfeMZI7q4jLksXVRWPQxsxEYwM7FgeyaSgU71cLG0.woff) format('woff');
+  src: local('Noto Serif'), local('NotoSerif'), url('fonts/eCpfeMZI7q4jLksXVRWPQxsxEYwM7FgeyaSgU71cLG0.woff') format('woff');
 }
 
 color-beige = #FCF8DC
@@ -326,6 +326,14 @@ input[type="color"]:focus,
         input
           border-radius: 0 15px 15px 0;
           width 475px
+    .userfilter-order
+      margin-left: 40px;
+      font-size: 14pt;
+      margin-right: -40px;
+      select
+        margin: 5px 0;
+    .userfilter-btn
+      margin: 5px 24px;
     .offset4
       margin-left 300px
     .user-entry
@@ -493,6 +501,10 @@ input[type="color"]:focus,
         a
           width: 70%;
     #users-filters
+      .userfilter-order
+        margin-left: 63px;
+      .userfilter-btn
+        margin: 5px 0 5px 67px;
       form
         .input-prepend
           input
@@ -558,6 +570,17 @@ input[type="color"]:focus,
         a
           width: 47%;
     #users-filters
+      .userfilter-order
+        margin-left: 40px;
+        font-size: 14pt;
+        width: 100%;
+        select
+          width: 67%;
+      .userfilter-btn
+        margin: 10px 40px;
+        width: 91%;
+        button
+          width 50%
       form
         .input-prepend
           input
@@ -632,6 +655,14 @@ input[type="color"]:focus,
             width: 24%;
             text-align right
     #users-filters
+      .userfilter-order
+        margin-left: 0px
+        select
+          width: 74%;
+      .userfilter-btn.btn-group
+        width: 98%;
+        button
+          width 50%
       form
         width: 89%;
         .input-prepend
@@ -762,6 +793,14 @@ input[type="color"]:focus,
           span
             font-size: 11pt;
     #users-filters
+      .userfilter-order
+        margin-left: 0px
+        select
+          width: 57%;
+      .userfilter-btn.btn-group
+        width: 98%;
+        button
+          width 50%
       form
         width: 82%;
         .input-prepend
