@@ -417,6 +417,49 @@ input[type="color"]:focus,
 #content #comments_body .span7 textarea {
   width: 99%;
 }
+#content #discussion_list .box {
+  padding: 0;
+  width: 510px;
+  margin-left: 0px;
+}
+#content #discussion_list .box .discussion_participants_photo {
+  text-align: left;
+  padding: 0 10px;
+}
+#content #discussion_list .box .discussion_participants_photo .box {
+  width: auto;
+  display: inline-block;
+  line-height: 4;
+}
+#content #discussion_list .box .discussion_subject {
+  overflow: hidden;
+  text-align: left;
+  line-height: 2;
+  font-size: 14pt;
+  padding: 0 10px;
+}
+#content #discussion_list .box .discussion_subject a {
+  width: 100%;
+  display: inline-block;
+  height: 30px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  -ms-word-wrap: normal;
+  word-wrap: normal;
+}
+#content #discussion_list .box .discussion_subject .icon-bubbles {
+  margin: 5px;
+}
+#content #discussion_list .box .time-ago {
+  float: right;
+}
+#content #discussion_list .box .timeAgo {
+  float: right;
+  font-size: 12pt;
+  line-height: 4;
+  margin-right: 5px;
+}
 #content #publication_list .box {
   padding: 0;
   width: 510px;
@@ -679,6 +722,12 @@ input[type="color"]:focus,
   #content #comments_body .span7 {
     width: 640px;
   }
+  #content #discussion_list .box {
+    width: 656px;
+  }
+  #content #discussion_list .box .publication_header a {
+    width: 70%;
+  }
   #content #publication_list .box {
     width: 656px;
   }
@@ -769,6 +818,12 @@ input[type="color"]:focus,
   }
   #content #comments_body .span7 {
     width: 385px;
+  }
+  #content #discussion_list .box {
+    width: 383px;
+  }
+  #content #discussion_list .box .publication_header a {
+    width: 47%;
   }
   #content #publication_list .box {
     width: 383px;
@@ -875,6 +930,19 @@ input[type="color"]:focus,
   #content #comments_body button.replybox {
     width: 49%;
     height: 46px;
+  }
+  #content ul#discussion_list {
+    margin: 0;
+  }
+  #content ul#discussion_list .box {
+    width: 100%;
+  }
+  #content ul#discussion_list .box .publication_header a {
+    width: 72%;
+  }
+  #content ul#discussion_list .box .time-ago {
+    width: 24%;
+    text-align: right;
   }
   #content ul#publication_list {
     margin: 0;
@@ -1058,6 +1126,25 @@ input[type="color"]:focus,
   #content #comments_body button.replybox {
     width: 49%;
     height: 46px;
+  }
+  #content ul#discussion_list {
+    margin: 0;
+  }
+  #content ul#discussion_list .box {
+    width: 100%;
+  }
+  #content ul#discussion_list .box .publication_header {
+    font-size: 12pt;
+  }
+  #content ul#discussion_list .box .publication_header a {
+    width: 61%;
+  }
+  #content ul#discussion_list .box .time-ago {
+    width: 37%;
+    text-align: right;
+    overflow: hidden;
+    -ms-word-wrap: normal;
+    word-wrap: normal;
   }
   #content ul#publication_list {
     margin: 0;
