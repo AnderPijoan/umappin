@@ -9,15 +9,20 @@ import controllers.routes;
 import models.SessionToken;
 import play.Application;
 import play.GlobalSettings;
+import play.libs.Akka;
 import play.mvc.Action;
 import play.mvc.Call;
 import java.net.UnknownHostException;
+import java.util.concurrent.TimeUnit;
+
 import play.Logger;
 import com.google.code.morphia.Morphia;
 import com.mongodb.Mongo;
 import controllers.MorphiaObject;
 import play.mvc.Http.Request;
 import play.mvc.Result;
+import scala.concurrent.duration.Duration;
+import utils.PhotoRankingUpdateActor;
 
 import static play.mvc.Results.ok;
 
@@ -87,6 +92,18 @@ public class Global extends GlobalSettings {
 		});
 
 		initialData();
+
+
+        //schedule photo ranking update
+        Akka.system().scheduler().schedule(
+                Duration.create(0, TimeUnit.MILLISECONDS), //Initial delay 0 milliseconds
+                Duration.create(720, TimeUnit.MINUTES),     //Frequency 12 hrs
+                Akka.system().actorOf(PhotoRankingUpdateActor.mkProps()),
+                "dummy msg",
+                Akka.system().dispatcher()
+        );
+
+
 	}
 
 	private void initialData() {

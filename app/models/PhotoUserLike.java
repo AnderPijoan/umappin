@@ -20,7 +20,7 @@ public class PhotoUserLike {
     public static final String PHOTO_ID = "photo_id";
 
     //max number of photoUserLike returned in a query
-    public static final int MAX_RESULTS_RETURNED = 99999;
+    public static final int MAX_RESULTS_RETURNED = 20;
 
     @Id
     private ObjectId id;

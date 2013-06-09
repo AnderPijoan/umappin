@@ -56,6 +56,7 @@ public class PhotosREST extends Controller {
     public static final String RESULTS_LIMIT = "limit";
     private static final String RESULTS_HAS_NEXT = "has_next";
     private static final String PHOTO_IS_SEARCHABLE = "is_searchable";
+    private static final String ALTERNATE_CONTENTS = "alternate_contents";
 
     @BodyParser.Of(value = BodyParser.MultipartFormData.class,
             maxLength = MAX_MULTIPART_UPLOAD_SIZE)
@@ -119,6 +120,8 @@ public class PhotosREST extends Controller {
         try {
             photo.addUpdateContent(f, picture.getContentType());
             photo.save();
+            //once the photo is saved, we can launch the independent creation of thumbnails and various sizes
+            photo.createAndSaveMultipleResizedContents_async();
         } catch (IOException e) {
             return badRequest("error in file content");
         }
@@ -202,6 +205,12 @@ public class PhotosREST extends Controller {
 
         //get the newly created id
         String id = photo.save().toString();
+        
+        //if we uploaded content, and once the photo is saved,
+        // we can launch the independent creation of thumbnails and various sizes
+        if(json.has(CONTENT)){
+            photo.createAndSaveMultipleResizedContents_async();
+        }
 
         response().setHeader(
                 CONTENT_LOCATION,
@@ -252,16 +261,50 @@ public class PhotosREST extends Controller {
         ObjectId objectId = photo.getId();
         if(objectId != null){
             json.put(POST_PHOTO_CONTENT_LOCATION, routes.PhotosREST.uploadMultipartContent(objectId.toString()).toString());
-            //TODO, photo location
             if(photo.getPhotoContents().size() > 0){
-                json.put(GET_PHOTO_CONTENT_LOCATION, routes.PhotosREST.getPhotoContent(objectId.toString()).toString());
+                json.put(GET_PHOTO_CONTENT_LOCATION, routes.PhotosREST.getPhotoContent(objectId.toString(), 0).toString());
             }
         }
+
+        //are there alternative contents?
+        int noOfContents = photo.getPhotoContents().size();
+        if(noOfContents > 1){
+            ObjectNode alternateContentsJson = Json.newObject();
+            for(int i = 0; i < noOfContents - 1; i++){
+                ObjectNode altJson = Json.newObject();
+                altJson.put("index", i + 1);
+                altJson.put("max_side", Photo.Content.RESIZE_SIZES.get(i));
+                altJson.put(
+                        "content",
+                                routes.PhotosREST.getPhotoContent(objectId.toString(), i + 1).toString()
+                        );
+                //creates a base64 representation
+//                altJson.put("bytes",
+//                        "data:" + photo.getPhotoContents().get(1).getMimeType() + ";base64," +
+//                        DatatypeConverter.printBase64Binary(photo.getPhotoContents().get(1).getFileBytes()));
+
+                alternateContentsJson.put(Photo.Content.RESIZE_NAMES.get(i), altJson);
+            }
+
+            json.put(ALTERNATE_CONTENTS, alternateContentsJson);
+        }
+
         return json;
     }
 
 
-    public static Result getPhotoContent(String id){
+    /**
+     * returns the content of the photo
+     * @param id id of the photo
+     * @param alternate alternate version (size-wise) of the photo. By default is 0, that means
+     *                  'original size'. 1 is the smallest resized version, and numbers up mean a larger size
+     *                  according to the pixels listed in {@code Photo.Content.RESIZE_SIZES}. Note that at a given
+     *                  point the requested size might not exist, only 0 is guaranteed to be present if the content
+     *                  was uploaded.
+     *
+     * @return the corresponding version of the photo if it exists
+     */
+    public static Result getPhotoContent(String id, Integer alternate){
 
         ObjectId obj;
         try {
@@ -278,15 +321,22 @@ public class PhotosREST extends Controller {
         ByteArrayInputStream inStream = null;
         //returns the first one
         //TODO: it will return the proper Content when handling multiple photo sizes (quality)
-        for(Photo.Content c : photo.getPhotoContents()){
-            response().setContentType(c.getMimeType());
-            //response().setHeader("Content-Disposition", "attachment; filename=FILENAME");
-            //response().setHeader(ETAG, "xxx");
-            //ByteArrayInputStream bais = new ByteArrayInputStream(c.getFileBytes());
-            Logger.info("found photo " + c.getId().toString());
-            inStream = new ByteArrayInputStream(c.getFileBytes());
 
+        int alternativeSizes = photo.getPhotoContents().size() - 1;
+        if(alternate > alternativeSizes){
+            return notFound("photo content for alternate image '"+ alternate + "' is missing. "
+                    + alternativeSizes + " alternate vesions only were found.");
         }
+
+        Photo.Content c = photo.getPhotoContents().get(alternate);
+        response().setContentType(c.getMimeType());
+        //response().setHeader("Content-Disposition", "attachment; filename=FILENAME");
+        //response().setHeader(ETAG, "xxx");
+        //ByteArrayInputStream bais = new ByteArrayInputStream(c.getFileBytes());
+        Logger.info("found photo " + c.getId().toString());
+        inStream = new ByteArrayInputStream(c.getFileBytes());
+
+
         if(inStream == null){
             return notFound("photo content is missing");
         }
@@ -345,8 +395,6 @@ public class PhotosREST extends Controller {
             return badRequest("error parsing json to Photo or request total size exceeding " + MAX_BASE64_UPLOAD_SIZE + " bytes");
         }
 
-
-
         if(json.has(CONTENT)){
             try{
                 String contentBase64String = json.findPath(CONTENT).getTextValue();
@@ -359,6 +407,12 @@ public class PhotosREST extends Controller {
         }
 
         photo.save();
+
+        //if we uploaded content, and once the photo is saved,
+        // we can launch the independent creation of thumbnails and various sizes
+        if(json.has(CONTENT)){
+            photo.createAndSaveMultipleResizedContents_async();
+        }
 
         //return the updated representation
         return ok(photoToJson(photo));
@@ -383,6 +437,22 @@ public class PhotosREST extends Controller {
         if(offset < 0){
             offset = 0;
         }
+
+        /*
+        //adjust coordinate overflow
+        if(x2 > 180){
+            x2 -= 180;
+        }
+        if(x1 > 180){
+            x1 -= 180;
+        }
+        if(y2 > 90){
+            y2 -= 90;
+        }
+        if(y1 > 90){
+            y1 -= 90;
+        }
+        */
 
         Double[][][] rect = {{
                 {x1, y1},
