@@ -42,7 +42,7 @@
                 </form>
                 <div class="span3">
                     <a href="#profile"><span class="icon-cog"></span>Profile</a>
-                    <a href="#inviteFriends"><span class="icon-users"></span>Invite friends</a>
+                    <a href="#inviteFriends" data-toggle="modal"><span class="icon-users"></span>Invite friends</a>
                     <a href="#logout"><span class="icon-switch"></span></a>
 
                 </div>
@@ -76,6 +76,24 @@
         </div>
     </div>
 </div>
+<form action="/invitemail" id="inviteFriendsForm">
+<div id="inviteFriends" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="inviteFriendsLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="inviteFriendsLabel">Invite your friend</h3>
+    </div>
+    <div class="modal-body">
+        <div class="input-prepend">
+            <div class="add-on"><span class="icon-envelop"></span></div>
+            <input type="text" id="invite_friend" name="invite_friend" class="span3" placeholder="Friend email">
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-free" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button type="submit" class="btn btn-primary">Invite a friend</button>
+    </div>
+</div>
+</form>
 <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
 <!--[if lt IE 9]>
 <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -171,6 +189,40 @@
 
     })
 
+    function submitInviteFriends() {
+        var inviteFriendsJson = {
+                email: $('#invite_friend').val(),
+                subject: "el titulo",
+                text: "el texto",
+                html: "el texto en html"
+            };
+        var inviteFriendsPost = $.post(
+                $('#inviteFriendsForm').attr('action'),
+                JSON.stringify(inviteFriendsJson)
+        );
+        inviteFriendsPost.done(function( data ) {
+            if(data == 'Your account has not been verified, yet. An e-mail including instructions on how to verify it has been sent out. Retry resetting your password afterwards.'){
+                toastNotify(data);
+            }else{
+                toastSuccess(data);
+            }
+            console.log(data.responseText);
+            $('#inviteFriends').modal('hide');
+            location.href='./#';
+        });
+        inviteFriendsPost.error(function( data ) {
+            console.log(data.responseText);
+            $('#inviteFriends').modal('hide');
+            toastFail(data.responseText);
+            location.href='./#';
+        });
+        console.log("invite friends");
+    }
+
+    $('#inviteFriendsForm').submit(function(event) {
+        event.preventDefault();
+        submitInviteFriends();
+    });
 </script>
 </body>
 

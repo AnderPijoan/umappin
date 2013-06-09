@@ -241,6 +241,57 @@ input[type="color"]:focus,
   background-color: color-beige
   #my-avatar
     border-radius 20px
+.modal
+  background-color: color-beige
+  .modal-header
+    border-bottom: 1px solid color-box-border
+  .modal-body
+    background-color inherit
+  .modal-footer
+    padding 9px 15px 10px
+    background-color inherit
+    border-top: none
+    box-shadow: none
+  .input-prepend
+    .add-on
+      background-color inherit
+    input.span3, textarea.span3, .uneditable-input.span3
+      width: 485px
+.btn-primary
+  margin auto
+  background-color: color-dark-red;
+  *background-color: darken(color-dark-red, 10%)
+  background-image: -moz-linear-gradient(top, lighten(color-dark-red, 10%), darken(color-dark-red, 10%));
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(lighten(color-dark-red, 10%)), to(darken(color-dark-red, 10%)));
+  background-image: -webkit-linear-gradient(top, lighten(color-dark-red, 10%), darken(color-dark-red, 10%));
+  background-image: -o-linear-gradient(top, lighten(color-dark-red, 10%), darken(color-dark-red, 10%));
+  background-image: linear-gradient(to bottom, lighten(color-dark-red, 10%), darken(color-dark-red, 10%));
+  border-color: darken(color-dark-red, 10%) darken(color-dark-red, 10%) darken(color-dark-red, 20%);
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary.active,
+.btn-primary.disabled,
+.btn-primary[disabled]
+  background-color: color-dark-red
+  *background-color: darken(color-dark-red, 10%);
+.btn-free
+  background-color: color-beige;
+  *background-color: darken(color-beige, 10%)
+  background-image: -moz-linear-gradient(top, lighten(color-beige, 10%), darken(color-beige, 10%));
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(lighten(color-beige, 10%)), to(darken(color-beige, 10%)));
+  background-image: -webkit-linear-gradient(top, lighten(color-beige, 10%), darken(color-beige, 10%));
+  background-image: -o-linear-gradient(top, lighten(color-beige, 10%), darken(color-beige, 10%));
+  background-image: linear-gradient(to bottom, lighten(color-beige, 10%), darken(color-beige, 10%));
+  border-color: darken(color-beige, 10%) darken(color-beige, 10%) darken(color-beige, 20%);
+.btn-free:hover,
+.btn-free:focus,
+.btn-free:active,
+.btn-free.active,
+.btn-free.disabled,
+.btn-free[disabled]
+  background-color: color-beige
+  *background-color: darken(color-beige, 10%);
 #content
   #messages-section
     .box-header
@@ -436,7 +487,6 @@ input[type="color"]:focus,
   h6
     font-weight normal
     margin 0
-
   .modal
     background-color: color-beige
     .modal-header
