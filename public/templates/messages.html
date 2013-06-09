@@ -98,7 +98,7 @@
            <% _.each(rc.messages, function(messageObject){ %>
               <div>
               <img class="messagePhoto" src=<%- messageObject.user.profilePicture%> />
-              <span class="message"><a href="/#account/<%- messageObject.user.id%>"><%- messageObject.user.name %></a>:<%= " " + messageObject.message %>
+              <span class="message"><a href="#wall/user/<%- messageObject.user.id%>"><%- messageObject.user.name %></a>:<%= " " + messageObject.message %>
               </span>
               <span class="timeAgo"><%- messageObject.timeAgo%></span>
               </div>
@@ -113,8 +113,4 @@
 
 <script src="/assets/js/messagesApp/view/receivedMessages_view.js"></script>
 <script src="/assets/js/messagesApp/view/messagesApp_view.js"></script>
-
-
 <script src="/assets/js/messagesApp/view/discussionMessages_view.js"></script>
-
-
