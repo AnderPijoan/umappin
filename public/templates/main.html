@@ -96,10 +96,18 @@
                     "&password=" + $('#password').val() + "&repeatPassword=" + $('#repeatPassword').val()
         );
         registerPost.done(function( data ) {
+            $('#repeatPassword').val('');
+            $('#name').val('');
+            $('#email').val('');
+            $('#password').val('');
             location.href='./';
         });
         registerPost.error(function( data ) {
             if(data.responseText == 'Unverified User, click the link in your email'){
+                $('#repeatPassword').val('');
+                $('#name').val('');
+                $('#email').val('');
+                $('#password').val('');
                 toastNotify(data.responseText);
             }else{
                 toastFail(data.responseText);
@@ -123,10 +131,12 @@
             }else{
                 toastSuccess(data);
             }
+            $('#email_forgot').val('');
             $('#forgotPassword').modal('hide');
             location.href='./#';
         });
         forgotPasswordPost.error(function( data ) {
+            $('#email_forgot').val('');
             $('#forgotPassword').modal('hide');
             toastFail(data.responseText);
             location.href='./#forgotPassword';

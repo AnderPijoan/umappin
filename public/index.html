@@ -128,9 +128,9 @@
     function submitInviteFriends() {
         var inviteFriendsJson = {
                 email: $('#invite_friend').val(),
-                subject: "el titulo",
-                text: "el texto",
-                html: "el texto en html"
+                subject: "A friend invited you to uMappin",
+                text: "Hello! I'm using using uMappin and i want you to join us! Yoy can invite more friends.",
+                html: "Hello! I'm using using uMappin and i want you to join us! Yoy can invite more friends."
             };
         var inviteFriendsPost = $.ajax({
                 url: $('#inviteFriendsForm').attr('action'),
@@ -139,19 +139,12 @@
                 data: JSON.stringify(inviteFriendsJson)
         });
         inviteFriendsPost.done(function( data ) {
-            if(data == 'Your account has not been verified, yet. An e-mail including instructions on how to verify it has been sent out. Retry resetting your password afterwards.'){
-                toastNotify(data);
-            }else{
-                toastSuccess(data);
-            }
-            console.log(data.responseText);
+            $('#invite_friend').val('');
             $('#inviteFriends').modal('hide');
             location.href='./#';
         });
         inviteFriendsPost.error(function( data ) {
-            console.log(data.responseText);
             $('#inviteFriends').modal('hide');
-            toastFail(data.responseText);
             location.href='./#';
         });
         console.log("invite friends");
