@@ -2,8 +2,6 @@ window.Account or= {}
 
 class window.Account.FollowCollection extends Backbone.Collection
 
-  model: Account.Follow
-
   getByUserId: (id) ->
     @find (follow) ->
       follow.get('userId') == id
