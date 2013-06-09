@@ -367,7 +367,7 @@ input[type="color"]:focus,
   padding: 0 10px;
 }
 #content #publication_list .box .publication_header a {
-  width: 78%;
+  width: 61%;
   display: inline-block;
   height: 30px;
   text-overflow: ellipsis;
@@ -606,7 +606,7 @@ input[type="color"]:focus,
     width: 656px;
   }
   #content #publication_list .box .publication_header a {
-    width: 83%;
+    width: 70%;
   }
   #content #users-filters form .input-prepend input {
     width: 600px;
@@ -679,7 +679,7 @@ input[type="color"]:focus,
     width: 383px;
   }
   #content #publication_list .box .publication_header a {
-    width: 70%;
+    width: 47%;
   }
   #content #users-filters form .input-prepend input {
     width: 355px;
@@ -762,7 +762,7 @@ input[type="color"]:focus,
     width: 72%;
   }
   #content ul#publication_list .box .publication_header .time-ago {
-    width: 25%;
+    width: 24%;
     text-align: right;
   }
   #content #users-filters form {
@@ -919,13 +919,12 @@ input[type="color"]:focus,
     font-size: 12pt;
   }
   #content ul#publication_list .box .publication_header a {
-    width: 70%;
+    width: 61%;
   }
   #content ul#publication_list .box .publication_header .time-ago {
-    width: 26%;
+    width: 37%;
     text-align: right;
     overflow: hidden;
-    white-space: nowrap;
     -ms-word-wrap: normal;
     word-wrap: normal;
   }
