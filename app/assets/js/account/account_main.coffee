@@ -38,7 +38,11 @@ Account.loadUsersData = () ->
       '/assets/js/account/collections/user_collection.js'
       '/assets/js/account/models/follow_model.js'
     ], () ->
-      requirejs ['/assets/js/account/collections/follow_collection.js'], () ->
+      requirejs [
+        '/assets/js/account/models/follows_model.js'
+        '/assets/js/account/models/followed_model.js'
+        '/assets/js/account/collections/follow_collection.js'
+      ], () ->
         requirejs [
           '/assets/js/account/collections/follows_collection.js'
           '/assets/js/account/collections/followed_collection.js'
@@ -78,7 +82,11 @@ Account.loadUserList = () ->
           '/assets/js/account/models/follow_model.js'
           '/assets/js/account/collections/user_collection.js'
         ], () ->
-          requirejs ['/assets/js/account/collections/follow_collection.js'], () ->
+          requirejs [
+            '/assets/js/account/models/follows_model.js'
+            '/assets/js/account/models/followed_model.js'
+            '/assets/js/account/collections/follow_collection.js'
+          ], () ->
             requirejs [
               '/assets/js/account/collections/userfollows_collection.js'
               '/assets/js/account/collections/userfollowed_collection.js'
@@ -96,19 +104,19 @@ Account.loadUserList = () ->
 Account._loadUserList = () ->
   Account.profile or= new Account.User(Account.session)
 
-  Account.userfollows or= new Account.UserFollows
-  Account.userfollowed or= new Account.UserFollowed
-  Account.relatedusers or= new Account.RelatedUsers
+  Account.userfollows = new Account.UserFollows
+  Account.userfollowed = new Account.UserFollowed
+  Account.relatedusers = new Account.RelatedUsers
 
-  Account.usersFiltersView or= new Account.UsersFiltersView
+  Account.usersFiltersView = new Account.UsersFiltersView
     collection: Account.relatedusers
     follows: Account.userfollows
     followed: Account.userfollowed
     refUser: Account.profile
 
-  Account.userfollows.fetch()
-  Account.userfollowed.fetch()
-  Account.relatedusers.fetch()
+  Account.userfollows.fetch complete: () ->
+    Account.userfollowed.fetch complete: () ->
+      Account.relatedusers.fetch()
 
 Account.init = () ->
   Account.usersFiltersView = null
