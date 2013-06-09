@@ -1,8 +1,8 @@
 var timelineApp = timelineApp || {};
 
 (function(){
-	var PublicationCollection =Backbone.Collection.extend({
-		url:'/publications',
+	var NewsCollection =Backbone.Collection.extend({
+		url:'/news',
 		
 		comparator: function(collection){
 		    return(collection.get('timeStamp'));
@@ -10,6 +10,6 @@ var timelineApp = timelineApp || {};
 	});
 	
 	// Create our global collection of **Publications**.
-	timelineApp.PublicationCollection = new PublicationCollection();
+	timelineApp.NewsCollection = new NewsCollection();
 }());
 

@@ -1,27 +1,46 @@
 $(function(){
 
+	_.templateSettings.variable = "rc";
+	
 	var Statistic = Backbone.Model.extend({
 		urlRoot: '/users'
 	});
 
 	var StatisticView = Backbone.View.extend({
-		el: $('#statistics'),
+		el: 'div',
 		
-		className: "#statisticContainer",
-
-		template:$("#statistic-Template").html(),
+		template:$("#statistic-template").html(),
+		
+		initialize: function(attrs) {
+            _.bind(this, "render");
+            this.model.on("sync", this);
+        },
+		
+		initAwards:function () {
+			statistic = new Statistic({id:userId});
+			console.log(userId);
+			statistic.fetch(
+				{
+					success: function(){
+						view = new StatisticView({ model: statistic });
+						$('#comments_body').html(view.addTimeAgoAndRender().el);
+					},
+					error: function(){
+						console.log("Error getting comments from server");
+					}
+				}
+			);
+		},
 
 		render:function () {
-			this.model.set({"level":3, "points":65});
-			alert(JSON.stringify(this.model));
-			var tmpl = _.template(this.template);
-			this.$el.html(tmpl(this.model.toJSON()));
+			this.model.set({level: 2, points:456, coins: 1200, userAwards: {name: "cool", description: "very cool", timeStamp: 3}});
+			console.log(JSON.stringify(this.model));
+			
+			$(this.el).html(this.template(this.model.toJSON()));
 			return this;
 		}
 	});
 	
-	statistic = new Statistic({});
-	
-    statisticView = new StatisticView({model: statistic});
-    statisticView.render();
+    statisticView = new StatisticView();
+    //alert("entro");
 });

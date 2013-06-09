@@ -19,9 +19,12 @@ var timelineApp = timelineApp || {};
 
 		renderPublications: function(){
 			$('#comments_body').html('<ul id="publication_list"> </ul>');
+			timelineApp.PublicationCollection.sort();
 			timelineApp.PublicationCollection.each(function(publication){
+				var date = new Date(publication.get("timeStamp"));
+				publication.set({"date": date});
 			   	var view = new timelineApp.ReceivedView({ model: publication});
-			   	$('#publication_list').append(view.render().el);
+			   	$('#publication_list').prepend(view.render().el);
 			});
 		},
 
@@ -43,8 +46,10 @@ var timelineApp = timelineApp || {};
 				}
 			});
 		}
-
+		
 	});
+	
+	appView = (typeof appView === 'undefined') ? new timelineApp.AppView() : appView;
+	
 })();
-
-var appView = new timelineApp.AppView();
+	
