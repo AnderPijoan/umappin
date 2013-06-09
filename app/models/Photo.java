@@ -1,6 +1,7 @@
 package models;
 
 //import play.modules.morphia.Model;
+import akka.actor.ActorRef;
 import com.google.code.morphia.Datastore;
 import com.google.code.morphia.annotations.*;
 
@@ -17,6 +18,7 @@ import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 import play.data.validation.Constraints.*;
 import play.db.DB;
+import play.libs.Akka;
 import play.libs.Json;
 import play.Logger;
 
@@ -26,6 +28,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.sql.DataSource;
 
@@ -33,29 +36,34 @@ import javax.sql.DataSource;
 @Entity
 public class Photo {
 
-	private static final String IS_BEAUTIFUL_COUNT = "is_beautiful_count";
+    private static final String IS_BEAUTIFUL_COUNT = "is_beautiful_count";
 	private static final String IS_USEFUL_COUNT = "is_useful_count";
-	private static final String RANKING = "ranking";
+	public static final String RANKING = "ranking";
+    public static final int INITIAL_PHOTO_RANKING = 100;
 
-	private static final int OPEN_LAYERS_SRID = 4326;
+    public static final String OWNER_ID = "owner_id";
+
+    private static final int OPEN_LAYERS_SRID = 4326;
+
 	private static final int OSM_SRID = 900913;
 
-    //coordinate system in the traditional latitude and longitude projection
-    //unused at the moment
-    private static final int LAT_LONG_SRID = 4326;
+    public static final  int MAX_RESULTS_RETURNED = 20;
 
-	public static final  int MAX_RESULTS_RETURNED = 20;
-    private static final String IS_SEARCHABLE = "is_searcheable";
+    private static final String IS_SEARCHABLE = "is_searchable";
+    //timeout of async image resize in millisecs
+    private static final long IMAGE_ASYNC_RESIZE_TIMEOUT = 10000L;
 
     @Id
 	private ObjectId id;
 
 	@Required
-	@Embedded("owner_id")
+	@Embedded(OWNER_ID)
 	private ObjectId ownerId;
 
+    //name of the Content entities used by Photo to reference the contents in the DB
+    public static final String PHOTO_CONTENTS = "photoContents";
 	@Reference(lazy=true)
-	private Set<Content> photoContents = new HashSet<Content>();
+	private List<Content> photoContents = new ArrayList<Content>();
 
 	@Embedded("title")
 	private String title;
@@ -79,12 +87,13 @@ public class Photo {
 	private int isUsefulCount;
 
 	@Embedded(RANKING)
-	private int ranking;
+	private int ranking = INITIAL_PHOTO_RANKING;
 
     //specifies if a photo should show up in non-spot queries (like geo-queries)
 	@Embedded(IS_SEARCHABLE)
 	private boolean isSearchable = false;
 
+    //not supported yet
 	private java.util.Map<String, String> tags;
 
     public boolean isSearchable() {
@@ -164,11 +173,11 @@ public class Photo {
 		this.description = description;
 	}
 
-	public Set<Content> getPhotoContents() {
+	public List<Content> getPhotoContents() {
 		return photoContents;
 	}
 
-	public void setPhotoContents(Set<Content> photoContents) {
+	public void setPhotoContents(List<Content> photoContents) {
 		this.photoContents = photoContents;
 	}
 
@@ -204,10 +213,10 @@ public class Photo {
 			}
 		}
 
-		//save in morphia first; we have to ensure it has an id, otherwise
-		//cannot be saved in GIS
-		MorphiaObject.datastore.save(this);
 
+        //save in morphia first; we have to ensure it has an id, otherwise
+        //cannot be saved in GIS
+        MorphiaObject.datastore.save(this);
 
         //note, the following insert/update/delete in postGis could be made just in case a
         //relevant detail has changed, not at every update.
@@ -232,21 +241,31 @@ public class Photo {
 
 	public void addUpdateContent(File f, String mimeType) throws IOException {
 		Content c = new Content(f);
-		c.setMimeType(mimeType);
-		cleanUpExistingContents();
-		photoContents.add(c);
+        handleIncomingContent(mimeType, c);
 	}
+
 	public void addUpdateContent(byte[] bytes, String mimeType){
 		Content c = new Content(bytes);
-		c.setMimeType(mimeType);
-		cleanUpExistingContents();
-		photoContents.add(c);
+        handleIncomingContent(mimeType, c);
+
 	}
 
+    private void handleIncomingContent(String mimeType, Content c) {
 
-	private void cleanUpExistingContents(){
-		for(Content c : photoContents) {
+        c.setMimeType(mimeType);
+        cleanUpExistingContents();
+        photoContents.add(c);
+
+    }
+
+
+    private void cleanUpExistingContents(){
+        //immutable copy of the list of contents.
+        //beware that it can be altered concurrently by the ImageResizerActor
+        CopyOnWriteArrayList<Content> contents = new CopyOnWriteArrayList<Content>(this.getPhotoContents());
+		for(Content c : contents) {
 			photoContents.remove(c);
+            Logger.info("deleting Photo.Content " + c.getId().toString() + " for photo " + this.getId().toString());
 			c.delete();
 		}
 
@@ -360,12 +379,40 @@ public class Photo {
         return new ArrayList<Photo>();
 	}
 
+    /**
+     * creates resized copies of the current photo by invoking a proper akka actor.
+     * The results are computed asynchronously ad persiste into the db
+     */
+    public void createAndSaveMultipleResizedContents_async() {
+
+        Logger.info("about to launch async resize for photo " + this.getId().toString());
+        ActorRef imageResizer = Akka.system().actorOf(utils.ImageResizerActor.mkProps());
+
+
+        //ask an actor to resize the photo given its id (String)
+        akka.pattern.Patterns.ask(imageResizer, this.getId().toString(), IMAGE_ASYNC_RESIZE_TIMEOUT);
+//        Akka.asPromise(akka.pattern.Patterns.ask(imageResizer, this, 1000L)).map(
+//            new F.Function<Object,String>() {
+//                public String apply(Object response) {
+//                    Logger.info("applied resizing to photo: " + response.toString());
+//                    return "ok";
+//                }
+//            }
+//        );
+    }
 
 
     @Entity("Photo_Content")
 	public static class Content{
+        //sizes in pixels for all the resized versions. The size refers to the side
+        //If changed, the ascendant ordering must be kept
+        public static final List<Integer> RESIZE_SIZES = Arrays.asList(50, 150, 500, 1024, 2048);
+        //these are the corresponding names for the sizes above
+        public static final List<String> RESIZE_NAMES = Arrays.asList("micro", "thumbnail", "small", "medium", "large");
+        //target type of the resized images
+        public static final String IMAGE_RESIZE_TYPE = "jpeg";
 
-		public void setId(ObjectId id) {
+        public void setId(ObjectId id) {
 			this.id = id;
 		}
 
@@ -431,7 +478,7 @@ public class Photo {
 
 
 		//needed for Morphia deserialilization
-		private Content() {}
+		public Content() {}
 
 		//only an instance of photo can create Content.
 		private Content(File file) throws IOException {
@@ -480,7 +527,9 @@ public class Photo {
 		public ObjectId getId() {
 			return id;
 		}
-	}
+
+
+    }
 
 	private static class GeoPoint {
 

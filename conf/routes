@@ -197,7 +197,7 @@ PUT     /photos/:id             controllers.PhotosREST.updatePhoto(id: String)
 DELETE  /photos/:id             controllers.PhotosREST.deletePhoto(id: String)
 
 # REST CRUD for pictures content
-GET     /photos/:id/content      controllers.PhotosREST.getPhotoContent(id: String)
+GET     /photos/:id/content      controllers.PhotosREST.getPhotoContent(id: String, alternate: Integer ?= 0)
 POST    /photos/:id/content      controllers.PhotosREST.uploadMultipartContent(id: String)
 
 # REST CRUD for Maps

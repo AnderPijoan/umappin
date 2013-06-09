@@ -14,7 +14,8 @@ object ApplicationBuild extends Build {
       "postgresql" % "postgresql" % "9.1-901.jdbc4",
       "com.google.code.morphia" % "morphia" % "0.99",
       "com.google.code.morphia" % "morphia-logging-slf4j" % "0.99",
-      "be.objectify"  %%  "deadbolt-java"     % "2.1-SNAPSHOT"
+      "be.objectify"  %%  "deadbolt-java"     % "2.1-SNAPSHOT",
+      "org.imgscalr" % "imgscalr-lib" % "4.2"
     )
 
     // Play Authenticate module build settings
@@ -46,8 +47,10 @@ object ApplicationBuild extends Build {
       resolvers += Resolver.url("play-easymail (release)", url("http://joscha.github.com/play-easymail/repo/releases/"))(Resolver.ivyStylePatterns),
       resolvers += Resolver.url("play-easymail (snapshot)", url("http://joscha.github.com/play-easymail/repo/snapshots/"))(Resolver.ivyStylePatterns),
       // Mongo morphia resolvers
-      resolvers += "Maven repository" at "http://morphia.googlecode.com/svn/mavenrepo/"
-        
+      resolvers += "Maven repository" at "http://morphia.googlecode.com/svn/mavenrepo/",
+      //image Scalrc
+      resolvers += "The Buzz Media Maven Repository" at "http://maven.thebuzzmedia.com"
+
     //Main Application submodules/subprojects dependencies
     ).dependsOn(
       playAuthenticate
