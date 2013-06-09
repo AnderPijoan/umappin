@@ -5,6 +5,7 @@ _.templateSettings.variable = "rc";
 
 	messagesApp.ReceivedView = Backbone.View.extend({
 		tagName:  'li',
+        className: 'row',
 
 		//set the discussion template
 		template: _.template($('#discussion-head-template').html()),

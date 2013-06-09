@@ -9,7 +9,6 @@
             users;
         usersListSearch.done(function(data){
             users = data;
-            console.log(data);
         });
 
         var that = this;
