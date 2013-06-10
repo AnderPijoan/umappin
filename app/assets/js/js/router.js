@@ -32,12 +32,7 @@
       'forgotPassword': 'forgotPassword',
       'userlist': 'userlist',
       'profile': 'profile',
-      'awards': 'awards',
-      '/': 'main'
-    };
-
-    Router.prototype.main = function() {
-      return this.navigate('#wall/news');
+      'awards': 'awards'
     };
 
     Router.prototype.account = function(id) {

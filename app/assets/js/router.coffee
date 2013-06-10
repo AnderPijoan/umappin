@@ -19,10 +19,6 @@ class umappin.Router extends Backbone.Router
     'userlist':           'userlist'
     'profile':            'profile'
     'awards':			  'awards'	
-    '/':                           'main'
-
-  main: () ->
-    @navigate '#wall/news'
 
   account: (id) ->
     @params = if id? then id: id else null
