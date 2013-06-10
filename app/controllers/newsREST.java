@@ -51,7 +51,7 @@ public class newsREST extends ItemREST {
 			return notFound(Constants.PUBLICATIONS_EMPTY.toString());
 		} else {
 			// Return the response
-			return ok(Json.toJson(Publication.publicationsToObjectNodes(publications)));
+			return ok(Json.toJson(Publication.publicationsWithUserToObjectNodes(publications)));
 		}
 	}
 
@@ -74,7 +74,7 @@ public class newsREST extends ItemREST {
 			return notFound(Constants.PUBLICATIONS_EMPTY.toString());
 		} else {
 			// Return the response
-			return ok(Json.toJson(Publication.publicationsToObjectNodes(publications)));
+			return ok(Json.toJson(Publication.publicationsWithUserToObjectNodes(publications)));
 		}
 	}
 
