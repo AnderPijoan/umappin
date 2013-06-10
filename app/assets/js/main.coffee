@@ -48,11 +48,17 @@ $ () ->
     setSessionUser data
     #setTemplate "/assets/templates/main_logged.html"
     $('#profile-picture').html('<img id="my-avatar" src="'+profileImg+'" onload="resize(this)">')
-    location.href = "/#wall/news"
+    initRouter () ->
+      if "#{location.href}" is "http://#{location.host}/"
+        umappin.router.navigate '#/wall/news', trigger: true
   sessionRequest.error ->
     updateSessionViews ""
-    setTemplate "/assets/templates/main.html"
-  # Initialize the main router
+    setTemplate "/assets/templates/main.html", () ->
+      initRouter () -> console.log 'no authenticated user'
+
+# Initialize the main router
+window.initRouter = (callback) ->
   requirejs ['/assets/js/router.js'], () ->
     umappin.router or= new umappin.Router
     Backbone.history.start()
+    callback.call @
