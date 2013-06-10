@@ -344,9 +344,19 @@ input[type="color"]:focus,
       text-align left
       padding: 0 10px;
       .box
-        width: auto;
-        display: inline-block;
-        line-height: 4;
+        position: relative;
+        width: 80px;
+        height: 80px;
+        display: block;
+        float: left;
+        span
+          color: white
+          width: 100%;
+          display: block;
+          background-color: rgba(#2B4429, 0.8)
+          position: absolute;
+          bottom: 0;
+          border-radius: 0 0 8px 8px;
     .discussion_subject
       overflow hidden
       text-align left
@@ -369,7 +379,7 @@ input[type="color"]:focus,
     .timeAgo
       float: right;
       font-size: 12pt;
-      line-height: 4;
+      line-height: 5;
       margin-right: 5px;
   #publication_list .box
     padding 0

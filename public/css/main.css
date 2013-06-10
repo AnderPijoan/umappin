@@ -427,9 +427,20 @@ input[type="color"]:focus,
   padding: 0 10px;
 }
 #content #discussion_list .box .discussion_participants_photo .box {
-  width: auto;
-  display: inline-block;
-  line-height: 4;
+  position: relative;
+  width: 80px;
+  height: 80px;
+  display: block;
+  float: left;
+}
+#content #discussion_list .box .discussion_participants_photo .box span {
+  color: #fff;
+  width: 100%;
+  display: block;
+  background-color: rgba(43,68,41,0.8);
+  position: absolute;
+  bottom: 0;
+  border-radius: 0 0 8px 8px;
 }
 #content #discussion_list .box .discussion_subject {
   overflow: hidden;
@@ -457,7 +468,7 @@ input[type="color"]:focus,
 #content #discussion_list .box .timeAgo {
   float: right;
   font-size: 12pt;
-  line-height: 4;
+  line-height: 5;
   margin-right: 5px;
 }
 #content #publication_list .box {

@@ -76,7 +76,7 @@
                     <% for (i=0; i<maxPhotosSeen;i++) { %>
                         <% if (rc.users[i]) { %>
                           <div class="box">
-                            <img id="photo<%- rc.users[i].name %>" class="messagePhoto" src="<%- rc.users[i].profilePicture%>" title="<%- rc.users[i].name %>"/>
+                            <img id="photo<%- rc.users[i].name %>" class="messagePhotoNEO" src="<%- rc.users[i].profilePicture%>" title="<%- rc.users[i].name %>" onload="resize(this, 80)"/>
                             <span><%- rc.users[i].name %></span>
                           </div>
                         <% } else {break;}} %>

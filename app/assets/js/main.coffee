@@ -47,7 +47,7 @@ $ () ->
     sessionStorage.setItem("user", JSON.stringify(data));
     setSessionUser data
     #setTemplate "/assets/templates/main_logged.html"
-    $('#profile-picture').html('<img id="my-avatar" src="'+profileImg+'" onload="resize(this)">')
+    $('#profile-picture').html('<img id="my-avatar" src="'+profileImg+'" onload="resize(this,128)">')
     initRouter () ->
       if "#{location.href}" is "http://#{location.host}/"
         umappin.router.navigate '#/wall/news', trigger: true

@@ -116,12 +116,13 @@
         $('.logo').click(function(){
             location.href='./';
         });
-        function resize(img){
+        function resize(img, size){
+            var currentImage = $(img);
             if(img.width > img.height){
-                $('#my-avatar').width('100%');
-                $('#my-avatar').css('margin-top',64-(((12800/(img.width*100))*img.height)/2));
+                currentImage.width('100%');
+                currentImage.css('margin-top',(size/2)-((((size*100)/(img.width*100))*img.height)/2));
             }else{
-                $('#my-avatar').height('100%');
+                currentImage.height('100%');
             }
         }
 
