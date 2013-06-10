@@ -138,6 +138,15 @@ GET     /publications/:id/likes     controllers.TimelineREST.getPublicationLikes
 POST    /publications               controllers.TimelineREST.addPublication()
 DELETE  /publications/:id           controllers.TimelineREST.deletePublication(id: String)
 
+# REST CRUD for other users publications
+GET     /userpublications/:userId               controllers.UserTimelineREST.getPublications(userId: String)
+GET     /userpublications/:userId/from/:f/to/:t controllers.UserTimelineREST.getRangePublications(userId: String, f: Integer, t: Integer)
+GET     /userpublications/:userId/:id           controllers.UserTimelineREST.getPublication(userId: String, id: String)
+GET     /userpublications/:userId/:id/likes     controllers.UserTimelineREST.getPublicationLikes(userId: String, id: String)
+POST    /userpublications/:userId               controllers.UserTimelineREST.addPublication(userId: String)
+DELETE  /userpublications/:userId/:id           controllers.UserTimelineREST.deletePublication(userId: String, id: String)
+
+
 # REST CRUD for comments (!!!they need a "publicaton_id" in the body!!!)
 GET     /comments/:id               controllers.TimelineREST.getMessage(id: String)
 PUT     /comments/:id               controllers.TimelineREST.updateMessage(id: String)
