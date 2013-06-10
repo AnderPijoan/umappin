@@ -80,7 +80,7 @@ public class Publication extends Post {
 		this.save();
 		return users;
 	}
-
+	
 
 	/** Parses a publication list and prepares it for exporting to JSON
 	 * @param dscs Publication list
@@ -94,7 +94,47 @@ public class Publication extends Post {
 		return publications;
 	}
 
+	
+	/** Parses a publication list and prepares it for exporting to JSON
+	 * @param dscs Publication list
+	 * @return List of ObjectNodes ready for use in toJson
+	 */
+	public static List<ObjectNode> publicationsWithUserToObjectNodes (List<Publication> pbct){
+		List<ObjectNode> publications = new ArrayList<ObjectNode>();
+		for(Publication publication : pbct){
+			publications.add(publicationWithUserToShortObjectNode(publication));
+		}
+		return publications;
+	}
+	
 
+	/** Parses a publication and prepares it for exporting to JSON
+	 * @param publication
+	 * @return ObjectNode ready for use in toJson
+	 */
+	public static ObjectNode publicationWithUserToShortObjectNode(Publication publication) {
+
+		ObjectNode publicationNode = Json.newObject();
+		publicationNode.put("id", publication.id.toString());
+		publicationNode.put("user", User.userToShortObjectNode(publication.writerId));
+		publicationNode.put("subject", publication.subject);
+		publicationNode.put("postPicture", publication.postPicture != null ? routes.PhotosREST.getPhoto(publication.postPicture.toString()).toString() +"/content" : null);
+		publicationNode.put("likes", Json.toJson(User.userIdsToShortObjectNode(publication.userLikesIds)));
+		publicationNode.put("replies", publication.repliesIds.size());
+		publicationNode.put("timeStamp", publication.id.getTime());
+		publicationNode.put("lastWrote", publication.lastWrote.toString());
+
+		Message message = Message.findById(publication.firstMessage, Message.class);
+		if (message != null){
+			publicationNode.put("content", message.message);
+		} else {
+			publication.delete();
+		}
+
+		return publicationNode;
+	}
+	
+	
 	/** Parses a publication and prepares it for exporting to JSON
 	 * @param publication
 	 * @return ObjectNode ready for use in toJson
