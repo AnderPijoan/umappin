@@ -40,9 +40,10 @@ timelineApp.Router = Backbone.SubRoute.extend({
 		});
 	},
 	userWall: function(idUser){
-		this.loadUserTemplateIfNeed(function(){
+		this.loadTemplateIfNeed(function(){
 			console.log("User "+idUser+" Wall");
-			//timelineApp.PublicationCollection.fetch();
+            timelineApp.UserPublicationCollection.url = "/userpublications/" + idUser;
+			timelineApp.UserPublicationCollection.fetch();
 		});
 	},
 	loadTemplateIfNeed:function(callback){
