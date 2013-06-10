@@ -11,16 +11,15 @@ var timelineApp = timelineApp || {};
 
 		initialize: function () {
 			//triggered on sync
-			this.listenTo(timelineApp.UserPublicationCollection, 'sync', this.renderPublications);
-
+			this.listenTo(timelineApp.UserPublicationCollection, 'sync reset change', this.renderPublications);
 		},
 		//Publication Headers methods
 
 
 		renderPublications: function(){
 			$('#comments_body').html('<ul id="publication_list"> </ul>');
-			timelineApp.PublicationCollection.sort();
-			timelineApp.PublicationCollection.each(function(publication){
+			timelineApp.UserPublicationCollection.sort();
+			timelineApp.UserPublicationCollection.each(function(publication){
 				var date = new Date(publication.get("timeStamp"));
 				publication.set({"date": date});
 			   	var view = new timelineApp.ReceivedView({ model: publication});
@@ -33,10 +32,10 @@ var timelineApp = timelineApp || {};
 			var subject = this.$el.find('#form_subject').val();
 			var comment = this.$el.find('#form_comment').val();
 
-			var a = new timelineApp.Publication({subject: this.$el.find('#form_subject').val(),
+			var a = new timelineApp.UserPublication({subject: this.$el.find('#form_subject').val(),
             	message: this.$el.find('#form_comment').val()});
-
-			timelineApp.PublicationCollection.unshift(a);
+            a.urlRoot = timelineApp.UserPublicationCollection.url
+			timelineApp.UserPublicationCollection.unshift(a);
 			var that = this;
 			a.save({}, {
 			    success:function(){
@@ -48,8 +47,8 @@ var timelineApp = timelineApp || {};
 		}
 		
 	});
-	
-	appView = (typeof appView === 'undefined') ? new timelineApp.UserAppView() : appView;
-	
+
+    timelineApp.userAppView =  new timelineApp.UserAppView();
+
 })();
 	
