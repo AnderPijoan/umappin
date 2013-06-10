@@ -1,0 +1,5 @@
+statisticApp = statisticApp || {}
+
+$(function () {
+
+});

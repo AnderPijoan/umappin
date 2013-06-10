@@ -1,12 +1,8 @@
-$(function(){
+var statisticsApp = statisticsApp || {};
 
-	_.templateSettings.variable = "rc";
-	
-	var Statistic = Backbone.Model.extend({
-		urlRoot: '/users'
-	});
-
-	var StatisticView = Backbone.View.extend({
+//this is the view controller for the all comments APP
+(function(){
+	statisticsApp.StatisticsView = Backbone.View.extend({
 		el: 'div',
 		
 		template:$("#statistic-template").html(),
@@ -18,7 +14,6 @@ $(function(){
 		
 		initAwards:function () {
 			statistic = new Statistic({id:userId});
-			console.log(userId);
 			statistic.fetch(
 				{
 					success: function(){
@@ -41,6 +36,4 @@ $(function(){
 		}
 	});
 	
-    statisticView = new StatisticView();
-    //alert("entro");
-});
+})();

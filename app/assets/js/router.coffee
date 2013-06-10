@@ -88,7 +88,9 @@ class umappin.Router extends Backbone.Router
       
   awards: () ->
     setTemplate "/assets/templates/awards.html", () ->
-      requirejs ['/assets/js/StatisticsApp.js']
+      requirejs ['/assets/js/view/statisticView.js'], () ->
+      	requirejs ['/assets/js/statisticsApp/routers/router.js'], () ->
+	      	subroutes.timelineRouter or= new statisticsApp.Router "wall/"
 
   login: () ->
     setTemplate "/assets/templates/login.html"
