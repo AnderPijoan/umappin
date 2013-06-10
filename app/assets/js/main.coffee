@@ -52,7 +52,6 @@ $ () ->
       requirejs ['/assets/js/router.js'], () ->
         umappin.router or= new umappin.Router
         Backbone.history.start()
-        @navigate '#wall/news'
     #   location.href = "/#wall/news"
   sessionRequest.error ->
     updateSessionViews ""
