@@ -46,14 +46,13 @@ $ () ->
       profileImg = './assets/img/140x140.gif'
     sessionStorage.setItem("user", JSON.stringify(data));
     setSessionUser data
-    setTemplate "/assets/templates/main_logged.html", () =>
-      $('#profile-picture').html('<img id="my-avatar" src="'+profileImg+'" onload="resize(this)">')
-      # Initialize the main router
-      requirejs ['/assets/js/router.js'], () ->
-        umappin.router or= new umappin.Router
-        Backbone.history.start()
-        if "#{location.href}" is "http://#{location.host}/"
-          umappin.router.navigate('#wall/news')
+    #setTemplate "/assets/templates/main_logged.html"
+    $('#profile-picture').html('<img id="my-avatar" src="'+profileImg+'" onload="resize(this)">')
+    location.href = "/#wall/news"
   sessionRequest.error ->
     updateSessionViews ""
     setTemplate "/assets/templates/main.html"
+  # Initialize the main router
+  requirejs ['/assets/js/router.js'], () ->
+    umappin.router or= new umappin.Router
+    Backbone.history.start()
