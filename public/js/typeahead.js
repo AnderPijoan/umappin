@@ -41,7 +41,7 @@
                 var user = _.find(users, function(p) {
                    return p.id == id;
                 });
-                console.log(user);
+
                 if(!user.profilePicture){
                     user.profilePicture = './assets/img/140x140.gif';
                 }
