@@ -78,7 +78,7 @@ timelineApp.Router = Backbone.SubRoute.extend({
 	userWall: function(idUser){   
     //this.loadTemplateIfNeed(function() {
     that = this;
-    setTemplate ("/assets/templates/wall.html", function() {  
+    setTemplate ("/assets/templates/userWall.html", function() {  
       requirejs(['/assets/js/timelineApp/model/publication.js'], function() {
         requirejs(['/assets/js/timelineApp/model/userPublication.js'], function() {
           requirejs(['/assets/js/timelineApp/model/comment.js'], function() {
