@@ -35,14 +35,18 @@ timelineApp.Router = Backbone.SubRoute.extend({
 	publicationHeaders: function(){
 		this.loadTemplateIfNeed(function(){
 			console.log("routing received");
+            // Create our global collection of **Publications**.
 			$('#new_post').show();
+            timelineApp.UserPublicationCollection.reset();
 			timelineApp.PublicationCollection.fetch();
 		});
 	},
 	userWall: function(idUser){
 		this.loadTemplateIfNeed(function(){
 			console.log("User "+idUser+" Wall");
+            // Create our global collection of **Publications**.
             timelineApp.UserPublicationCollection.url = "/userpublications/" + idUser;
+            timelineApp.UserPublicationCollection.reset();
 			timelineApp.UserPublicationCollection.fetch();
 		});
 	},

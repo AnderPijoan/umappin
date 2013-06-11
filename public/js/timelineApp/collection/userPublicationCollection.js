@@ -1,15 +1,13 @@
 var timelineApp = timelineApp || {};
 
 (function(){
-	var UserPublicationCollection = Backbone.Collection.extend({
+	window.UserPublicationCollection = Backbone.Collection.extend({
 		url:'/userpublications',
-		
+		model: timelineApp.UserPublication,
 		comparator: function(collection){
 		    return(collection.get('timeStamp'));
 		}
 	});
-	
-	// Create our global collection of **Publications**.
-	timelineApp.UserPublicationCollection = new UserPublicationCollection();
+    timelineApp.UserPublicationCollection = new UserPublicationCollection();
 }());
 
