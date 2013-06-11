@@ -1,5 +1,0 @@
-statisticApp = statisticApp || {}
-
-$(function () {
-
-});

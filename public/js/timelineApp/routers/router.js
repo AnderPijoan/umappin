@@ -5,8 +5,7 @@ timelineApp.Router = Backbone.SubRoute.extend({
 	routes: {
 		'comment/:id' : 	'comments',
 		'news' :			'news',
-   		'/'	: 				'publicationHeaders',
-   		'user/:id' :		'userWall'
+   		'/'	: 				'publicationHeaders'
 	},
 
 	comments: function(idComment){
@@ -37,12 +36,6 @@ timelineApp.Router = Backbone.SubRoute.extend({
 			console.log("routing received");
 			$('#new_post').show();
 			timelineApp.PublicationCollection.fetch();
-		});
-	},
-	userWall: function(idUser){
-		this.loadUserTemplateIfNeed(function(){
-			console.log("User "+idUser+" Wall");
-			//timelineApp.PublicationCollection.fetch();
 		});
 	},
 	loadTemplateIfNeed:function(callback){

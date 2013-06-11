@@ -1,10 +1,8 @@
-var statisticApp = statisticApp || {};
+var statisticsApp = statisticsApp || {};
 
 (function(){
 
-	statisticApp.Statistic = Backbone.Model.extend({
-
+	statisticsApp.Statistic = Backbone.Model.extend({
     	urlRoot: '/statistics',
-
 	});
 })();
