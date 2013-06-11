@@ -6,8 +6,8 @@ timelineApp.Router = Backbone.SubRoute.extend({
 	routes: {
 		'comment/:id' : 	'comments',
 		'news' :			    'news',
-   	'/'	: 				    'publicationHeaders',
-   	'user/:id' :		  'userWall'
+		'/'	: 				    'publicationHeaders',
+		'user/:id' :		  	'userWall'
 	},
 
 	comments: function(idComment) {
@@ -74,7 +74,7 @@ timelineApp.Router = Backbone.SubRoute.extend({
       });
 		});
 	},
-  
+
 	userWall: function(idUser){   
     //this.loadTemplateIfNeed(function() {
     that = this;
@@ -103,7 +103,7 @@ timelineApp.Router = Backbone.SubRoute.extend({
       });
     });               
 	},
-  
+
 	loadTemplateIfNeed:function(callback){
 		//it reloads the template only if not set
 		if($('#comments_body').length ===0){

@@ -171,6 +171,7 @@ GET     /awards/types/:type			controllers.AwardREST.findByAwardType(type: String
 
 # REST CRUD for statistics
 GET     /users/:id/statistics		controllers.UserStatisticsREST.getUserStatistics(id: String)
+GET     /statistics					controllers.UserStatisticsREST.getConnectedUserStatistics()
 PUT		/users/:id/statistics		controllers.UserStatisticsREST.updateUserStatistics(id: String)
 # --------------------------------------------------------------------------
 

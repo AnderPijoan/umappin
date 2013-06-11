@@ -46,6 +46,26 @@ public class UserStatisticsREST extends Controller {
 		return ok(Json.toJson(node));
 	}
 
+	// GET
+	@Restrict(@Group(Application.USER_ROLE))
+	public static Result getConnectedUserStatistics() {
+		ObjectNode node;
+		boolean isConnectedUser = false;
+		final User connectedUser = Application.getLocalUser(session());
+		UserStatistics userStatistics = UserStatistics.findByUserId(connectedUser.getIdentifier());
+		if(userStatistics == null){
+			userStatistics = UserStatistics.init(connectedUser.getIdentifier()).save();
+			node = UserStatistics.userStatisticsToObjectNode(userStatistics);
+		}else if(isConnectedUser) { // set to false the non-read data flags...
+			node = UserStatistics.userStatisticsToObjectNode(userStatistics);
+			userStatistics.setRead();
+			userStatistics.save();
+		}else {
+			node = UserStatistics.userStatisticsToObjectNode(userStatistics);
+		}
+		return ok(Json.toJson(node));
+	}
+	
 	// PUT
 	@Restrict(@Group(Application.USER_ROLE))
 	public static Result updateUserStatistics(String userId) {
