@@ -43,9 +43,9 @@ public class Photo {
 
     public static final String OWNER_ID = "owner_id";
 
-    private static final int OPEN_LAYERS_SRID = 4326;
+    private static final int LONG_LAT_SRID = 4326;
 
-	private static final int OSM_SRID = 900913;
+	private static final int GOOGLE_SRID = 900913;
 
     public static final  int MAX_RESULTS_RETURNED = 20;
 
@@ -560,8 +560,8 @@ public class Photo {
 				conn = ds.getConnection();
 				// Try updating, if the photo doesn't exists, the query does nothing
 				String sql = "update photos set ranking = ?, timest = ?, " +
-					"location = ST_Transform(ST_SetSRID(ST_MakePoint(?, ?), " + OPEN_LAYERS_SRID + ")," + OSM_SRID + ")" +
-					//"location = ST_Transform(ST_SetSRID(ST_MakePoint(?, ?), " + LAT_LONG_SRID + ")," + OSM_SRID + ")" +
+					"location = ST_Transform(ST_SetSRID(ST_MakePoint(?, ?), " + LONG_LAT_SRID + ")," + GOOGLE_SRID + ")" +
+					//"location = ST_Transform(ST_SetSRID(ST_MakePoint(?, ?), " + LAT_LONG_SRID + ")," + GOOGLE_SRID + ")" +
 					(tags != null && tags.size() > 0 ? ", tags = " + OsmFeature.tagsToHstoreFormat(tags) : "" ) +
 					" where mongo_oid = ?";
 				st = conn.prepareStatement(sql);
@@ -575,8 +575,8 @@ public class Photo {
 				// Try inserting, if the photo exists, the query does nothing
 				sql = "insert into photos (mongo_oid, ranking, timest, location " +
 					(tags != null? ",tags" : "" ) + ") " +
-					"select ?, ?, ?, ST_Transform(ST_SetSRID(ST_MakePoint(?, ?), " + OPEN_LAYERS_SRID + ")," + OSM_SRID + ") " +
-					//"select ?, ?, ?, ST_Transform(ST_SetSRID(ST_MakePoint(?, ?), " + LAT_LONG_SRID + ")," + OSM_SRID + ") " +
+					"select ?, ?, ?, ST_Transform(ST_SetSRID(ST_MakePoint(?, ?), " + LONG_LAT_SRID + ")," + GOOGLE_SRID + ") " +
+					//"select ?, ?, ?, ST_Transform(ST_SetSRID(ST_MakePoint(?, ?), " + LAT_LONG_SRID + ")," + GOOGLE_SRID + ") " +
 					 (tags != null && tags.size() > 0 ? ", tags = " + OsmFeature.tagsToHstoreFormat(tags) : "" ) +
 					"where not exists (select 1 from photos where mongo_oid = ?)";
 				st = conn.prepareStatement(sql);
@@ -622,8 +622,8 @@ public class Photo {
 
 			try {
 				conn = ds.getConnection();
-				String sql = "select mongo_oid, st_asgeojson(ST_Transform(ST_SetSRID(location, " + OSM_SRID + ")," + OPEN_LAYERS_SRID + ")) as geometry " +
-				"from photos ORDER BY location <-> ST_Transform(ST_SetSRID(?," + OPEN_LAYERS_SRID + ")," + OSM_SRID + "), ranking DESC LIMIT ?";
+				String sql = "select mongo_oid, st_asgeojson(ST_Transform(ST_SetSRID(location, " + GOOGLE_SRID + ")," + LONG_LAT_SRID + ")) as geometry " +
+				"from photos ORDER BY location <-> ST_Transform(ST_SetSRID(?," + LONG_LAT_SRID + ")," + GOOGLE_SRID + "), ranking DESC LIMIT ?";
 				st = conn.prepareStatement(sql);
 				st.setString(1, "ST_MakePoint(" + lon + "," + lat + ")");
 				st.setInt(2, limit);
@@ -664,8 +664,8 @@ public class Photo {
 
 			try {
 				conn = ds.getConnection();
-				String sql = "select mongo_oid, st_asgeojson(ST_Transform(ST_SetSRID(location, " + OSM_SRID + ")," + OPEN_LAYERS_SRID + ")) as geometry " +
-				"from photos WHERE ranking = ? ORDER BY location <-> ST_Transform(ST_SetSRID(?," + OPEN_LAYERS_SRID + ")," + OSM_SRID + ") LIMIT ?";
+				String sql = "select mongo_oid, st_asgeojson(ST_Transform(ST_SetSRID(location, " + GOOGLE_SRID + ")," + LONG_LAT_SRID + ")) as geometry " +
+				"from photos WHERE ranking = ? ORDER BY location <-> ST_Transform(ST_SetSRID(?," + LONG_LAT_SRID + ")," + GOOGLE_SRID + ") LIMIT ?";
 				st = conn.prepareStatement(sql);
 				st.setInt(1, ranking);
 				st.setString(2, "ST_MakePoint(" + lon + "," + lat + ")");
@@ -711,8 +711,8 @@ public class Photo {
 
 			try {
 				conn = ds.getConnection();
-				String sql = "select mongo_oid, st_asgeojson(ST_Transform(ST_SetSRID(location, " + OSM_SRID + ")," + OPEN_LAYERS_SRID + ")) as geometry " +
-				"from photos WHERE lower(tags->lower(?)) = lower(?) ORDER BY location <-> ST_Transform(ST_SetSRID(?," + OPEN_LAYERS_SRID + ")," + OSM_SRID + "), ranking DESC LIMIT ?";
+				String sql = "select mongo_oid, st_asgeojson(ST_Transform(ST_SetSRID(location, " + GOOGLE_SRID + ")," + LONG_LAT_SRID + ")) as geometry " +
+				"from photos WHERE lower(tags->lower(?)) = lower(?) ORDER BY location <-> ST_Transform(ST_SetSRID(?," + LONG_LAT_SRID + ")," + GOOGLE_SRID + "), ranking DESC LIMIT ?";
 				st = conn.prepareStatement(sql);
 				st.setString(1, key);
 				st.setString(2, value);
@@ -762,8 +762,8 @@ public class Photo {
 
 			try {
 				conn = ds.getConnection();
-				String sql = "select mongo_oid, st_asgeojson(ST_Transform(ST_SetSRID(location, " + OSM_SRID + ")," + OPEN_LAYERS_SRID + ")) as geometry " +
-				"from photos where ST_Intersects(location, ST_Transform(ST_SetSRID(st_geomfromgeojson(?)," + OPEN_LAYERS_SRID + ")," + OSM_SRID + ")) " +
+				String sql = "select mongo_oid, st_asgeojson(ST_Transform(ST_SetSRID(location, " + GOOGLE_SRID + ")," + LONG_LAT_SRID + ")) as geometry " +
+				"from photos where ST_Intersects(location, ST_Transform(ST_SetSRID(st_geomfromgeojson(?)," + LONG_LAT_SRID + ")," + GOOGLE_SRID + ")) " +
 						(osmTags != null ? " and tags = " + OsmFeature.tagsToHstoreFormat(osmTags) : "" ) +
 						" ORDER BY ranking DESC LIMIT ? OFFSET ?";
 				st = conn.prepareStatement(sql);

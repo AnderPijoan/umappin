@@ -19,6 +19,11 @@ import java.util.List;
  */
 public class PhotoRankingUpdateActor extends UntypedActor {
 
+    //the time the initial default ranking takes to be reduced by exp(-1).
+    //currently set to one week
+    //the decay is exponential exp(-age/RANKING_DECAY)
+    private static final int RANKING_DECAY = 3600 * 1000 * 24 * 7;
+
     @Override
     public void onReceive(Object message) throws Exception {
 
@@ -42,7 +47,7 @@ public class PhotoRankingUpdateActor extends UntypedActor {
                     Logger.info("determining ranking for photo " + p.getId().toString() + " with current ranking " + p.getRanking());
 
                     //number of weeks elapsed from the creation of the metadata
-                    long elapsedWeeks = - (now - p.getId().getTime()) / (3600 * 1000 * 24 * 7);
+                    long elapsedWeeks = - (now - p.getId().getTime()) / RANKING_DECAY;
                     int ranking = (int) (Photo.INITIAL_PHOTO_RANKING * Math.exp(elapsedWeeks));
                     ranking += p.getBeautifulCount() + p.getUsefulCount() + awardPoints;
 

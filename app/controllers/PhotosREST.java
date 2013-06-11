@@ -46,9 +46,9 @@ public class PhotosREST extends Controller {
     public static final String PHOTO_IS_BEAUTIFUL = "is_beautiful";
     public static final String PHOTO_IS_USEFUL = "is_useful";
 
-    //max size of a photo uploaded in json = 1MB (base64 encoded, so it's like 6/8 x 1MB)
-    public static final int MAX_BASE64_UPLOAD_SIZE = 1024 * 1024;
-    //max size of a photo uploaded via multipart form = 4MB
+    //max size of a photo uploaded in json = 2MB (base64 encoded, so it's like 6/8 x 2MB)
+    public static final int MAX_BASE64_UPLOAD_SIZE = 2 * 1024 * 1024;
+    //max size of a photo uploaded via multipart form = 6MB, max size is 16Mb due to Mongo. Use GridFS if need more.
     public static final int MAX_MULTIPART_UPLOAD_SIZE = 6 * 1024 * 1024;
     //json attribute that specify the pagination params
     public static final String RESULTS_RETURNED = "results";
