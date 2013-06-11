@@ -12,7 +12,7 @@ var timelineApp = timelineApp || {};
 		initialize: function () {
 			//triggered on sync
 			this.listenTo(timelineApp.PublicationCollection, 'sync', this.renderPublications);
-
+            this.renderPublications();
 		},
 		//Publication Headers methods
 
@@ -48,8 +48,8 @@ var timelineApp = timelineApp || {};
 		}
 		
 	});
-	
-	appView = (typeof appView === 'undefined') ? new timelineApp.AppView() : appView;
-	
+
+    timelineApp.appView =  new timelineApp.AppView();
+
 })();
 	
