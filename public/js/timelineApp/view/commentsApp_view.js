@@ -3,7 +3,7 @@ var timelineApp = timelineApp || {};
 //this is the view controller for the all comments APP
 (function(){
 	timelineApp.AppView = Backbone.View.extend({
-		el: 'body',
+		el: 'div#wallDiv',
 
 		events: {
             "click #send_new_publication_button":   "create"
@@ -48,8 +48,6 @@ var timelineApp = timelineApp || {};
 		}
 		
 	});
-
-    timelineApp.appView =  new timelineApp.AppView();
 
 })();
 	

@@ -81,18 +81,8 @@ class umappin.Router extends Backbone.Router
 
   wall: () ->
     subroutes = @subroutes
-    requirejs ['/assets/js/timelineApp/model/publication.js'], () ->
-      requirejs ['/assets/js/timelineApp/model/userPublication.js'], () ->
-        requirejs ['/assets/js/timelineApp/model/comment.js'], () ->
-          requirejs ['/assets/js/timelineApp/collection/publicationCollection.js'], () ->
-            requirejs ['/assets/js/timelineApp/collection/userPublicationCollection.js'], () ->
-              requirejs ['/assets/js/timelineApp/collection/newsCollection.js'], () ->
-                requirejs ['/assets/js/timelineApp/view/receivedComments_view.js'], () ->
-                  requirejs ['/assets/js/timelineApp/view/commentsApp_view.js'], () ->
-                    requirejs ['/assets/js/timelineApp/view/userCommentsApp_view.js'], () ->
-                      requirejs ['/assets/js/timelineApp/view/publicationComments_view.js'], () ->
-                        requirejs ['/assets/js/timelineApp/routers/router.js'], () ->
-                          subroutes.timelineRouter or= new timelineApp.Router "wall/"
+    requirejs ['/assets/js/timelineApp/routers/router.js'], () ->
+      subroutes.timelineRouter or= new timelineApp.Router "wall/"
 
   awards: () ->
     setTemplate "/assets/templates/awards.html", () ->
