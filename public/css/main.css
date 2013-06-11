@@ -305,6 +305,31 @@ input[type="color"]:focus,
 #profile-picture #my-avatar {
   border-radius: 20px;
 }
+#user_wall #user-wall-picture {
+  border: 1px solid #2b4429;
+  width: 128px;
+  height: 128px;
+  border-radius: 20px;
+  padding: 5px;
+  background-color: #fcf8dc;
+  float: left;
+  margin: 0 20px 20px 20px;
+}
+#user_wall #user-wall-picture #user-wall-avatar {
+  border-radius: 5px;
+}
+#user_wall #user-wall-follow {
+  text-align: center;
+}
+#user_wall #user-wall-follow .btn-primary {
+  width: auto;
+}
+#user_wall #user-wall-nick {
+  text-align: center;
+}
+#user_wall #user-wall-nick h3 {
+  padding-top: 25px;
+}
 .modal {
   background-color: #fcf8dc;
 }
@@ -378,6 +403,16 @@ input[type="color"]:focus,
   letter-spacing: 1px;
   margin: 7px 0;
 }
+#content #messages-section #messages_body {
+  width: 100%;
+  -ms-word-wrap: break-word;
+  word-wrap: break-word;
+  margin-bottom: 20px;
+  font-size: 17pt;
+}
+#content #messages-section #sending_message {
+  width: 97%;
+}
 #content #comments_body .span7 {
   width: 510px;
   text-align: right;
@@ -434,6 +469,7 @@ input[type="color"]:focus,
   float: left;
 }
 #content #discussion_list .box .discussion_participants_photo .box span {
+  font-size: 14px;
   color: #fff;
   width: 100%;
   display: block;
@@ -788,7 +824,7 @@ input[type="color"]:focus,
     width: 360px;
   }
   .box .box-body #profile-form .span3 {
-    width: 248px;
+    width: 246px;
     margin: 0 20px;
   }
   .box .box-body #profile-form .input-xlarge {
