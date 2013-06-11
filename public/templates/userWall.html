@@ -1,0 +1,64 @@
+<div id='wallDiv'>
+  <div class="box-transparent span9">
+      <div class="row">
+          <div class="box span7 offset1">
+              <div class="box-header">
+                  <h3>User Wall</h3>
+              </div>
+              <div class="box-body">
+                  <div id="comments_body" class="row">
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+<!-- This is the publications header template -->
+<script type="text/template" id="publication-head-template">
+        <% maxPhotosSeen=5; %>
+
+        <div class="box span7">
+            <div class="publication_head">
+                <div class="publication_header">
+                    <a href="#wall/comment/<%- rc.id %>">
+                        <span class="icon-bubbles"></span>
+                        <span> <%- rc.subject %></span>
+                    </a>
+                    <span class="time-ago"><%- rc.timeAgo%> Replys: <%- rc.replies %></span>
+				</div>
+				<div class="first_comment"><span><%- rc.content %></span></div>
+            </div>
+        </div>
+</script>
+
+<!-- This is the template to show a publication comments and reply to it-->
+<script type="text/template" id="comments-template">
+        <% maxPhotosSeen=5; %>
+
+         <div class="span7">
+            <h4><%- rc.subject %></h4>
+             <div class="comments">
+                 <% _.each(rc.messages, function(commentObject){ %>
+                    <span class="comment">
+                        <label>
+                            <a class="wall-user-reply" href="/#wall/user/<%- commentObject.user.id%>"><%- commentObject.user.name %></a>
+                        </label>
+                        <span>
+                            <%= " " + commentObject.message %>
+                        </span>
+                    </span>
+                    <span class="timeAgo"><%- commentObject.timeAgo%></span>
+                 <% }); %>
+             </div>
+             <textarea id="sending_comment" class="replybox"></textarea>
+             <button id="reply" class="replybox">Reply</button>
+             <button id="backWall" class="replybox">Back to wall</button>
+         </div>
+</script>
+
+<script src="/assets/js/timelineApp/model/publication.js"></script>
+<script src="/assets/js/timelineApp/model/comment.js"></script>
+<script src="/assets/js/timelineApp/view/receivedComments_view.js"></script>
+<script src="/assets/js/timelineApp/view/commentsApp_view.js"></script>
+<script src="/assets/js/timelineApp/view/publicationComments_view.js"></script>
+
