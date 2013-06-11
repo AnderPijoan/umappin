@@ -240,6 +240,26 @@ input[type="color"]:focus,
   background-color: color-beige
   #my-avatar
     border-radius 20px
+#user_wall
+  #user-wall-picture
+    border: 1px solid color-dark-green;
+    width: 128px;
+    height: 128px;
+    border-radius: 20px;
+    padding: 5px;
+    background-color: color-beige
+    float: left;
+    margin: 0 20px 20px 20px;
+    #user-wall-avatar
+      border-radius 5px
+  #user-wall-follow
+    text-align center
+    .btn-primary
+      width auto
+  #user-wall-nick
+    text-align center
+    h3
+      padding-top 25px
 .modal
   background-color: color-beige
   .modal-header
@@ -303,6 +323,14 @@ input[type="color"]:focus,
         float right
         letter-spacing: 1px;
         margin: 7px 0;
+    #messages_body
+      width: 100%;
+      -ms-word-wrap: break-word;
+      word-wrap: break-word;
+      margin-bottom: 20px;
+      font-size: 17pt;
+    #sending_message
+      width 97%
   #comments_body
     .span7
       width: 510px;
@@ -350,6 +378,7 @@ input[type="color"]:focus,
         display: block;
         float: left;
         span
+          font-size: 14px;
           color: white
           width: 100%;
           display: block;

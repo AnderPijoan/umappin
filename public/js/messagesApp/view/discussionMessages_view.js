@@ -8,7 +8,8 @@ _.templateSettings.variable = "rc";
         template: _.template($('#messages-template').html()),
 
         events: {
-            "click #reply": "reply"
+            "click #reply": "reply",
+            "click #backMessage": "backMessages"
         },
 
         initialize: function(attrs, options) {
@@ -71,6 +72,9 @@ _.templateSettings.variable = "rc";
                         }
                     }
                 );
+        },
+        backMessages: function() {
+            location.href = "/#messages/";
         }
 	});
 }());

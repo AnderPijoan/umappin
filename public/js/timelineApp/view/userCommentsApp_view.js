@@ -6,15 +6,48 @@ var timelineApp = timelineApp || {};
 		el: 'div#wallDiv',
 
 		events: {
-            "click #send_new_publication_button":   "create"
+            "click #send_new_publication_button":   "create",
+            "click #user-follow": "userFollow",
+            "click #user-unfollow": "userUnfollow"
         },
 
 		initialize: function () {
 			//triggered on sync
 			this.listenTo(timelineApp.UserPublicationCollection, 'sync reset change', this.renderPublications);
 		},
+        userFollow: function(){
+          var userFollow = sessionStorage.getItem('wall-follow-user'),
+          		currentUser = sessionStorage.getItem('user');
+	      var userFollowProfile = $.ajax({
+                url: '/api/addFollows/'+userFollow,
+                type: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify(currentUser)
+        	});
+	      userFollowProfile.done(function( data ) {
+			$('#user-wall-follow').html('<button id="user-unfollow" class="btn btn-primary">Unfollow</button>');
+	      });
+	      userFollowProfile.error(function( data ) {
+	      	console.log(data);
+	      });
+        },
+        userUnfollow: function(){
+          var userFollow = sessionStorage.getItem('wall-follow-user'),
+          	currentUser = sessionStorage.getItem('user');
+	      var userFollowProfile = $.ajax({
+                url: '/api/unfollow/'+userFollow,
+                type: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify(currentUser)
+        	});
+	      userFollowProfile.done(function( data ) {
+			$('#user-wall-follow').html('<button id="user-follow" class="btn btn-primary">Follow</button>');
+	      });
+	      userFollowProfile.error(function( data ) {
+	      	console.log(data);
+	      });
+        },
 		//Publication Headers methods
-
 
 		renderPublications: function(){
 			$('#comments_body').html('<ul id="publication_list"> </ul>');
@@ -45,8 +78,8 @@ var timelineApp = timelineApp || {};
 				}
 			});
 		}
-		
+
 	});
-    
+
 })();
-	
+
