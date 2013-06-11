@@ -6,15 +6,16 @@ var timelineApp = timelineApp || {};
 		el: 'div#wallDiv',
 
 		events: {
-            "click #send_new_publication_button":   "create",
-            "click #user-follow": "userFollow",
-            "click #user-unfollow": "userUnfollow"
+            "click #send_new_publication_button":   "create"//,
+            //"click #user-follow": "userFollow",
+            //"click #user-unfollow": "userUnfollow"
         },
 
 		initialize: function () {
 			//triggered on sync
 			this.listenTo(timelineApp.UserPublicationCollection, 'sync reset change', this.renderPublications);
 		},
+        /*
         userFollow: function(){
           var userFollow = sessionStorage.getItem('wall-follow-user'),
           		currentUser = sessionStorage.getItem('user');
@@ -47,6 +48,7 @@ var timelineApp = timelineApp || {};
 	      	console.log(data);
 	      });
         },
+        */
 		//Publication Headers methods
 
 		renderPublications: function(){

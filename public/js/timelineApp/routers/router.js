@@ -88,19 +88,31 @@ timelineApp.Router = Backbone.SubRoute.extend({
                 requirejs(['/assets/js/timelineApp/view/receivedComments_view.js'], function() {
                   requirejs(['/assets/js/timelineApp/view/userCommentsApp_view.js'], function() {
                     requirejs(['/assets/js/timelineApp/view/publicationComments_view.js'], function() {
-                      var userWallProfile = $.get('/users/'+idUser),
-                          searchedUser;
-                      userWallProfile.done(function( data ) {
-                          var profileImg;
-                          searchedUser = data;
-                          if(data.profilePicture != null){
-                            profileImg = './photos/'+data.profilePicture+'/content'
-                          }else{
-                            profileImg = './assets/img/140x140.gif'
+                        requirejs(['/assets/js/account/models/user_model.js'], function() {
+                            requirejs(['/assets/js/account/models/follow_model.js'], function() {
+                                requirejs(['/assets/js/account/models/usrfollows_model.js'], function() {
+                                    requirejs(['/assets/js/account/models/usrfollowed_model.js'], function() {
+                                        requirejs(['/assets/js/account/views/user_follows_view.js'], function() {
+                      var searchedUser = new Account.User({id: idUser})
+                      searchedUser.fetch({
+                          complete: function() {
+                              var img = searchedUser.get('profilePicture');
+                              var profileImg = (img != null) ? './photos/'+ img +'/content' : './assets/img/140x140.gif';
+                              $('#user-wall-picture').html('<img id="user-wall-avatar" src="'+profileImg+'" onload="resize(this,128)">');
+                              $('#user-wall-nick h3').text(searchedUser.get('name'));
                           }
-                          $('#user-wall-picture').html('<img id="user-wall-avatar" src="'+profileImg+'" onload="resize(this,128)">');
-                          $('#user-wall-nick h3').text(data.name);
                       });
+                      var follows = new Account.UsrFollows({id: Account.session.get('id')});
+                      follows.fetch();
+                      var followed = new Account.UsrFollowed({id: idUser});
+                      followed.fetch();
+                      var followsView = new Account.UserFollowsView({
+                         model: searchedUser,
+                         follows: follows,
+                         followed: followed
+                      });
+                      $('#user-wall-follow').html(followsView.render().el);
+                      /*
                       var userFollowProfile = $.get('/userfollowed/'+idUser),
                           follow = idUser;
                       userFollowProfile.done(function( data ) {
@@ -127,11 +139,17 @@ timelineApp.Router = Backbone.SubRoute.extend({
                             sessionStorage.setItem('wall-follow-user',follow);
                       });
                       console.log("User " + idUser + " Wall");
+                      */
                       that.cleanUpViews();
                       timelineApp.userAppView = new timelineApp.UserAppView();
                       timelineApp.UserPublicationCollection.url = "/userpublications/" + idUser;
                       timelineApp.UserPublicationCollection.reset();
                       timelineApp.UserPublicationCollection.fetch();
+                                });
+                              });
+                            });
+                          });
+                        });
                     });
                   });
                 });
