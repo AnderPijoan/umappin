@@ -156,7 +156,7 @@ class window.Maps.MapView extends Backbone.View
         div = OpenLayers.Control.prototype.draw.apply(@, arguments)
         div.innerHTML = that.searchBarTemplate {}
         @keepEvents(div);
-        $(div).find('img.clickableImage').click () =>
+        $(div).find('button.geosearchButton').click () =>
           that.performSearch $('#searchInput').val()
         $(div).find('button.geoLocateButton').click () =>
           that.geoLocationControl.deactivate()
