@@ -103,15 +103,23 @@ timelineApp.Router = Backbone.SubRoute.extend({
                           }
                       });
                       var follows = new Account.UsrFollows({id: Account.session.get('id')});
-                      follows.fetch();
-                      var followed = new Account.UsrFollowed({id: idUser});
-                      followed.fetch();
-                      var followsView = new Account.UserFollowsView({
-                         model: searchedUser,
-                         follows: follows,
-                         followed: followed
+                      follows.fetch({
+                          complete: function(data) {
+                              var followed = new Account.UsrFollowed({id: idUser});
+                              followed.fetch({
+                                  complete: function(data) {
+                                      var followsView = new Account.UserFollowsView({
+                                          model: searchedUser,
+                                          follows: follows,
+                                          followed: followed
+                                      });
+                                      $('#user-wall-follow').html(followsView.render().el);
+                                  }
+                              });
+                          }
                       });
-                      $('#user-wall-follow').html(followsView.render().el);
+
+
                       /*
                       var userFollowProfile = $.get('/userfollowed/'+idUser),
                           follow = idUser;

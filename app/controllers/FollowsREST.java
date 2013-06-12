@@ -130,11 +130,9 @@ public class FollowsREST extends ItemREST {
             return badRequest(Constants.USER_NOT_LOGGED_IN.toString());
         Follows userFollows = Follows.findByUserId(new ObjectId(userId));
         if (userFollows == null) {
-            if (userFollows == null) {
                 userFollows = new Follows();
                 userFollows.setUserId(userId);
                 userFollows.save();
-            }
         }
         return ok(userFollows.toJson());
     }
