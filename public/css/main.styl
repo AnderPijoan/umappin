@@ -170,7 +170,7 @@ box(opacy)
     border-left-color: color-dark-green
     border-left-style: solid;
     border-left-width: 1px;
-
+    margin-top: 10px;
   .last
     border-right-color: color-dark-green
     border-right-style: solid;
@@ -329,6 +329,8 @@ input[type="color"]:focus,
       word-wrap: break-word;
       margin-bottom: 20px;
       font-size: 17pt;
+      button
+        float right
     #sending_message
       width 97%
   #comments_body
@@ -371,6 +373,8 @@ input[type="color"]:focus,
     .discussion_participants_photo
       text-align left
       padding: 0 10px;
+      .plusUsers
+        line-height: 4;
       .box
         position: relative;
         width: 80px;
@@ -792,6 +796,10 @@ input[type="color"]:focus,
       .box-header
         a
           width auto
+      #messages_body
+        button.replybox
+          width 49%
+          height 46px
     #comments_body
       .span7
         width: 98%;
@@ -943,6 +951,10 @@ input[type="color"]:focus,
       .box-header
         a
           width auto
+      #messages_body
+        button.replybox
+          width 49%
+          height 46px
     #comments_body
       .span7
         width: 98%;

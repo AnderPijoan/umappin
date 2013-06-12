@@ -226,6 +226,7 @@
   border-left-color: #2b4429;
   border-left-style: solid;
   border-left-width: 1px;
+  margin-top: 10px;
 }
 .menu .last {
   border-right-color: #2b4429;
@@ -410,6 +411,9 @@ input[type="color"]:focus,
   margin-bottom: 20px;
   font-size: 17pt;
 }
+#content #messages-section #messages_body button {
+  float: right;
+}
 #content #messages-section #sending_message {
   width: 97%;
 }
@@ -460,6 +464,9 @@ input[type="color"]:focus,
 #content #discussion_list .box .discussion_participants_photo {
   text-align: left;
   padding: 0 10px;
+}
+#content #discussion_list .box .discussion_participants_photo .plusUsers {
+  line-height: 4;
 }
 #content #discussion_list .box .discussion_participants_photo .box {
   position: relative;
@@ -971,6 +978,10 @@ input[type="color"]:focus,
   #content #messages-section .box-header a {
     width: auto;
   }
+  #content #messages-section #messages_body button.replybox {
+    width: 49%;
+    height: 46px;
+  }
   #content #comments_body .span7 {
     width: 98%;
   }
@@ -1166,6 +1177,10 @@ input[type="color"]:focus,
   }
   #content #messages-section .box-header a {
     width: auto;
+  }
+  #content #messages-section #messages_body button.replybox {
+    width: 49%;
+    height: 46px;
   }
   #content #comments_body .span7 {
     width: 98%;
