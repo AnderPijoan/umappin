@@ -42,7 +42,7 @@
   <div class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
 
-        <button id="send_new_discussion_button" class="bnt-large btn-success " >Send</button>
+        <button id="send_new_discussion_button" class="btn bnt-large btn-primary" >Send</button>
   </div>
 </div>
 
@@ -83,6 +83,8 @@
                     <% if (rc.users.length > maxPhotosSeen) {plusUsers=rc.users.length-maxPhotosSeen;%>
                         <span class="plusUsers">+<%- plusUsers %></span>
                     <% } %>
+                    <div style="clear:both;">
+                    </div>
                 </div>
                 <!-- <div class="discussion_author"> -->
                    <!-- <div class="author_name"><a href="/#account/userID">USERNAME</a></div>-->
@@ -108,8 +110,9 @@
               </div>
            <% }); %>
        </div>
-       <textarea id="sending_message" class="span8 replybox"></textarea>
+       <textarea id="sending_message" class="span7 replybox"></textarea>
        <button id="reply" class="replybox">Reply</button>
+       <button id="backMessage" class="replybox">Back to messages</button>
    </div>
 </script>
 <script src="/assets/js/messagesApp/model/discussion.js"></script>

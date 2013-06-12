@@ -3,26 +3,9 @@
       <div class="row">
           <div class="box span7 offset1">
               <div class="box-header">
-                  <h3>Wall</h3>
+                  <h3>User Wall</h3>
               </div>
               <div class="box-body">
-                    <div id="user_wall">
-                        <div id="user-wall-picture">
-                        </div>
-                        <div id="user-wall-nick">
-                            <h3></h3>
-                          <div id="user-wall-follow">
-                          </div>
-                        </div>
-                    </div>
-                  <div id="new_post" style="text-align: right;">
-                      <input id="form_subject" class="input-block-level" type="text"
-                          name="subject" placeholder="Subject">
-                      <textarea name="comment" id="form_comment" rows="3"
-                          class="input-block-level" placeholder="Share your thoughts..."></textarea>
-                      <button id="send_new_publication_button" class="btn btn-primary"
-                          style="margin-bottom: 20px;">Post</button>
-                  </div>
                   <div id="comments_body" class="row">
                   </div>
               </div>
@@ -41,7 +24,7 @@
                         <span class="icon-bubbles"></span>
                         <span> <%- rc.subject %></span>
                     </a>
-                    <span class="time-ago"><%- rc.timeAgo%> Replies: <%- rc.replies %></span>
+                    <span class="time-ago"><%- rc.timeAgo%> Replys: <%- rc.replies %></span>
 				</div>
 				<div class="first_comment"><span><%- rc.content %></span></div>
             </div>
@@ -73,7 +56,9 @@
          </div>
 </script>
 
-<script type='text/template' id='user-follows-template'>
-    <button class="btn btn-primary"><%=rc%></button>
-</script>
+<script src="/assets/js/timelineApp/model/publication.js"></script>
+<script src="/assets/js/timelineApp/model/comment.js"></script>
+<script src="/assets/js/timelineApp/view/receivedComments_view.js"></script>
+<script src="/assets/js/timelineApp/view/commentsApp_view.js"></script>
+<script src="/assets/js/timelineApp/view/publicationComments_view.js"></script>
 

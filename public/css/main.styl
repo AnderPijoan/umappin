@@ -170,7 +170,7 @@ box(opacy)
     border-left-color: color-dark-green
     border-left-style: solid;
     border-left-width: 1px;
-
+    margin-top: 10px;
   .last
     border-right-color: color-dark-green
     border-right-style: solid;
@@ -240,6 +240,28 @@ input[type="color"]:focus,
   background-color: color-beige
   #my-avatar
     border-radius 20px
+#user_wall
+  #user-wall-picture
+    border: 1px solid color-dark-green;
+    width: 128px;
+    height: 128px;
+    border-radius: 20px;
+    padding: 5px;
+    background-color: color-beige
+    float: left;
+    margin: 0 20px 20px 20px;
+    #user-wall-avatar
+      border-radius 5px
+  #user-wall-follow
+    text-align center
+    .btn-primary
+      width auto
+    button
+      margin-left: 108px;
+  #user-wall-nick
+    text-align center
+    h3
+      padding-top 25px
 .modal
   background-color: color-beige
   .modal-header
@@ -292,6 +314,15 @@ input[type="color"]:focus,
   background-color: color-beige
   *background-color: darken(color-beige, 10%);
 #content
+  #statistics_body
+    .award-box
+      text-align: center;
+      width: 74px;
+      float: left;
+      padding: 5px;
+      margin: 2px;
+    .span5
+      width: 355px;
   #messages-section
     .box-header
       h3
@@ -303,6 +334,16 @@ input[type="color"]:focus,
         float right
         letter-spacing: 1px;
         margin: 7px 0;
+    #messages_body
+      width: 100%;
+      -ms-word-wrap: break-word;
+      word-wrap: break-word;
+      margin-bottom: 20px;
+      font-size: 17pt;
+      button
+        float right
+    #sending_message
+      width 97%
   #comments_body
     .span7
       width: 510px;
@@ -343,6 +384,8 @@ input[type="color"]:focus,
     .discussion_participants_photo
       text-align left
       padding: 0 10px;
+      .plusUsers
+        line-height: 4;
       .box
         position: relative;
         width: 80px;
@@ -350,6 +393,7 @@ input[type="color"]:focus,
         display: block;
         float: left;
         span
+          font-size: 14px;
           color: white
           width: 100%;
           display: block;
@@ -588,6 +632,17 @@ input[type="color"]:focus,
   .dropdown-menu > li > a
     width 425px
   #content
+    #user_wall
+      #user-wall-follow
+        button
+          margin-left: 163px;
+    #statistics_body
+      .span5
+        width: 445px;
+      .award-box
+        width: 90px;
+        padding: 5px;
+        margin: 5px;
     #comments_body
       .span7
         width: 640px;
@@ -639,7 +694,7 @@ input[type="color"]:focus,
         width 360px
       #profile-form
         .span3
-          width 248px
+          width 246px
           margin 0 20px
         .input-xlarge
           width 319px
@@ -671,6 +726,17 @@ input[type="color"]:focus,
     width: 30px;
     height: 30px;
   #content
+    #user_wall
+      #user-wall-follow
+        button
+          margin-left: 45px;
+    #statistics_body
+      .span5
+        width: 265px;
+      .award-box
+        width: 57px;
+        padding: 3px;
+        margin: 1px;
     #comments_body
       .span7
         width: 385px;
@@ -759,10 +825,25 @@ input[type="color"]:focus,
     width: 50px;
     height: 50px;
   #content
+    #user_wall
+      #user-wall-follow
+        button
+          margin-left: 0;
+    #statistics_body
+      .span5
+        width: 100%;
+      .award-box
+        width: 21%;
+        padding: 3px;
+        margin: 1%;
     #messages-section
       .box-header
         a
           width auto
+      #messages_body
+        button.replybox
+          width 49%
+          height 46px
     #comments_body
       .span7
         width: 98%;
@@ -910,10 +991,25 @@ input[type="color"]:focus,
     width: 50px;
     height: 50px;
   #content
+    #user_wall
+      #user-wall-follow
+        button
+          margin-left: 0;
+    #statistics_body
+      .span5
+        width: 100%;
+      .award-box
+        width: 20%;
+        padding: 3px;
+        margin: 1%;
     #messages-section
       .box-header
         a
           width auto
+      #messages_body
+        button.replybox
+          width 49%
+          height 46px
     #comments_body
       .span7
         width: 98%;

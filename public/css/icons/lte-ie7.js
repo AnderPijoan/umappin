@@ -22,7 +22,10 @@ window.onload = function() {
 			'icon-map' : '&#xe00d;',
 			'icon-address-book' : '&#xe00f;',
 			'icon-phone' : '&#xe010;',
-			'icon-camera' : '&#xe011;'
+			'icon-camera' : '&#xe011;',
+			'icon-pencil' : '&#xe00e;',
+			'icon-file' : '&#xe012;',
+			'icon-share' : '&#xe013;'
 		},
 		els = document.getElementsByTagName('*'),
 		i, attr, html, c, el;

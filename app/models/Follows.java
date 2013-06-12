@@ -21,7 +21,7 @@ public class Follows extends Follow {
         List<Follows> allfollows = MorphiaObject.datastore.find(Follows.class).asList();
         List<Follows> follows = new ArrayList<>();
         for (Follows f : allfollows)
-            if (f.userId.equals(id) || (f.follow != null && f.follow.contains(id)))
+            if (f.userId.equals(id)/* || (f.follow != null && f.follow.contains(id))*/)
                 follows.add(f);
         return follows;
     }

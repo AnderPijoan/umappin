@@ -62,7 +62,6 @@
 
         $('#product').hide();
         this.setSelectedProduct = function(user) {
-            console.log("SELECCIONADO");
             location.href = '/#wall/user/'+user.id;
         }
     })

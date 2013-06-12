@@ -72,8 +72,11 @@ public class FollowedREST extends ItemREST {
         if (user == null)
             return badRequest(Constants.USER_NOT_LOGGED_IN.toString());
         Followed userFollowed = Followed.findByUserId(new ObjectId(userId));
-        if (userFollowed == null)
-            return notFound();
+        if (userFollowed == null) {
+            userFollowed = new Followed();
+            userFollowed.setUserId(userId);
+            userFollowed.save();
+        }
         return ok(userFollowed.toJson());
     }
 }
