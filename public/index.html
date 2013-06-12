@@ -58,7 +58,7 @@
                 <a id="message-unread" href="#messages/" class="middle"><span class="icon-bubbles"></span><span class="only-icon">Messages</span><span id="messages-badge" class="badge badge-warning">0</span></a>
                 <a href="#userlist" class="middle"><span class="icon-heart-stroke"></span><span class="only-icon">User list</span></a>
                 <a href="#awards/" class="last"><span class="icon-trophy"></span><span class="only-icon">Awards</span></a>
-            </hr>
+
                 <a href="#featuresMap" class="first"><span class="icon-pencil"></span><span class="only-icon">Features Draw Map</span></a>
                 <a href="#markersMap" class="middle"><span class="icon-file"></span><span class="only-icon">Notes Map</span></a>
                 <a href="#searchMap" class="middle"><span class="icon-office"></span><span class="only-icon">Overpass Search Map</span></a>
@@ -66,11 +66,6 @@
                 <a href="#photosMap" class="last"><span class="icon-camera"></span><span class="only-icon">Photos Map</span></a>
                 <ul>
                     <li>provisional</li>
-                    <li class="loggedin"><a href="#featuresMap">Features Draw Map</a></li>
-                    <li class="loggedin"><a href="#markersMap">Notes Map</a></li>
-                    <li class="loggedin"><a href="#searchMap">Overpass Search Map</a></li>
-                    <li class="loggedin"><a href="#routesMap">Routes Map</a></li>
-                    <li class="loggedin"><a href="#photosMap">Photos Map</a></li>
                     <li class="loggedin"><a href="#account">Account</a></li>
                     <li>provisional</li>
                 </ul>
@@ -146,6 +141,15 @@
                 data: JSON.stringify(inviteFriendsJson)
         });
         inviteFriendsPost.done(function( data ) {
+            var currentUser = JSON.parse(sessionStorage.getItem('user')),
+                inviteFriendAward = localStorage.getItem('invite-friend-award'+currentUser.id);
+            if (!inviteFriendAward) {
+                inviteFriendAward = 1;
+                localStorage.setItem('invite-friend-award'+currentUser.id, inviteFriendAward);
+            }else{
+                inviteFriendAward++;
+                localStorage.setItem('invite-friend-award'+currentUser.id, inviteFriendAward);
+            }
             $('#invite_friend').val('');
             $('#inviteFriends').modal('hide');
             location.href='./#';

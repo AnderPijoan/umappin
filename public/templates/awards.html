@@ -1,34 +1,57 @@
-
-<div class="row-fluid">
-	<div class="span9" id="statistics_body"></div>
+<div class="box-transparent span9">
+  <div class="row">
+      <div class="box span7 offset1">
+          <div class="box-header">
+              <h3>Awards</h3>
+          </div>
+          <div class="box-body">
+              <div id="statistics_body" class="row">
+              </div>
+          </div>
+      </div>
+  </div>
 </div>
 
 <!-- This is the Statistics template -->
 <script type="text/template" id="statistics-template">
-	<h2>Statistics:</h2>
-	<h4>Level <%- rc.level %></h4>
-	<span class="newLevel"><%="Is new level: "+ rc.newLevel %></span><br/><br/>
-	<a>Points: <%- rc.points %></a><br/>
-	<a>Coins: <%- rc.coins %></a><br/>
-	<ul>
-	<li>PHOTOLIKES: <%- rc.statistics.PHOTOLIKES %></li>
-	<li>ROUTELIKES: <%- rc.statistics.ROUTELIKES %></li>
-	<li>FEATURELIKES: <%- rc.statistics.FEATURELIKES %></li>
-	<li>PARTICIPATIONS: <%- rc.statistics.PARTICIPATIONS %></li>
-	<li>WINS: <%- rc.statistics.WINS %></li>
-	<li>EDITIONS: <%- rc.statistics.EDITIONS %></li>
-	</ul>
-
-	<h2>Awards:</h2>
-		<% _.each(rc.userAwards, function(award){ %>
-			<div class="award">
-				<a><%- award.award.name %></a><br/>
-				<a><%- award.award.description %></a><br/>
-				<a><%="Type: "+ award.award.awardType %></a><br/>
-				<span><%="Is new award: "+ award.isNew %></span>
+	<div class="box span2">
+		<h2>Statistics:</h2>
+		<h4>Level <%- rc.level %></h4>
+		<span class="newLevel"><%="Is new level: "+ rc.newLevel %></span><br/><br/>
+		<a>Points: <%- rc.points %></a><br/>
+		<a>Coins: <%- rc.coins %></a><br/>
+		<ul>
+		<li>PHOTOLIKES: <%- rc.statistics.PHOTOLIKES %></li>
+		<li>ROUTELIKES: <%- rc.statistics.ROUTELIKES %></li>
+		<li>FEATURELIKES: <%- rc.statistics.FEATURELIKES %></li>
+		<li>PARTICIPATIONS: <%- rc.statistics.PARTICIPATIONS %></li>
+		<li>WINS: <%- rc.statistics.WINS %></li>
+		<li>EDITIONS: <%- rc.statistics.EDITIONS %></li>
+		<li>Invite friends: <%- rc.statistics.INVITEFRIENDS %></li>
+		</ul>
+	</div>
+	<div class="box span5">
+		<h2>Awards:</h2>
+			<% for (var i = 0; i<28; i++) { %>
+			<div class="box award-box">
+				<img class="my-award" src="./assets/img/140x140.gif">
 			</div>
-		<% }); %>
-    
+			<% } %>
+			<% if(rc.statistics.PHOTOLIKES == '1') { %>
+
+			<% } else { %>
+
+			<% } %>
+			<% _.each(rc.userAwards, function(award){ %>
+				<div class="award">
+					<a><%- award.award.name %></a><br/>
+					<a><%- award.award.description %></a><br/>
+					<a><%="Type: "+ award.award.awardType %></a><br/>
+					<span><%="Is new award: "+ award.isNew %></span>
+				</div>
+			<% }); %>
+			<div style="clear:both;"></div>
+	</div>
 </script>
 <script src="/assets/js/statisticsApp/model/statistic.js"></script>
 <script src="/assets/js/statisticsApp/view/statisticView.js"></script>
