@@ -325,6 +325,9 @@ input[type="color"]:focus,
 #user_wall #user-wall-follow .btn-primary {
   width: auto;
 }
+#user_wall #user-wall-follow button {
+  margin-left: 108px;
+}
 #user_wall #user-wall-nick {
   text-align: center;
 }
@@ -783,6 +786,9 @@ input[type="color"]:focus,
   .dropdown-menu > li > a {
     width: 425px;
   }
+  #content #user_wall #user-wall-follow button {
+    margin-left: 163px;
+  }
   #content #statistics_body .span5 {
     width: 445px;
   }
@@ -887,6 +893,9 @@ input[type="color"]:focus,
   .dropdown-menu > li > a img {
     width: 30px;
     height: 30px;
+  }
+  #content #user_wall #user-wall-follow button {
+    margin-left: 45px;
   }
   #content #statistics_body .span5 {
     width: 265px;
@@ -1000,6 +1009,9 @@ input[type="color"]:focus,
   .dropdown-menu > li > a img {
     width: 50px;
     height: 50px;
+  }
+  #content #user_wall #user-wall-follow button {
+    margin-left: 0;
   }
   #content #statistics_body .span5 {
     width: 100%;
@@ -1208,6 +1220,9 @@ input[type="color"]:focus,
   .dropdown-menu > li > a img {
     width: 50px;
     height: 50px;
+  }
+  #content #user_wall #user-wall-follow button {
+    margin-left: 0;
   }
   #content #statistics_body .span5 {
     width: 100%;
