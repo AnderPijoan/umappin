@@ -22,7 +22,7 @@ public class newsREST extends ItemREST {
 		
 		// Super query
 		List<Publication> publications = 
-				MorphiaObject.datastore.find(Publication.class).field("writerId").hasAnyOf(userFollows.getFollowOids()).order("_id").asList();
+				MorphiaObject.datastore.find(Publication.class).field("writerId").hasAnyOf(userFollows.getFollowOids()).order("-_id").asList();
 
 		if (publications != null && publications.size() == 0) {
 			return notFound(Constants.PUBLICATIONS_EMPTY.toString());
@@ -45,7 +45,7 @@ public class newsREST extends ItemREST {
 		
 		// Super query
 		List<Publication> publications = 
-				MorphiaObject.datastore.find(Publication.class).field("writerId").hasAnyOf(userFollows.getFollowOids()).order("_id").limit(20).asList();
+				MorphiaObject.datastore.find(Publication.class).field("writerId").hasAnyOf(userFollows.getFollowOids()).order("-_id").limit(20).asList();
 
 		if (publications != null && publications.size() == 0) {
 			return notFound(Constants.PUBLICATIONS_EMPTY.toString());
@@ -68,7 +68,7 @@ public class newsREST extends ItemREST {
 
 		// Super query
 		List<Publication> publications = 
-				MorphiaObject.datastore.find(Publication.class).field("writerId").hasAnyOf(userFollows.getFollowOids()).order("_id").offset(from).limit(to-from).asList();
+				MorphiaObject.datastore.find(Publication.class).field("writerId").hasAnyOf(userFollows.getFollowOids()).order("-_id").offset(from).limit(to-from).asList();
 
 		if (publications != null && publications.size() == 0) {
 			return notFound(Constants.PUBLICATIONS_EMPTY.toString());
