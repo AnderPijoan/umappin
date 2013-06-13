@@ -302,6 +302,7 @@ input[type="color"]:focus,
   margin-bottom: 10px;
 }
 #profile-picture {
+  text-align: center;
   border: 1px solid #2b4429;
   width: 128px;
   height: 128px;
@@ -322,6 +323,7 @@ input[type="color"]:focus,
   background-color: #fcf8dc;
   float: left;
   margin: 0 20px 20px 20px;
+  text-align: center;
 }
 #user_wall #user-wall-picture #user-wall-avatar {
   border-radius: 5px;
