@@ -179,7 +179,7 @@ public class Route extends Item {
 			// Try updating, if the route doesnt exists, the query does nothing
 			
 			String sql = "update routes set mongo_oid = ?, difficulty = ?, timest = ?, " +
-					"geom = ST_SimplifyPreserveTopology(ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913), " + OsmFeature.TOLERANCE + ")" + 
+					"geom = ST_SimplifyPreserveTopology(ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913), " + 10 + ")" + 
 					", tags = " + ((tags != null && tags.size() > 0) ? OsmFeature.tagsToHstoreFormat(tags) : "NULL" ) +
 					" where mongo_oid = ?";
 			st = conn.prepareStatement(sql);
@@ -195,7 +195,7 @@ public class Route extends Item {
 			
 			sql = "insert into routes (mongo_oid, difficulty, timest, geom " + 
 					((tags != null && tags.size() > 0) ? ",tags" : "" ) + ") " +
-					"select ?, ?, ?, ST_SimplifyPreserveTopology(ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913), " + OsmFeature.TOLERANCE + ") " +
+					"select ?, ?, ?, ST_SimplifyPreserveTopology(ST_Transform(ST_SetSRID(st_geomfromgeojson(?),4326),900913), " + 10 + ") " +
 					((tags != null && tags.size() > 0) ? ", " + OsmFeature.tagsToHstoreFormat(tags) : "" ) + " " +
 					"where not exists (select 1 from routes where mongo_oid = ?)";
 			st = conn.prepareStatement(sql);
