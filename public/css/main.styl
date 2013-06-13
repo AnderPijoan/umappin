@@ -157,6 +157,11 @@ box(opacy)
     #messages-badge
       display none
       float right
+    #awards-badge
+      display none
+      float right
+      span.icon-trophy
+        margin-right 0
   a:hover,a:focus
     color white
     background-color color-olive
@@ -313,14 +318,34 @@ input[type="color"]:focus,
 .btn-free[disabled]
   background-color: color-beige
   *background-color: darken(color-beige, 10%);
+.award-newbie
+  background-color: #C5FFCA;
+.award-copper
+  background-color: #FF9473;
+.award-silver
+  background-color: #919191;
+.award-gold
+  background-color: #FF0;
+.award-hide
+  background-color: #333;
 #content
   #statistics_body
-    .award-box
+    .award-box,.award-box-full
       text-align: center;
       width: 74px;
+      height: 74px;
       float: left;
       padding: 5px;
       margin: 2px;
+      .award-trophy
+        font-size: 45pt;
+        line-height: 1.4;
+        text-align: center;
+        width: 74px;
+        height: 74px;
+        border-radius: 8px;
+    .award-box-full
+      background-color: #FF0;
     .span5
       width: 355px;
   #messages-section
@@ -639,10 +664,18 @@ input[type="color"]:focus,
     #statistics_body
       .span5
         width: 445px;
-      .award-box
+      .award-box,.award-box-full
         width: 90px;
+        height 90px
         padding: 5px;
         margin: 5px;
+        .award-trophy
+          font-size: 50pt;
+          line-height: 1.5;
+          text-align: center;
+          border-radius: 8px;
+          width: 90px;
+          height: 90px;
     #comments_body
       .span7
         width: 640px;
@@ -733,10 +766,18 @@ input[type="color"]:focus,
     #statistics_body
       .span5
         width: 265px;
-      .award-box
+      .award-box,.award-box-full
         width: 57px;
+        height 57px
         padding: 3px;
         margin: 1px;
+        .award-trophy
+          font-size: 34pt;
+          line-height: 1.4;
+          text-align: center;
+          border-radius: 8px;
+          width: 57px;
+          height: 57px;
     #comments_body
       .span7
         width: 385px;
@@ -832,10 +873,19 @@ input[type="color"]:focus,
     #statistics_body
       .span5
         width: 100%;
-      .award-box
+      .award-box,.award-box-full
         width: 21%;
+        height auto
+        line-height: 5;
         padding: 3px;
         margin: 1%;
+        .award-trophy
+          width auto
+          font-size: 45pt;
+          line-height: 1.4;
+          text-align: center;
+          height: 74px;
+          border-radius: 8px;
     #messages-section
       .box-header
         a
@@ -998,10 +1048,19 @@ input[type="color"]:focus,
     #statistics_body
       .span5
         width: 100%;
-      .award-box
+      .award-box,.award-box-full
         width: 20%;
+        height auto
         padding: 3px;
         margin: 1%;
+        line-height: 3;
+        .award-trophy
+          font-size: 34pt;
+          line-height: 1.4;
+          text-align: center;
+          width: auto;
+          height: 57px;
+          border-radius: 8px;
     #messages-section
       .box-header
         a
