@@ -14,42 +14,816 @@
 
 <!-- This is the Statistics template -->
 <script type="text/template" id="statistics-template">
-	<div class="box span2">
-		<h2>Statistics:</h2>
+	<div class="box span2" style="text-align: left;">
+		<h4><b>Statistics:</b></h4>
 		<h4>Level <%- rc.level %></h4>
-		<span class="newLevel"><%="Is new level: "+ rc.newLevel %></span><br/><br/>
-		<a>Points: <%- rc.points %></a><br/>
-		<a>Coins: <%- rc.coins %></a><br/>
-		<ul>
-		<li>PHOTOLIKES: <%- rc.statistics.PHOTOLIKES %></li>
-		<li>ROUTELIKES: <%- rc.statistics.ROUTELIKES %></li>
-		<li>FEATURELIKES: <%- rc.statistics.FEATURELIKES %></li>
-		<li>PARTICIPATIONS: <%- rc.statistics.PARTICIPATIONS %></li>
-		<li>WINS: <%- rc.statistics.WINS %></li>
-		<li>EDITIONS: <%- rc.statistics.EDITIONS %></li>
-		<li>Invite friends: <%- rc.statistics.INVITEFRIENDS %></li>
+		Points: <%- rc.points %><br/>
+		Coins: <%- rc.coins %><br/><br/>
+
+		<ul style="margin: 0;">
+
+		<li>Photo likes:</li>
+		<li style="text-align: right;"><span class="icon-trophy" style="float:left;"></span><b><%- rc.statistics.PHOTOLIKES %></b> </li>
+		<li>Route likes:</li>
+		<li style="text-align: right;"><span class="icon-trophy" style="float:left;"></span><b><%- rc.statistics.ROUTELIKES %></b> </li>
+		<li>Feature likes:</li>
+		<li style="text-align: right;"><span class="icon-trophy" style="float:left;"></span><b><%- rc.statistics.FEATURELIKES %></b> </li>
+		<li>Participations:</li>
+		<li style="text-align: right;"><span class="icon-trophy" style="float:left;"></span><b><%- rc.statistics.PARTICIPATIONS %></b> </li>
+		<li>Wins:</li>
+		<li style="text-align: right;"><span class="icon-trophy" style="float:left;"></span><b><%- rc.statistics.WINS %></b> </li>
+		<li>Editions:</li>
+		<li style="text-align: right;"><span class="icon-trophy" style="float:left;"></span><b><%- rc.statistics.EDITIONS %></b> </li>
+		<li>Invite friends:</li>
+		<li style="text-align: right;"><span class="icon-trophy" style="float:left;"></span><b><%- rc.statistics.INVITEFRIENDS %></b> </li>
 		</ul>
 	</div>
 	<div class="box span5">
-		<h2>Awards:</h2>
-			<% for (var i = 0; i<28; i++) { %>
-			<div class="box award-box">
-				<img class="my-award" src="./assets/img/140x140.gif">
-			</div>
-			<% } %>
-			<% if(rc.statistics.PHOTOLIKES == '1') { %>
-
-			<% } else { %>
-
-			<% } %>
-			<% _.each(rc.userAwards, function(award){ %>
-				<div class="award">
-					<a><%- award.award.name %></a><br/>
-					<a><%- award.award.description %></a><br/>
-					<a><%="Type: "+ award.award.awardType %></a><br/>
-					<span><%="Is new award: "+ award.isNew %></span>
+		<%	if (rc.statistics.PHOTOLIKES >= 1000) { %>
+			<div class="box award-box-full">
+				<div class="award-trophy award-newbie">
+					<span class="iconumappin-camera"></span>
 				</div>
-			<% }); %>
+			</div>
+			<div class="box award-box-full">
+				<div class="award-trophy award-copper">
+					<span class="iconumappin-camera"></span>
+				</div>
+			</div>
+			<div class="box award-box-full">
+				<div class="award-trophy award-silver">
+					<span class="iconumappin-camera"></span>
+				</div>
+			</div>
+			<div class="box award-box-full">
+				<div class="award-trophy award-gold">
+					<span class="iconumappin-camera"></span>
+				</div>
+			</div>
+		<%	} else {
+				if (rc.statistics.PHOTOLIKES >= 100) { %>
+			<div class="box award-box">
+				<div class="award-trophy award-newbie">
+					<span class="iconumappin-camera"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-copper">
+					<span class="iconumappin-camera"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-silver">
+					<span class="iconumappin-camera"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-camera"></span>
+				</div>
+			</div>
+			<%	} else {
+					if (rc.statistics.PHOTOLIKES >= 10) { %>
+			<div class="box award-box">
+				<div class="award-trophy award-newbie">
+					<span class="iconumappin-camera"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-copper">
+					<span class="iconumappin-camera"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-camera"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-camera"></span>
+				</div>
+			</div>
+				<%	} else {
+						if (rc.statistics.PHOTOLIKES >= 1) { %>
+			<div class="box award-box">
+				<div class="award-trophy award-newbie">
+					<span class="iconumappin-camera"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-camera"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-camera"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-camera"></span>
+				</div>
+			</div>
+						<% } else { %>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-camera"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-camera"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-camera"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-camera"></span>
+				</div>
+			</div>
+						<% }
+					}
+				}
+			} %>
+		<%	if (rc.statistics.ROUTELIKES >= 1000) { %>
+			<div class="box award-box-full">
+				<div class="award-trophy award-newbie">
+					<span class="iconumappin-share"></span>
+				</div>
+			</div>
+			<div class="box award-box-full">
+				<div class="award-trophy award-copper">
+					<span class="iconumappin-share"></span>
+				</div>
+			</div>
+			<div class="box award-box-full">
+				<div class="award-trophy award-silver">
+					<span class="iconumappin-share"></span>
+				</div>
+			</div>
+			<div class="box award-box-full">
+				<div class="award-trophy award-gold">
+					<span class="iconumappin-share"></span>
+				</div>
+			</div>
+		<%	} else {
+				if (rc.statistics.ROUTELIKES >= 100) { %>
+			<div class="box award-box">
+				<div class="award-trophy award-newbie">
+					<span class="iconumappin-share"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-copper">
+					<span class="iconumappin-share"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-silver">
+					<span class="iconumappin-share"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-share"></span>
+				</div>
+			</div>
+			<%	} else {
+					if (rc.statistics.ROUTELIKES >= 10) { %>
+			<div class="box award-box">
+				<div class="award-trophy award-newbie">
+					<span class="iconumappin-share"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-copper">
+					<span class="iconumappin-share"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-share"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-share"></span>
+				</div>
+			</div>
+				<%	} else {
+						if (rc.statistics.ROUTELIKES >= 1) { %>
+			<div class="box award-box">
+				<div class="award-trophy award-newbie">
+					<span class="iconumappin-share"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-share"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-share"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-share"></span>
+				</div>
+			</div>
+						<% } else { %>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-share"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-share"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-share"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-share"></span>
+				</div>
+			</div>
+						<% }
+					}
+				}
+			} %>
+		<%	if (rc.statistics.FEATURELIKES >= 1000) { %>
+			<div class="box award-box-full">
+				<div class="award-trophy award-newbie">
+					<span class="iconumappin-map"></span>
+				</div>
+			</div>
+			<div class="box award-box-full">
+				<div class="award-trophy award-copper">
+					<span class="iconumappin-map"></span>
+				</div>
+			</div>
+			<div class="box award-box-full">
+				<div class="award-trophy award-silver">
+					<span class="iconumappin-map"></span>
+				</div>
+			</div>
+			<div class="box award-box-full">
+				<div class="award-trophy award-gold">
+					<span class="iconumappin-map"></span>
+				</div>
+			</div>
+		<%	} else {
+				if (rc.statistics.FEATURELIKES >= 100) { %>
+			<div class="box award-box">
+				<div class="award-trophy award-newbie">
+					<span class="iconumappin-map"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-copper">
+					<span class="iconumappin-map"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-silver">
+					<span class="iconumappin-map"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-map"></span>
+				</div>
+			</div>
+			<%	} else {
+					if (rc.statistics.FEATURELIKES >= 10) { %>
+			<div class="box award-box">
+				<div class="award-trophy award-newbie">
+					<span class="iconumappin-map"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-copper">
+					<span class="iconumappin-map"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-map"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-map"></span>
+				</div>
+			</div>
+				<%	} else {
+						if (rc.statistics.FEATURELIKES >= 1) { %>
+			<div class="box award-box">
+				<div class="award-trophy award-newbie">
+					<span class="iconumappin-map"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-map"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-map"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-map"></span>
+				</div>
+			</div>
+						<% } else { %>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-map"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-map"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-map"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-map"></span>
+				</div>
+			</div>
+						<% }
+					}
+				}
+			} %>
+		<%	if (rc.statistics.PARTICIPATIONS >= 1000) { %>
+			<div class="box award-box-full">
+				<div class="award-trophy award-newbie">
+					<span class="iconumappin-newspaper"></span>
+				</div>
+			</div>
+			<div class="box award-box-full">
+				<div class="award-trophy award-copper">
+					<span class="iconumappin-newspaper"></span>
+				</div>
+			</div>
+			<div class="box award-box-full">
+				<div class="award-trophy award-silver">
+					<span class="iconumappin-newspaper"></span>
+				</div>
+			</div>
+			<div class="box award-box-full">
+				<div class="award-trophy award-gold">
+					<span class="iconumappin-newspaper"></span>
+				</div>
+			</div>
+		<%	} else {
+				if (rc.statistics.PARTICIPATIONS >= 100) { %>
+			<div class="box award-box">
+				<div class="award-trophy award-newbie">
+					<span class="iconumappin-newspaper"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-copper">
+					<span class="iconumappin-newspaper"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-silver">
+					<span class="iconumappin-newspaper"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-newspaper"></span>
+				</div>
+			</div>
+			<%	} else {
+					if (rc.statistics.PARTICIPATIONS >= 10) { %>
+			<div class="box award-box">
+				<div class="award-trophy award-newbie">
+					<span class="iconumappin-newspaper"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-copper">
+					<span class="iconumappin-newspaper"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-newspaper"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-newspaper"></span>
+				</div>
+			</div>
+				<%	} else {
+						if (rc.statistics.PARTICIPATIONS >= 1) { %>
+			<div class="box award-box">
+				<div class="award-trophy award-newbie">
+					<span class="iconumappin-newspaper"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-newspaper"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-newspaper"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-newspaper"></span>
+				</div>
+			</div>
+						<% } else { %>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-newspaper"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-newspaper"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-newspaper"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-newspaper"></span>
+				</div>
+			</div>
+						<% }
+					}
+				}
+			} %>
+		<%	if (rc.statistics.WINS >= 1000) { %>
+			<div class="box award-box-full">
+				<div class="award-trophy award-newbie">
+					<span class="iconumappin-trophy"></span>
+				</div>
+			</div>
+			<div class="box award-box-full">
+				<div class="award-trophy award-copper">
+					<span class="iconumappin-trophy"></span>
+				</div>
+			</div>
+			<div class="box award-box-full">
+				<div class="award-trophy award-silver">
+					<span class="iconumappin-trophy"></span>
+				</div>
+			</div>
+			<div class="box award-box-full">
+				<div class="award-trophy award-gold">
+					<span class="iconumappin-trophy"></span>
+				</div>
+			</div>
+		<%	} else {
+				if (rc.statistics.WINS >= 100) { %>
+			<div class="box award-box">
+				<div class="award-trophy award-newbie">
+					<span class="iconumappin-trophy"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-copper">
+					<span class="iconumappin-trophy"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-silver">
+					<span class="iconumappin-trophy"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-trophy"></span>
+				</div>
+			</div>
+			<%	} else {
+					if (rc.statistics.WINS >= 10) { %>
+			<div class="box award-box">
+				<div class="award-trophy award-newbie">
+					<span class="iconumappin-trophy"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-copper">
+					<span class="iconumappin-trophy"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-trophy"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-trophy"></span>
+				</div>
+			</div>
+				<%	} else {
+						if (rc.statistics.WINS >= 1) { %>
+			<div class="box award-box">
+				<div class="award-trophy award-newbie">
+					<span class="iconumappin-trophy"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-trophy"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-trophy"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-trophy"></span>
+				</div>
+			</div>
+						<% } else { %>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-trophy"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-trophy"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-trophy"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-trophy"></span>
+				</div>
+			</div>
+						<% }
+					}
+				}
+			} %>
+		<%	if (rc.statistics.EDITIONS >= 1000) { %>
+			<div class="box award-box-full">
+				<div class="award-trophy award-newbie">
+					<span class="iconumappin-pencil"></span>
+				</div>
+			</div>
+			<div class="box award-box-full">
+				<div class="award-trophy award-copper">
+					<span class="iconumappin-pencil"></span>
+				</div>
+			</div>
+			<div class="box award-box-full">
+				<div class="award-trophy award-silver">
+					<span class="iconumappin-pencil"></span>
+				</div>
+			</div>
+			<div class="box award-box-full">
+				<div class="award-trophy award-gold">
+					<span class="iconumappin-pencil"></span>
+				</div>
+			</div>
+		<%	} else {
+				if (rc.statistics.EDITIONS >= 100) { %>
+			<div class="box award-box">
+				<div class="award-trophy award-newbie">
+					<span class="iconumappin-pencil"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-copper">
+					<span class="iconumappin-pencil"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-silver">
+					<span class="iconumappin-pencil"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-pencil"></span>
+				</div>
+			</div>
+			<%	} else {
+					if (rc.statistics.EDITIONS >= 10) { %>
+			<div class="box award-box">
+				<div class="award-trophy award-newbie">
+					<span class="iconumappin-pencil"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-copper">
+					<span class="iconumappin-pencil"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-pencil"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-pencil"></span>
+				</div>
+			</div>
+				<%	} else {
+						if (rc.statistics.EDITIONS >= 1) { %>
+			<div class="box award-box">
+				<div class="award-trophy award-newbie">
+					<span class="iconumappin-pencil"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-pencil"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-pencil"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-pencil"></span>
+				</div>
+			</div>
+						<% } else { %>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-pencil"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-pencil"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-pencil"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-pencil"></span>
+				</div>
+			</div>
+						<% }
+					}
+				}
+			} %>
+		<%	if (rc.statistics.INVITEFRIENDS >= 1000) { %>
+			<div class="box award-box-full">
+				<div class="award-trophy award-newbie">
+					<span class="iconumappin-envelop"></span>
+				</div>
+			</div>
+			<div class="box award-box-full">
+				<div class="award-trophy award-copper">
+					<span class="iconumappin-envelop"></span>
+				</div>
+			</div>
+			<div class="box award-box-full">
+				<div class="award-trophy award-silver">
+					<span class="iconumappin-envelop"></span>
+				</div>
+			</div>
+			<div class="box award-box-full">
+				<div class="award-trophy award-gold">
+					<span class="iconumappin-envelop"></span>
+				</div>
+			</div>
+		<%	} else {
+				if (rc.statistics.INVITEFRIENDS >= 100) { %>
+			<div class="box award-box">
+				<div class="award-trophy award-newbie">
+					<span class="iconumappin-envelop"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-copper">
+					<span class="iconumappin-envelop"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-silver">
+					<span class="iconumappin-envelop"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-envelop"></span>
+				</div>
+			</div>
+			<%	} else {
+					if (rc.statistics.INVITEFRIENDS >= 10) { %>
+			<div class="box award-box">
+				<div class="award-trophy award-newbie">
+					<span class="iconumappin-envelop"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-copper">
+					<span class="iconumappin-envelop"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-envelop"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-envelop"></span>
+				</div>
+			</div>
+				<%	} else {
+						if (rc.statistics.INVITEFRIENDS >= 1) { %>
+			<div class="box award-box">
+				<div class="award-trophy award-newbie">
+					<span class="iconumappin-envelop"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-envelop"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-envelop"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-envelop"></span>
+				</div>
+			</div>
+						<% } else { %>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-envelop"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-envelop"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-envelop"></span>
+				</div>
+			</div>
+			<div class="box award-box">
+				<div class="award-trophy award-hide">
+					<span class="iconumappin-envelop"></span>
+				</div>
+			</div>
+						<% }
+					}
+				}
+			} %>
+
 			<div style="clear:both;"></div>
 	</div>
 </script>

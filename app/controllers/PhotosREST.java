@@ -720,7 +720,7 @@ public class PhotosREST extends Controller {
                 //increment counter on user photo
                 photo.incrementCountersAndSave(incrUseful, incrBeautiful);
                 //increment statistics for the user
-                updateUserStatisticsAndAwards(user, incrUseful + incrBeautiful);
+                updateUserStatisticsAndAwards(photo.getOwnerId(), incrUseful + incrBeautiful);
 
             }
         }
@@ -775,11 +775,11 @@ public class PhotosREST extends Controller {
     }
 
 
-    private static void updateUserStatisticsAndAwards(User user, int photoLikesIncrement) {
+    private static void updateUserStatisticsAndAwards(ObjectId userId, int photoLikesIncrement) {
         //increment counter on user statistics
-        UserStatistics userStatistics = UserStatistics.findByUserId(user.id.toString());
+        UserStatistics userStatistics = UserStatistics.findByUserId(userId.toString());
         if(userStatistics == null){
-            userStatistics = UserStatistics.init(user.id.toString());
+            userStatistics = UserStatistics.init(userId.toString());
             //needed for the following update
             userStatistics.save();
         }

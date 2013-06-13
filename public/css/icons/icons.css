@@ -97,3 +97,74 @@ you can use the generic selector below, but it's slower:
 .icon-share:before {
 	content: "\e013";
 }
+
+.iconumappin-home, .iconumappin-newspaper, .iconumappin-bubbles, .iconumappin-cog, .iconumappin-heart-stroke, .iconumappin-trophy, .iconumappin-magnifying-glass, .iconumappin-key, .iconumappin-users, .iconumappin-unlocked, .iconumappin-envelop, .iconumappin-switch, .iconumappin-office, .iconumappin-map, .iconumappin-address-book, .iconumappin-phone, .iconumappin-camera, .iconumappin-pencil, .iconumappin-file, .iconumappin-share {
+	font-family: 'icomoon';
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+}
+.iconumappin-home:before {
+	content: "\e000";
+}
+.iconumappin-newspaper:before {
+	content: "\e006";
+}
+.iconumappin-bubbles:before {
+	content: "\e007";
+}
+.iconumappin-cog:before {
+	content: "\e008";
+}
+.iconumappin-heart-stroke:before {
+	content: "\e009";
+}
+.iconumappin-trophy:before {
+	content: "\e00a";
+}
+.iconumappin-magnifying-glass:before {
+	content: "\e00b";
+}
+.iconumappin-key:before {
+	content: "\e00c";
+}
+.iconumappin-users:before {
+	content: "\e001";
+}
+.iconumappin-unlocked:before {
+	content: "\e002";
+}
+.iconumappin-envelop:before {
+	content: "\e003";
+}
+.iconumappin-switch:before {
+	content: "\e004";
+}
+.iconumappin-office:before {
+	content: "\e005";
+}
+.iconumappin-map:before {
+	content: "\e00d";
+}
+.iconumappin-address-book:before {
+	content: "\e00f";
+}
+.iconumappin-phone:before {
+	content: "\e010";
+}
+.iconumappin-camera:before {
+	content: "\e011";
+}
+.iconumappin-pencil:before {
+	content: "\e00e";
+}
+.iconumappin-file:before {
+	content: "\e012";
+}
+.iconumappin-share:before {
+	content: "\e013";
+}

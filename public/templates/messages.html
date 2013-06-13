@@ -27,14 +27,14 @@
     <h3 id="myModalLabel">New Message</h3>
   </div>
   <div class="modal-body">
-    <label for="form_subject">Subject</label><input type="text" name="subject" id="form_subject"/><br/>
-        <label for="form_message">Message</label><textarea name="message" id="form_message" ></textarea><br />
+    <label for="form_subject">Subject</label><input type="text" name="subject" id="form_subject" style="width: 97%;"/><br/>
+        <label for="form_message">Message</label><textarea name="message" id="form_message" style="width: 97%;height: 65px;"></textarea><br />
         <div id="receivers_block">
           <label for="form_receivers">Receivers</label>
 
           <div id="receivers_list">
           </div>
-          <input type="text" name="receivers" id="form_receivers" />
+          <input type="text" name="receivers" id="form_receivers"  style="width: 97%;"/>
           <div id="search_result_list"></div>
         <br />
         <br />
@@ -76,7 +76,7 @@
                     <% for (i=0; i<maxPhotosSeen;i++) { %>
                         <% if (rc.users[i]) { %>
                           <div class="box">
-                            <img id="photo<%- rc.users[i].name %>" class="messagePhotoNEO" src="<%- rc.users[i].profilePicture%>" title="<%- rc.users[i].name %>" onload="resize(this, 80)"/>
+                            <img id="photo<%- rc.users[i].name %>" src="<%- rc.users[i].profilePicture%>" title="<%- rc.users[i].name %>" onload="resize(this, 80)"/>
                             <span><%- rc.users[i].name %></span>
                           </div>
                         <% } else {break;}} %>

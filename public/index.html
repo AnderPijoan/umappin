@@ -57,7 +57,7 @@
                 <a href="#wall/" class="middle"><span class="icon-home"></span><span class="only-icon">Wall</span></a>
                 <a id="message-unread" href="#messages/" class="middle"><span class="icon-bubbles"></span><span class="only-icon">Messages</span><span id="messages-badge" class="badge badge-warning">0</span></a>
                 <a href="#userlist" class="middle"><span class="icon-heart-stroke"></span><span class="only-icon">User list</span></a>
-                <a href="#awards/" class="last"><span class="icon-trophy"></span><span class="only-icon">Awards</span></a>
+                <a href="#awards/" class="last"><span class="icon-trophy"></span><span class="only-icon">Awards</span><span id="awards-badge" class="badge badge-success"><span class="icon-trophy"></span></span></a>
 
                 <a href="#featuresMap" class="first"><span class="icon-pencil"></span><span class="only-icon">Features Draw Map</span></a>
                 <a href="#markersMap" class="middle"><span class="icon-file"></span><span class="only-icon">Notes Map</span></a>
@@ -145,6 +145,7 @@
                 inviteFriendAward = localStorage.getItem('invite-friend-award'+currentUser.id);
             if (!inviteFriendAward) {
                 inviteFriendAward = 1;
+                $('#awards-badge').show();
                 localStorage.setItem('invite-friend-award'+currentUser.id, inviteFriendAward);
             }else{
                 inviteFriendAward++;
