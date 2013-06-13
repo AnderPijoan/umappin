@@ -211,6 +211,13 @@
   display: none;
   float: right;
 }
+.menu a #awards-badge {
+  display: none;
+  float: right;
+}
+.menu a #awards-badge span.icon-trophy {
+  margin-right: 0;
+}
 .menu a:hover,
 .menu a:focus {
   color: #fff;
@@ -396,12 +403,41 @@ input[type="color"]:focus,
   background-color: #fcf8dc;
   *background-color: #f8efb1;
 }
-#content #statistics_body .award-box {
+.award-newbie {
+  background-color: #c5ffca;
+}
+.award-copper {
+  background-color: #ff9473;
+}
+.award-silver {
+  background-color: #919191;
+}
+.award-gold {
+  background-color: #ff0;
+}
+.award-hide {
+  background-color: #333;
+}
+#content #statistics_body .award-box,
+#content #statistics_body .award-box-full {
   text-align: center;
   width: 74px;
+  height: 74px;
   float: left;
   padding: 5px;
   margin: 2px;
+}
+#content #statistics_body .award-box .award-trophy,
+#content #statistics_body .award-box-full .award-trophy {
+  font-size: 45pt;
+  line-height: 1.4;
+  text-align: center;
+  width: 74px;
+  height: 74px;
+  border-radius: 8px;
+}
+#content #statistics_body .award-box-full {
+  background-color: #ff0;
 }
 #content #statistics_body .span5 {
   width: 355px;
@@ -792,10 +828,21 @@ input[type="color"]:focus,
   #content #statistics_body .span5 {
     width: 445px;
   }
-  #content #statistics_body .award-box {
+  #content #statistics_body .award-box,
+  #content #statistics_body .award-box-full {
     width: 90px;
+    height: 90px;
     padding: 5px;
     margin: 5px;
+  }
+  #content #statistics_body .award-box .award-trophy,
+  #content #statistics_body .award-box-full .award-trophy {
+    font-size: 50pt;
+    line-height: 1.5;
+    text-align: center;
+    border-radius: 8px;
+    width: 90px;
+    height: 90px;
   }
   #content #comments_body .span7 {
     width: 640px;
@@ -900,10 +947,21 @@ input[type="color"]:focus,
   #content #statistics_body .span5 {
     width: 265px;
   }
-  #content #statistics_body .award-box {
+  #content #statistics_body .award-box,
+  #content #statistics_body .award-box-full {
     width: 57px;
+    height: 57px;
     padding: 3px;
     margin: 1px;
+  }
+  #content #statistics_body .award-box .award-trophy,
+  #content #statistics_body .award-box-full .award-trophy {
+    font-size: 34pt;
+    line-height: 1.4;
+    text-align: center;
+    border-radius: 8px;
+    width: 57px;
+    height: 57px;
   }
   #content #comments_body .span7 {
     width: 385px;
@@ -1016,10 +1074,22 @@ input[type="color"]:focus,
   #content #statistics_body .span5 {
     width: 100%;
   }
-  #content #statistics_body .award-box {
+  #content #statistics_body .award-box,
+  #content #statistics_body .award-box-full {
     width: 21%;
+    height: auto;
+    line-height: 5;
     padding: 3px;
     margin: 1%;
+  }
+  #content #statistics_body .award-box .award-trophy,
+  #content #statistics_body .award-box-full .award-trophy {
+    width: auto;
+    font-size: 45pt;
+    line-height: 1.4;
+    text-align: center;
+    height: 74px;
+    border-radius: 8px;
   }
   #content #messages-section .box-header a {
     width: auto;
@@ -1227,10 +1297,22 @@ input[type="color"]:focus,
   #content #statistics_body .span5 {
     width: 100%;
   }
-  #content #statistics_body .award-box {
+  #content #statistics_body .award-box,
+  #content #statistics_body .award-box-full {
     width: 20%;
+    height: auto;
     padding: 3px;
     margin: 1%;
+    line-height: 3;
+  }
+  #content #statistics_body .award-box .award-trophy,
+  #content #statistics_body .award-box-full .award-trophy {
+    font-size: 34pt;
+    line-height: 1.4;
+    text-align: center;
+    width: auto;
+    height: 57px;
+    border-radius: 8px;
   }
   #content #messages-section .box-header a {
     width: auto;

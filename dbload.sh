@@ -17,10 +17,12 @@ mongo test --eval "db.User.drop(); \
 		   db.SessionToken.drop(); \
 		   db.User2Discussion.drop(); \
 		   db.UserStatistics.drop(); \
-		   db.Award.drop(); "
-mongoimport --db test --collection SecurityRole --file ./preload/securityRoles.json
-mongoimport --db test --collection User --file ./preload/users.json
-mongoimport --db test --collection LinkedAccount --file ./preload/linkedAccounts.json
-mongoimport --db test --collection Award --file ./preload/awards.json
+		   db.Award.drop(); \
+		   db.Photo_User_Like.drop(); \
+		   db.Publication.drop(); \
+		   db.Timeline.drop(); "
+
 psql -d umappin -U gisuser -c 'delete from osmnodes; delete from osmways; delete from routes; delete from photos;'
+
+mongoimport --db test --collection SecurityRole --file ./preload/securityRoles.json
 

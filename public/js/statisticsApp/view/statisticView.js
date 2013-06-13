@@ -6,6 +6,7 @@ _.templateSettings.variable = "rc";
 	statisticsApp.StatisticView = Backbone.View.extend({
 		initialize: function() {
 			console.log(this.model.get('statistics'));
+			$('#awards-badge').hide();
             var currentUser = JSON.parse(sessionStorage.getItem('user')),
 				statistics = this.model.get('statistics');
 			statistics.INVITEFRIENDS = localStorage.getItem('invite-friend-award'+currentUser.id);
